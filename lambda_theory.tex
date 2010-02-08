@@ -31,7 +31,13 @@ replacing $x$ with the number 2.
 % definition af syntax
 
 The lambda calculus consists of \emph{lambda expressions} and variables with a
-recursively defined syntax. The set of all lambda expressions is denoted $\Lambda$:
+syntax over the alphabet:
+\begin{align*}
+	x,y,z,\hdots\ &\text{ variables} \\
+	\lambda\ &\text{ abstractor} \\
+	()\ &\text{ parentheses}
+\end{align*}
+The set of all lambda expressions is denoted $\Lambda$:
 \begin{align*}
 	x \text{ is a variable} &=> x\in\Lambda \\
 	x \text{ is a variable and } M\in\Lambda &=> (\lam{x}{M})\in\Lambda \\
@@ -43,14 +49,25 @@ bodies extend as far as possible; $\lam{x}{M N}=\lam{x}{(M
 N)}\neq(\lam{x}{M})N$.
 
 % frie variable
-As already indicated, the variabled in a lambda expression can be split on two groups;
-the free and the bound variables. The function $FV$ takes returns for any
-lambda expression the set of free variables:
+
+As already indicated, the variables in a lambda expression can be divided into
+two groups; the free and the bound variables. The function $FV$ takes returns
+for any lambda expression the set of free variables:
 \begin{align*}
 	FV(x)&={x} \\
-	FV(\lam{x}{M})&= FV(M) \backslash {x} \\
+	FV(\lam{x}{M})&= FV(M) - {x} \\
 	FV((M N)) &= FV(M) \cup FV(N)
 \end{align*}
+
+The two expressions 
+\begin{align*}
+	\lam{x}{x} \\
+	\lam{y}{y}
+\end{align*}
+both return the input unchanged. In other words; they define the same function
+-- the identity. These two expressions can therefore be though of as being
+equal, which should be reflected in the syntax. For this we have the concept
+of alpha conversion.
 
 % definition af alfakonvertering
 % eksempel
