@@ -1,2 +1,67 @@
 %!TEX root = rapport.tex
 
+\section{Preliminaries: Basic Lambda Calculus}
+
+The untyped lambda calculus was introduced in 1936 by Alonzo Church
+[reference] as part of the search for a solid foundation for mathematics. It is
+heavily intertwined with the notion of a ``function'', in the sense that logic
+and mathematics is represented with only functions and untyped variables that
+can be either free or bound.
+
+
+% alt er funktioner
+% eksempler
+
+As a very informal example, here is a function that doubles an integer:
+\begin{equation*}
+	(\lam{x}{x+x})2=4
+\end{equation*}
+This example shows a bound variable, $x$, and an implicit \emph{reduction} step. The variable $x$
+is said to be bound because the lambda function uses it as an argument. Contrast this to
+\begin{equation*}
+	(\lam{x}{x+y})2=2+y.
+\end{equation*}
+Here, $y$ is a free variable that hasn't got any values assigned to it yet. It can
+take any value, hence it's called ``free''. In this second example there was
+another reduction step. A reduction step can be regarded as a rewriting action
+on the string representing the lambda expression. Yet more informally, one can 
+think of it as ``substituting in'' the values. In the examples above this amounts to
+replacing $x$ with the number 2. 
+
+% definition af syntax
+
+The lambda calculus consists of \emph{lambda expressions} and variables with a
+recursively defined syntax. The set of all lambda expressions is denoted $\Lambda$:
+\begin{align*}
+	x \text{ is a variable} &=> x\in\Lambda \\
+	x \text{ is a variable and } M\in\Lambda &=> (\lam{x}{M})\in\Lambda \\
+	M, N\in\Lambda &=> (M N)\in\Lambda
+\end{align*}
+For brevity, it's convention to leave out the outermost parentheses.
+Expressions are evaulated left-to-right, so $M N P = (M N) P$, and function
+bodies extend as far as possible; $\lam{x}{M N}=\lam{x}{(M
+N)}\neq(\lam{x}{M})N$.
+
+% frie variable
+As already indicated, the variabled in a lambda expression can be split on two groups;
+the free and the bound variables. The function $FV$ takes returns for any
+lambda expression the set of free variables:
+\begin{align*}
+	FV(x)&={x} \\
+	FV(\lam{x}{M})&= FV(M) \backslash {x} \\
+	FV((M N)) &= FV(M) \cup FV(N)
+\end{align*}
+
+% definition af alfakonvertering
+% eksempel
+% definition af betareduktion
+% eksempel!
+% definition af reduktionsgraf
+% eksempel(?)
+
+
+% Syntax
+
+% Alpha-conversion
+
+% Beta-reduction
