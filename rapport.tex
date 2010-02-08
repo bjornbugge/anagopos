@@ -2,100 +2,33 @@
 
 \usepackage[colorlinks]{hyperref}
 \hypersetup{colorlinks=false}
-% \usepackage{vector}
 \usepackage{url}
 \usepackage{fullpage}
-
 \usepackage[printing,url]{dk-bib}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amstext}
 \usepackage{amsthm}
-% \usepackage{mathdots}
-\usepackage{nicefrac}
 \usepackage[danish]{babel}
-\usepackage{ae,aecompl}
-%\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{graphs}
-\usepackage{semantic}
 \usepackage{graphicx}
-\usepackage{verbatim}
 
+% \usepackage{vector}
 % \usepackage{maplestd2e}
+% \usepackage{graphs}
+% \usepackage{ae,aecompl}
+% \usepackage[T1]{fontenc}
+% \usepackage{nicefrac}
 
 \title{}
 \author{}
 \date{}
 
-\newtheorem{saetning}{Sætning}[section]
-\theoremstyle{definition}
-\newtheorem{eksempel}{Eksempel}
-
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
-\newcommand{\vc}[1]{\underline{#1}}
-\newcommand{\mtrx}[1]{\underset{=}{#1}{}}
-\newcommand{\tmtrx}[1]{\underset{=}{\widetilde{#1}}{}}
-\newcommand{\rmtrx}[1]{\underset{=}{#1}^{-1}{}}
-\newcommand{\trmtrx}[1]{\underset{=}{#1}^{t}{}}
-\newcommand{\spann}{\operatorname{span}}
-\newcommand{\egenm}{\operatorname{em}}
-\newcommand{\rodmul}{\operatorname{rm}}
-\newcommand{\id}{\operatorname{id}}
-\newcommand{\sign}{\operatorname{sign}}
-\newcommand{\Pol}{\operatorname{Pol}}
-\newcommand{\ccvec}[3]{\left( \cvec{#1}{#2}{#3} \right)}
-\newcommand{\basis}[2]{\ensuremath{\vc{#1}_1,\cdots,\vc{#1}_{#2}}}
-\newcommand{\trebasis}[1]{\ensuremath{\vc{#1}_1,\vc{#1}_2,\vc{#1}_2}}
-%\newcommand{\introtekst}[1]{\begin{quote}\textsf{#1}\end{quote}}
-\newcommand{\introtekst}[1]{\textsf{#1}}
-
-\newcommand{\ei}[1]{e^{\frac{#1 2\pi i}{n}}}
-
-\newcommand{\ol}[1]{\overline{#1}}
-\newcommand{\ul}[1]{\underline{#1}}
-\newcommand{\integrale}[3]{\int_{#1}^{#2}#3\ \text{d}x}
-\newcommand{\overint}[3]{\ol{\int_{#1}^{#2}}#3\ \text{d}x}
-\newcommand{\underint}[3]{\ul{\int_{#1}^{#2}}#3\ \text{d}x}
-
-\renewcommand{\iff}{\enspace\Longleftrightarrow\enspace}
-%\renewcommand{\to}{\curvearrowright}
-\renewcommand{\qedsymbol}{\ensuremath{\blacksquare}}
-\renewcommand{\theequation}{\arabic{equation}}
-
-
-% Ting til semantics and types, september/oktober 2009
-\newcommand{\pl}[1]{\textbf{\tt{#1}}}
-\newcommand{\gi}{\downarrow}
-\newcommand{\E}{\varepsilon}
-\newcommand{\pst}[2]{\left\langle#1\right\rangle\gi#2}
-\newcommand{\smstpgeneral}[3]{\left\langle#1\right\rangle\rightarrow^{#2}\left\langle#3\right\rangle}
-\newcommand{\smstp}[2]{\smstpgeneral{#1}{}{#2}}
-\newcommand{\smstps}[2]{\smstpgeneral{#1}{*}{#2}}
-\newcommand{\smstpegeneral}[3]{\sigma\vdash#1\rightarrow^{#2}#3}
-\newcommand{\smstpe}[2]{\smstpegeneral{#1}{}{#2}}
-\newcommand{\smstpes}[2]{\smstpegeneral{#1}{*}{#2}}
-
-\newcommand{\tyenv}[3]{#1\vdash#2 : #3}
-\newcommand{\tygam}[2]{\tyenv{\Gamma}{#1}{#2}}
-\newcommand{\tytom}[2]{\tyenv{[]}{#1}{#2}}
-\newcommand{\ty}[1]{\textbf{#1}}
-
-
-\renewcommand{\S}{\mathcal{S}}
-\newcommand{\ass}[1]{\left\{#1\right\}}
-\newcommand{\mc}[1]{\mathcal{#1}}
-\newcommand{\T}{\mc{T}}
-\newcommand{\f}{\ass{f}}
-\newcommand{\s}{\sigma}
-
-\newcommand{\XOR}{\text{ XOR }}
-\renewcommand{\P}[2]{\mathcal{P}\big[ #1, #2 \big]}
-\newcommand{\la}{\langle}
-\newcommand{\ra}{\rangle}
 \newcommand{\lam}[2]{\lambda#1.#2}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

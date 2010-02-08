@@ -12,73 +12,84 @@ can be either free or bound.
 % alt er funktioner
 % eksempler
 
-As a very informal example, here is a function that doubles an integer:
+As a very informal example, here is a function that doubles up an integer:
 \begin{equation*}
 	(\lam{x}{x+x})2=4
 \end{equation*}
-This example shows a bound variable, $x$, and an implicit \emph{reduction} step. The variable $x$
+This example shows a \emph{bound variable}, $x$, and an implicit \emph{reduction step}. The variable $x$
 is said to be bound because the lambda function uses it as an argument. Contrast this to
 \begin{equation*}
 	(\lam{x}{x+y})2=2+y.
 \end{equation*}
-Here, $y$ is a free variable that hasn't got any values assigned to it yet. It can
-take any value, hence it's called ``free''. In this second example there was
-another reduction step. A reduction step can be regarded as a rewriting action
-on the string representing the lambda expression. Yet more informally, one can 
-think of it as ``substituting in'' the values. In the examples above this amounts to
-replacing $x$ with the number 2. 
+Here, $y$ is a variable that hasn't got any values assigned to it yet. From
+the context we can say nothing about $y$, so we give it the predicate
+``free''. In this second example there was another reduction step, which 
+can be regarded as a rewriting action on the string representing the
+lambda term. Yet more informally, one can think of it as ``substituting in''
+the values for the bound variables. In the examples above this amounts to
+replacing $x$ with the number 2.
 
 % definition af syntax
 
-The lambda calculus consists of \emph{lambda expressions} and variables with a
+The lambda calculus consists of \emph{lambda terms} and variables with a
 syntax over the alphabet:
 \begin{align*}
 	x,y,z,\hdots\ &\text{ variables} \\
 	\lambda\ &\text{ abstractor} \\
 	()\ &\text{ parentheses}
 \end{align*}
-The set of all lambda expressions is denoted $\Lambda$:
+The set of all lambda terms is denoted $\Lambda$:
 \begin{align*}
-	x \text{ is a variable} &=> x\in\Lambda \\
-	x \text{ is a variable and } M\in\Lambda &=> (\lam{x}{M})\in\Lambda \\
-	M, N\in\Lambda &=> (M N)\in\Lambda
+	x \text{ is a variable} &\Rightarrow x\in\Lambda \\
+	x \text{ is a variable and } M\in\Lambda &\Rightarrow (\lam{x}{M})\in\Lambda \\
+	M, N\in\Lambda &\Rightarrow (M N)\in\Lambda
 \end{align*}
-For brevity, it's convention to leave out the outermost parentheses.
-Expressions are evaulated left-to-right, so $M N P = (M N) P$, and function
-bodies extend as far as possible; $\lam{x}{M N}=\lam{x}{(M
-N)}\neq(\lam{x}{M})N$.
+For brevity, it's conventional to leave out the outermost parentheses.
+Evaluation is left associative, so $M N P = (M N) P$, and function
+bodies extend as far as possible: $\lam{x}{M N}=\lam{x}{(M N)}\neq(\lam{x}{M})N$.
 
 % frie variable
 
-As already indicated, the variables in a lambda expression can be divided into
-two groups; the free and the bound variables. The function $FV$ takes returns
-for any lambda expression the set of free variables:
+As already indicated, the variables in a lambda term can be divided into
+two groups; the free and the bound variables. The function $FV$ returns
+for any lambda term the set of free variables:
 \begin{align*}
-	FV(x)&={x} \\
-	FV(\lam{x}{M})&= FV(M) - {x} \\
+	FV(x)&=\{x\} \\
+	FV(\lam{x}{M})&= FV(M) - \{x\} \\
 	FV((M N)) &= FV(M) \cup FV(N)
 \end{align*}
 
-The two expressions 
+The particular name of a bound variable doesn't affect the function represented 
+by a lambda term. Thus, the two terms
 \begin{align*}
 	\lam{x}{x} \\
 	\lam{y}{y}
 \end{align*}
-both return the input unchanged. In other words; they define the same function
--- the identity. These two expressions can therefore be though of as being
-equal, which should be reflected in the syntax. For this we have the concept
-of alpha conversion.
+denote the same function, the identity. For a term $M$ we define
+\emph{change of bound variables} as a substitution of a part of $M$,
+$\lam{x}{N}$, with $\lam{y}{(N[x:=y])}$, i.e. all occurences of $x$ are
+replaced with an occurence of $y$. It is a requirement that $y$ doesn't occur
+at all in $N$ in order for the substitution to be safe. We say that two terms
+$M$ and $N$ are $\alpha$-congruent, $M\equiv_\alpha N$, if we can make $N$ from
+$M$ by changing the bound variables. For instance, the following terms are
+$\alpha$-congruent:
+\begin{align*}
+	\lam{x}{x}&\equiv_\alpha\lam{y}{y} \\
+	\lam{x}{\lam{y}{xy}}&\equiv_\alpha{\lam{a}{\lam{b}{ab}}}
+\end{align*}
+whereas these terms aren't:
+\begin{align*}
+	\lam{x}{\lam{y}{xy}}\not\equiv_\alpha\lam{y}{\lam{y}{yy}}
+\end{align*}
+In the following we'll use the short-hand $\equiv$ for $\equiv_\alpha$.
+
+
 
 % definition af alfakonvertering
 % eksempel
 % definition af betareduktion
 % eksempel!
+% definition af undertermer
 % definition af reduktionsgraf
 % eksempel(?)
 
-
-% Syntax
-
-% Alpha-conversion
-
-% Beta-reduction
