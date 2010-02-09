@@ -92,22 +92,47 @@ whereas these terms aren't:
 \begin{align*}
 	\lam{x}{\lam{y}{xy}}\not\equiv_\alpha\lam{y}{\lam{y}{yy}}
 \end{align*}
+This last example illustrates the need for the requirement that $y$ cannot occur
+in $N$.
 In the following we'll use the short-hand $\equiv$ for $\equiv_\alpha$.
 
 % definition af substitution af frie variable
 \subsection{Substitution}
 
 
-% definition af betareduktion
-% eksempel!
-\subsection{Beta Reduction}
-A \emph{beta reduction} is a binary relation $(M,N)\in\Delta^2$ such that
-\begin{equation*}
-	\BETA=\Big\{\big((\lam{x}{M})N,M[x:=N])\big)\big|M,N\in\Delta\Big\}
-\end{equation*}
-
 % definition af undertermer
 \subsection{Subterms}
+
+% definition af betareduktion
+% eksempel!
+\subsection{$\beta$-reduction}
+A \emph{$\beta$-reduction} is a binary relation $\BETA\subseteq\Lambda^2$ such that
+\begin{equation}
+	\BETA=\Big\{\big((\lam{x}{M})N,M[x:=N])\big)\big|M,N\in\Lambda\Big\}
+\end{equation}
+For an element $(M,N)\in\BETA$, $M$ is called a \emph{$\beta$-redex} and
+$N$ is called a \emph{$\beta$-contractum} of $M$.
+
+The reduction captures the notion of ``substituting in'' terms for bound variables.
+We have the relations [BarendregtRef?3.1.5]
+\begin{align}
+	(M,N)\in\BETA&\Rightarrow M\barrow N \\
+	M\barrow N &\Rightarrow ZM\barrow ZN \\
+	M\barrow N &\Rightarrow MZ\barrow NZ \\
+	M\barrow N &\Rightarrow \lam{x}{M}\barrow \lam{x}{N} \\
+	M\barrow N &\Rightarrow M\Barrow N \\
+	M\Barrow N, N\Barrow L &\Rightarrow M\Barrow L \\
+	M\Barrow M & \\
+\end{align}
+The following example from [Barendregt p52] illustrates the concept:
+\begin{align*}
+	(\lam{x}{xx})(\lam{y}{y})z&\barrow(\lam{y}{y})(\lam{y}{y})z \\
+	&\barrow(\lam{y}{y})z \\
+	&\barrow z
+\end{align*}
+
+
+
 % definition af reduktionsgraf
 \subsection{Reduction Graphs}
 % eksempel(?)
