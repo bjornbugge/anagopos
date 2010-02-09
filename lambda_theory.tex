@@ -98,7 +98,23 @@ In the following we'll use the short-hand $\equiv$ for $\equiv_\alpha$.
 
 % definition af substitution af frie variable
 \subsection{Substitution}
-
+Substitution, written as:
+\begin{align*}
+	E[V:=E]
+\end{align*}
+Will substitute all free variables V with the expression X.
+In lambda-calculus we substitute to avoid mixing up free and bound variables
+We have the notation:
+\begin{align*}
+	M[x:=N]
+\end{align*}
+It is defined as the following:
+\begin{align}
+	x[x:=N]&\equiv N; \\
+	x[x:=N]&\equiv y, if x \not\equiv y; \\
+	(\lam{y}M_1)[x:=N]&\equiv\lam{y}(M_1[x:=N]) \\
+	(M_1M_2)[x:=N]&\equiv(M_1[x:=N])(M_2[x:=N])
+\end{align}
 
 % definition af undertermer
 \subsection{Subterms}
@@ -113,6 +129,9 @@ A \emph{$\beta$-reduction} is a binary relation $\BETA\subseteq\Lambda^2$ such t
 For an element $(M,N)\in\BETA$, $M$ is called a \emph{$\beta$-redex} and
 $N$ is called a \emph{$\beta$-contractum} of $M$.
 
+% definition af undertermer
+\subsection{Subterms}
+=======
 The reduction captures the notion of ``substituting in'' terms for bound variables.
 We have the relations [BarendregtRef?3.1.5]
 \begin{align}
@@ -130,7 +149,6 @@ The following example from [Barendregt p52] illustrates the concept:
 	&\barrow(\lam{y}{y})z \\
 	&\barrow z
 \end{align*}
-
 
 
 % definition af reduktionsgraf
