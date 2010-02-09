@@ -1,0 +1,65 @@
+\documentclass[11pt,oneside,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage[pdftex,colorlinks]{hyperref}
+\hypersetup{colorlinks=false}
+
+\title{Visualization of $\beta$-reduction-graphs in the lambda calculus}
+\author{Jens Duelund Pallesen \and
+Niels Bjørn Bugge Grathwohl}
+\date{2010-02-10}
+
+\begin{document}
+\maketitle
+
+% Contents of the project
+
+The aim of the project is to develop a method to visualize reduction graphs in
+the lambda calculus, so that they are ``pretty'' and informative for theoretical
+computer scientists. This includes: developing a parser for some notation of
+the lambda calculus, developing a program that can compute the reduction
+graphs, and developing a program that, given a reduction graph, can visualize
+it in an intuitive (for theoretical computer scientists) way.
+
+% Expected result 
+
+The expected result is a program that takes as input a lambda term and draws
+the $\beta$-reduction-graph as it develops after each iteration of reductions.
+A reduction graph visualization can thus be regarded as a ``film'', with each
+frame depicting the look of the reduction graph after reduction $n$.
+
+% Why is the project useful? 
+
+Our program is supposed to be used by researchers to infer knowledge about
+pros and cons of a reduction strategy or of a certain lambda term, while also
+providing inspiration for further investigations into previously unknown
+peculiarities or problems with a certain reduction strategy.
+
+Thus far there doesn't exist a proper, automatic way of visualizing these
+graphs. Researchers are limited to what they themselves can draw or imagine,
+and as reduction graphs becomes huge, this becomes a difficult task. 
+
+% What is particularly difficult/of high risk?
+
+Because reduction graphs very often tend to become huge, there arises the
+problem of deciding whether they can be drawn on a plane at all. We'll perhaps
+have to develop routines for deciding this, along with routines for reordering
+the graph. Alternatively, a set of ``best practices'' for drawing the nodes
+could be developed that would minimize the amount of crossing edges as the
+film progresses forward. Yet more alternatively, methods for 3D-drawing could
+be considered. However, this will demand great care when determining the look
+of the images, as a 3-dimensional rendering of a large graph very easily could
+inhibit understanding and confuse the beholder, which is the opposite of what
+we are working towards.
+
+Furthermore, there is a design choice to be made whether each frame of the
+film should be drawn immediately after the reduction step has been completed,
+making the film rendering and the term reductions synchronized, or whether the
+rendering should begin only after all desired (or possible) reductions have
+been computed.
+
+
+\end{document}
