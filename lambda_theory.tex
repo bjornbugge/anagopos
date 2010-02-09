@@ -116,23 +116,32 @@ It is defined as the following:
 
 % definition af undertermer
 \subsection{Subterms}
+A lambda term $M$ is composed of several parts which we call \emph{subterms}. 
+$N\subset M$ notates that $N$ is a subterm of $M$. The subterms are defined by 
+the function $Sub$:
+\begin{align*}
+	Sub(x) &=\{x\} \\
+	Sub(\lam{x}{N}) &= Sub(N) \cup \{\lam{x}{N}\} \\
+	Sub(M N) &= Sub(M) \cup Sub(N) \cup Sub(M N)
+\end{align*}
+A subterm $N$ of $M$ is called \emph{active} if $N L \subset M$ and \emph{passive}
+otherwise.
 
 % definition af betareduktion
 % eksempel!
 \subsection{$\beta$-reduction}
 A \emph{$\beta$-reduction} is a binary relation $\BETA\subseteq\Lambda^2$ such that
-\begin{equation}
+\begin{equation*}
 	\BETA=\Big\{\big((\lam{x}{M})N,M[x:=N])\big)\big|M,N\in\Lambda\Big\}
-\end{equation}
+\end{equation*}
 For an element $(M,N)\in\BETA$, $M$ is called a \emph{$\beta$-redex} and
-$N$ is called a \emph{$\beta$-contractum} of $M$.
+$N$ is called a \emph{$\beta$-contractum} of $M$. If a term $M$ doesn't contain
+any subterms that are $\beta$-redexes, we say that $M$ is a \emph{$\beta$-normal-form}
+($\beta$-nf).
 
-% definition af undertermer
-\subsection{Subterms}
-=======
 The reduction captures the notion of ``substituting in'' terms for bound variables.
-We have the relations [BarendregtRef?3.1.5]
-\begin{align}
+We have the relations (\cite{Barendregt} def. 3.1.5])
+\begin{align*}
 	(M,N)\in\BETA&\Rightarrow M\barrow N \\
 	M\barrow N &\Rightarrow ZM\barrow ZN \\
 	M\barrow N &\Rightarrow MZ\barrow NZ \\
@@ -140,8 +149,18 @@ We have the relations [BarendregtRef?3.1.5]
 	M\barrow N &\Rightarrow M\Barrow N \\
 	M\Barrow N, N\Barrow L &\Rightarrow M\Barrow L \\
 	M\Barrow M & \\
-\end{align}
-The following example from [Barendregt p52] illustrates the concept:
+\end{align*}
+These relations generate an equivalence relation:
+\begin{align*}
+	M\Barrow N &\Rightarrow M=_\beta N \\
+	M=_\beta N &\Rightarrow N=_\beta M \\
+	M=_\beta N\wedge N=_\beta L&\Rightarrow M=_\beta L
+\end{align*}
+We call a term $N$ a \emph{$\beta$-nf of $M$} if $M=_\beta N$ and $N$ is a $\beta$-nf.
+From these definitions it follows (\cite{Barendregt} 3.1.10), that if $M$ is a
+$\beta$-nf then $\neg\exists N:M\barrow N$ and $M\Barrow N\Rightarrow M\equiv N$.
+
+The following example from \cite{Barendregt} p. 52 illustrates the concept:
 \begin{align*}
 	(\lam{x}{xx})(\lam{y}{y})z&\barrow(\lam{y}{y})(\lam{y}{y})z \\
 	&\barrow(\lam{y}{y})z \\
