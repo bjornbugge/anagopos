@@ -7,19 +7,23 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amstext}
+\usepackage{amsthm}
 \usepackage[utf8]{inputenc}
-\usepackage{graphicx}
 
+% \usepackage{graphicx}
 % \usepackage[danish]{babel}
 % \usepackage[printing,url]{dk-bib}
 % \usepackage{pslatex}
-% \usepackage{amsthm}
 % \usepackage{vector}
 % \usepackage{maplestd2e}
 % \usepackage{graphs}
 % \usepackage{ae,aecompl}
 % \usepackage[T1]{fontenc}
 % \usepackage{nicefrac}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
 
 \title{}
 \author{}
@@ -31,7 +35,8 @@
 \newcommand{\lam}[2]{\lambda#1.#2}
 \newcommand{\BETA}{\boldsymbol\beta}
 \newcommand{\barrow}{\rightarrow_\beta}
-\newcommand{\Barrow}{\twoheadrightarrow_\beta}
+\newcommand{\Barrow}{\barrow^*}
+\newcommand{\I}{\textsf{\textbf{I}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -39,6 +44,7 @@
 
 % \maketitle
 \input{lambda_theory.tex}
+
 \bibliographystyle{plain}
 \bibliography{bibliography}
 

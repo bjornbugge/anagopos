@@ -31,9 +31,9 @@ replacing $x$ with the number 2.
 
 % definition af syntax
 \subsection{Syntax}
-
 The lambda calculus consists of \emph{lambda terms} and variables defined 
 over the alphabet:
+\begin{definition}
 \begin{align*}
 	x,y,z,\hdots\ &\text{ variables} \\
 	\lambda\ &\text{ abstractor} \\
@@ -45,6 +45,7 @@ The set of all lambda terms is denoted $\Lambda$:
 	x \text{ is a variable and } M\in\Lambda &\Rightarrow (\lam{x}{M})\in\Lambda \\
 	M, N\in\Lambda &\Rightarrow (M N)\in\Lambda
 \end{align*}
+\end{definition}
 For brevity, it's conventional to leave out the outermost parentheses.
 Evaluation is left associative, so $M N P = (M N) P$, and function
 bodies extend as far as possible: $\lam{x}{M N}=\lam{x}{(M N)}\neq(\lam{x}{M})N$.
@@ -60,11 +61,15 @@ the following abbreviation:
 As already indicated, the variables in a lambda term can be divided into
 two groups; the free and the bound variables. The function $FV$ returns
 for any lambda term the set of free variables:
+\begin{definition}
 \begin{align*}
 	FV(x)&=\{x\} \\
 	FV(\lam{x}{M})&= FV(M) - \{x\} \\
 	FV((M N)) &= FV(M) \cup FV(N)
 \end{align*}
+\end{definition}
+If $FV(M)=\emptyset$, $M$ is said to be \emph{closed}. The set of all closed terms
+is denoted $\Lambda^0$.
 
 % definition af alfakonvertering
 % eksempel
@@ -80,46 +85,50 @@ denote the same function, the identity. For a term $M$ we define
 \emph{change of bound variables} as a substitution of a part of $M$,
 $\lam{x}{N}$, with $\lam{y}{(N[x:=y])}$, i.e. all occurences of $x$ are
 replaced with an occurence of $y$. It is a requirement that $y$ doesn't occur
-at all in $N$ in order for the substitution to be safe. We say that two terms
+at all in $N$ in order for the substitution to be ``safe'', in the sense that the meaning of the term doesn't change. 
+We say that two terms
 $M$ and $N$ are $\alpha$-congruent, $M\equiv_\alpha N$, if we can make $N$ from
 $M$ by changing the bound variables. For instance, the following terms are
 $\alpha$-congruent:
+\begin{example}
 \begin{align*}
 	\lam{x}{x}&\equiv_\alpha\lam{y}{y} \\
 	\lam{x}{\lam{y}{xy}}&\equiv_\alpha{\lam{a}{\lam{b}{ab}}}
 \end{align*}
+\end{example}
 whereas these terms aren't:
+\begin{example}
 \begin{align*}
 	\lam{x}{\lam{y}{xy}}\not\equiv_\alpha\lam{y}{\lam{y}{yy}}
 \end{align*}
+\end{example}
 This last example illustrates the need for the requirement that $y$ cannot occur
 in $N$.
-In the following we'll use the short-hand $\equiv$ for $\equiv_\alpha$.
+In the following we'll regard $\alpha$-congruent terms as being equivalent, so
+the notation $\equiv$ is used instead of $\equiv_\alpha$.
 
 % definition af substitution af frie variable
 \subsection{Substitution}
-Substitution, written as:
-\begin{align*}
-	E[V:=E]
-\end{align*}
-Will substitute all free variables V with the expression X.\\
-In lambda-calculus we have the notation:
+In addition to substitution of bound variables, it is possible to substitute values for
+free variables. These values aren't limited to being just new variables, but can be
+any lambda term. A substitution is notated:
 \begin{align*}
 	M[x:=N]
 \end{align*}
-It is defined as the following[\cite{Barendregt} 2.1.15]:
+meaning ``substitute term $N$ for all occurences of the free variable $x$''.
+Substitution is defined as the following (\cite{Barendregt} 2.1.15):
 \begin{align*}
-	x[x:=N]&\equiv N; \\
-	x[y:=N]&\equiv y, if x \not\equiv y; \\
-	(\lam{y}M_1)[x:=N]&\equiv\lam{y}(M_1[x:=N]) \\
-	(M_1M_2)[x:=N]&\equiv(M_1[x:=N])(M_2[x:=N])
+	x[x:=N]&\equiv N \\
+	y[x:=N]&\equiv y, \text{ if } x \not\equiv y \\
+	(\lam{y}{M})[x:=N]&\equiv\lam{y}{(M[x:=N])} \\
+	(M L)[x:=N]&\equiv(M[x:=N])(L[x:=N])
 \end{align*}
 
 % definition af undertermer
 \subsection{Subterms}
 A lambda term $M$ is composed of several parts which we call \emph{subterms}. 
-$N\subset M$ notates that $N$ is a subterm of $M$. The subterms are defined by 
-the function $Sub$:
+$N\subset M$ notates that $N$ is a subterm of $M$. The subterms for $M$ are given
+in the set $Sub(M)$:
 \begin{align*}
 	Sub(x) &=\{x\} \\
 	Sub(\lam{x}{N}) &= Sub(N) \cup \{\lam{x}{N}\} \\
@@ -147,10 +156,14 @@ We have the relations (\cite{Barendregt} def. 3.1.5])
 	M\barrow N &\Rightarrow ZM\barrow ZN \\
 	M\barrow N &\Rightarrow MZ\barrow NZ \\
 	M\barrow N &\Rightarrow \lam{x}{M}\barrow \lam{x}{N} \\
+\end{align*}
+The transitive, reflexive closure of $\barrow$ is notated $\Barrow$:
+\begin{align*}
 	M\barrow N &\Rightarrow M\Barrow N \\
 	M\Barrow N, N\Barrow L &\Rightarrow M\Barrow L \\
 	M\Barrow M & \\
 \end{align*}
+
 These relations generate an equivalence relation:
 \begin{align*}
 	M\Barrow N &\Rightarrow M=_\beta N \\
@@ -162,14 +175,49 @@ From these definitions it follows (\cite{Barendregt} 3.1.10), that if $M$ is a
 $\beta$-nf then $\neg\exists N:M\barrow N$ and $M\Barrow N\Rightarrow M\equiv N$.
 
 The following example from \cite{Barendregt} p. 52 illustrates the concept:
+\begin{example}
 \begin{align*}
 	(\lam{x}{xx})(\lam{y}{y})z&\barrow(\lam{y}{y})(\lam{y}{y})z \\
 	&\barrow(\lam{y}{y})z \\
 	&\barrow z
 \end{align*}
+\end{example}
 
+% Skal der være noget om kontekster?
 
 % definition af reduktionsgraf
-\subsection{Reduction Graphs}
 % eksempel(?)
+\subsection{Reduction Graphs}
 
+When a $\beta$-redex $M$ contains subterms $\Delta_{0\hdots n}$ that are themselves 
+$\beta$-redexes, an ambiguity concerning the order of $\beta$-reductions arises.
+Consider the following example from \cite{Barendregt} 3.1.19:
+\begin{example}
+\begin{align*}
+	M&\equiv(\lam{x}{xx})\Delta \\
+	M&\barrow(\lam{x}{xx})\Delta' \\
+	M&\barrow\Delta\Delta
+\end{align*}
+\end{example}
+i.e. we can choose to reduce $\Delta$ to its contractum $\Delta'$, or
+we can reduce $M$ to its contractum $\Delta\Delta$. This is notated as 
+$\overset{\Delta}\barrow$ and $\overset{M}\barrow$ respectively. Different
+subterms can have the same contractum, as this example illustrates:
+\begin{example}
+\begin{align*}
+	\I(\I x)&\overset{\I x}\barrow\I x \\
+	\I(\I x)&\overset{\I(\I x)}\barrow\I x
+\end{align*}
+\end{example}
+where $\I\equiv\lam{x}{x}$. The set of reductions from a redex $M$ can
+be considered as a directed graph, with each arc going out of a node representing
+a reduction on some subterm of that node, and each node representing a lambda term that
+is the contractum of the nodes in the beginning of its ingoing arcs. This graph
+is called the \emph{$\beta$ reduction graph} of $M$ and is written $G_\beta(M)$.
+The sets of nodes and arcs in $G_\beta(M)$ are: 
+\begin{definition}
+\begin{align*}
+	V&=\{N\in\Lambda|M\Barrow N\} \\
+	A&=\{(N_0, N_1)\in\Lambda^2|N_0,N_1\in V\wedge N_0\barrow N_1\}
+\end{align*}
+\end{definition}
