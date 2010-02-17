@@ -12,6 +12,8 @@
 % alt er funktioner
 % eksempler
 
+% Replace Barendregt with \cite{Barendregt}
+
 As a very informal example, here is a function that doubles up an integer:
 \begin{equation*}
 	(\lam{x}{x+x})2=4.
@@ -21,7 +23,7 @@ is said to be bound because the lambda function uses it as an argument. Contrast
 \begin{equation*}
 	(\lam{x}{x+y})2=2+y.
 \end{equation*}
-Here, $y$ is a variable that hasn't got any values assigned to it yet. From
+Here, $y$ is a variable that has not got any values assigned to it yet. From
 the context we can say nothing about $y$, so we give it the predicate
 ``free''. In this second example there was yet another reduction step, which 
 can be regarded as a rewriting action on the string representing the
@@ -32,7 +34,7 @@ replacing $x$ with the number 2.
 % definition af syntax
 \subsection{Syntax}
 The lambda calculus consists of \emph{lambda terms} and variables defined 
-over the alphabet:
+over the alphabet:\\
 \begin{definition}
 \begin{align*}
 	x,y,z,\hdots\ &\text{ variables} \\
@@ -46,7 +48,7 @@ The set of all lambda terms is denoted $\Lambda$:
 	M, N\in\Lambda &\Rightarrow (M N)\in\Lambda
 \end{align*}
 \end{definition}
-For brevity, it's conventional to leave out the outermost parentheses.
+For brevity, it is conventional to leave out the outermost parentheses.
 Evaluation is left associative, so $M N P = (M N) P$, and function
 bodies extend as far as possible: $\lam{x}{M N}=\lam{x}{(M N)}\neq(\lam{x}{M})N$.
 All lambda terms take exactly one argument, but as syntactic sugar we introduce
@@ -60,7 +62,7 @@ the following abbreviation:
 
 As already indicated, the variables in a lambda term can be divided into
 two groups; the free and the bound variables. The function $FV$ returns
-for any lambda term the set of free variables:
+for any lambda term the set of free variables:\\
 \begin{definition}
 \begin{align*}
 	FV(x)&=\{x\} \\
@@ -89,14 +91,14 @@ at all in $N$ in order for the substitution to be ``safe'', in the sense that th
 We say that two terms
 $M$ and $N$ are $\alpha$-congruent, $M\equiv_\alpha N$, if we can make $N$ from
 $M$ by changing the bound variables. For instance, the following terms are
-$\alpha$-congruent:
+$\alpha$-congruent:\\
 \begin{example}
 \begin{align*}
 	\lam{x}{x}&\equiv_\alpha\lam{y}{y} \\
 	\lam{x}{\lam{y}{xy}}&\equiv_\alpha{\lam{a}{\lam{b}{ab}}}
 \end{align*}
 \end{example}
-whereas these terms aren't:
+whereas these terms aren't:\\
 \begin{example}
 \begin{align*}
 	\lam{x}{\lam{y}{xy}}\not\equiv_\alpha\lam{y}{\lam{y}{yy}}
@@ -116,13 +118,16 @@ any lambda term. A substitution is notated:
 	M[x:=N]
 \end{align*}
 meaning ``substitute term $N$ for all occurences of the free variable $x$''.
-Substitution is defined as the following (\cite{Barendregt} 2.1.15):
+Substitution is defined as the following (Barendregt 2.1.15):\\
+\begin{definition}
 \begin{align*}
 	x[x:=N]&\equiv N \\
 	y[x:=N]&\equiv y, \text{ if } x \not\equiv y \\
 	(\lam{y}{M})[x:=N]&\equiv\lam{y}{(M[x:=N])} \\
 	(M L)[x:=N]&\equiv(M[x:=N])(L[x:=N])
 \end{align*}
+\end{definition}
+
 
 % definition af undertermer
 \subsection{Subterms}
@@ -150,7 +155,8 @@ any subterms that are $\beta$-redexes, we say that $M$ is a \emph{$\beta$-normal
 ($\beta$-nf).
 
 The reduction captures the notion of ``substituting in'' terms for bound variables.
-We have the relations (\cite{Barendregt} def. 3.1.5])
+We have the relations (Barendregt def. 3.1.5])\\
+\begin{definition}
 \begin{align*}
 	(M,N)\in\BETA&\Rightarrow M\barrow N \\
 	M\barrow N &\Rightarrow ZM\barrow ZN \\
@@ -163,6 +169,7 @@ The transitive, reflexive closure of $\barrow$ is notated $\Barrow$:
 	M\Barrow N, N\Barrow L &\Rightarrow M\Barrow L \\
 	M\Barrow M & \\
 \end{align*}
+\end{definition}
 
 These relations generate an equivalence relation:
 \begin{align*}
@@ -171,10 +178,10 @@ These relations generate an equivalence relation:
 	M=_\beta N\wedge N=_\beta L&\Rightarrow M=_\beta L
 \end{align*}
 We call a term $N$ a \emph{$\beta$-nf of $M$} if $M=_\beta N$ and $N$ is a $\beta$-nf.
-From these definitions it follows (\cite{Barendregt} 3.1.10), that if $M$ is a
+From these definitions it follows (Barendregt 3.1.10), that if $M$ is a
 $\beta$-nf then $\neg\exists N:M\barrow N$ and $M\Barrow N\Rightarrow M\equiv N$.
 
-The following example from \cite{Barendregt} p. 52 illustrates the concept:
+The following example from Barendregt p. 52 illustrates the concept:\\
 \begin{example}
 \begin{align*}
 	(\lam{x}{xx})(\lam{y}{y})z&\barrow(\lam{y}{y})(\lam{y}{y})z \\
@@ -191,7 +198,7 @@ The following example from \cite{Barendregt} p. 52 illustrates the concept:
 
 When a $\beta$-redex $M$ contains subterms $\Delta_{0\hdots n}$ that are themselves 
 $\beta$-redexes, an ambiguity concerning the order of $\beta$-reductions arises.
-Consider the following example from \cite{Barendregt} 3.1.19:
+Consider the following example from Barendregt 3.1.19:\\
 \begin{example}
 \begin{align*}
 	M&\equiv(\lam{x}{xx})\Delta \\
@@ -202,7 +209,7 @@ Consider the following example from \cite{Barendregt} 3.1.19:
 i.e. we can choose to reduce $\Delta$ to its contractum $\Delta'$, or
 we can reduce $M$ to its contractum $\Delta\Delta$. This is notated as 
 $\overset{\Delta}\barrow$ and $\overset{M}\barrow$ respectively. Different
-subterms can have the same contractum, as this example illustrates:
+subterms can have the same contractum, as this example illustrates:\\
 \begin{example}
 \begin{align*}
 	\I(\I x)&\overset{\I x}\barrow\I x \\
@@ -214,7 +221,7 @@ be considered as a directed graph, with each arc going out of a node representin
 a reduction on some subterm of that node, and each node representing a lambda term that
 is the contractum of the nodes in the beginning of its ingoing arcs. This graph
 is called the \emph{$\beta$ reduction graph} of $M$ and is written $G_\beta(M)$.
-The sets of nodes and arcs in $G_\beta(M)$ are: 
+The sets of nodes and arcs in $G_\beta(M)$ are:\\
 \begin{definition}
 \begin{align*}
 	V&=\{N\in\Lambda|M\Barrow N\} \\
