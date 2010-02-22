@@ -1,7 +1,6 @@
 %!TEX root = rapport.tex
 
-% \textcolor{navyblue}{\section{Preliminaries: Basic Lambda Calculus}}
-\textcolor{newblue}{\section{Preliminaries: Basic Lambda Calculus}}
+\section{Preliminaries: Basic Lambda Calculus}
 
 % The untyped lambda calculus was introduced in 1936 by Alonzo Church
 % [reference] as part of the search for a solid foundation for mathematics. It is
@@ -28,7 +27,7 @@ the context we can say nothing about $y$, so we give it the predicate
 can be regarded as a rewriting action on the string representing the
 lambda term. More informally, one can think of it as ``substituting in''
 the values for the bound variables. In the examples above this amounts to
-replacing $x$ with the number 2.
+replacing $x$ with the number 2.\\\\
 
 % definition af syntax
 \subsection{Syntax}
@@ -72,8 +71,7 @@ two groups; the free and the bound variables.
 		FV((M N)) &= FV(M) \cup FV(N)
 	\end{align*}
 \end{definition}
-If $FV(M)=\emptyset$, $M$ is said to be \emph{closed}. The set of all closed terms
-is denoted $\Lambda^0$.
+If $FV(M)=\emptyset$, $M$ is said to be \emph{closed}. The set of all closed terms is denoted $\Lambda^0$.\\\\
 
 % definition af alfakonvertering
 % eksempel
@@ -108,7 +106,7 @@ whereas these terms are not:\\
 \end{example}
 This last example illustrates the need for the requirement that $y$ cannot occur
 in $N$.
-In the following we will regard $\alpha$-congruent terms as being equivalent, so the notation $\equiv$ is used instead of $\equiv_\alpha$.
+In the following we will regard $\alpha$-congruent terms as being equivalent, so the notation $\equiv$ is used instead of $\equiv_\alpha$.\\\\
 
 % definition af substitution af frie variable
 \subsection{Substitution}
@@ -139,8 +137,7 @@ A lambda term $M$ is composed of several parts which we call \emph{subterms}.
 	\end{align*}
 \end{definition}
 
-A subterm $N$ of $M$ is called \emph{active} if $N L \subset M$ and \emph{passive}
-otherwise.
+A subterm $N$ of $M$ is called \emph{active} if $N L \subset M$ and \emph{passive} otherwise.\\\\
 
 % definition af betareduktion
 % eksempel!

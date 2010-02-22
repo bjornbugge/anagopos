@@ -12,9 +12,7 @@
 \usepackage[a4paper]{geometry}
 \usepackage[dvips]{color}
 \usepackage[toc,page]{appendix}
-
-
-\geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
+\usepackage{sectsty}
 
 
 \theoremstyle{definition}
@@ -28,7 +26,18 @@
 
 
 %  New color
-\definecolor{newblue}{RGB}{0,62,132}
+\definecolor{sectionColor}{RGB}{65,117,78}
+
+
+% Color & size for sections
+\sectionfont{\Huge}
+\sectionfont{\color{sectionColor}}
+\subsectionfont{\large}
+\subsectionfont{\color{sectionColor}}
+
+
+% Margins
+\geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
 
 
 % Custom commands
