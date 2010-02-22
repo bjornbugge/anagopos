@@ -1,34 +1,36 @@
 \documentclass[11pt,oneside,a4paper]{article}
 
-\usepackage[colorlinks]{hyperref}
-\hypersetup{colorlinks=false}
-\usepackage{url}
-\usepackage{fullpage}
+
+% Packages to use
+\usepackage{graphicx}
+\usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amstext}
 \usepackage{amsthm}
-\usepackage[utf8]{inputenc}
+\usepackage{palatino}
+\usepackage[a4paper]{geometry}
+\usepackage[dvips]{color}
 
-% \usepackage{graphicx}
-% \usepackage[danish]{babel}
-% \usepackage[printing,url]{dk-bib}
-% \usepackage{pslatex}
-% \usepackage{vector}
-% \usepackage{maplestd2e}
-% \usepackage{graphs}
-% \usepackage{ae,aecompl}
-% \usepackage[T1]{fontenc}
-% \usepackage{nicefrac}
+
+\geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
+
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
 \newtheorem{example}{Example}
 
-\title{}
-\author{}
-\date{}
 
+\title{Visualization of $\beta$-reduction-graphs in the lambda calculus}
+\author{Niels Bjørn Bugge Grathwohl & Jens Duelund Pallesen}
+\date{\large \today}
+
+
+%  New color
+\definecolor{newblue}{RGB}{0,62,132}
+
+
+% Custom commands
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
@@ -38,13 +40,31 @@
 \newcommand{\Barrow}{\barrow^*}
 \newcommand{\I}{\textsf{\textbf{I}}}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \maketitle
-\input{lambda_theory.tex}
+% Title page
+% \input{title.tex}
+% \newpage
 
+% Abstract
+\input{abstract.tex}
+\newpage
+
+% Table of content
+\tableofcontents
+\listoftables
+\listoffigures
+\newpage
+
+% Chapters
+\input{lambda_theory.tex}
+\input{existing_visualizations.tex}
+
+% Bibliography
+\newpage
 \bibliographystyle{plain}
 \bibliography{bibliography}
 
