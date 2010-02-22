@@ -11,6 +11,7 @@
 \usepackage{palatino}
 \usepackage[a4paper]{geometry}
 \usepackage[dvips]{color}
+\usepackage[toc,page]{appendix}
 
 
 \geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
@@ -62,6 +63,14 @@
 % Chapters
 \input{lambda_theory.tex}
 \input{existing_visualizations.tex}
+
+% Appendices
+\appendix
+\appendixpage
+% \addappheadtotoc
+\input{appendixA.tex}
+\input{appendixB.tex}
+\input{appendixC.tex}
 
 % Bibliography
 \newpage
