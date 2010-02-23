@@ -27,53 +27,61 @@ the context we can say nothing about $y$, so we give it the predicate
 can be regarded as a rewriting action on the string representing the
 lambda term. More informally, one can think of it as ``substituting in''
 the values for the bound variables. In the examples above this amounts to
-replacing $x$ with the number 2.\\\\
+replacing $x$ with the number 2.
 
 % definition af syntax
 \subsection{Syntax}
 \begin{definition}
-	The lambda calculus consists of \emph{lambda terms} defined 
-over the alphabet:\\
+	The lambda calculus consists of \emph{lambda terms} defined over the alphabet:
 	\begin{align*}
-		x,y,z,\hdots\ &\text{ variables} \\
+		x,y,z,\hdots\ &\in V\\
 		\lambda\ &\text{ abstractor} \\
 		()\ &\text{ parentheses}
 	\end{align*}
+	where $V$ is the countable, infinite set containing variable names $v_0,v_1,v_2,\hdots$.
 	The set of all lambda terms $\Lambda$ is defined as follows:
 	\begin{align*}
 		x\in\Lambda \\
 		M\in\Lambda &\Rightarrow (\lam{x}{M})\in\Lambda \\
 		M, N\in\Lambda &\Rightarrow (M N)\in\Lambda
 	\end{align*}
-Where x is a variable.\\
+Where $x\in V$.
 \end{definition}
 
 For brevity, it is conventional to leave out the outermost parentheses.
 Evaluation is left associative, so $M N P = (M N) P$, and function
 bodies extend as far as possible: $\lam{x}{M N}=\lam{x}{(M N)}\neq(\lam{x}{M})N$.
 All lambda terms take exactly one argument, but as syntactic sugar we introduce the following abbreviation:
+\begin{abbreviation}
 \begin{align*}
 	\lam{xy}{xy}\equiv\lam{x}{\lam{y}{xy}}
 \end{align*}
+\end{abbreviation}
 
-% frie variable
 \subsection{Free Variables}
 
 As already indicated, the variables in a lambda term can be divided into
 two groups; the free and the bound variables.
 
 \begin{definition}
-	$FV$ returns for any lambda term the set of free variables and is defined as follows:\\
+	The set $FV(M)$ is the smallest set containing all free variables of the lambda
+	term $M$, defined by:
 	\begin{align*}
 		FV(x)&=\{x\} \\
 		FV(\lam{x}{M})&= FV(M) - \{x\} \\
 		FV((M N)) &= FV(M) \cup FV(N)
 	\end{align*}
 \end{definition}
-If $FV(M)=\emptyset$, $M$ is said to be \emph{closed}. The set of all closed terms is denoted $\Lambda^0$.\\\\
+\begin{definition}
+	\begin{enumerate}
+		\item If $FV(M)=\emptyset$, $M$ is said to be \emph{closed}.
+		\item The set of all closed terms is denoted $\Lambda^0$.
+	\end{enumerate}
+\end{definition}
+\begin{definition}
+	A variable $x$ that is not free is \emph{bound}.
+\end{definition}
 
-% definition af alfakonvertering
-% eksempel
 \subsection{$\alpha$-congruence}
 
 The particular name of a bound variable does not affect the function represented 
@@ -82,39 +90,43 @@ by a lambda term. Thus, the two terms
 	\lam{x}{x} \\
 	\lam{y}{y}
 \end{align*}
-denote the same function, the identity. For a term $M$ we define
-\emph{change of bound variables} as a substitution of a part of $M$,
-$\lam{x}{N}$, with $\lam{y}{(N[x:=y])}$, i.e. all occurences of $x$ are
-replaced with an occurence of $y$. It is a requirement that $y$ doesn't occur
-at all in $N$ in order for the substitution to be ``safe'', in the sense that the meaning of the term does not change. 
-We say that two terms
-$M$ and $N$ are $\alpha$-congruent, $M\equiv_\alpha N$, if we can make $N$ from
-$M$ by changing the bound variables. For instance, the following terms are
-$\alpha$-congruent:\\
+denote the same function, namely the identity. This gives rise to a definition of congruence
+that is essential in the lambda calculus.
+\begin{definition}
+	\begin{enumerate}
+		\item For a term $M$, \emph{change of bound variables} is defined as a substitution
+		of a part of $M$, $\lam{x}{N}$, with $\lam{y}{N[x:=y]}$, i.e. all occurences of $x$
+		are replaced with an occurence of $y$. It is a requirement that $y$ does not 
+		occur in $N$.
+		\item $M$ and $N$ are $\alpha$-congruent, $M\equiv_\alpha N$, if $N$ is the
+		resulting term after a series of changes of bound variables in $M$.
+	\end{enumerate}
+\end{definition} 
+For instance, we have:
 \begin{example}
 \begin{align*}
 	\lam{x}{x}&\equiv_\alpha\lam{y}{y} \\
-	\lam{x}{\lam{y}{xy}}&\equiv_\alpha{\lam{a}{\lam{b}{ab}}}
+	\lam{x}{\lam{y}{xy}}&\equiv_\alpha{\lam{a}{\lam{b}{ab}}} \\
+	\lam{x}{\lam{y}{xy}}&\not\equiv_\alpha\lam{y}{\lam{y}{yy}}
 \end{align*}
 \end{example}
-whereas these terms are not:\\
-\begin{example}
-\begin{align*}
-	\lam{x}{\lam{y}{xy}}\not\equiv_\alpha\lam{y}{\lam{y}{yy}}
-\end{align*}
-\end{example}
-This last example illustrates the need for the requirement that $y$ cannot occur
-in $N$.
-In the following we will regard $\alpha$-congruent terms as being equivalent, so the notation $\equiv$ is used instead of $\equiv_\alpha$.\\\\
+This last example illustrates the need for the requirement that $y$ cannot
+occur in $N$. In the following we will regard $\alpha$-congruent terms as
+being equivalent, so the notation $\equiv$ is used instead of
+$\equiv_\alpha$.
 
-% definition af substitution af frie variable
 \subsection{Substitution}
-In addition to substitution of bound variables, it is possible to substitute values for free variables. These values are not limited to being just new variables, but can be any lambda term. A substitution is notated:
+
+In addition to substitution of bound variables, it is possible to substitute
+values for free variables. These values are not limited to being just new
+variables, but can be any lambda term. A substitution is notated:
 \begin{align*}
 	M[x:=N]
 \end{align*}
-It results in ``substituting term $N$ for all occurrences of the free variable $x$''.
-\begin{definition}Substitution is defined as follows (\cite{Barendregt} 2.1.15):\\
+with the intuitive meaning that all free occurences of $x$ are replaced with 
+the term $N$.
+\begin{definition}
+Substitution is defined as follows (\cite{Barendregt} 2.1.15):
 \begin{align*}
 	x[x:=N]&\equiv N \\
 	y[x:=N]&\equiv y, \text{ if } x \not\equiv y \\
@@ -128,64 +140,90 @@ It results in ``substituting term $N$ for all occurrences of the free variable $
 \subsection{Subterms}
 A lambda term $M$ is composed of several parts which we call \emph{subterms}.
 \begin{definition}
-	$N\subset M$ denotes that $N$ is a subterm of $M$. The set of subterms for $M$ are given in the set $Sub(M)$:\\
-	\begin{align*}
-		Sub(x) &=\{x\} \\
-		Sub(\lam{x}{N}) &= Sub(N) \cup \{\lam{x}{N}\} \\
-		Sub(M N) &= Sub(M) \cup Sub(N) \cup Sub(M N)
-	\end{align*}
+	\begin{enumerate}
+		\item $N\subset M$ denotes that $N$ is a subterm of $M$. The set $Sub(M)$ is the 
+		smallest set such that all subterms of $M$ are contained in $Sub(M)$:
+		\begin{align*}
+			Sub(x) &=\{x\} \\
+			Sub(\lam{x}{N}) &= Sub(N) \cup \{\lam{x}{N}\} \\
+			Sub(M N) &= Sub(M) \cup Sub(N) \cup Sub(M N)
+		\end{align*}
+		\item A subterm $N$ of $M$ is called \emph{active} if $N L \subset M$ 
+		and \emph{passive} otherwise.
+	\end{enumerate}
 \end{definition}
-
-A subterm $N$ of $M$ is called \emph{active} if $N L \subset M$ and \emph{passive} otherwise.\\\\
+\begin{example}\label{exmpl:subterms}
+	The term $M\equiv\lam{x}{xy(\lam{z}{y})}$ has the following subterms:
+	\begin{itemize}
+		\item $\lam{x}{((xy)(\lam{z}{y}))}\subset M$, passive.
+		\item $(xy)(\lam{z}{y})\subset M$, passive.
+		\item $xy\subset M$, active.
+		\item $\lam{z}{y}\subset M$, passive.
+		\item $x\subset M$, active.
+		\item $y\subset M$, passive.
+	\end{itemize}
+\end{example}
+Note that the subterm $y$ occurs two times in Example \ref{exmpl:subterms}.
 
 % definition af betareduktion
 % eksempel!
 \subsection{$\beta$-reduction}
+
+In this section we shall define a key concept of the lambda calculus which
+plays a central role in this report, namely the $\beta$-reduction. This
+reduction captures the notion of ``substituting in'' terms for bound variables,
+and can be intuitively thought of as ``solving'' a lambda term by reducing it
+to a (sometimes) simpler form.
+
 \begin{definition}
-	\emph{$\beta$-reduction} is the binary relation $\BETA\subseteq\Lambda^2$ such that
-	\begin{equation*}
-		\BETA=\Big\{\big((\lam{x}{M})N,M[x:=N])\big)\big|M,N\in\Lambda\Big\}
-	\end{equation*}
+	\begin{enumerate}
+		\item \emph{$\beta$-reduction} is the binary relation $\BETA\subseteq\Lambda^2$ such that
+		\begin{equation*}
+			\BETA=\Big\{\big((\lam{x}{M})N,M[x:=N])\big)\big|M,N\in\Lambda\Big\}
+		\end{equation*}
+		\item For an element $(M,N)\in\BETA$ we call $M$ a \emph{$\beta$-redex} and
+		$N$ a \emph{$\beta$-contractum} of $M$.
+		\item A term $M$ is in \emph{$\beta$-normal-form} ($\beta$-nf) if it 
+		does not contain any subterms that are $\beta$-redexes.
+	\end{enumerate}
 \end{definition}
 
-% A \emph{$\beta$-reduction} is a binary relation $\BETA\subseteq\Lambda^2$ such that
-% \begin{equation*}
-% 	\BETA=\Big\{\big((\lam{x}{M})N,M[x:=N])\big)\big|M,N\in\Lambda\Big\}
-% \end{equation*}
-For an element $(M,N)\in\BETA$, $M$ is called a \emph{$\beta$-redex} and
-$N$ is called a \emph{$\beta$-contractum} of $M$. If a term $M$ does not contain
-any subterms that are $\beta$-redexes, we say that $M$ is a \emph{$\beta$-normal-form}
-($\beta$-nf).
-
-The reduction captures the notion of ``substituting in'' terms for bound variables.
-We have the relations (\cite{Barendregt} def. 3.1.5])\\
-% \begin{definition}
-\begin{align*}
-	(M,N)\in\BETA&\Rightarrow M\barrow N \\
-	M\barrow N &\Rightarrow ZM\barrow ZN \\
-	M\barrow N &\Rightarrow MZ\barrow NZ \\
-	M\barrow N &\Rightarrow \lam{x}{M}\barrow \lam{x}{N} \\
-\end{align*}
-The transitive, reflexive closure of $\barrow$ is notated $\Barrow$:
-\begin{align*}
-	M\barrow N &\Rightarrow M\Barrow N \\
-	M\Barrow N, N\Barrow L &\Rightarrow M\Barrow L \\
-	M\Barrow M & \\
-\end{align*}
-% \end{definition}
-
-These relations generate an equivalence relation:
-\begin{align*}
-	M\Barrow N &\Rightarrow M=_\beta N \\
-	M=_\beta N &\Rightarrow N=_\beta M \\
-	M=_\beta N\wedge N=_\beta L&\Rightarrow M=_\beta L
-\end{align*}
-We call a term $N$ a \emph{$\beta$-normal form of $M$} if $M=_\beta N$ and $N$ is a $\beta$-normal form.
+\begin{definition}\label{def:beta_rel1}
+	We have the relations (\cite{Barendregt} def. 3.1.5]):
+	\begin{align*}
+		(M,N)\in\BETA&\Rightarrow M\barrow N \\
+		M\barrow N &\Rightarrow ZM\barrow ZN \\
+		M\barrow N &\Rightarrow MZ\barrow NZ \\
+		M\barrow N &\Rightarrow \lam{x}{M}\barrow \lam{x}{N} 
+	\end{align*}	
+\end{definition}
+\begin{definition}\label{def:beta_rel2}
+	The transitive, reflexive closure of $\barrow$ is notated $\Barrow$:
+	\begin{align*}
+		M\barrow N &\Rightarrow M\Barrow N \\
+		M\Barrow N, N\Barrow L &\Rightarrow M\Barrow L \\
+		M\Barrow M & 
+	\end{align*}
+\end{definition}
+\begin{definition}
+	The relations from Definitions \ref{def:beta_rel1} and \ref{def:beta_rel2} 
+	generate an equivalence relation:
+	\begin{align*}
+		M\Barrow N &\Rightarrow M=_\beta N \\
+		M=_\beta N &\Rightarrow N=_\beta M \\
+		M=_\beta N\wedge N=_\beta L&\Rightarrow M=_\beta L
+	\end{align*}	
+\end{definition}
+\begin{definition}
+	A term $N$ is a \emph{$\beta$-normal form of $M$} if $M=_\beta N$ and $N$ is in $\beta$-normal form.
+\end{definition}
 From these definitions it follows (\cite{Barendregt} 3.1.10), that if $M$ is a
 $\beta$-nf then $\neg\exists N:M\barrow N$ and $M\Barrow N\Rightarrow M\equiv N$.
 
-The following example from \cite{Barendregt} p. 52 illustrates the concept:\\
+The following example from \cite{Barendregt} p. 52 illustrates the concept:
 \begin{example}
+	$(\lam{x}{xx})(\lam{y}{y})z\Barrow z$, and hence $(\lam{x}{xx})(\lam{y}{y})z =_\beta z$.
+	More elaborately:
 \begin{align*}
 	(\lam{x}{xx})(\lam{y}{y})z&\barrow(\lam{y}{y})(\lam{y}{y})z \\
 	&\barrow(\lam{y}{y})z \\
@@ -195,40 +233,42 @@ The following example from \cite{Barendregt} p. 52 illustrates the concept:\\
 
 % Skal der være noget om kontekster?
 
-% definition af reduktionsgraf
-% eksempel(?)
 \subsection{Reduction Graphs}
 
 When a $\beta$-redex $M$ contains subterms $\Delta_{0\hdots n}$ that are themselves 
 $\beta$-redexes, an ambiguity concerning the order of $\beta$-reductions arises.
-Consider the following example from \cite{Barendregt} 3.1.19:\\
+Consider the following example from \cite{Barendregt} 3.1.19:
 \begin{example}
+	Let $M\equiv(\lam{x}{xx})\Delta$ and $\Delta\barrow\Delta'$. We can then perform the two reductions:
 \begin{align*}
-	M&\equiv(\lam{x}{xx})\Delta \\
 	M&\barrow(\lam{x}{xx})\Delta' \\
 	M&\barrow\Delta\Delta
 \end{align*}
 \end{example}
-i.e. we can choose to reduce $\Delta$ to its contractum $\Delta'$, or
-we can reduce $M$ to its contractum $\Delta\Delta$. This is notated as 
+The example shows that we can choose to reduce $\Delta$ to its contractum $\Delta'$, or
+we can choose to reduce $M$ to its contractum $\Delta\Delta$. This is notated as 
 $\overset{\Delta}\barrow$ and $\overset{M}\barrow$ respectively. Different
-subterms can have the same contractum, as this example illustrates:\\
+subterms can have the same contractum, as this example illustrates:
 \begin{example}
+	Let $\I\equiv\lam{x}{x}$. Then:
 \begin{align*}
 	\I(\I x)&\overset{\I x}\barrow\I x \\
 	\I(\I x)&\overset{\I(\I x)}\barrow\I x
 \end{align*}
 \end{example}
-where $\I\equiv\lam{x}{x}$. The set of reductions from a redex $M$ can
+The set of reductions from a redex $M$ can
 be considered as a directed graph, with each arc going out of a node representing
 a reduction on some subterm of that node, and each node representing a lambda term that
-is the contractum of the nodes in the beginning of its ingoing arcs.
-
+is the contractum of the terms represented by the nodes parents.
 \begin{definition}
-This graph is called the \emph{$\beta$ reduction graph} of $M$ and is written $G_\beta(M)$ and its sets of nodes and arcs in $G_\beta(M)$ are defined as:\\
+	The \emph{$\beta$ reduction graph} of $M$ is written $G_\beta(M)$ and it consists
+	of the nodes in the set $V$ and the arcs in the multiset $A$. The set
+	of nodes and multiset of arcs in $G_\beta(M)$ are defined as:
 \begin{align*}
 	V&=\{N\in\Lambda|M\Barrow N\} \\
 	A&=\{(N_0, N_1)\in\Lambda^2|N_0,N_1\in V\wedge N_0\barrow N_1\}
 \end{align*}
+	Since $A$ can contain duplicates it follows that if there are more than one
+	different reduction step from $N_0$ to $N_1$, that many arcs will be included 
+	in $G_\beta(M)$.
 \end{definition}
-\newpage

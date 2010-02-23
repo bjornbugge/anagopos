@@ -14,10 +14,21 @@
 \usepackage[toc,page]{appendix}
 \usepackage{sectsty}
 
+% TODO Lav theoremstyle så den er ordenlig!
+\newtheoremstyle{mystyle}% ⟨name⟩ 
+{5pt}%	⟨Space above⟩ 
+{15pt}%	⟨Space below⟩ 
+{\itshape}%	⟨Body font⟩
+{\parindent}%	⟨Indent amount⟩
+{\bfseries}% ⟨Theorem head font⟩ 
+{:}%	⟨Punctuation after theorem head⟩ 
+{.5em}%	⟨Space after theorem head⟩
+{}%	⟨Theorem head spec (can be left empty, meaning ‘normal’)⟩
 
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\newtheorem{example}{Example}
+\theoremstyle{mystyle}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{abbreviation}{Abbreviation}[section]
 
 
 \title{Visualization of $\beta$-reduction-graphs in the lambda calculus}
@@ -58,30 +69,30 @@
 % \newpage
 
 % Abstract
-\input{abstract.tex}
-\newpage
+% \input{abstract.tex}
+% \newpage
 
 % Table of content
-\tableofcontents
-\listoftables
-\listoffigures
-\newpage
+% \tableofcontents
+% \listoftables
+% \listoffigures
+% \newpage
 
 % Chapters
 \input{lambda_theory.tex}
-\input{existing_visualizations.tex}
+% \input{existing_visualizations.tex}
 
 % Appendices
-\appendix
-\appendixpage
-\input{appendixA.tex}
-\input{appendixB.tex}
-\input{appendixC.tex}
-
-% Bibliography
-\newpage
-\bibliographystyle{plain}
-\bibliography{bibliography}
+% \appendix
+% \appendixpage
+% \input{appendixA.tex}
+% \input{appendixB.tex}
+% \input{appendixC.tex}
+% 
+% % Bibliography
+% \newpage
+% \bibliographystyle{plain}
+% \bibliography{bibliography}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
