@@ -51,8 +51,7 @@ Where x is a variable.\\
 For brevity, it is conventional to leave out the outermost parentheses.
 Evaluation is left associative, so $M N P = (M N) P$, and function
 bodies extend as far as possible: $\lam{x}{M N}=\lam{x}{(M N)}\neq(\lam{x}{M})N$.
-All lambda terms take exactly one argument, but as syntactic sugar we introduce
-the following abbreviation:
+All lambda terms take exactly one argument, but as syntactic sugar we introduce the following abbreviation:
 \begin{align*}
 	\lam{xy}{xy}\equiv\lam{x}{\lam{y}{xy}}
 \end{align*}
