@@ -1,12 +1,12 @@
 {
-    DKDChangeTimeStamp = "2010-02-10 12:32:13 +0100";
-    DKDCreateTimeStamp = "2010-02-10 12:26:57 +0100";
+    DKDChangeTimeStamp = "2010-02-23 17:35:13 +0100";
+    DKDCreateTimeStamp = "2010-02-23 17:24:51 +0100";
     DKDDisplayGraphicDetails =     {
         AngleFormatDisplayDetails =         {
             AngleDirection = Right;
             AngleForm = degrees;
             AngleRotation = "Counter Clockwise";
-            PrecisionAngles = 1;
+            PrecisionAngles = 2;
         };
         AnglesDisplaySpec =         {
             ExampleValueDisplaySpec = "100.010002";
@@ -26,7 +26,7 @@
         InspectingSpecIndex = 0;
         LengthsDisplaySpec =         {
             ExampleValueDisplaySpec = "100.010002";
-            FieldWidthDisplaySpec = "62.000000";
+            FieldWidthDisplaySpec = "83.860764";
             FormDisplaySpec = Decimal;
             PrecisionDisplaySpec = 2;
             UnitsDisplaySpec = Nothing;
@@ -88,13 +88,13 @@
             PrintLineWidth = "0.850000";
             PrintsGrid = NO;
             ShowsGrid = YES;
-            SnapsToGrid = YES;
+            SnapsToGrid = NO;
         };
         SnapEnds = NO;
         SnapGuidelines = NO;
         SnapRadiusGrid = "3.000000";
         SnapSound = None;
-        SoftSnap = YES;
+        SoftSnap = NO;
     };
     DKDHideExtension = YES;
     DKDLayersList =     (
@@ -112,21 +112,21 @@
             };
             GraphicsList =             (
                                 {
-                    Bounds = "{{90, 108}, {13.8, 13.8}}";
+                    Bounds = "{{229.446, 113.091}, {13.8, 13.8}}";
                     Class = DKDCircle;
                     CloakGuidelines = NO;
                     CloakVertices = NO;
-                    GraphicID = CD958204;
+                    GraphicID = A1A58204;
                     GraphicName = Circle;
                     GraphicStyle =                     {
                         DrawsFill = YES;
                         DrawsLine = YES;
                         FillRGB =                         {
-                            Blue = "1.000000";
+                            Blue = "0.000000";
                             ColorSpace = NSCalibratedRGBColorSpace;
-                            Green = "1.000000";
+                            Green = "0.000000";
                             Opacity = "1.000000";
-                            Red = "1.000000";
+                            Red = "0.000000";
                         };
                         LineCapStyle = Square;
                         LineJoinStyle = Miter;
@@ -151,47 +151,8 @@
                     ReversedPath = NO;
                 },
                                 {
-                    Bounds = "{{144, 108}, {13.8, 13.8}}";
-                    Class = DKDCircle;
-                    CloakGuidelines = NO;
-                    CloakVertices = NO;
-                    GraphicID = DD958204;
-                    GraphicName = Circle;
-                    GraphicStyle =                     {
-                        DrawsFill = YES;
-                        DrawsLine = YES;
-                        FillRGB =                         {
-                            Blue = "1.000000";
-                            ColorSpace = NSCalibratedRGBColorSpace;
-                            Green = "1.000000";
-                            Opacity = "1.000000";
-                            Red = "1.000000";
-                        };
-                        LineCapStyle = Square;
-                        LineJoinStyle = Miter;
-                        LineRGB =                         {
-                            Blue = "0.000000";
-                            ColorSpace = NSCalibratedRGBColorSpace;
-                            Green = "0.000000";
-                            Opacity = "1.000000";
-                            Red = "0.000000";
-                        };
-                        LineWidth = "1.000000";
-                        MiterLimit = 10;
-                        StrokePosition = Front;
-                        WindingRule = "Non-Zero";
-                    };
-                    GridRef =                     {
-                        GridRefPosition = "Top Left";
-                        GridRefX = "0.000000";
-                        GridRefY = "0.000000";
-                    };
-                    Locked = NO;
-                    ReversedPath = NO;
-                },
-                                {
-                    Bounds = "{{103.8, 114.9}, {40.2, 0}}";
-                    Class = DKDOrthConnector;
+                    Bounds = "{{236.054, 119.409}, {22.5, 20.5}}";
+                    Class = DKDOrthogonalPath;
                     CloakGuidelines = NO;
                     CloakVertices = NO;
                     DkBezArrow =                     {
@@ -232,27 +193,41 @@
                                                 {
                             BezierPathElement = MoveToElement;
                             PositionPoint =                             {
-                                X = "103.800003";
-                                Y = "114.899994";
+                                X = "236.054001";
+                                Y = "130.408508";
                             };
                         },
                                                 {
                             BezierPathElement = LineToElement;
                             PositionPoint =                             {
-                                X = "103.800003";
-                                Y = "114.899994";
+                                X = "236.054001";
+                                Y = "139.908508";
                             };
                         },
                                                 {
                             BezierPathElement = LineToElement;
                             PositionPoint =                             {
-                                X = "144.000000";
-                                Y = "114.899994";
+                                X = "258.554016";
+                                Y = "139.908508";
+                            };
+                        },
+                                                {
+                            BezierPathElement = LineToElement;
+                            PositionPoint =                             {
+                                X = "258.554016";
+                                Y = "119.408501";
+                            };
+                        },
+                                                {
+                            BezierPathElement = LineToElement;
+                            PositionPoint =                             {
+                                X = "247.054001";
+                                Y = "119.408501";
                             };
                         }
                     );
-                    GraphicID = 1E958204;
-                    GraphicName = "Orthogonal Connector";
+                    GraphicID = B1A58204;
+                    GraphicName = "Orthogonal Path";
                     GraphicStyle =                     {
                         DrawsFill = NO;
                         DrawsLine = YES;
@@ -285,10 +260,6 @@
                             OrthogonalJoinRadius = "3.000000";
                             SnapDistance = "2.000000";
                         };
-                        GraphicIdEnd = DD958204;
-                        GraphicIdStart = CD958204;
-                        GraphicTargetIndexEnd = 5;
-                        GraphicTargetIndexStart = 1;
                     };
                 }
             );
@@ -349,7 +320,7 @@
         XPrintMirror = NO;
         YPrintMirror = NO;
     };
-    DKDSaveTimeStamp = "2010-02-10 12:39:26 +0100";
+    DKDSaveTimeStamp = "2010-02-23 17:35:14 +0100";
     DKDTablet =     {
         PenMax = "25.000000";
         PenMin = "0.500000";
@@ -359,9 +330,9 @@
     DKDTimeFormat =     {
         "Field 0 Include" = Weekday;
         "Field 0 Type" = Long;
-        "Field 1 Include" = Month;
+        "Field 1 Include" = Year;
         "Field 1 Type" = Short;
-        "Field 2 Include" = Day;
+        "Field 2 Include" = Year;
         "Field 2 Type" = Number;
         "Field 3 Include" = Year;
         "Field 3 Type" = Long;
@@ -443,24 +414,17 @@
         "ColorStrokeToolbarItemIdentifier_0",
                 (
             "HSB_000020"
-        ),
-        "DKDArrowMenuToolbarItemIdentifier_0",
-                (
-            810009
-        ),
-        "DashMenuToolbarIdentifier_0",
-                (
-            810017
         )
     );
     DKDWindowState =     {
-        DocCenter = "{194, 132.75}";
+        DocCenter = "{275.25, 128.75}";
+        DocumentFileName = "/Users/bear/DIKU/ProjektFora\U030ar2009/lambda2010/graf3_omega.ezdraw";
         GDetailsLayersDrawerEdgePreference = Auto;
         GraphicDetailsOpen = NO;
         LayerOpen = NO;
         LayerSelect = "Active Only";
         LayersDrawerEdgePreference = Auto;
-        WindowLocation = "137 197 791 568 0 0 1280 778 ";
+        WindowLocation = "182 227 696 508 0 0 1280 778 ";
         ZoomPercent = "200.000000";
     };
     DocumentCompression = None;

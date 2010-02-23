@@ -51,7 +51,8 @@ Where $x\in V$.
 For brevity, it is conventional to leave out the outermost parentheses.
 Evaluation is left associative, so $M N P = (M N) P$, and function
 bodies extend as far as possible: $\lam{x}{M N}=\lam{x}{(M N)}\neq(\lam{x}{M})N$.
-All lambda terms take exactly one argument, but as syntactic sugar we introduce the following abbreviation:
+All lambda terms take exactly one argument, but as syntactic sugar we introduce
+the following abbreviation:
 \begin{abbreviation}
 \begin{align*}
 	\lam{xy}{xy}\equiv\lam{x}{\lam{y}{xy}}
@@ -272,3 +273,57 @@ is the contractum of the terms represented by the nodes parents.
 	different reduction step from $N_0$ to $N_1$, that many arcs will be included 
 	in $G_\beta(M)$.
 \end{definition}
+\begin{example}
+	\begin{enumerate}
+		\item The reduction graph illustrated in Figure \ref{fig:images_graphs_graf2}
+		for the term $\I x$, $G_\beta(\I x)$, with
+		the previous definition of $\I$ captures the reduction $\I x\barrow x$.
+		
+		\item $G_\beta(\I(\I x))$ is illustrated in Figure \ref{fig:images_graphs_graf1}.
+		
+		\item Let $\Omega\equiv(\lam{x}{xx})(\lam{x}{xx})$. $G_\beta(\Omega)$
+		can be seen in Figure \ref{fig:images_graphs_graf3_omega}.
+		
+		\item Let $\W\equiv\lam{xy}{xyy}$. $G_\beta(\W\W\W)$ is illustrated in
+		Figure \ref{fig:images_graphs_graf4_www}.
+		
+		\item Let $M\equiv\lam{x}{(\lam{y}{yy})x}$. $G_\beta(MM)$ is pictured in
+		Figure \ref{fig:images_graphs_graf5_MM}.
+		
+		\item Let $w_3\equiv\lam{x}{xxx}$. Figure \ref{fig:images_graphs_graf6_w3w3}
+		contains the reduction graph. Note that this graph contains an infinite 
+		amount of nodes and arcs.
+	\end{enumerate}
+	\begin{figure}[htbp]
+		\centering
+		\begin{tabular}{ccc}
+			\subfigure[$G_\beta(\I x)$]{
+				\includegraphics{images/graphs/graf2.png}
+				\label{fig:images_graphs_graf2}
+			} &
+			\subfigure[$G_\beta(\I(\I x))$]{
+				\includegraphics{images/graphs/graf1.png}
+				\label{fig:images_graphs_graf1}
+			} & 
+			\subfigure[$G_\beta(\Omega)$]{
+				\includegraphics{images/graphs/graf3_omega.png}
+				\label{fig:images_graphs_graf3_omega}
+			} \\ \\
+			\subfigure[$G_\beta(\W\W\W)$]{
+				\includegraphics{images/graphs/graf4_www.png}
+				\label{fig:images_graphs_graf4_www}
+			} \hspace{1.5em}
+			&
+			\subfigure[$G_\beta(MM)$]{
+				\includegraphics{images/graphs/graf5_MM.png}
+				\label{fig:images_graphs_graf5_MM}
+			}\hspace{1.5em}
+			&
+			\subfigure[$G_\beta(w_3w_3)$]{
+				\includegraphics{images/graphs/graf6_w3w3.png}
+				\label{fig:images_graphs_graf6_w3w3}
+			}
+		\end{tabular}
+		\caption{Example of $\beta$-reduction graphs for different lambda terms.}
+	\end{figure}
+\end{example}

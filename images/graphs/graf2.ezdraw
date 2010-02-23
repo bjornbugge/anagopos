@@ -1,5 +1,5 @@
 {
-    DKDChangeTimeStamp = "2010-02-10 12:38:39 +0100";
+    DKDChangeTimeStamp = "2010-02-23 17:26:17 +0100";
     DKDCreateTimeStamp = "2010-02-10 12:32:04 +0100";
     DKDDisplayGraphicDetails =     {
         AngleFormatDisplayDetails =         {
@@ -54,6 +54,44 @@
     };
     DKDDocumentVersion = 1;
     DKDEazyDrawVersion = "rev. 2.3.1";
+    DKDExportDoc =     {
+        BMPExporBackground = "No Background";
+        DOSEPSPreview = NO;
+        DataExporBackground = "No Background";
+        EPSColorSpace = RGB;
+        EPSExporBackground = "No Background";
+        EPSLatexPsfrag = NO;
+        ExporBackground = "No Background";
+        ExportButtonDragFormat = File;
+        ExportButtonFileExtension = pdf;
+        ExportColorTable = "256 Best";
+        ExportCompresion = "1.000000";
+        ExportContent = "Just Graphics";
+        ExportExpand = "1.000000";
+        ExportFileExtension = png;
+        ExportImageAntialias = YES;
+        ExportImageInterpolation = Automatic;
+        ExportPath = "/Users/bear/DIKU/ProjektFora\U030ar2009/lambda2010/images/graphs";
+        ExportTransparentColor = Automatic;
+        GIFExporBackground = "White Background";
+        GIFFDither = NO;
+        HideExtension = NO;
+        ICNSExporBackground = "No Background";
+        ICOColorTable = "256 Best";
+        ICOExporBackground = "No Background";
+        IncludePictHeader = YES;
+        JPGExporBackground = "White Background";
+        KeynoteExporBackground = "No Background";
+        KeynoteExportMapping = "One Slide";
+        MirrorTextEncoding = "-1";
+        PDFExporBackground = "No Background";
+        PNGExporBackground = "White Background";
+        PNGInterlace = NO;
+        TIFExporBackground = "No Background";
+        TIFFColorSpace = RGBA;
+        TIFFCompresionType = None;
+        ThumbnailPreview = NO;
+    };
     DKDGrids =     {
         DynamicSnapGrid = YES;
         MajorGrid =         {
@@ -112,21 +150,21 @@
             };
             GraphicsList =             (
                                 {
-                    Bounds = "{{54, 198}, {13.8, 13.8}}";
+                    Bounds = "{{105.475, 141.1}, {13.8, 13.8}}";
                     Class = DKDCircle;
                     CloakGuidelines = NO;
                     CloakVertices = NO;
-                    GraphicID = 2E958204;
+                    GraphicID = AF958204;
                     GraphicName = Circle;
                     GraphicStyle =                     {
                         DrawsFill = YES;
                         DrawsLine = YES;
                         FillRGB =                         {
-                            Blue = "1.000000";
+                            Blue = "0.000000";
                             ColorSpace = NSCalibratedRGBColorSpace;
-                            Green = "1.000000";
+                            Green = "0.000000";
                             Opacity = "1.000000";
-                            Red = "1.000000";
+                            Red = "0.000000";
                         };
                         LineCapStyle = Square;
                         LineJoinStyle = Miter;
@@ -151,21 +189,21 @@
                     ReversedPath = NO;
                 },
                                 {
-                    Bounds = "{{108, 198}, {13.8, 13.8}}";
+                    Bounds = "{{145.725, 141.1}, {13.8, 13.8}}";
                     Class = DKDCircle;
                     CloakGuidelines = NO;
                     CloakVertices = NO;
-                    GraphicID = 3E958204;
+                    GraphicID = BF958204;
                     GraphicName = Circle;
                     GraphicStyle =                     {
                         DrawsFill = YES;
                         DrawsLine = YES;
                         FillRGB =                         {
-                            Blue = "1.000000";
+                            Blue = "0.000000";
                             ColorSpace = NSCalibratedRGBColorSpace;
-                            Green = "1.000000";
+                            Green = "0.000000";
                             Opacity = "1.000000";
-                            Red = "1.000000";
+                            Red = "0.000000";
                         };
                         LineCapStyle = Square;
                         LineJoinStyle = Miter;
@@ -190,8 +228,8 @@
                     ReversedPath = NO;
                 },
                                 {
-                    Bounds = "{{60.9, 198}, {47.1, 6.89999}}";
-                    Class = DKDOrthConnector;
+                    Bounds = "{{122.891, 147.767}, {18, 0}}";
+                    Class = DKDLine;
                     CloakGuidelines = NO;
                     CloakVertices = NO;
                     DkBezArrow =                     {
@@ -232,34 +270,20 @@
                                                 {
                             BezierPathElement = MoveToElement;
                             PositionPoint =                             {
-                                X = "60.900002";
-                                Y = "198.000000";
+                                X = "122.891335";
+                                Y = "147.766663";
                             };
                         },
                                                 {
                             BezierPathElement = LineToElement;
                             PositionPoint =                             {
-                                X = "90.500000";
-                                Y = "198.000000";
-                            };
-                        },
-                                                {
-                            BezierPathElement = LineToElement;
-                            PositionPoint =                             {
-                                X = "90.500000";
-                                Y = "204.899994";
-                            };
-                        },
-                                                {
-                            BezierPathElement = LineToElement;
-                            PositionPoint =                             {
-                                X = "107.999985";
-                                Y = "204.899994";
+                                X = "140.891327";
+                                Y = "147.766663";
                             };
                         }
                     );
-                    GraphicID = 8E958204;
-                    GraphicName = "Orthogonal Connector";
+                    GraphicID = CF958204;
+                    GraphicName = Line;
                     GraphicStyle =                     {
                         DrawsFill = NO;
                         DrawsLine = YES;
@@ -284,94 +308,6 @@
                     };
                     Locked = NO;
                     ReversedPath = NO;
-                    TargetInfo =                     {
-                        ConnectorSpec =                         {
-                            ConnectorResolution = Halves;
-                            DynamicSnapDistance = YES;
-                            OrthogonalJoin = Square;
-                            OrthogonalJoinRadius = "3.000000";
-                            SnapDistance = "2.000000";
-                        };
-                        GraphicIdEnd = 3E958204;
-                        GraphicIdStart = 2E958204;
-                        GraphicTargetIndexEnd = 5;
-                        GraphicTargetIndexStart = 7;
-                    };
-                },
-                                {
-                    Bounds = "{{60.9, 204.9}, {47.1, 6.89999}}";
-                    Class = DKDOrthConnector;
-                    CloakGuidelines = NO;
-                    CloakVertices = NO;
-                    DkBezierPath =                     (
-                                                {
-                            BezierPathElement = MoveToElement;
-                            PositionPoint =                             {
-                                X = "60.900005";
-                                Y = "211.799988";
-                            };
-                        },
-                                                {
-                            BezierPathElement = LineToElement;
-                            PositionPoint =                             {
-                                X = "90.500000";
-                                Y = "211.799988";
-                            };
-                        },
-                                                {
-                            BezierPathElement = LineToElement;
-                            PositionPoint =                             {
-                                X = "90.500000";
-                                Y = "204.899994";
-                            };
-                        },
-                                                {
-                            BezierPathElement = LineToElement;
-                            PositionPoint =                             {
-                                X = "107.999985";
-                                Y = "204.899994";
-                            };
-                        }
-                    );
-                    GraphicID = 9E958204;
-                    GraphicName = "Orthogonal Connector";
-                    GraphicStyle =                     {
-                        DrawsFill = NO;
-                        DrawsLine = YES;
-                        LineCapStyle = Square;
-                        LineJoinStyle = Miter;
-                        LineRGB =                         {
-                            Blue = "0.000000";
-                            ColorSpace = NSCalibratedRGBColorSpace;
-                            Green = "0.000000";
-                            Opacity = "1.000000";
-                            Red = "0.000000";
-                        };
-                        LineWidth = "1.000000";
-                        MiterLimit = 10;
-                        StrokePosition = Front;
-                        WindingRule = "Non-Zero";
-                    };
-                    GridRef =                     {
-                        GridRefPosition = "Top Left";
-                        GridRefX = "0.000000";
-                        GridRefY = "0.000000";
-                    };
-                    Locked = NO;
-                    ReversedPath = NO;
-                    TargetInfo =                     {
-                        ConnectorSpec =                         {
-                            ConnectorResolution = Halves;
-                            DynamicSnapDistance = YES;
-                            OrthogonalJoin = Square;
-                            OrthogonalJoinRadius = "3.000000";
-                            SnapDistance = "2.000000";
-                        };
-                        GraphicIdEnd = 8E958204;
-                        GraphicIdStart = 2E958204;
-                        GraphicTargetIndexEnd = 6;
-                        GraphicTargetIndexStart = 3;
-                    };
                 }
             );
             HideDimensions = NO;
@@ -379,7 +315,7 @@
                 DKDOnColorMod = NO;
                 DKDOpacityColorMod = "0.500000";
                 DKDTintColorColorMod =                 {
-                    ColorSpace = NSCalibratedWhiteColorSpace;
+                    ColorSpace = NSDeviceWhiteColorSpace;
                     Opacity = "1.000000";
                     White = "0.500000";
                 };
@@ -431,7 +367,7 @@
         XPrintMirror = NO;
         YPrintMirror = NO;
     };
-    DKDSaveTimeStamp = "2010-02-10 12:39:18 +0100";
+    DKDSaveTimeStamp = "2010-02-23 17:39:47 +0100";
     DKDTablet =     {
         PenMax = "25.000000";
         PenMin = "0.500000";
@@ -536,7 +472,8 @@
         )
     );
     DKDWindowState =     {
-        DocCenter = "{214.25, 229}";
+        DocCenter = "{305.25, 236}";
+        DocumentFileName = "/Users/bear/DIKU/ProjektFora\U030ar2009/lambda2010/graf2.ezdraw";
         GDetailsLayersDrawerEdgePreference = Auto;
         GraphicDetailsOpen = NO;
         LayerOpen = NO;
