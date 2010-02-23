@@ -1,6 +1,6 @@
 %!TEX root = rapport.tex
 
-\section{Preliminaries: Basic Lambda Calculus}
+\chapter{Preliminaries: Basic Lambda Calculus}
 
 % The untyped lambda calculus was introduced in 1936 by Alonzo Church
 % [reference] as part of the search for a solid foundation for mathematics. It is
@@ -30,7 +30,7 @@ the values for the bound variables. In the examples above this amounts to
 replacing $x$ with the number 2.
 
 % definition af syntax
-\subsection{Syntax}
+\section{Syntax}
 \begin{definition}
 	The lambda calculus consists of \emph{lambda terms} defined over the alphabet:
 	\begin{align*}
@@ -58,7 +58,7 @@ All lambda terms take exactly one argument, but as syntactic sugar we introduce 
 \end{align*}
 \end{abbreviation}
 
-\subsection{Free Variables}
+\section{Free Variables}
 
 As already indicated, the variables in a lambda term can be divided into
 two groups; the free and the bound variables.
@@ -82,7 +82,7 @@ two groups; the free and the bound variables.
 	A variable $x$ that is not free is \emph{bound}.
 \end{definition}
 
-\subsection{$\alpha$-congruence}
+\section{$\alpha$-congruence}
 
 The particular name of a bound variable does not affect the function represented 
 by a lambda term. Thus, the two terms
@@ -115,7 +115,7 @@ occur in $N$. In the following we will regard $\alpha$-congruent terms as
 being equivalent, so the notation $\equiv$ is used instead of
 $\equiv_\alpha$.
 
-\subsection{Substitution}
+\section{Substitution}
 
 In addition to substitution of bound variables, it is possible to substitute
 values for free variables. These values are not limited to being just new
@@ -137,7 +137,7 @@ Substitution is defined as follows (\cite{Barendregt} 2.1.15):
 
 
 % definition af undertermer
-\subsection{Subterms}
+\section{Subterms}
 A lambda term $M$ is composed of several parts which we call \emph{subterms}.
 \begin{definition}
 	\begin{enumerate}
@@ -167,7 +167,7 @@ Note that the subterm $y$ occurs two times in Example \ref{exmpl:subterms}.
 
 % definition af betareduktion
 % eksempel!
-\subsection{$\beta$-reduction}
+\section{$\beta$-reduction}
 
 In this section we shall define a key concept of the lambda calculus which
 plays a central role in this report, namely the $\beta$-reduction. This
@@ -233,7 +233,7 @@ The following example from \cite{Barendregt} p. 52 illustrates the concept:
 
 % Skal der være noget om kontekster?
 
-\subsection{Reduction Graphs}
+\section{Reduction Graphs}
 
 When a $\beta$-redex $M$ contains subterms $\Delta_{0\hdots n}$ that are themselves 
 $\beta$-redexes, an ambiguity concerning the order of $\beta$-reductions arises.

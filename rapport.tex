@@ -1,4 +1,4 @@
-\documentclass[11pt,oneside,a4paper]{article}
+\documentclass[11pt,oneside,a4paper]{report}
 
 
 % Packages to use
@@ -41,8 +41,9 @@
 
 
 % Color & size for sections
-\sectionfont{\huge\color{sectionColor} }
-\subsectionfont{\large\color{sectionColor} }
+\chapterfont{\Huge\color{sectionColor} }
+\sectionfont{\large\color{sectionColor} }
+\subsectionfont{\Small\color{sectionColor} }
 
 
 % Margins
@@ -65,34 +66,31 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Title page
-% \input{title.tex}
-% \newpage
+\input{title.tex}
 
 % Abstract
-% \input{abstract.tex}
-% \newpage
+\input{abstract.tex}
 
 % Table of content
-% \tableofcontents
-% \listoftables
-% \listoffigures
-% \newpage
+\tableofcontents
+\listoftables
+\listoffigures
+\newpage
 
 % Chapters
+\input{introduction.tex}
 \input{lambda_theory.tex}
-% \input{existing_visualizations.tex}
+\input{existing_visualizations.tex}
 
 % Appendices
-% \appendix
-% \appendixpage
-% \input{appendixA.tex}
-% \input{appendixB.tex}
-% \input{appendixC.tex}
-% 
-% % Bibliography
-% \newpage
-% \bibliographystyle{plain}
-% \bibliography{bibliography}
+\appendix
+\input{appendixA.tex}
+\input{appendixB.tex}
+\input{appendixC.tex}
+
+% Bibliography
+\bibliographystyle{plain}
+\bibliography{bibliography}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
