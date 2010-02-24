@@ -135,10 +135,19 @@ Substitution is defined as follows (\cite{Barendregt} 2.1.15):
 	(M L)[x:=N]&\equiv(M[x:=N])(L[x:=N])
 \end{align*}
 \end{definition}
+Using this definition, the following result can be shown (\cite{Barendregt} p. 28):
+\begin{lemma}\label{lem:subst}
+	\begin{enumerate}
+		\item $M=M'\Rightarrow M[x:=N]=M'[x:=N]$.
+		\item $N=N'\Rightarrow M[x:=N]=M[x:=N']$.
+		\item $M=M', N=N'\Rightarrow M[x:=N]=M'[x:=N']$.
+	\end{enumerate}
+\end{lemma}
+Lemma \ref{lem:subst} tells us, informally, that the meaning of a a lambda term
+is closed under substitution with equals.
 
-
-% definition af undertermer
 \section{Subterms}
+
 A lambda term $M$ is composed of several parts which we call \emph{subterms}.
 \begin{definition}
 	\begin{enumerate}
@@ -178,7 +187,7 @@ to a (sometimes) simpler form.
 
 \begin{definition}
 	\begin{enumerate}
-		\item \emph{$\beta$-reduction} is the binary relation $\BETA\subseteq\Lambda^2$ such that
+		\item \emph{$\beta$-reduction} is a binary relation $\BETA\subseteq\Lambda^2$ such that
 		\begin{equation*}
 			\BETA=\Big\{\big((\lam{x}{M})N,M[x:=N])\big)\big|M,N\in\Lambda\Big\}
 		\end{equation*}
@@ -293,6 +302,11 @@ is the contractum of the terms represented by the nodes parents.
 		\item Let $w_3\equiv\lam{x}{xxx}$. Figure \ref{fig:images_graphs_graf6_w3w3}
 		contains the reduction graph. Note that this graph contains an infinite 
 		amount of nodes and arcs.
+		
+		\item In Figure \ref{fig:images_graphs_graf7_omega_w3} there is another
+		example of a graph containing an infinite amount of nodes and arcs. This
+		graph captures qualities found in the two graphs $G_\beta(\Omega)$ and
+		$G_\beta(w_3w_3)$.
 	\end{enumerate}
 	\begin{figure}[htbp]
 		\centering
@@ -324,6 +338,13 @@ is the contractum of the terms represented by the nodes parents.
 				\label{fig:images_graphs_graf6_w3w3}
 			}
 		\end{tabular}
-		\caption{Example of $\beta$-reduction graphs for different lambda terms.}
+		\caption{Example of $\beta$-reduction graphs for different lambda terms. 
+		Taken from \cite{Barendregt}.}
+	\end{figure}
+	\begin{figure}[htbp]
+		\centering
+			\includegraphics{images/graphs/graf7_omega_w3.png}
+		\caption{The $\beta$-reduction graph $G_\beta(\Omega w_3)$}
+		\label{fig:images_graphs_graf7_omega_w3}
 	\end{figure}
 \end{example}
