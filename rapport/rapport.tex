@@ -19,8 +19,8 @@
 % TODO Lav theoremstyle så den er ordenlig!
 \newtheoremstyle{mystyle}% ⟨name⟩ 
 {5pt}%	⟨Space above⟩ 
-{15pt}%	⟨Space below⟩ 
-{\itshape}%	⟨Body font⟩
+{25pt}%	⟨Space below⟩ 
+{}%	⟨Body font⟩
 {\parindent}%	⟨Indent amount⟩
 {\bfseries}% ⟨Theorem head font⟩ 
 {:}%	⟨Punctuation after theorem head⟩ 
@@ -30,7 +30,8 @@
 \theoremstyle{mystyle}
 \newtheorem{definition}{Definition}[section]
 \newtheorem{example}{Example}[section]
-\newtheorem{abbreviation}{Abbreviation}[section]
+\newtheorem{convention}{Convention}[section]
+\newtheorem{lemma}{Lemma}[section]
 
 
 \title{Visualization of $\beta$-reduction-graphs in the lambda calculus}
@@ -52,7 +53,6 @@
 \geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
 
 
-% Custom commands
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
@@ -63,35 +63,39 @@
 \newcommand{\I}{\textsf{\textbf{I}}}
 \newcommand{\W}{\textsf{\textbf{W}}}
 
+% Bruges til Python-kode.
+\newcommand{\pycode}[1]{\texttt{#1}}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Title page
-\input{title.tex}
+% \input{title.tex}
 
 % Abstract
-\input{abstract.tex}
+% \input{abstract.tex}
 
 % Table of content
-\tableofcontents
-\listoftables
-\listoffigures
-\newpage
-
+%\tableofcontents
+%\listoftables
+%\listoffigures
+%\newpage
+%
 % Chapters
 \input{introduction.tex}
 \input{lambda_theory.tex}
 \input{existing_visualizations.tex}
+\input{design.tex}
 
 % Appendices
 
-\appendix
-\input{appendixA.tex}
-\input{appendixB.tex}
-\input{appendixC.tex}
-
+%\appendix
+% \input{appendixA.tex}
+% \input{appendixB.tex}
+%\input{appendixC.tex}
+%
 % Bibliography
 \bibliographystyle{plain}
 \bibliography{bibliography}

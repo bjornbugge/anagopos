@@ -1,0 +1,45 @@
+%!TEX root = rapport.tex
+
+\chapter{Introduction}
+
+We will in this project develop an automatic method for visualization of 
+$\beta$-reduction graphs of lambda terms. The method has been implemented in 
+the programming language Python.
+
+Until now there did not exist any software for reduction graph visualization.
+Researchers wanting to visualize reduction graphs have therefore been limited
+to either their own drawings or to what they can imagine. Since reduction
+graphs can be very large, this posed a very tight constraint on what could be
+visually presented. 
+
+In our opinion, software for this visualization task presents two primary
+challenges: The drawn graphs must be \emph{informative} and
+\emph{good-looking}. These two matters are not entirely independent of each
+other; very often the particular layout of a graphs two-dimensional embedding
+greatly reduces clutter and ``noise'', thus adding information. The opposite
+can of course also be the case, which is why the two problems are
+interchanged.
+
+The intended user of the software is a theoretical computer scientist that
+does research in the field of lambda calculus. Our hope is that researchers
+can use this tool to gain new insight into the lambda calculus, and that it
+will serve as a source of inspiration for new research because it offers a new
+look at a well-known concept.
+
+% \section{Project constraints \& risks}
+% Because reduction graphs very often tend to become huge, there arises the
+% problem of deci ding whether they can be drawn on a plane at all. We will
+% perhaps have to develop a routine for deciding this, along with routines for
+% reordering the graph. Alternatively, a set of ``best practices'' for drawing
+% the nodes could be developed that would minimize the amount of crossing edges
+% as the film progresses forward. Yet more alternatively, methods for 3D-drawing
+% could be considered. However, this will demand great care when determining the
+% look of the images, as a 3-dimensional rendering of a large graph very easily
+% could inhibit understanding and confuse the beholder, which is the opposite of
+% what we are working towards.
+% 
+% Furthermore, there is a design choice to be made whether each frame of the
+% film should be drawn immediately after the reduction step has been completed,
+% making the film rendering and the term reductions synchronized, or whether the
+% rendering should begin only after all desired (or possible) reductions have
+% been computed.

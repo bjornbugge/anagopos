@@ -12,7 +12,7 @@
 % alt er funktioner
 % eksempler
 
-As a very informal example, here is a function that doubles up an integer:
+As a very informal example, here is a function that doubles an integer:
 \begin{equation*}
 	(\lam{x}{x+x})2=4.
 \end{equation*}
@@ -39,25 +39,38 @@ replacing $x$ with the number 2.
 		()\ &\text{ parentheses}
 	\end{align*}
 	where $V$ is the countable, infinite set containing variable names $v_0,v_1,v_2,\hdots$.
-	The set of all lambda terms $\Lambda$ is defined as follows:
+	The set of all lambda terms $\Lambda$ is defined inductively as follows:
 	\begin{align*}
 		x\in\Lambda \\
 		M\in\Lambda &\Rightarrow (\lam{x}{M})\in\Lambda \\
 		M, N\in\Lambda &\Rightarrow (M N)\in\Lambda
 	\end{align*}
-Where $x\in V$.
+where $x\in V$.
 \end{definition}
-
-For brevity, it is conventional to leave out the outermost parentheses.
-Evaluation is left associative, so $M N P = (M N) P$, and function
-bodies extend as far as possible: $\lam{x}{M N}=\lam{x}{(M N)}\neq(\lam{x}{M})N$.
-All lambda terms take exactly one argument, but as syntactic sugar we introduce
-the following abbreviation:
-\begin{abbreviation}
-\begin{align*}
-	\lam{xy}{xy}\equiv\lam{x}{\lam{y}{xy}}
-\end{align*}
-\end{abbreviation}
+\begin{convention}
+	A term $\lam{x}{M}$ is called a function.
+\end{convention}
+\begin{convention}
+	For brevity, we leave out the outermost parentheses.
+\end{convention}
+\begin{convention}
+	Evaluation is left associative:
+	\begin{equation*}
+		M N P \equiv (M N) P
+	\end{equation*}
+\end{convention}
+\begin{convention}
+	Function bodies extend as far as possible:
+	\begin{equation*}
+		\lam{x}{M N}\equiv\lam{x}{(M N)}\not\equiv(\lam{x}{M})N
+	\end{equation*}
+\end{convention}
+\begin{convention}
+	Functions take exactly one argument, but as syntactic sugar we use:
+	\begin{equation*}
+		\lam{xy}{xy}\equiv\lam{x}{\lam{y}{xy}}
+	\end{equation*}
+\end{convention}
 
 \section{Free Variables}
 
@@ -83,42 +96,9 @@ two groups; the free and the bound variables.
 	A variable $x$ that is not free is \emph{bound}.
 \end{definition}
 
-\section{$\alpha$-congruence}
-
-The particular name of a bound variable does not affect the function represented 
-by a lambda term. Thus, the two terms
-\begin{align*}
-	\lam{x}{x} \\
-	\lam{y}{y}
-\end{align*}
-denote the same function, namely the identity. This gives rise to a definition of congruence
-that is essential in the lambda calculus.
-\begin{definition}
-	\begin{enumerate}
-		\item For a term $M$, \emph{change of bound variables} is defined as a substitution
-		of a part of $M$, $\lam{x}{N}$, with $\lam{y}{N[x:=y]}$, i.e. all occurences of $x$
-		are replaced with an occurence of $y$. It is a requirement that $y$ does not 
-		occur in $N$.
-		\item $M$ and $N$ are $\alpha$-congruent, $M\equiv_\alpha N$, if $N$ is the
-		resulting term after a series of changes of bound variables in $M$.
-	\end{enumerate}
-\end{definition} 
-For instance, we have:
-\begin{example}
-\begin{align*}
-	\lam{x}{x}&\equiv_\alpha\lam{y}{y} \\
-	\lam{x}{\lam{y}{xy}}&\equiv_\alpha{\lam{a}{\lam{b}{ab}}} \\
-	\lam{x}{\lam{y}{xy}}&\not\equiv_\alpha\lam{y}{\lam{y}{yy}}
-\end{align*}
-\end{example}
-This last example illustrates the need for the requirement that $y$ cannot
-occur in $N$. In the following we will regard $\alpha$-congruent terms as
-being equivalent, so the notation $\equiv$ is used instead of
-$\equiv_\alpha$.
-
 \section{Substitution}
 
-In addition to substitution of bound variables, it is possible to substitute
+It is possible to substitute
 values for free variables. These values are not limited to being just new
 variables, but can be any lambda term. A substitution is notated:
 \begin{align*}
@@ -131,7 +111,8 @@ Substitution is defined as follows (\cite{Barendregt} 2.1.15):
 \begin{align*}
 	x[x:=N]&\equiv N \\
 	y[x:=N]&\equiv y, \text{ if } x \not\equiv y \\
-	(\lam{y}{M})[x:=N]&\equiv\lam{y}{(M[x:=N])} \\
+	(\lam{y}{M})[x:=N]&\equiv\lam{y}{(M[x:=N])}, \text{ if } x\not\equiv y \\
+	(\lam{x}{M})[x:=N]&\equiv\lam{x}{M} \\
 	(M L)[x:=N]&\equiv(M[x:=N])(L[x:=N])
 \end{align*}
 \end{definition}
@@ -159,7 +140,7 @@ A lambda term $M$ is composed of several parts which we call \emph{subterms}.
 			Sub(M N) &= Sub(M) \cup Sub(N) \cup Sub(M N)
 		\end{align*}
 		\item A subterm $N$ of $M$ is called \emph{active} if $N L \subset M$ 
-		and \emph{passive} otherwise.
+		for a term $L$ and \emph{passive} otherwise.
 	\end{enumerate}
 \end{definition}
 \begin{example}\label{exmpl:subterms}
@@ -175,8 +156,66 @@ A lambda term $M$ is composed of several parts which we call \emph{subterms}.
 \end{example}
 Note that the subterm $y$ occurs two times in Example \ref{exmpl:subterms}.
 
-% definition af betareduktion
-% eksempel!
+\section{$\alpha$-congruence}
+
+The particular name of a bound variable does not affect the function represented 
+by a lambda term. Thus, the two terms
+\begin{align*}
+	\lam{x}{x} \\
+	\lam{y}{y}
+\end{align*}
+denote the same function, namely the identity. This gives rise to a definition of congruence
+that is essential in the lambda calculus.
+\begin{definition}
+	\begin{enumerate}
+		\item For a term $M$, \emph{change of bound variables} is defined as a substitution
+		of a part of $M$, $\lam{x}{N}$, with $\lam{y}{N[x:=y]}$, i.e. all occurences of $x$
+		are replaced with an occurence of $y$. It is a requirement that $y$ does not 
+		occur in $N$.
+		\item $M$ and $N$ are $\alpha$-congruent, $M\equiv_\alpha N$, if $N$ is the
+		resulting term after a finite sequence of changes of bound variables in $M$.
+	\end{enumerate}
+\end{definition} 
+For instance, we have:
+\begin{example}
+\begin{align*}
+	\lam{x}{x}&\equiv_\alpha\lam{y}{y} \\
+	\lam{x}{\lam{y}{xy}}&\equiv_\alpha{\lam{a}{\lam{b}{ab}}} \\
+	\lam{x}{\lam{y}{xy}}&\not\equiv_\alpha\lam{y}{\lam{y}{yy}}
+\end{align*}
+\end{example}
+This last example illustrates the need for the requirement that $y$ cannot
+occur in $N$. In the following we will regard $\alpha$-congruent terms as
+being equivalent, so the notation $\equiv$ is used instead of
+$\equiv_\alpha$.
+
+\section{Contexts}
+
+\begin{definition}
+	\begin{enumerate}
+		\item A context $C[\ ]$ is an ``unfinished term'' with holes in it. 
+		\item The set $Con$ contains all contexts and is defined as the smallest
+		set satisfying these constraints:
+		\begin{align*}
+			[\ ]&\in Con \\
+			M\in\Lambda\Rightarrow M[\ ]&\in Con \\
+			M\in\Lambda\Rightarrow [\ ]M&\in Con \\
+			C\in Con\Rightarrow C[\ ]&\in Con \\
+			C\in Con\Rightarrow [\ ]C&\in Con
+		\end{align*}
+		\item Terms can be plugged into the holes, thus completing the term. 
+		\item When plugging a term into a hole, we do not work modulo 
+		$\alpha$-congruence.
+	\end{enumerate}
+\end{definition}
+\begin{example}
+	Given the context $C[\ ]\equiv\lam{x}{x[\ ]}$, we can make new lambda terms:
+	\begin{align*}
+		C[x]&\equiv\lam{x}{xx} \\
+		C[\lam{y}{y}]&\equiv\lam{x}{x\lam{y}{y}}
+	\end{align*}
+\end{example}
+
 \section{$\beta$-reduction}
 
 In this section we shall define a key concept of the lambda calculus which
@@ -185,11 +224,11 @@ reduction captures the notion of ``substituting in'' terms for bound variables,
 and can be intuitively thought of as ``solving'' a lambda term by reducing it
 to a (sometimes) simpler form.
 
-\begin{definition}
+\begin{definition}\label{def:betareduction}
 	\begin{enumerate}
 		\item \emph{$\beta$-reduction} is a binary relation $\BETA\subseteq\Lambda^2$ such that
 		\begin{equation*}
-			\BETA=\Big\{\big((\lam{x}{M})N,M[x:=N])\big)\big|M,N\in\Lambda\Big\}
+			\BETA=\Big\{\big((\lam{x}{M})N,\ M[x:=N]\big)\big|M,N\in\Lambda\Big\}.
 		\end{equation*}
 		\item For an element $(M,N)\in\BETA$ we call $M$ a \emph{$\beta$-redex} and
 		$N$ a \emph{$\beta$-contractum} of $M$.
@@ -197,7 +236,12 @@ to a (sometimes) simpler form.
 		does not contain any subterms that are $\beta$-redexes.
 	\end{enumerate}
 \end{definition}
-
+\begin{definition}
+	Definition \ref{def:betareduction} is extended up to contexts.
+	\begin{align*}
+		C\big[(\lam{x}{M})N\big]\equiv C\big[M[x:=N]\big]
+	\end{align*}
+\end{definition}
 \begin{definition}\label{def:beta_rel1}
 	We have the relations (\cite{Barendregt} def. 3.1.5]):
 	\begin{align*}
@@ -226,6 +270,9 @@ to a (sometimes) simpler form.
 \end{definition}
 \begin{definition}
 	A term $N$ is a \emph{$\beta$-normal form of $M$} if $M=_\beta N$ and $N$ is in $\beta$-normal form.
+\end{definition}
+\begin{definition}
+	For two terms, $M\Barrow N$, we call $N$ the \emph{reduct} of $M$.
 \end{definition}
 From these definitions it follows (\cite{Barendregt} 3.1.10), that if $M$ is a
 $\beta$-nf then $\neg\exists N:M\barrow N$ and $M\Barrow N\Rightarrow M\equiv N$.
@@ -271,7 +318,7 @@ be considered as a directed graph, with each arc going out of a node representin
 a reduction on some subterm of that node, and each node representing a lambda term that
 is the contractum of the terms represented by the nodes parents.
 \begin{definition}
-	The \emph{$\beta$ reduction graph} of $M$ is written $G_\beta(M)$ and it consists
+	The \emph{$\beta$ reduction graph} of $M$, written $G_\beta(M)$, consists
 	of the nodes in the set $V$ and the arcs in the multiset $A$. The set
 	of nodes and multiset of arcs in $G_\beta(M)$ are defined as:
 \begin{align*}
@@ -312,29 +359,29 @@ is the contractum of the terms represented by the nodes parents.
 		\centering
 		\begin{tabular}{ccc}
 			\subfigure[$G_\beta(\I x)$]{
-				\includegraphics{images/graphs/graf2.png}
+				\includegraphics{../images/graphs/graf2.png}
 				\label{fig:images_graphs_graf2}
 			} &
 			\subfigure[$G_\beta(\I(\I x))$]{
-				\includegraphics{images/graphs/graf1.png}
+				\includegraphics{../images/graphs/graf1.png}
 				\label{fig:images_graphs_graf1}
 			} & 
 			\subfigure[$G_\beta(\Omega)$]{
-				\includegraphics{images/graphs/graf3_omega.png}
+				\includegraphics{../images/graphs/graf3_omega.png}
 				\label{fig:images_graphs_graf3_omega}
 			} \\ \\
 			\subfigure[$G_\beta(\W\W\W)$]{
-				\includegraphics{images/graphs/graf4_www.png}
+				\includegraphics{../images/graphs/graf4_www.png}
 				\label{fig:images_graphs_graf4_www}
 			} \hspace{1.5em}
 			&
 			\subfigure[$G_\beta(MM)$]{
-				\includegraphics{images/graphs/graf5_MM.png}
+				\includegraphics{../images/graphs/graf5_MM.png}
 				\label{fig:images_graphs_graf5_MM}
 			}\hspace{1.5em}
 			&
 			\subfigure[$G_\beta(w_3w_3)$]{
-				\includegraphics{images/graphs/graf6_w3w3.png}
+				\includegraphics{../images/graphs/graf6_w3w3.png}
 				\label{fig:images_graphs_graf6_w3w3}
 			}
 		\end{tabular}
@@ -343,8 +390,11 @@ is the contractum of the terms represented by the nodes parents.
 	\end{figure}
 	\begin{figure}[htbp]
 		\centering
-			\includegraphics{images/graphs/graf7_omega_w3.png}
+			\includegraphics{../images/graphs/graf7_omega_w3.png}
 		\caption{The $\beta$-reduction graph $G_\beta(\Omega w_3)$}
 		\label{fig:images_graphs_graf7_omega_w3}
 	\end{figure}
 \end{example}
+Note that these examples only serve to illustrate the \emph{structure} of a 
+$\beta$-reduction graph, not the actual graph visualization that we develop
+in this thesis.
