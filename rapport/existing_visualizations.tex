@@ -1,36 +1,42 @@
 %!TEX root = rapport.tex
 
 \chapter{Existing visualizations in lambda theory}
+In this chapter we will discuss what already exists in areas related to our
+project. First of all we have examples where lambda calculus has been
+visualized, both using a piece of software, but also how lambda terms in
+theory can be visualized. We will secondly discuss general visualization using
+directed and semi-directed graphs.
 
-There does not exist anything similar to what we are doing in this thesis.
-However, there does exist many examples of projects making other types of
-visualizations of the lambda calculus. In this section we will discuss these.
+We haven not in our research found anything exactly similar to our thesis.
+There does exist many examples where a given reduction has been visualized,
+but newer in a way giving a complete insight into the evaluation of the lambda
+term. We have in in just a few hours of research found 9 examples, where we in
+the following sections will focus on two of them. The 9 examples we have found
+are:
 
-There are numerous examples of software with which a lambda term or a
-reduction step for a lambda term can be visualized. We have found 7 examples
-of such programs. For a complete list, see Appendix \ref{app:a}.
-What differentiates these examples from this project are mainly two things:
+\begin{enumerate}
+	\item A Visual Lambda Calculus \cite{Citrin+Hall+Zorn+1995a}
+	\item Reduction graphs in the lambda calculus \cite{VenturiniZilli1984251}
+	\item Orders, reduction graphs and spectra \cite{297368}
+	\item Standard ML on the Web server: Visualizing Lambda Calculus Reduction \cite{Sestoft96standardml}
+	\item TILC: The Interactive Lambda-Calculus Tracer \cite{DBLP:journals/entcs/RuizV09}
+	\item Visual Lambda \cite{visual-lambda}
+	\item Lambda Animator \cite{lambdaAnimatorThyer}
+	\item Alligator Eggs - A Puzzle Game \cite{Alligator}
+	\item Animated Lambda Calculus Evaluator \cite{AnimatedLambdaCalculusEvaluator}
+\end{enumerate}
+
+You can quantify the differentiations, from our project to these examples, by mainly two things:
+
 \begin{itemize}
-	\item
-	In our project we focus on the reduction graphs, and not on
-	the particular reductions, whereas the earlier work focus on
-	visualizing either particular reduction steps or the syntactic structure
-	of lambda terms. 
-	
-	\item
-	None of the existing visualizations are in our opinion very good-looking.
+	\item It is currently not possible to get a complete overview of all
+	      the reductions and thereby get an understanding of how the lambda
+	      term evaluate ``over time''.
+	\item Secondly, non existing visualizations has been capable of doing
+	      it beautifully.
 \end{itemize}
 
-In the rest of this chapter we will describe the two most interesting examples.
-
 \section{Alligator Eggs -- A Puzzle Game by Bret Victor}
-
-% \begin{figure}[h!]
-% 	% \centering
-% 		\includegraphics[width=0.1in]{../images/AlligatorEggs.png}
-% 	\caption{Alligator Eggs -  A Puzzle Game}
-% 	\label{fig:images_AlligatorEggs}
-% \end{figure}
 
 The ``Alligator Eggs - A Puzzle Game'' \cite{Alligator} is a ``fun'' and
 children-like way of visualizing $\beta$-reductions of a lambda term. It was
@@ -76,12 +82,29 @@ has eaten. ``The miracle of life'', as the author calls it. This so-called
 ``miracle'' is in our profane terminology called a $\beta$-reduction, as
 mentioned above.
 
-% \begin{figure}[htbp]
-% 	\centering
-% 		\includegraphics[width=2in]{../images/alligatorEat.png}
-% 	\caption{A reduction visualized as an alligator eating}
-% 	\label{fig:images_alligatorEat}
-% \end{figure}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=2in]{../images/alligatorEat.png}
+	\caption{A reduction visualized as an alligator eating}
+	\label{fig:images_alligatorEat}
+\end{figure}
+
+In figure \ref{fig:images_alligatorOld} we can see an example of the old age
+rule. In figure \ref{fig:images_alligatorOld} (a) the old alligator guards
+more than one alligator and therefore works as a parenthesis. Now the green
+alligator eats the red alligator. We can now in figure
+\ref{fig:images_alligatorOld} (b) see that the old alligator only has the red
+alligator to guard, which is the reason it now will die. In normal
+mathematical words, this means that the parenthesis only concludes one element
+and therefore is useless. Figure \ref{fig:images_alligatorOld} (c) shows the
+end result with the old alligator dead.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=2in]{../images/alligatorOld.jpg}
+	\caption{Example of the old age rule}
+	\label{fig:images_alligatorOld}
+\end{figure}
 
 ``Alligator Eggs - A Puzzle Game'' does not deal with the same kind of
 visualization tasks that we do in this project. It basically presents a
@@ -93,13 +116,13 @@ actually print out the alligators. (\cite{AlligatorTool})
 
 \section{Lambda Animator by Mike Thyer}
 The ``Lambda Animator'' is a representation of lambda terms in tree
-form. It is implemented in Java and available online via a Java Applet (\cite{lambdaAnimator}).
-% \begin{figure}[!htbp]
-% 	\centering
-% 		\includegraphics[scale=0.1]{../images/lambdaAnimator.png}
-% 	\caption{Screenshot of the Lambda Annimator tool}
-% 	\label{fig:images_lambdaAnimator}
-% \end{figure}
+form. It is implemented in Java and available online via a Java Applet (\cite{lambdaAnimatorThyer}).
+\begin{figure}[!htbp]
+	\centering
+		\includegraphics[scale=0.1]{../images/lambdaAnimator.png}
+	\caption{Screenshot of the Lambda Annimator tool}
+	\label{fig:images_lambdaAnimator}
+\end{figure}
 
 The Animator does not seem very smooth and does not produce graphs that are
 neither pretty nor especially visually informative. It uses extremely simple
@@ -110,20 +133,25 @@ the tool.
 It can give an reasonable overview when the lambda terms are not to complex.
 In figure \ref{fig:images_lambdaAnimatorReduction} there is an example of a
 simple $\beta$-reduction.
-% \begin{figure}[!htbp]
-% 	\centering
-% 		\includegraphics[scale=0.25]{../images/lambdaAnimatorReduction.png}
-% 	\caption{Example of a simple $\beta$-reduction in the Lambda Animator}
-% 	\label{fig:images_lambdaAnimatorReduction}
-% \end{figure}
+\begin{figure}[!htbp]
+	\centering
+		\includegraphics[scale=0.25]{../images/lambdaAnimatorReduction.png}
+	\caption{Example of a simple $\beta$-reduction in the Lambda Animator}
+	\label{fig:images_lambdaAnimatorReduction}
+\end{figure}
 
 When you are dealing with more complex lambda terms it very easy gets chaotic.
 In figure \ref{fig:images_lambdaAnimatorComplex} there is another example, in
 which one can see that the informativeness seems to drastically degrade when
 the term complexity is increasing.
-% \begin{figure}[!htbp]
-% 	\centering
-% 		\includegraphics[scale=0.25]{../images/lambdaAnimatorComplex.png}
-% 	\caption{Complex example in the Lambda Animator}
-% 	\label{fig:images_lambdaAnimatorComplex}
-% \end{figure}
+\begin{figure}[!htbp]
+	\centering
+		\includegraphics[scale=0.25]{../images/lambdaAnimatorComplex.png}
+	\caption{Complex example in the Lambda Animator}
+	\label{fig:images_lambdaAnimatorComplex}
+\end{figure}
+
+\section{Textual reduction}
+
+\section{Example of visualization via graphs}
+
