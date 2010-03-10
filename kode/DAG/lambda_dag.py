@@ -7,13 +7,9 @@ class Node(object):
 	"""
 	A node in a graph...
 	"""
-	v_count = 0
 	def __init__(self):
 		self.children = []
-	
-	def alphaconvert(self):
-		raise NotImplementedError("")
-	
+		
 	def add(self, nodes):
 		self.children.extend(nodes)
 	
@@ -21,44 +17,61 @@ class Node(object):
 		for n in nodes:
 			self.children.remove(n)
 
-class Abstraction(Node):
+class LambdaNode(Node):
+	def alphaconvert(self, convertfrom, convertto):
+		for c in self.children:
+			c.alphaconvert(convertfrom, convertto)
+	
+	def betareduce(self):
+		raise NotImplementedError("")
+	
+
+class Abstraction(LambdaNode):
 	"""
 	A lambda abstraction. Knows which descending nodes it binds.
 	"""
-	variables = []
-	def assignvar(self, *variablenode):
+	def assignvar(self, variablenode):
 		self.variables.extend(variablenode)
 	
-	def alphaconvert(self):
-		
+	def __init__(self):
+		self.children = []
+		self.variables = []
+	
+	def alphaconvert(self, convertfrom, convertto):
+		for v in self.variables:
+			if v.name == convertfrom:
+				v.name = convertto
+		for c in self.children:
+			if c not in self.variables:
+				c.alphaconvert(convertfrom, convertto)
 	
 	def __repr__(self):
 		return "Abstraction(" + [c.__repr__() for c in self.children].__repr__() + ")"
 
 
-class Application(Node):
+class Application(LambdaNode):
 	"""
 	Lambda application.
 	"""
 	def __repr__(self):
 		return "Application(" + [c.__repr__() for c in self.children].__repr__() + ")"
-		
+	
+	def betareduce(self):
+		if isinstance(self.children[0], Abstraction):
+			# return some kind of reduct/thingy perhaps...
 
 
-class Variable(Node):
+class Variable(LambdaNode):
 	"""
 	A variable. Can be either bound or free.
-	"""
-	bound = False
-	def bind():
-		bound = True
-	
-	def __init__(self, opt_name):
+	"""	
+	def __init__(self, n):
+		self.bound = False
 		self.children = []
-		self.given_name = opt_name
+		self.name = n
 	
 	def __repr__(self):
-		return "Variable_" + self.given_name + "(" + [c.__repr__() for c in self.children].__repr__() + ")"
+		return "Variable_" + self.name + "(" + [c.__repr__() for c in self.children].__repr__() + ")"
 
 
 def traverse(root, dispatch):
@@ -92,11 +105,11 @@ if __name__ == "__main__":
 	root_node.add([lX, appl])
 	appl.add([lY, z])
 	lX.add([x])
-	lX.assignvar(x)
+	lX.assignvar([x])
 	lY.add([y])
-	lY.assignvar(y)
+	lY.assignvar([y])
 	
 	def cb(node):
-		print node.__repr__()
+		print node
 	
 	traverse(root_node, cb)
