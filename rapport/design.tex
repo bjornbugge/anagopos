@@ -29,7 +29,24 @@ class, \pycode{Node}, which has a subclass for each node type. Each
 \pycode{Node}-object maintains a list of its immediate descendants. The
 abstraction nodes furthermore maintain a list of variable nodes representing
 the particular variable that the abstraction node ``binds''. These variable
-nodes need not be direct descendants.
+nodes need not be direct descendants. 
+
+When a term is reduced, the problem is attacked ``top-down'', i.e. we first
+see the abstraction node, and then we have to deal with its variables.
+Therefore there is no need for a doubly linked connection between abstraction
+nodes and variable nodes, and we can safely encode the relationship as a simple
+list of bound nodes in each abstraction node.
+
+A variable node need not know its ``original name'', meaning the name
+associated with the variable in the original textual representation given by
+the user. After $\alpha$-conversion, this name does not matter, and after a
+sequence of $\beta$-reductions the overall structure of the term will be so
+far from the original, that all variables will be ``new'' defined. However, in
+order to be able to get nice (textual) representations of lambda terms from
+the DAG representations, we will name all variables with an ordinary name
+($v_0$, $v_1$, $v_2$, etc.). The bound variables will get their names from the
+lists in the abstraction nodes that maintain the abstractor-variable
+relationship, whereas the free variables will contain their names themselves.
 
 % Callback functions? Hvad skal de bruges til?
 

@@ -1,5 +1,5 @@
 {
-    DKDChangeTimeStamp = "2010-02-23 17:31:53 +0100";
+    DKDChangeTimeStamp = "2010-02-24 12:00:08 +0100";
     DKDCreateTimeStamp = "2010-02-23 17:27:07 +0100";
     DKDDisplayGraphicDetails =     {
         AngleFormatDisplayDetails =         {
@@ -765,7 +765,7 @@
                 DKDOnColorMod = NO;
                 DKDOpacityColorMod = "0.500000";
                 DKDTintColorColorMod =                 {
-                    ColorSpace = NSCalibratedWhiteColorSpace;
+                    ColorSpace = NSDeviceWhiteColorSpace;
                     Opacity = "1.000000";
                     White = "0.500000";
                 };
@@ -817,7 +817,7 @@
         XPrintMirror = NO;
         YPrintMirror = NO;
     };
-    DKDSaveTimeStamp = "2010-02-23 17:32:02 +0100";
+    DKDSaveTimeStamp = "2010-02-26 01:59:50 +0100";
     DKDTablet =     {
         PenMax = "25.000000";
         PenMin = "0.500000";
@@ -923,7 +923,7 @@
     );
     DKDWindowState =     {
         DocCenter = "{306, 255.5}";
-        DocumentFileName = "/Users/bear/DIKU/ProjektFora\U030ar2009/lambda2010/graf4_www.ezdraw";
+        DocumentFileName = "/Users/bear/DIKU/ProjektFora\U030ar2009/lambda2010/images/graphs/graf4_www.ezdraw";
         GDetailsLayersDrawerEdgePreference = Auto;
         GraphicDetailsOpen = NO;
         LayerOpen = NO;

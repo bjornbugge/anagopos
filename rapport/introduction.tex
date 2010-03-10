@@ -26,20 +26,38 @@ can use this tool to gain new insight into the lambda calculus, and that it
 will serve as a source of inspiration for new research because it offers a new
 look at a well-known concept.
 
-% \section{Project constraints \& risks}
-% Because reduction graphs very often tend to become huge, there arises the
-% problem of deci ding whether they can be drawn on a plane at all. We will
-% perhaps have to develop a routine for deciding this, along with routines for
-% reordering the graph. Alternatively, a set of ``best practices'' for drawing
-% the nodes could be developed that would minimize the amount of crossing edges
-% as the film progresses forward. Yet more alternatively, methods for 3D-drawing
-% could be considered. However, this will demand great care when determining the
-% look of the images, as a 3-dimensional rendering of a large graph very easily
-% could inhibit understanding and confuse the beholder, which is the opposite of
-% what we are working towards.
-% 
-% Furthermore, there is a design choice to be made whether each frame of the
-% film should be drawn immediately after the reduction step has been completed,
-% making the film rendering and the term reductions synchronized, or whether the
-% rendering should begin only after all desired (or possible) reductions have
-% been computed.
+\section{A Brief History of the Lambda Calculus}
+
+The lambda calculus was developed in the 1930s by Alonzo Church
+\cite{Church1932}, contributing to the mathematical search for a foundation
+for all mathematics. The attempt was unsuccesful, however, as the original
+lambda calculus was proven inconsistent using the Kleene-Rosser paradox
+\cite{KleeneRosser1935}. After this setback, Church published a subset of
+the theory, known as the \emph{untyped lambda calculus} \cite{Church1936}.
+This part of the theory deals only with the concepts relevant for computation,
+and does as such not try to lay out a general foundation for all mathematics.
+Later on, Church also published a simple, typed version of his theory, known
+as the \emph{simply typed lambda calculus} \cite{Church1940} in order to fix
+some of the inconsistencies. We will in this thesis deal with the untyped
+version, whence the names ``lambda calculus'' and ``untyped lambda calculus''
+will be used as synonyms.
+
+The untyped lambda calculus proved quite useful for computability theory.
+Church proposed a definition of the notion ``effectively computable'' using
+it, and Turing showed that his ``mechanical'' approach to computability in the
+Turing machine is equivalent to Church's approach
+\cite{Turing1936,Turing1937}. In the field of programming languages it was
+also put to use, as it can be viewed as a Turing-complete programming
+language, albeit very cumbersome to use. It is of course not intended to be
+used as a ``regular'' programming language, rather, it provides a clean
+mathematical framework and notation for language designers to reason about
+programming language semantics. For instance, a formal semantics for Algol was
+developed by translating the language into lambda calculus and then defining a
+semantics for that \cite{Landin1965}.
+
+\section{Expectations of the Reader}
+
+The reader is expected to have a basic knowledge of graphs along with basic
+familiarity with Python. Knowledge of the lambda calculus is an advantage but
+not a requirement, since the basic concepts relevant for this work are
+introduced in a later chapter. 
