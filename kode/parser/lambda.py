@@ -7,9 +7,6 @@ class LambdaScanner(Scanner):
         ('"\\\\)"', re.compile('\\)')),
         ('"\\\\("', re.compile('\\(')),
         ('"/"', re.compile('/')),
-        ('"[*]"', re.compile('[*]')),
-        ('"-"', re.compile('-')),
-        ('"[+]"', re.compile('[+]')),
         ('END', re.compile('$')),
         ('LAM', re.compile('[\xc2\xa3\xe2\x80\x9d]+')),
         ('VAR', re.compile('[a-zA-Z_]+')),
@@ -24,33 +21,12 @@ class Lambda(Parser):
         return expr
 
     def expr(self):
-        factor = self.factor()
-        v = factor
-        while self._peek('"[+]"', '"-"', 'END', '"\\\\)"') in ['"[+]"', '"-"']:
-            _token_ = self._peek('"[+]"', '"-"')
-            if _token_ == '"[+]"':
-                self._scan('"[+]"')
-                factor = self.factor()
-                v = v+factor
-            else:# == '"-"'
-                self._scan('"-"')
-                factor = self.factor()
-                v = v-factor
-        return v
-
-    def factor(self):
         term = self.term()
         v = term
-        while self._peek('"[*]"', '"/"', '"[+]"', '"-"', 'END', '"\\\\)"') in ['"[*]"', '"/"']:
-            _token_ = self._peek('"[*]"', '"/"')
-            if _token_ == '"[*]"':
-                self._scan('"[*]"')
-                term = self.term()
-                v = v*term
-            else:# == '"/"'
-                self._scan('"/"')
-                term = self.term()
-                v = v/term
+        while self._peek('"/"', 'END', '"\\\\)"') == '"/"':
+            self._scan('"/"')
+            term = self.term()
+            v = v/term
         return v
 
     def term(self):
