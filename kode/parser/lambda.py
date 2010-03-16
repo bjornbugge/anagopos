@@ -11,8 +11,7 @@ class LambdaScanner(Scanner):
         ('"-"', re.compile('-')),
         ('"[+]"', re.compile('[+]')),
         ('END', re.compile('$')),
-        ('NUM', re.compile('[0-9]+')),
-        ('LAM', re.compile('[\xc2\xa3]+')),
+        ('LAM', re.compile('[\xc2\xa3\xe2\x80\x9d]+')),
         ('VAR', re.compile('[a-zA-Z_]+')),
     ]
     def __init__(self, str):
@@ -55,15 +54,10 @@ class Lambda(Parser):
         return v
 
     def term(self):
-        _token_ = self._peek('NUM', '"\\\\("')
-        if _token_ == 'NUM':
-            NUM = self._scan('NUM')
-            return atoi(NUM)
-        else:# == '"\\\\("'
-            self._scan('"\\\\("')
-            expr = self.expr()
-            self._scan('"\\\\)"')
-            return expr
+        self._scan('"\\\\("')
+        expr = self.expr()
+        self._scan('"\\\\)"')
+        return expr
 
 
 def parse(rule, text):
