@@ -1,7 +1,7 @@
 parser Lambda:
     token END: "$"
-	token LAM: "[λ]+"
-	token DOT: "[.]+"
+	token LAM: "#"
+	token DOT: "."
 	token VAR: "[a-zA-Z_]+"
 
 
@@ -9,26 +9,38 @@ parser Lambda:
 	# If x is a variable and M ∈ Λ, then (λx.M) ∈ Λ
 	# If M, N ∈ Λ, then (M N) ∈ Λ
 	
-	rule goal:           term END         {{ return term }}
+#	rule goal:           term END         {{ print "term" }}
+#
+#
+#	# x			#variable
+#	rule x:                 VAR                   {{ print "var" }}
+#
+#	# t ::=		#terms
+#	rule term:              x                       {{  }}
+#                          | abstraction             {{  }}
+#                          | parentheses             {{  }}
+#
+#	# (λx.t)	#abstraction
+#	rule abstraction:       LAM x DOT term   {{ print "abstraction" }}
+#
+#	# # (t t)		#parentheses
+#	rule parentheses:       "\\("term term"\\)"     {{ print "parentheses" }}
+#
 
+    rule goal:  term END    {{}}
+    
+    rule exp:   VAR                 {{}}
+                | LAM VAR DOT exp   {{}}
+                | exp exp           {{}}   # LEFT RECURSION!
+                | "\\(" exp "\\)"   {{}}
 
-	# x			#variable
-	rule x:                 VAR                   {{ return x }}
-
-	# t ::=		#terms
-	rule term:              x                       {{ return x }}
-                          | abstraction             {{ return abstraction }}
-                          | parentheses             {{ return parentheses }}
-
-	# (λx.t)	#abstraction
-	rule abstraction:       LAM x DOT abstraction   {{ return term }}
-
-	# # (t t)		#parentheses
-	rule parentheses:       "\\("term term"\\)"     {{ return term }}
-
-
-
-
+#
+#    <Exp> ::= <ident> |
+#              <constant> |
+#              lambda <ident> . <Exp> |      -- function abstraction
+#              <Exp> <Exp> |                 -- function application
+#              ( <Exp> )
+#
 
 	# 						    rule goal:           expr END         {{ return expr }}
 	

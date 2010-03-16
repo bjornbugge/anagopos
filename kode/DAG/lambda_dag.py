@@ -1,7 +1,6 @@
 """
+DAG-representation of lambda terms.
 """
-
-from collections import deque
 
 class Node(object):
 	"""
@@ -16,14 +15,20 @@ class Node(object):
 	def remove(self, nodes):
 		for n in nodes:
 			self.children.remove(n)
+	
+	def clone(self):
+		return NotImplementedError('')
 
 class LambdaNode(Node):
 	def alphaconvert(self, convertfrom, convertto):
 		for c in self.children:
 			c.alphaconvert(convertfrom, convertto)
 	
-	def betareduce(self):
-		raise NotImplementedError("")
+	def leftchild(self):
+		return self.children[0]
+
+	def rightchild(self):
+		return self.children[1]
 	
 
 class Abstraction(LambdaNode):
@@ -45,21 +50,35 @@ class Abstraction(LambdaNode):
 			if c not in self.variables:
 				c.alphaconvert(convertfrom, convertto)
 	
+	def reduce(self, term):
+		for c in self.children:
+			if c in self.variables:
+				self.children.insert(self.children.index(c), term)
+				self.children.remove(c)
+			else:
+				c.reduce()
+	
+	def clone(self):
+		n = Abstraction()
+		n.add([c.clone() for c in self.children])
+		n.assignvar([v.clone() for v in self.variables])
+		return n
+	
 	def __repr__(self):
-		return "Abstraction(" + [c.__repr__() for c in self.children].__repr__() + ")"
+		return "$"+self.variables[0].name+".("+ [c.__repr__() for c in self.children].__repr__() +")"
 
 
 class Application(LambdaNode):
 	"""
 	Lambda application.
 	"""
-	def __repr__(self):
-		return "Application(" + [c.__repr__() for c in self.children].__repr__() + ")"
+	def clone(self):
+		n = Application()
+		n.add([c.clone() for c in self.children])
+		return n
 	
-	def betareduce(self):
-		if isinstance(self.children[0], Abstraction):
-			# return some kind of reduct/thingy perhaps...
-
+	def __repr__(self):
+		return "(" + self.leftchild().__repr__() + " " + self.rightchild().__repr__() + ")"
 
 class Variable(LambdaNode):
 	"""
@@ -67,49 +86,13 @@ class Variable(LambdaNode):
 	"""	
 	def __init__(self, n):
 		self.bound = False
-		self.children = []
+		self.children = [] # A variable can't have children
 		self.name = n
 	
+	def clone(self):
+		n = Variable(self.name)
+		n.bound = self.bound
+		return n
+	
 	def __repr__(self):
-		return "Variable_" + self.name + "(" + [c.__repr__() for c in self.children].__repr__() + ")"
-
-
-def traverse(root, dispatch):
-	"""
-	Traverse down the tree, processing nodes from left to right, calling dispatch on each node.
-	"""
-	stack = deque([root])
-	stack_pop = stack.popleft
-	stack_extend = stack.extend
-	stack_rotate = stack.rotate
-	while stack:
-		# print "Traversing..."
-		node = stack_pop() 
-		dispatch(node)
-		if hasattr(node, 'children'):
-			stack_extend(node.children)
-			stack_rotate(len(node.children))
-
-
-if __name__ == "__main__":	
-	root_node = Application()
-	appl = Application()
-	
-	lX = Abstraction()
-	lY = Abstraction()
-	
-	x = Variable('x')
-	y = Variable('y')
-	z = Variable('z')
-	
-	root_node.add([lX, appl])
-	appl.add([lY, z])
-	lX.add([x])
-	lX.assignvar([x])
-	lY.add([y])
-	lY.assignvar([y])
-	
-	def cb(node):
-		print node
-	
-	traverse(root_node, cb)
+		return self.name
