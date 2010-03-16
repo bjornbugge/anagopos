@@ -6,7 +6,6 @@ class LambdaScanner(Scanner):
     patterns = [
         ('"\\\\)"', re.compile('\\)')),
         ('"\\\\("', re.compile('\\(')),
-        ('"\xce\xbb"', re.compile('\xce\xbb')),
         ('END', re.compile('$')),
         ('LAM', re.compile('[\xce\xbb]+')),
         ('DOT', re.compile('[.]+')),
@@ -16,14 +15,21 @@ class LambdaScanner(Scanner):
         Scanner.__init__(self,None,[],str)
 
 class Lambda(Parser):
+    def goal(self):
+        term = self.term()
+        END = self._scan('END')
+        return term
+
     def x(self):
-        x = self.x()
         VAR = self._scan('VAR')
         return x
 
     def term(self):
-        _token_ = self._peek('"\xce\xbb"', '"\\\\("')
-        if _token_ == '"\xce\xbb"':
+        _token_ = self._peek('VAR', 'LAM', '"\\\\("')
+        if _token_ == 'VAR':
+            x = self.x()
+            return x
+        elif _token_ == 'LAM':
             abstraction = self.abstraction()
             return abstraction
         else:# == '"\\\\("'
@@ -31,8 +37,7 @@ class Lambda(Parser):
             return parentheses
 
     def abstraction(self):
-        _token_ = self._peek('"\xce\xbb"')
-        self._scan('"\xce\xbb"')
+        LAM = self._scan('LAM')
         x = self.x()
         DOT = self._scan('DOT')
         abstraction = self.abstraction()

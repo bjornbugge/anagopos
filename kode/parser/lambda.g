@@ -8,10 +8,12 @@ parser Lambda:
 	# If x is a variable, then x ∈ Λ
 	# If x is a variable and M ∈ Λ, then (λx.M) ∈ Λ
 	# If M, N ∈ Λ, then (M N) ∈ Λ
+	
+	rule goal:           term END         {{ return term }}
 
 
 	# x			#variable
-	rule x:                 x VAR                   {{ return x }}
+	rule x:                 VAR                   {{ return x }}
 
 	# t ::=		#terms
 	rule term:              x                       {{ return x }}
@@ -19,8 +21,7 @@ parser Lambda:
                           | parentheses             {{ return parentheses }}
 
 	# (λx.t)	#abstraction
-	rule abstraction:       "λ" x DOT abstraction   {{ return term }}
-                          | x                       {{ return x }}
+	rule abstraction:       LAM x DOT abstraction   {{ return term }}
 
 	# # (t t)		#parentheses
 	rule parentheses:       "\\("term term"\\)"     {{ return term }}
