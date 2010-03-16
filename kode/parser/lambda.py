@@ -6,34 +6,44 @@ class LambdaScanner(Scanner):
     patterns = [
         ('"\\\\)"', re.compile('\\)')),
         ('"\\\\("', re.compile('\\(')),
-        ('"/"', re.compile('/')),
+        ('"\xce\xbb"', re.compile('\xce\xbb')),
         ('END', re.compile('$')),
-        ('LAM', re.compile('[\xc2\xa3\xe2\x80\x9d]+')),
+        ('LAM', re.compile('[\xce\xbb]+')),
+        ('DOT', re.compile('[.]+')),
         ('VAR', re.compile('[a-zA-Z_]+')),
     ]
     def __init__(self, str):
         Scanner.__init__(self,None,[],str)
 
 class Lambda(Parser):
-    def goal(self):
-        expr = self.expr()
-        END = self._scan('END')
-        return expr
-
-    def expr(self):
-        term = self.term()
-        v = term
-        while self._peek('"/"', 'END', '"\\\\)"') == '"/"':
-            self._scan('"/"')
-            term = self.term()
-            v = v/term
-        return v
+    def x(self):
+        x = self.x()
+        VAR = self._scan('VAR')
+        return x
 
     def term(self):
+        _token_ = self._peek('"\xce\xbb"', '"\\\\("')
+        if _token_ == '"\xce\xbb"':
+            abstraction = self.abstraction()
+            return abstraction
+        else:# == '"\\\\("'
+            parentheses = self.parentheses()
+            return parentheses
+
+    def abstraction(self):
+        _token_ = self._peek('"\xce\xbb"')
+        self._scan('"\xce\xbb"')
+        x = self.x()
+        DOT = self._scan('DOT')
+        abstraction = self.abstraction()
+        return term
+
+    def parentheses(self):
         self._scan('"\\\\("')
-        expr = self.expr()
+        term = self.term()
+        term = self.term()
         self._scan('"\\\\)"')
-        return expr
+        return term
 
 
 def parse(rule, text):
