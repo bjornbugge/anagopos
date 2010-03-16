@@ -1,0 +1,376 @@
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html>
+<head>
+<title>5 Parser Mechanics</title>
+<meta name="description" content="5 parser Mechanics">
+<meta name="keywords" content="yapps2">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="LaTeX2HTML v2K.1beta">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="yapps2.css">
+
+<link rel="next" href="node6.html">
+<link rel="previous" href="node4.html">
+<link rel="up" href="yapps2.html">
+<link rel="next" href="node6.html">
+</head>
+
+<body bgcolor=white text=black link=#004080 vlink=#006020>
+
+<div class="navigation"><!--Navigation Panel-->
+<a name="tex2html101"
+  href="node6.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html99"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html93"
+  href="node4.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html102"
+  href="node6.html">A. Grammar for Parsers</a>
+<b> Up:</b> <a name="tex2html100"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html94"
+  href="node4.html">4 Customization</a>
+<br>
+<br></div>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<a name="CHILD_LINKS"><strong>Subsections</strong></a>
+
+<ul class="ChildLinks">
+<li><a name="tex2html103"
+  href="#SECTION00051000000000000000"><span class="arabic">5</span>.<span class="arabic">1</span> Parser Objects</a>
+<li><a name="tex2html104"
+  href="#SECTION00052000000000000000"><span class="arabic">5</span>.<span class="arabic">2</span> Context Sensitive Scanner</a>
+<li><a name="tex2html105"
+  href="#SECTION00053000000000000000"><span class="arabic">5</span>.<span class="arabic">3</span> Internal Variables</a>
+<li><a name="tex2html106"
+  href="#SECTION00054000000000000000"><span class="arabic">5</span>.<span class="arabic">4</span> Pre- and Post-Parser Code</a>
+<li><a name="tex2html107"
+  href="#SECTION00055000000000000000"><span class="arabic">5</span>.<span class="arabic">5</span> Representation of Grammars</a>
+</ul>
+<!--End of Table of Child-Links-->
+<hr>
+
+<h1><a name="SECTION00050000000000000000">
+<span class="arabic">5</span> Parser Mechanics</a>
+</h1>
+
+<p>
+The base parser class (Parser) defines two methods, <tt>_scan</tt>
+and <tt>_peek</tt>, and two fields, <tt>_pos</tt> and
+<tt>_scanner</tt>.  The generated parser inherits from the base
+parser, and contains one method for each rule in the grammar.  To
+avoid name clashes, do not use names that begin with an underscore
+(<tt>_</tt>).
+
+<p>
+
+<h2><a name="SECTION00051000000000000000"></a>
+<a name="sec:Parser-Objects"></a>
+<br>
+<span class="arabic">5</span>.<span class="arabic">1</span> Parser Objects
+</h2>
+
+<p>
+Yapps produces as output two exception classes, a scanner class, a
+parser class, and a function <tt>parse</tt> that puts everything
+together.  The <tt>parse</tt> function does not have to be used;
+instead, one can create a parser and scanner object and use them
+together for parsing.
+
+<p>
+<pre>
+    def parse(rule, text):
+        P = X(XScanner(text))
+        return wrap_error_reporter(P, rule)
+</pre>
+
+<p>
+The <tt>parse</tt> function takes a name of a rule and an input string
+as input.  It creates a scanner and parser object, then calls
+<tt>wrap_error_reporter</tt> to execute the method in the parser
+object named <tt>rule</tt>.  The wrapper function will call the
+appropriate parser rule and report any parsing errors to standard
+output.
+
+<p>
+There are several situations in which the <tt>parse</tt> function
+would not be useful.  If a different parser or scanner is being used,
+or exceptions are to be handled differently, a new <tt>parse</tt>
+function would be required.  The supplied <tt>parse</tt> function can
+be used as a template for writing a function for your own needs.  An
+example of a custom parse function is the <tt>generate</tt> function
+in <tt>Yapps.py</tt>.
+
+<p>
+
+<h2><a name="SECTION00052000000000000000">
+<span class="arabic">5</span>.<span class="arabic">2</span> Context Sensitive Scanner</a>
+</h2>
+
+<p>
+Unlike most scanners, the scanner produced by Yapps can take into
+account the context in which tokens are needed, and try to match only
+good tokens.  For example, in the grammar:
+
+<p>
+<pre>
+parser IniFile:
+   token ID:   "[a-zA-Z_0-9]+"
+   token VAL:  ".*"
+
+   rule pair:  ID "[ \t]*=[ \t]*" VAL "\n"
+</pre>
+
+<p>
+we would like to scan lines of text and pick out a name/value pair.
+In a conventional scanner, the input string <tt>shell=progman.exe</tt>
+would be turned into a single token of type <tt>VAL</tt>.  The Yapps
+scanner, however, knows that at the beginning of the line, an
+<tt>ID</tt> is expected, so it will return <tt>"shell"</tt> as a token
+of type <tt>ID</tt>.  Later, it will return <tt>"progman.exe"</tt> as
+a token of type <tt>VAL</tt>.
+
+<p>
+Context sensitivity decreases the separation between scanner and
+parser, but it is useful in parsers like <tt>IniFile</tt>, where the
+tokens themselves are not unambiguous, but <span  class="textit">are</span> unambiguous
+given a particular stage in the parsing process.
+
+<p>
+Unfortunately, context sensitivity can make it more difficult to
+detect errors in the input.  For example, in parsing a Pascal-like
+language with ``begin'' and ``end'' as keywords, a context sensitive
+scanner would only match ``end'' as the END token if the parser is in
+a place that will accept the END token.  If not, then the scanner
+would match ``end'' as an identifier.  To disable the context
+sensitive scanner in Yapps, add the
+<tt>context-insensitive-scanner</tt> option to the grammar:
+
+<p>
+<pre>
+Parser X:
+    option:  "context-insensitive-scanner"
+</pre>
+
+<p>
+Context-insensitive scanning makes the parser look cleaner as well.
+
+<p>
+
+<h2><a name="SECTION00053000000000000000">
+<span class="arabic">5</span>.<span class="arabic">3</span> Internal Variables</a>
+</h2>
+
+<p>
+There are two internal fields that may be of use.  The parser object
+has two fields, <tt>_pos</tt>, which is the index of the current
+token being matched, and <tt>_scanner</tt>, which is the scanner
+object.  The token itself can be retrieved by accessing the scanner
+object and calling the <tt>token</tt> method with the token index.  However, if you call <tt>token</tt> before the token has been requested by the parser, it may mess up a context-sensitive scanner.<a name="tex2html2"
+  href="footnode.html#foot399"><sup><span class="arabic">1</span></sup></a>  A
+potentially useful combination of these fields is to extract the
+portion of the input matched by the current rule.  To do this, just save the scanner state (<tt>_scanner.pos</tt>) before the text is matched and then again after the text is matched:
+
+<p>
+<pre>
+  rule R: 
+      {{ start = self._scanner.pos }}
+      a b c 
+      {{ end = self._scanner.pos }}
+      {{ print 'Text is', self._scanner.input[start:end] }}
+</pre>
+
+<p>
+
+<h2><a name="SECTION00054000000000000000">
+<span class="arabic">5</span>.<span class="arabic">4</span> Pre- and Post-Parser Code</a>
+</h2>
+
+<p>
+Sometimes the parser code needs to rely on helper variables,
+functions, and classes.  A Yapps grammar can optionally be surrounded
+by double percent signs, to separate the grammar from Python code.
+
+<p>
+<pre>
+... Python code ...
+%%
+... Yapps grammar ...
+%%
+... Python code ...
+</pre>
+
+<p>
+The second <code>%%</code> can be omitted if there is no Python code at the
+end, and the first <code>%%</code> can be omitted if there is no extra
+Python code at all.  (To have code only at the end, both separators
+are required.)
+
+<p>
+If the second <code>%%</code> is omitted, Yapps will insert testing code
+that allows you to use the generated parser to parse a file.
+
+<p>
+The extended calculator example in the Yapps examples subdirectory
+includes both pre-parser and post-parser code.
+
+<p>
+
+<h2><a name="SECTION00055000000000000000">
+<span class="arabic">5</span>.<span class="arabic">5</span> Representation of Grammars</a>
+</h2>
+
+<p>
+For each kind of pattern there is a class derived from Pattern.  Yapps 
+has classes for Terminal, NonTerminal, Sequence, Choice, Option, Plus, 
+Star, and Eval.  Each of these classes has the following interface:
+
+<p>
+<dl compact>
+<dt>setup(<span  class="textit">gen</span>)</dt>
+<dd>Set accepts-<span class="MATH"><IMG
+ WIDTH="14" HEIGHT="21" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$\epsilon$"></span>, and call
+   <span  class="textit">gen.changed()</span> if it changed.  This function can change the
+   flag from false to true but <span  class="textit">not</span> from true to false.
+ 
+</dd>
+<dt>update(<span  class="textit">(</span>gen))</dt>
+<dd>Set <small>FIRST</small>and <small>FOLLOW</small>, and call
+   <span  class="textit">gen.changed()</span> if either changed.  This function can add to
+   the sets but <span  class="textit">not</span> remove from them.
+ 
+</dd>
+<dt>output(<span  class="textit">gen</span>, <span  class="textit">indent</span>)</dt>
+<dd>Generate code for matching
+   this rule, using <span  class="textit">indent</span> as the current indentation level.
+   Writes are performed using <span  class="textit">gen.write</span>.
+ 
+</dd>
+<dt>used(<span  class="textit">vars</span>)</dt>
+<dd>Given a list of variables <span  class="textit">vars</span>,
+   return two lists: one containing the variables that are used, and
+   one containing the variables that are assigned.  This function is
+   used for optimizing the resulting code.
+</dd>
+</dl>
+
+<p>
+Both <span  class="textit">setup</span> and <span  class="textit">update</span> monotonically increase the
+variables they modify.  Since the variables can only increase a finite
+number of times, we can repeatedly call the function until the
+variable stabilized.  The <span  class="textit">used</span> function is not currently
+implemented.
+
+<p>
+With each pattern in the grammar Yapps associates three pieces of
+information: the <small>FIRST</small>set, the <small>FOLLOW</small>set, and the
+accepts-<span class="MATH"><IMG
+ WIDTH="14" HEIGHT="21" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$\epsilon$"></span> flag.
+
+<p>
+The <small>FIRST</small>set contains the tokens that can appear as we start
+matching the pattern.  The <small>FOLLOW</small>set contains the tokens that can
+appear immediately after we match the pattern.  The accepts-<span class="MATH"><IMG
+ WIDTH="14" HEIGHT="21" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$\epsilon$"></span> 
+flag is true if the pattern can match no tokens.  In this case, <small>FIRST</small>
+will contain all the elements in <small>FOLLOW</small>.  The <small>FOLLOW</small>set is not
+needed when accepts-<span class="MATH"><IMG
+ WIDTH="14" HEIGHT="21" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$\epsilon$"></span> is false, and may not be accurate in
+those cases.
+
+<p>
+Yapps does not compute these sets precisely.  Its approximation can
+miss certain cases, such as this one:
+
+<p>
+<pre>
+  rule C: ( A* | B )
+  rule B: C [A]
+</pre>
+
+<p>
+Yapps will calculate <tt>C</tt>'s <small>FOLLOW</small>set to include <tt>A</tt>.
+However, <tt>C</tt> will always match all the <tt>A</tt>'s, so <tt>A</tt> will
+never follow it.  Yapps 2.0 does not properly handle this construct,
+but if it seems important, I may add support for it in a future
+version.
+
+<p>
+Yapps also cannot handle constructs that depend on the calling
+sequence.  For example:
+
+<p>
+<pre>
+  rule R: U | 'b'
+  rule S:   | 'c'
+  rule T: S 'b'
+  rule U: S 'a'
+</pre>
+
+<p>
+The <small>FOLLOW</small>set for <tt>S</tt> includes <tt>a</tt> and <tt>b</tt>.  Since <tt>  S</tt> can be empty, the <small>FIRST</small>set for <tt>S</tt> should include <tt>a</tt>,
+<tt>b</tt>, and <tt>c</tt>.  However, when parsing <tt>R</tt>, if the lookahead
+is <tt>b</tt> we should <span  class="textit">not</span> parse <tt>U</tt>.  That's because in <tt>  U</tt>, <tt>S</tt> is followed by <tt>a</tt> and not <tt>b</tt>.  Therefore in
+<tt>R</tt>, we should choose rule <tt>U</tt> only if there is an <tt>a</tt> or
+<tt>c</tt>, but not if there is a <tt>b</tt>.  Yapps and many other LL(1)
+systems do not distinguish <tt>S b</tt> and <tt>S a</tt>, making <tt>  S</tt>'s <small>FOLLOW</small>set <tt>a, b</tt>, and making <tt>R</tt> always try to match
+<tt>U</tt>.  In this case we can solve the problem by changing <tt>R</tt> to 
+<code>'b' | U</code> but it may not always be possible to solve all such
+problems in this way.
+
+<p>
+
+<p>
+
+<div class="navigation"><hr>
+<!--Navigation Panel-->
+<a name="tex2html101"
+  href="node6.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html99"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html93"
+  href="node4.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html102"
+  href="node6.html">A. Grammar for Parsers</a>
+<b> Up:</b> <a name="tex2html100"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html94"
+  href="node4.html">4 Customization</a></div>
+<!--End of Navigation Panel-->
+<address>
+Amit J Patel, amitp@cs.stanford.edu
+</address>
+</body>
+</html>

@@ -1,0 +1,113 @@
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html>
+<head>
+<title>C. Troubleshooting</title>
+<meta name="description" content="C. Troubleshooting">
+<meta name="keywords" content="yapps2">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="LaTeX2HTML v2K.1beta">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="yapps2.css">
+
+<link rel="next" href="node9.html">
+<link rel="previous" href="node7.html">
+<link rel="up" href="yapps2.html">
+<link rel="next" href="node9.html">
+</head>
+
+<body bgcolor=white text=black link=#004080 vlink=#006020>
+
+<div class="navigation"><!--Navigation Panel-->
+<a name="tex2html136"
+  href="node9.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html134"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html128"
+  href="node7.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html137"
+  href="node9.html">D. History</a>
+<b> Up:</b> <a name="tex2html135"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html129"
+  href="node7.html">B. Upgrading</a>
+<br>
+<br></div>
+<!--End of Navigation Panel-->
+
+<h1><a name="SECTION00080000000000000000">
+C. Troubleshooting</a>
+</h1>
+
+<p>
+
+<ul>
+<li>A common error is to write a grammar that doesn't have an END
+   token.  End tokens are needed when it is not clear when to stop
+   parsing.  For example, when parsing the expression <tt>3+5</tt>, it is 
+   not clear after reading <tt>3</tt> whether to treat it as a complete
+   expression or whether the parser should continue reading.
+   Therefore the grammar for numeric expressions should include an end 
+   token.  Another example is the grammar for Lisp expressions.  In
+   Lisp, it is always clear when you should stop parsing, so you do
+   <span  class="textit">not</span> need an end token.  In fact, it may be more useful not
+   to have an end token, so that you can read in several Lisp expressions.
+</li>
+<li>If there is a chance of ambiguity, make sure to put the choices 
+   in the order you want them checked.  Usually the most specific
+   choice should be first.  Empty sequences should usually be last.
+</li>
+<li>The context sensitive scanner is not appropriate for all
+   grammars.  You might try using the insensitive scanner with the
+   <tt>context-insensitive-scanner</tt> option in the grammar.
+</li>
+<li>If performance turns out to be a problem, try writing a custom
+   scanner.  The Yapps scanner is rather slow (but flexible and easy
+   to understand).
+</li>
+</ul>
+
+<p>
+
+<div class="navigation"><hr>
+<!--Navigation Panel-->
+<a name="tex2html136"
+  href="node9.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html134"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html128"
+  href="node7.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html137"
+  href="node9.html">D. History</a>
+<b> Up:</b> <a name="tex2html135"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html129"
+  href="node7.html">B. Upgrading</a></div>
+<!--End of Navigation Panel-->
+<address>
+Amit J Patel, amitp@cs.stanford.edu
+</address>
+</body>
+</html>

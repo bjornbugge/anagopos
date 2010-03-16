@@ -1,0 +1,150 @@
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html>
+<head>
+<title>Yapps 2.0 Manual</title>
+<meta name="description" content="Yapps 2.0 Manual">
+<meta name="keywords" content="yapps2">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="LaTeX2HTML v2K.1beta">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="yapps2.css">
+
+<link rel="next" href="node1.html">
+</head>
+
+<body bgcolor=white text=black link=#004080 vlink=#006020>
+
+<div class="navigation"><!--Navigation Panel-->
+<a name="tex2html13"
+  href="node1.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html11"
+  href="http://theory.stanford.edu/~amitp/yapps/">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev_g.png">   
+<br>
+<b> Next:</b> <a name="tex2html14"
+  href="node1.html">1 Introduction</a>
+<b> Up:</b> <a name="tex2html12"
+  href="http://theory.stanford.edu/~amitp/yapps/">Yapps Page</a>
+<br>
+<br></div>
+<!--End of Navigation Panel-->
+
+<p>
+<div align="CENTER">
+<table cols=1>
+<col align=CENTER>
+<tr><td valign=BASELINE align=CENTER nowrap>
+<big class="XLARGE">The <span  class="textit">Yapps</span> Parser Generator System</big></td></tr>
+<tr><td valign=BASELINE align=CENTER nowrap> 
+<code>http://theory.stanford.edu/~amitp/Yapps/</code></td></tr>
+<tr><td valign=BASELINE align=CENTER nowrap> 
+                Version 2</td></tr>
+<tr><td></td></tr>
+<tr><td valign=BASELINE align=CENTER nowrap> 
+Amit J. Patel</td></tr>
+<tr><td valign=BASELINE align=CENTER nowrap> 
+<a name="tex2html1"
+  href="http://www-cs-students.stanford.edu/~amitp/">http://www-cs-students.stanford.edu/~amitp/</a>
+</div>
+<p>
+<div align="CENTER"></td></tr>
+</table>
+
+</div>
+
+<p>
+<br><hr>
+<!--Table of Child-Links-->
+<a name="CHILD_LINKS"></a>
+
+<ul class="ChildLinks">
+<li><a name="tex2html15"
+  href="node1.html"><span class="arabic">1</span> Introduction</a>
+<li><a name="tex2html16"
+  href="node2.html"><span class="arabic">2</span> Examples</a>
+<ul>
+<li><a name="tex2html17"
+  href="node2.html#SECTION00021000000000000000"><span class="arabic">2</span>.<span class="arabic">1</span> Introduction to Grammars</a>
+<li><a name="tex2html18"
+  href="node2.html#SECTION00022000000000000000"><span class="arabic">2</span>.<span class="arabic">2</span> Lisp Expressions</a>
+<ul>
+<li><a name="tex2html19"
+  href="node2.html#SECTION00022100000000000000">Defining the Grammar</a>
+<li><a name="tex2html20"
+  href="node2.html#SECTION00022200000000000000">Running Yapps</a>
+</ul>
+<li><a name="tex2html21"
+  href="node2.html#SECTION00023000000000000000"><span class="arabic">2</span>.<span class="arabic">3</span> Calculator</a>
+<li><a name="tex2html22"
+  href="node2.html#SECTION00024000000000000000"><span class="arabic">2</span>.<span class="arabic">4</span> Calculator with Memory</a>
+</ul>
+<br>
+<li><a name="tex2html23"
+  href="node3.html"><span class="arabic">3</span> Grammars</a>
+<ul>
+<li><a name="tex2html24"
+  href="node3.html#SECTION00031000000000000000"><span class="arabic">3</span>.<span class="arabic">1</span> Left Factoring</a>
+<li><a name="tex2html25"
+  href="node3.html#SECTION00032000000000000000"><span class="arabic">3</span>.<span class="arabic">2</span> Left Recursion</a>
+<li><a name="tex2html26"
+  href="node3.html#SECTION00033000000000000000"><span class="arabic">3</span>.<span class="arabic">3</span> Ambiguous Grammars</a>
+</ul>
+<br>
+<li><a name="tex2html27"
+  href="node4.html"><span class="arabic">4</span> Customization</a>
+<ul>
+<li><a name="tex2html28"
+  href="node4.html#SECTION00041000000000000000"><span class="arabic">4</span>.<span class="arabic">1</span> Customizing Parsers</a>
+<li><a name="tex2html29"
+  href="node4.html#SECTION00042000000000000000"><span class="arabic">4</span>.<span class="arabic">2</span> Customizing Scanners</a>
+</ul>
+<br>
+<li><a name="tex2html30"
+  href="node5.html"><span class="arabic">5</span> Parser Mechanics</a>
+<ul>
+<li><a name="tex2html31"
+  href="node5.html#SECTION00051000000000000000"><span class="arabic">5</span>.<span class="arabic">1</span> Parser Objects</a>
+<li><a name="tex2html32"
+  href="node5.html#SECTION00052000000000000000"><span class="arabic">5</span>.<span class="arabic">2</span> Context Sensitive Scanner</a>
+<li><a name="tex2html33"
+  href="node5.html#SECTION00053000000000000000"><span class="arabic">5</span>.<span class="arabic">3</span> Internal Variables</a>
+<li><a name="tex2html34"
+  href="node5.html#SECTION00054000000000000000"><span class="arabic">5</span>.<span class="arabic">4</span> Pre- and Post-Parser Code</a>
+<li><a name="tex2html35"
+  href="node5.html#SECTION00055000000000000000"><span class="arabic">5</span>.<span class="arabic">5</span> Representation of Grammars</a>
+</ul>
+<br>
+<li><a name="tex2html36"
+  href="node6.html">A. Grammar for Parsers</a>
+<li><a name="tex2html37"
+  href="node7.html">B. Upgrading</a>
+<li><a name="tex2html38"
+  href="node8.html">C. Troubleshooting</a>
+<li><a name="tex2html39"
+  href="node9.html">D. History</a>
+<li><a name="tex2html40"
+  href="node10.html">E. Future Extensions</a>
+<li><a name="tex2html41"
+  href="node11.html">F. References</a>
+</ul>
+<!--End of Table of Child-Links-->
+<br><hr>
+<address>
+Amit J Patel, amitp@cs.stanford.edu
+</address>
+</body>
+</html>

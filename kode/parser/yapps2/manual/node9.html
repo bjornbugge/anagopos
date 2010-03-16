@@ -1,0 +1,141 @@
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html>
+<head>
+<title>D. History</title>
+<meta name="description" content="D. History">
+<meta name="keywords" content="yapps2">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="LaTeX2HTML v2K.1beta">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="yapps2.css">
+
+<link rel="next" href="node10.html">
+<link rel="previous" href="node8.html">
+<link rel="up" href="yapps2.html">
+<link rel="next" href="node10.html">
+</head>
+
+<body bgcolor=white text=black link=#004080 vlink=#006020>
+
+<div class="navigation"><!--Navigation Panel-->
+<a name="tex2html146"
+  href="node10.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html144"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html138"
+  href="node8.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html147"
+  href="node10.html">E. Future Extensions</a>
+<b> Up:</b> <a name="tex2html145"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html139"
+  href="node8.html">C. Troubleshooting</a>
+<br>
+<br></div>
+<!--End of Navigation Panel-->
+
+<h1><a name="SECTION00090000000000000000">
+D. History</a>
+</h1>
+
+<p>
+Yapps 1 had several limitations that bothered me while writing
+parsers:
+
+<p>
+
+<ol>
+<li>It was not possible to insert statements into the generated
+   parser.  A common workaround was to write an auxilliary function
+   that executed those statements, and to call that function as part
+   of the return value calculation.  For example, several of my
+   parsers had an ``append(x,y)'' function that existed solely to call 
+   ``x.append(y)''.
+</li>
+<li>The way in which grammars were specified was rather
+   restrictive: a rule was a choice of clauses.  Each clause was a
+   sequence of tokens and rule names, followed by a return value.
+</li>
+<li>Optional matching had to be put into a separate rule because
+   choices were only made at the beginning of a rule.
+</li>
+<li>Repetition had to be specified in terms of recursion.  Not only 
+   was this awkward (sometimes requiring additional rules), I had to
+   add a tail recursion optimization to Yapps to transform the
+   recursion back into a loop.
+</li>
+</ol>
+
+<p>
+Yapps 2 addresses each of these limitations.
+
+<p>
+
+<ol>
+<li>Statements can occur anywhere within a rule.  (However, only
+   one-line statements are allowed; multiline blocks marked by
+   indentation are not.)
+</li>
+<li>Grammars can be specified using any mix of sequences, choices,
+   tokens, and rule names.  To allow for complex structures,
+   parentheses can be used for grouping.
+</li>
+<li>Given choices and parenthesization, optional matching can be
+   expressed as a choice between some pattern and nothing.  In
+   addition, Yapps 2 has the convenience syntax <code>[A B ...]</code> for
+   matching <code>A B ...</code> optionally.
+</li>
+<li>Repetition operators <code>*</code> for zero or more and <code>+</code> for 
+   one or more make it easy to specify repeating patterns.
+</li>
+</ol>
+
+<p>
+It is my hope that Yapps 2 will be flexible enough to meet my needs
+for another year, yet simple enough that I do not hesitate to use it.
+
+<p>
+
+<div class="navigation"><hr>
+<!--Navigation Panel-->
+<a name="tex2html146"
+  href="node10.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html144"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html138"
+  href="node8.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html147"
+  href="node10.html">E. Future Extensions</a>
+<b> Up:</b> <a name="tex2html145"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html139"
+  href="node8.html">C. Troubleshooting</a></div>
+<!--End of Navigation Panel-->
+<address>
+Amit J Patel, amitp@cs.stanford.edu
+</address>
+</body>
+</html>

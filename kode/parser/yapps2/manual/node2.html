@@ -1,0 +1,601 @@
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html>
+<head>
+<title>2 Examples</title>
+<meta name="description" content="2 Examples">
+<meta name="keywords" content="yapps2">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="LaTeX2HTML v2K.1beta">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="yapps2.css">
+
+<link rel="next" href="node3.html">
+<link rel="previous" href="node1.html">
+<link rel="up" href="yapps2.html">
+<link rel="next" href="node3.html">
+</head>
+
+<body bgcolor=white text=black link=#004080 vlink=#006020>
+
+<div class="navigation"><!--Navigation Panel-->
+<a name="tex2html60"
+  href="node3.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html58"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html52"
+  href="node1.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html61"
+  href="node3.html">3 Grammars</a>
+<b> Up:</b> <a name="tex2html59"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html53"
+  href="node1.html">1 Introduction</a>
+<br>
+<br></div>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<a name="CHILD_LINKS"><strong>Subsections</strong></a>
+
+<ul class="ChildLinks">
+<li><a name="tex2html62"
+  href="#SECTION00021000000000000000"><span class="arabic">2</span>.<span class="arabic">1</span> Introduction to Grammars</a>
+<li><a name="tex2html63"
+  href="#SECTION00022000000000000000"><span class="arabic">2</span>.<span class="arabic">2</span> Lisp Expressions</a>
+<ul>
+<li><a name="tex2html64"
+  href="#SECTION00022100000000000000">Defining the Grammar</a>
+<li><a name="tex2html65"
+  href="#SECTION00022200000000000000">Running Yapps</a>
+</ul>
+<br>
+<li><a name="tex2html66"
+  href="#SECTION00023000000000000000"><span class="arabic">2</span>.<span class="arabic">3</span> Calculator</a>
+<li><a name="tex2html67"
+  href="#SECTION00024000000000000000"><span class="arabic">2</span>.<span class="arabic">4</span> Calculator with Memory</a>
+</ul>
+<!--End of Table of Child-Links-->
+<hr>
+
+<h1><a name="SECTION00020000000000000000">
+<span class="arabic">2</span> Examples</a>
+</h1>
+
+<p>
+In this section are several examples that show the use of Yapps.
+First, an introduction shows how to construct grammars and write them
+in Yapps form.  This example can be skipped by someone familiar with
+grammars and parsing.  Next is a Lisp expression grammar that produces
+a parse tree as output.  This example demonstrates the use of tokens
+and rules, as well as returning values from rules.  The third example
+is a expression evaluation grammar that evaluates during parsing
+(instead of producing a parse tree).
+
+<p>
+
+<h2><a name="SECTION00021000000000000000">
+<span class="arabic">2</span>.<span class="arabic">1</span> Introduction to Grammars</a>
+</h2>
+
+<p>
+A <span  class="textit">grammar</span> for a natural language specifies how words can be put
+together to form large structures, such as phrases and sentences.  A
+grammar for a computer language is similar in that it specifies how
+small components (called <span  class="textit">tokens</span>) can be put together to form
+larger structures.  In this section we will write a grammar for a tiny
+subset of English.
+
+<p>
+Simple English sentences can be described as being a noun phrase
+followed by a verb followed by a noun phrase.  For example, in the
+sentence, ``Jack sank the blue ship,'' the word ``Jack'' is the first
+noun phrase, ``sank'' is the verb, and ``the blue ship'' is the second
+noun phrase.  In addition we should say what a noun phrase is; for
+this example we shall say that a noun phrase is an optional article
+(a, an, the) followed by any number of adjectives followed by a noun.
+The tokens in our language are the articles, nouns, verbs, and
+adjectives.  The <span  class="textit">rules</span> in our language will tell us how to
+combine the tokens together to form lists of adjectives, noun phrases,
+and sentences:
+
+<p>
+
+<ul>
+<li><tt>sentence: noun_phrase verb noun_phrase</tt>
+</li>
+<li><tt>noun_phrase: [article] adjective* noun</tt>
+</li>
+</ul>
+
+<p>
+Notice that some things that we said easily in English, such as
+``optional article,'' are expressed using special syntax, such as
+brackets.  When we said, ``any number of adjectives,'' we wrote
+<tt>adjective*</tt>, where the <tt>*</tt> means ``zero or more of the
+preceding pattern''.
+
+<p>
+The grammar given above is close to a Yapps grammar.  We also have to
+specify what the tokens are, and what to do when a pattern is matched.
+For this example, we will do nothing when patterns are matched; the
+next example will explain how to perform match actions.
+
+<p>
+<pre>
+parser TinyEnglish:
+  ignore:          "\\W+"
+  token noun:      "(Jack|spam|ship)"
+  token verb:      "(sank|threw)"
+  token article:   "(a|an|the)"
+  token adjective: "(blue|red|green)"
+
+  rule sentence:       noun_phrase verb noun_phrase
+  rule noun_phrase:    [article] adjective* noun
+</pre>
+
+<p>
+The tokens are specified as Python <span  class="textit">regular expressions</span>.  Since
+Yapps produces Python code, you can write any regular expression that
+would be accepted by Python.  (<span  class="textit">Note:</span> These are Python 1.5
+regular expressions from the <tt>re</tt> module, not Python 1.4
+regular expressions from the <tt>regex</tt> module.)  In addition to
+tokens that you want to see (which are given names), you can also
+specify tokens to ignore, marked by the <tt>ignore</tt> keyword.  In
+this parser we want to ignore whitespace.
+
+<p>
+The TinyEnglish grammar shows how you define tokens and rules, but it
+does not specify what should happen once we've matched the rules.  In
+the next example, we will take a grammar and produce a <span  class="textit">parse
+tree</span> from it.
+
+<p>
+
+<h2><a name="SECTION00022000000000000000">
+<span class="arabic">2</span>.<span class="arabic">2</span> Lisp Expressions</a>
+</h2>
+
+<p>
+Lisp syntax, although hated by many, has a redeeming quality: it is
+simple to parse.  In this section we will construct a Yapps grammar to
+parse Lisp expressions and produce a parse tree as output.
+
+<p>
+
+<h3><a name="SECTION00022100000000000000">
+Defining the Grammar</a>
+</h3>
+
+<p>
+The syntax of Lisp is simple.  It has expressions, which are
+identifiers, strings, numbers, and lists.  A list is a left
+parenthesis followed by some number of expressions (separated by
+spaces) followed by a right parenthesis.  For example, <code>5</code>,
+<code>"ni"</code>, and <code>(print "1+2 = " (+ 1 2))</code> are Lisp expressions.
+Written as a grammar,
+
+<p>
+<pre>
+    expr:   ID | STR | NUM | list
+    list:   ( expr* )
+</pre>
+
+<p>
+In addition to having a grammar, we need to specify what to do every
+time something is matched.  For the tokens, which are strings, we just
+want to get the ``value'' of the token, attach its type (identifier,
+string, or number) in some way, and return it.  For the lists, we want
+to construct and return a Python list.
+
+<p>
+Once some pattern is matched, we enclose a return statement enclosed
+in <code>{{...}}</code>.  The braces allow us to insert any one-line
+statement into the parser.  Within this statement, we can refer to the
+values returned by matching each part of the rule.  After matching a
+token such as <tt>ID</tt>, ``ID'' will be bound to the text of the
+matched token.  Let's take a look at the rule:
+
+<p>
+<pre>
+    rule expr: ID   {{ return ('id', ID) }}
+      ...
+</pre>
+
+<p>
+In a rule, tokens return the text that was matched.  For identifiers,
+we just return the identifier, along with a ``tag'' telling us that
+this is an identifier and not a string or some other value.  Sometimes
+we may need to convert this text to a different form.  For example, if
+a string is matched, we want to remove quotes and handle special forms
+like <code>\n</code>.  If a number is matched, we want to convert it into a
+number.  Let's look at the return values for the other tokens:
+
+<p>
+<pre>
+      ...
+             | STR  {{ return ('str', eval(STR)) }}
+             | NUM  {{ return ('num', atoi(NUM)) }}
+      ...
+</pre>
+
+<p>
+If we get a string, we want to remove the quotes and process any
+special backslash codes, so we run <tt>eval</tt> on the quoted string.
+If we get a number, we convert it to an integer with <tt>atoi</tt> and
+then return the number along with its type tag.
+
+<p>
+For matching a list, we need to do something slightly more
+complicated.  If we match a Lisp list of expressions, we want to
+create a Python list with those values.
+
+<p>
+<pre>
+    rule list: "\\("                 # Match the opening parenthesis
+               {{ result = [] }}     # Create a Python list
+               ( 
+                  expr               # When we match an expression,
+                  {{ result.append(expr) }}   # add it to the list
+               )*                    # * means repeat this if needed
+               "\\)"                 # Match the closing parenthesis
+               {{ return result }}   # Return the Python list
+</pre>
+
+<p>
+In this rule we first match the opening parenthesis, then go into a
+loop.  In this loop we match expressions and add them to the list.
+When there are no more expressions to match, we match the closing
+parenthesis and return the resulting.  Note that <code>#</code> is used for
+comments, just as in Python.
+
+<p>
+The complete grammar is specified as follows:
+<pre>
+parser Lisp:
+    ignore:      '\\s+'
+    token NUM:   '[0-9]+'
+    token ID:    '[-+*/!@%^&amp;=.a-zA-Z0-9_]+' 
+    token STR:   '"([^\\"]+|\\\\.)*"'
+
+    rule expr:   ID     {{ return ('id', ID) }}
+               | STR    {{ return ('str', eval(STR)) }}
+               | NUM    {{ return ('num', atoi(NUM)) }}
+               | list   {{ return list }}
+    rule list: "\\("    {{ result = [] }} 
+               ( expr   {{ result.append(expr) }}
+               )*  
+               "\\)"    {{ return result }}
+</pre>
+
+<p>
+One thing you may have noticed is that <code>"\\("</code> and <code>"\\)"</code>
+appear in the <tt>list</tt> rule.  These are <span  class="textit">inline tokens</span>:
+they appear in the rules without being given a name with the
+<tt>token</tt> keyword.  Inline tokens are more convenient to use, but
+since they do not have a name, the text that is matched cannot be used
+in the return value.  They are best used for short simple patterns
+(usually punctuation or keywords).
+
+<p>
+Another thing to notice is that the number and identifier tokens
+overlap.  For example, ``487'' matches both NUM and ID.  In Yapps, the
+scanner only tries to match tokens that are acceptable to the parser.
+This rule doesn't help here, since both NUM and ID can appear in the
+same place in the grammar.  There are two rules used to pick tokens if
+more than one matches.  One is that the <span  class="textit">longest</span> match is
+preferred.  For example, ``487x'' will match as an ID (487x) rather
+than as a NUM (487) followed by an ID (x).  The second rule is that if
+the two matches are the same length, the <span  class="textit">first</span> one listed in
+the grammar is preferred.  For example, ``487'' will match as an NUM
+rather than an ID because NUM is listed first in the grammar.  Inline
+tokens have preference over any tokens you have listed.
+
+<p>
+Now that our grammar is defined, we can run Yapps to produce a parser,
+and then run the parser to produce a parse tree.
+
+<p>
+
+<h3><a name="SECTION00022200000000000000">
+Running Yapps</a>
+</h3>
+
+<p>
+In the Yapps module is a function <tt>generate</tt> that takes an
+input filename and writes a parser to another file.  We can use this
+function to generate the Lisp parser, which is assumed to be in
+<tt>lisp.g</tt>.
+
+<p>
+<pre>
+% python
+Python 1.5.1 (#1, Sep  3 1998, 22:51:17)  [GCC 2.7.2.3] on linux-i386
+Copyright 1991-1995 Stichting Mathematisch Centrum, Amsterdam
+&gt;&gt;&gt; import yapps
+&gt;&gt;&gt; yapps.generate('lisp.g')
+</pre>
+
+<p>
+At this point, Yapps has written a file <tt>lisp.py</tt> that contains
+the parser.  In that file are two classes (one scanner and one parser)
+and a function (called <tt>parse</tt>) that puts things together for
+you.
+
+<p>
+Alternatively, we can run Yapps from the command line to generate the
+parser file:
+
+<p>
+<pre>
+% python yapps.py lisp.g
+</pre>
+
+<p>
+After running Yapps either from within Python or from the command
+line, we can use the Lisp parser by calling the <tt>parse</tt>
+function.  The first parameter should be the rule we want to match,
+and the second parameter should be the string to parse.
+
+<p>
+<pre>
+&gt;&gt;&gt; import lisp
+&gt;&gt;&gt; lisp.parse('expr', '(+ 3 4)')
+[('id', '+'), ('num', 3), ('num', 4)]
+&gt;&gt;&gt; lisp.parse('expr', '(print "3 = " (+ 1 2))')
+[('id', 'print'), ('str', '3 = '), [('id', '+'), ('num', 1), ('num', 2)]]
+</pre>
+
+<p>
+The <tt>parse</tt> function is not the only way to use the parser;
+section <a href="node5.html#sec:Parser-Objects"><img  align="BOTTOM" border="1" alt="[*]"
+ src="http://www.stanford.edu/icons/latex2html/crossref.png"></a> describes how to access parser objects
+directly.
+
+<p>
+We've now gone through the steps in creating a grammar, writing a
+grammar file for Yapps, producing a parser, and using the parser.  In
+the next example we'll see how rules can take parameters and also how
+to do computations instead of just returning a parse tree.
+
+<p>
+
+<h2><a name="SECTION00023000000000000000">
+<span class="arabic">2</span>.<span class="arabic">3</span> Calculator</a>
+</h2>
+
+<p>
+A common example parser given in many textbooks is that for simple
+expressions, with numbers, addition, subtraction, multiplication,
+division, and parenthesization of subexpressions.  We'll write this
+example in Yapps, evaluating the expression as we parse.
+
+<p>
+Unlike <tt>yacc</tt>, Yapps does not have any way to specify
+precedence rules, so we have to do it ourselves.  We say that an
+expression is the sum of terms, and that a term is the product of
+factors, and that a factor is a number or a parenthesized expression:
+
+<p>
+<pre>
+    expr:           factor ( ("+"|"-") factor )*
+    factor:         term   ( ("*"|"/") term )*
+    term:           NUM | "(" expr ")"
+</pre>
+
+<p>
+In order to evaluate the expression as we go, we should keep along an
+accumulator while evaluating the lists of terms or factors.  Just as
+we kept a ``result'' variable to build a parse tree for Lisp
+expressions, we will use a variable to evaluate numerical
+expressions.  The full grammar is given below:
+
+<p>
+<pre>
+parser Calculator:
+    token END: "$"         # $ means end of string
+    token NUM: "[0-9]+"
+
+    rule goal:           expr END         {{ return expr }}
+
+    # An expression is the sum and difference of factors
+    rule expr:           factor           {{ v = factor }}
+                       ( "[+]" factor       {{ v = v+factor }}
+                       |  "-"  factor       {{ v = v-factor }}
+                       )*                 {{ return v }}
+
+    # A factor is the product and division of terms
+    rule factor:         term             {{ v = term }}
+                       ( "[*]" term         {{ v = v*term }}
+                       |  "/"  term         {{ v = v/term }}
+                       )*                 {{ return v }}
+
+    # A term is either a number or an expression surrounded by parentheses
+    rule term:           NUM              {{ return atoi(NUM) }}
+                       | "\\(" expr "\\)" {{ return expr }}
+</pre>
+
+<p>
+The top-level rule is <span  class="textit">goal</span>, which says that we are looking for
+an expression followed by the end of the string.  The <tt>END</tt>
+token is needed because without it, it isn't clear when to stop
+parsing.  For example, the string ``1+3'' could be parsed either as
+the expression ``1'' followed by the string ``+3'' or it could be
+parsed as the expression ``1+3''.  By requiring expressions to end
+with <tt>END</tt>, the parser is forced to take ``1+3''.
+
+<p>
+In the two rules with repetition, the accumulator is named <tt>v</tt>.
+After reading in one expression, we initialize the accumulator.  Each
+time through the loop, we modify the accumulator by adding,
+subtracting, multiplying by, or dividing the previous accumulator by
+the expression that has been parsed.  At the end of the rule, we
+return the accumulator.
+
+<p>
+The calculator example shows how to process lists of elements using
+loops, as well as how to handle precedence of operators.
+
+<p>
+<span  class="textit">Note:</span> It's often important to put the <tt>END</tt> token in, so 
+put it in unless you are sure that your grammar has some other
+non-ambiguous token marking the end of the program.
+
+<p>
+
+<h2><a name="SECTION00024000000000000000">
+<span class="arabic">2</span>.<span class="arabic">4</span> Calculator with Memory</a>
+</h2>
+
+<p>
+In the previous example we learned how to write a calculator that
+evaluates simple numerical expressions.  In this section we will
+extend the example to support both local and global variables.
+
+<p>
+To support global variables, we will add assignment statements to the
+``goal'' rule.
+
+<p>
+<pre>
+    rule goal:           expr END         {{ return expr }}
+              | 'set' ID expr END         {{ global_vars[ID] = expr }}
+                                          {{ return expr }}
+</pre>
+
+<p>
+To use these variables, we need a new kind of terminal:
+
+<p>
+<pre>
+    rule term: ... | ID {{ return global_vars[ID] }}
+</pre>
+
+<p>
+So far, these changes are straightforward.  We simply have a global
+dictionary <tt>global_vars</tt> that stores the variables and values, 
+we modify it when there is an assignment statement, and we look up
+variables in it when we see a variable name.
+
+<p>
+To support local variables, we will add variable declarations to the
+set of allowed expressions.
+
+<p>
+<pre>
+    rule term: ... | 'let' VAR '=' expr 'in' expr ...
+</pre>
+
+<p>
+This is where it becomes tricky.  Local variables should be stored in
+a local dictionary, not in the global one.  One trick would be to save 
+a copy of the global dictionary, modify it, and then restore it
+later.  In this example we will instead use <span  class="textit">attributes</span> to
+create local information and pass it to subrules.
+
+<p>
+A rule can optionally take parameters.  When we invoke the rule, we
+must pass in arguments.  For local variables, let's use a single
+parameter, <tt>local_vars</tt>:
+
+<p>
+<pre>
+    rule expr&lt;&lt;local_vars&gt;&gt;:   ...
+    rule factor&lt;&lt;local_vars&gt;&gt;: ...
+    rule term&lt;&lt;local_vars&gt;&gt;:   ...
+</pre>
+
+<p>
+Each time we want to match <tt>expr</tt>, <tt>factor</tt>, or
+<tt>term</tt>, we will pass the local variables in the current rule to
+the subrule.  One interesting case is when we pass as an argument
+something <span  class="textit">other</span> than <tt>local_vars</tt>:
+
+<p>
+<pre>
+   rule term&lt;&lt;local_vars&gt;&gt;: ...
+                | 'let' VAR '=' expr&lt;&lt;local_vars&gt;&gt;
+                  {{ local_vars = [(VAR, expr)] + local_vars }}
+                  'in' expr&lt;&lt;local_vars&gt;&gt;
+                  {{ return expr }}
+</pre>
+
+<p>
+Note that the assignment to the local variables list does not modify
+the original list.  This is important to keep local variables from
+being seen outside the ``let''.
+
+<p>
+The other interesting case is when we find a variable:
+
+<p>
+<pre>
+global_vars = {}
+
+def lookup(map, name):
+    for x,v in map:  if x==name: return v
+    return global_vars[name]
+%%
+   ...
+   rule term&lt;&lt;local_vars&gt;: ...
+                | VAR {{ return lookup(local_vars, VAR) }}
+</pre>
+
+<p>
+The lookup function will search through the local variable list, and
+if it cannot find the name there, it will look it up in the global
+variable dictionary.
+
+<p>
+A complete grammar for this example, including a read-eval-print loop
+for interacting with the calculator, can be found in the examples
+subdirectory included with Yapps.
+
+<p>
+In this section we saw how to insert code before the parser.  We also
+saw how to use attributes to transmit local information from one rule
+to its subrules.
+
+<p>
+
+<div class="navigation"><hr>
+<!--Navigation Panel-->
+<a name="tex2html60"
+  href="node3.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html58"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html52"
+  href="node1.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html61"
+  href="node3.html">3 Grammars</a>
+<b> Up:</b> <a name="tex2html59"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html53"
+  href="node1.html">1 Introduction</a></div>
+<!--End of Navigation Panel-->
+<address>
+Amit J Patel, amitp@cs.stanford.edu
+</address>
+</body>
+</html>

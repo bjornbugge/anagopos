@@ -1,0 +1,366 @@
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html>
+<head>
+<title>3 Grammars</title>
+<meta name="description" content="3 Grammars">
+<meta name="keywords" content="yapps2">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="LaTeX2HTML v2K.1beta">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="yapps2.css">
+
+<link rel="next" href="node4.html">
+<link rel="previous" href="node2.html">
+<link rel="up" href="yapps2.html">
+<link rel="next" href="node4.html">
+</head>
+
+<body bgcolor=white text=black link=#004080 vlink=#006020>
+
+<div class="navigation"><!--Navigation Panel-->
+<a name="tex2html76"
+  href="node4.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html74"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html68"
+  href="node2.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html77"
+  href="node4.html">4 Customization</a>
+<b> Up:</b> <a name="tex2html75"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html69"
+  href="node2.html">2 Examples</a>
+<br>
+<br></div>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<a name="CHILD_LINKS"><strong>Subsections</strong></a>
+
+<ul class="ChildLinks">
+<li><a name="tex2html78"
+  href="#SECTION00031000000000000000"><span class="arabic">3</span>.<span class="arabic">1</span> Left Factoring</a>
+<li><a name="tex2html79"
+  href="#SECTION00032000000000000000"><span class="arabic">3</span>.<span class="arabic">2</span> Left Recursion</a>
+<li><a name="tex2html80"
+  href="#SECTION00033000000000000000"><span class="arabic">3</span>.<span class="arabic">3</span> Ambiguous Grammars</a>
+</ul>
+<!--End of Table of Child-Links-->
+<hr>
+
+<h1><a name="SECTION00030000000000000000">
+<span class="arabic">3</span> Grammars</a>
+</h1>
+
+<p>
+Each Yapps grammar has a name, a list of tokens, and a set of
+production rules.  A grammar named <tt>X</tt> will be used to produce
+a parser named <tt>X</tt> and a scanner anmed <tt>XScanner</tt>.  As
+in Python, names are case sensitive, start with a letter, and contain
+letters, numbers, and underscores (_).
+
+<p>
+There are three kinds of tokens in Yapps: named, inline, and ignored.
+As their name implies, named tokens are given a name, using the token
+construct: <tt>token <span  class="textit">name</span> : <span  class="textit">regexp</span></tt>.  In a rule, the
+token can be matched by using the name.  Inline tokens are regular
+expressions that are used in rules without being declared.  Ignored
+tokens are declared using the ignore construct: <tt>ignore:
+  <span  class="textit">regexp</span></tt>.  These tokens are ignored by the scanner, and are
+not seen by the parser.  Often whitespace is an ignored token.  The
+regular expressions used to define tokens should use the syntax
+defined in the <tt>re</tt> module, so some symbols may have to be
+backslashed.
+
+<p>
+Production rules in Yapps have a name and a pattern to match.  If the
+rule is parameterized, the name should be followed by a list of
+parameter names in <code>&lt;&lt;...&gt;&gt;</code>.  A pattern can be a simple pattern
+or a compound pattern.  Simple patterns are the name of a named token,
+a regular expression in quotes (inline token), the name of a
+production rule (followed by arguments in <code>&lt;&lt;...&gt;&gt;</code>, if the rule
+has parameters), and single line Python statements (<code>{{...}}</code>).
+Compound patterns are sequences (<code>A B C ...</code>), choices (
+<code>A | B | C | ...</code>), options (<code>[...]</code>), zero-or-more repetitions
+(<code>...*</code>), and one-or-more repetitions (<code>...+</code>).  Like
+regular expressions, repetition operators have a higher precedence
+than sequences, and sequences have a higher precedence than choices.
+
+<p>
+Whenever <code>{{...}}</code> is used, a legal one-line Python statement
+should be put inside the braces.  The token <code>}}</code> should not
+appear within the <code>{{...}}</code> section, even within a string, since
+Yapps does not attempt to parse the Python statement.  A workaround
+for strings is to put two strings together (<code>"}" "}"</code>), or to use
+backslashes (<code>"}\}"</code>).  At the end of a rule you should use a
+<code>{{ return X }}</code> statement to return a value.  However, you
+should <span  class="textit">not</span> use any control statements (<tt>return</tt>,
+<tt>continue</tt>, <tt>break</tt>) in the middle of a rule.  Yapps
+needs to make assumptions about the control flow to generate a parser,
+and any changes to the control flow will confuse Yapps.
+
+<p>
+The <code>&lt;&lt;...&gt;&gt;</code> form can occur in two places: to define parameters
+to a rule and to give arguments when matching a rule.  Parameters use
+the syntax used for Python functions, so they can include default
+arguments and the special forms (<code>*args</code> and <code>**kwargs</code>).
+Arguments use the syntax for Python function call arguments, so they
+can include normal arguments and keyword arguments.  The token
+<code>&gt;&gt;</code> should not appear within the <code>&lt;&lt;...&gt;&gt;</code> section.
+
+<p>
+In both the statements and rule arguments, you can use names defined
+by the parser to refer to matched patterns.  You can refer to the text
+matched by a named token by using the token name.  You can use the
+value returned by a production rule by using the name of that rule.
+If a name <tt>X</tt> is matched more than once (such as in loops), you
+will have to save the earlier value(s) in a temporary variable, and
+then use that temporary variable in the return value.  The next
+section has an example of a name that occurs more than once.
+
+<p>
+
+<h2><a name="SECTION00031000000000000000"></a>
+<a name="sec:Left-Factoring"></a>
+<br>
+<span class="arabic">3</span>.<span class="arabic">1</span> Left Factoring
+</h2>
+
+<p>
+Yapps produces ELL(1) parsers, which determine which clause to match
+based on the first token available.  Sometimes the leftmost tokens of
+several clauses may be the same.  The classic example is the
+<span  class="textit">if/then/else</span> construct in Pascal:
+
+<p>
+<pre>
+rule stmt:  "if" expr "then" stmt {{ then_part = stmt }} 
+                      "else" stmt {{ return ('If',expr,then_part,stmt) }}
+          | "if" expr "then" stmt {{ return ('If',expr,stmt,[]) }}
+</pre>
+
+<p>
+(Note that we have to save the first <tt>stmt</tt> into a variable
+because there is another <tt>stmt</tt> that will be matched.)  The
+left portions of the two clauses are the same, which presents a
+problem for the parser.  The solution is <span  class="textit">left-factoring</span>: the
+common parts are put together, and <span  class="textit">then</span> a choice is made about
+the remaining part:
+
+<p>
+<pre>
+rule stmt:  "if" expr 
+              "then" stmt {{ then_part = stmt }}
+              {{ else_part = [] }}
+              [ "else" stmt {{ else_part = stmt }} ]
+            {{ return ('If', expr, then_part, else_part) }}
+</pre>
+
+<p>
+Unfortunately, the classic <span  class="textit">if/then/else</span> situation is
+<span  class="textit">still</span> ambiguous when you left-factor.  Yapps can deal with this
+situation, but will report a warning; see section
+<a href="node3.html#sec:Ambiguous-Grammars"><img  align="BOTTOM" border="1" alt="[*]"
+ src="http://www.stanford.edu/icons/latex2html/crossref.png"></a> for details.
+
+<p>
+In general, replace rules of the form:
+
+<p>
+<pre>
+rule A:   a b1 {{ return E1 }}
+        | a b2 {{ return E2 }}
+        | c3   {{ return E3 }}
+        | c4   {{ return E4 }}
+</pre>
+
+<p>
+with rules of the form:
+
+<p>
+<pre>
+rule A:   a ( b1 {{ return E1 }}
+            | b2 {{ return E2 }}
+            )
+        | c3   {{ return E3 }}
+        | c4   {{ return E4 }}
+</pre>
+
+<p>
+
+<h2><a name="SECTION00032000000000000000">
+<span class="arabic">3</span>.<span class="arabic">2</span> Left Recursion</a>
+</h2>
+
+<p>
+A common construct in grammars is for matching a list of patterns,
+sometimes separated with delimiters such as commas or semicolons.  In
+LR-based parser systems, we can parse a list with something like this:
+
+<p>
+<pre>
+rule sum:  NUM             {{ return NUM }}
+         | sum "+" NUM     {{ return (sum, NUM) }}
+</pre>
+
+<p>
+Parsing <tt>1+2+3+4</tt> would produce the output
+<tt>(((1,2),3),4)</tt>, which is what we want from a left-associative
+addition operator.  Unfortunately, this grammar is <span  class="textit">left
+recursive,</span> because the <tt>sum</tt> rule contains a clause that
+begins with <tt>sum</tt>.  (The recursion occurs at the left side of
+the clause.)
+
+<p>
+We must restructure this grammar to be <span  class="textit">right recursive</span> instead:
+
+<p>
+<pre>
+rule sum:  NUM             {{ return NUM }}
+         | NUM "+" sum     {{ return (NUM, sum) }}
+</pre>
+
+<p>
+Unfortunately, using this grammar, <tt>1+2+3+4</tt> would be parsed as
+<tt>(1,(2,(3,4)))</tt>, which no longer follows left associativity.
+The rule also needs to be left-factored.  Instead, we write the
+pattern as a loop instead:
+
+<p>
+<pre>
+rule sum:       NUM {{ v = NUM }}
+                ( "[+]" NUM {{ v = (v,NUM) }} )*
+                {{ return v }}
+</pre>
+
+<p>
+In general, replace rules of the form:
+
+<p>
+<pre>
+rule A:  A a1 -&gt; &lt;&lt; E1 &gt;&gt; 
+       | A a2 -&gt; &lt;&lt; E2 &gt;&gt;
+       | b3   -&gt; &lt;&lt; E3 &gt;&gt;
+       | b4   -&gt; &lt;&lt; E4 &gt;&gt;
+</pre>
+
+<p>
+with rules of the form:
+
+<p>
+<pre>
+rule A:  ( b3 {{ A = E3 }} 
+         | b4 {{ A = E4 }} )
+         ( a1 {{ A = E1 }}
+         | a2 {{ A = E2 }} )*
+         {{ return A }}
+</pre>
+
+<p>
+We have taken a rule that proved problematic for with recursion and
+turned it into a rule that works well with looping constructs.
+
+<p>
+
+<h2><a name="SECTION00033000000000000000"></a>
+<a name="sec:Ambiguous-Grammars"></a>
+<br>
+<span class="arabic">3</span>.<span class="arabic">3</span> Ambiguous Grammars
+</h2>
+
+<p>
+In section <a href="node3.html#sec:Left-Factoring"><img  align="BOTTOM" border="1" alt="[*]"
+ src="http://www.stanford.edu/icons/latex2html/crossref.png"></a> we saw the classic if/then/else
+ambiguity, which occurs because the ``else ...'' portion of an ``if
+...then ...else ...'' construct is optional.  Programs with 
+nested if/then/else constructs can be ambiguous when one of the else
+clauses is missing:
+<pre>
+if 1 then            if 1 then
+    if 5 then            if 5 then
+        x := 1;              x := 1;
+    else             else
+        y := 9;          y := 9;
+</pre>
+
+<p>
+The indentation shows that the program can be parsed in two different
+ways.  (Of course, if we all would adopt Python's indentation-based
+structuring, this would never happen!)  Usually we want the parsing on
+the left: the ``else'' should be associated with the closest ``if''
+statement.  In section <a href="node3.html#sec:Left-Factoring"><img  align="BOTTOM" border="1" alt="[*]"
+ src="http://www.stanford.edu/icons/latex2html/crossref.png"></a> we ``solved'' the
+problem by using the following grammar:
+
+<p>
+<pre>
+rule stmt:  "if" expr 
+              "then" stmt {{ then_part = stmt }}
+              {{ else_part = [] }}
+              [ "else" stmt {{ else_part = stmt }} ]
+            {{ return ('If', expr, then_part, else_part) }}
+</pre>
+
+<p>
+Here, we have an optional match of ``else'' followed by a statement.
+The ambiguity is that if an ``else'' is present, it is not clear
+whether you want it parsed immediately or if you want it to be parsed
+by the outer ``if''.
+
+<p>
+Yapps will deal with the situation by matching when the else pattern
+when it can.  The parser will work in this case because it prefers the
+<span  class="textit">first</span> matching clause, which tells Yapps to parse the ``else''.
+That is exactly what we want!
+
+<p>
+For ambiguity cases with choices, Yapps will choose the <span  class="textit">first</span>
+matching choice.  However, remember that Yapps only looks at the first 
+token to determine its decision, so <tt>(a b | a c)</tt> will result in
+Yapps choosing <tt>a b</tt> even when the input is <tt>a c</tt>.  It only
+looks at the first token, <tt>a</tt>, to make its decision.
+
+<p>
+
+<div class="navigation"><hr>
+<!--Navigation Panel-->
+<a name="tex2html76"
+  href="node4.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html74"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html68"
+  href="node2.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html77"
+  href="node4.html">4 Customization</a>
+<b> Up:</b> <a name="tex2html75"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html69"
+  href="node2.html">2 Examples</a></div>
+<!--End of Navigation Panel-->
+<address>
+Amit J Patel, amitp@cs.stanford.edu
+</address>
+</body>
+</html>

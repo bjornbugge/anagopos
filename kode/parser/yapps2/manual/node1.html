@@ -1,0 +1,211 @@
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html>
+<head>
+<title>1 Introduction</title>
+<meta name="description" content="1 Introduction">
+<meta name="keywords" content="yapps2">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="LaTeX2HTML v2K.1beta">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="yapps2.css">
+
+<link rel="next" href="node2.html">
+<link rel="previous" href="yapps2.html">
+<link rel="up" href="yapps2.html">
+<link rel="next" href="node2.html">
+</head>
+
+<body bgcolor=white text=black link=#004080 vlink=#006020>
+
+<div class="navigation"><!--Navigation Panel-->
+<a name="tex2html50"
+  href="node2.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html48"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html42"
+  href="yapps2.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html51"
+  href="node2.html">2 Examples</a>
+<b> Up:</b> <a name="tex2html49"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html43"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<br>
+<br></div>
+<!--End of Navigation Panel-->
+
+<h1><a name="SECTION00010000000000000000">
+<span class="arabic">1</span> Introduction</a>
+</h1>
+
+<p>
+<span  class="textit">Yapps</span> (<span id="txt43">Y</span>et <span id="txt44">A</span>nother <span id="txt45">P</span>ython
+<span id="txt46">P</span>arser <span id="txt47">S</span>ystem) is an easy to use parser
+generator that is written in Python and generates Python code.  There
+are several parser generator systems already available for Python,
+including <tt>PyLR, kjParsing, PyBison,</tt> and <tt>mcf.pars,</tt>
+but I had different goals for my parser.  Yapps is simple, is easy to
+use, and produces human-readable parsers.  It is not the fastest or
+most powerful parser.  Yapps is designed to be used when regular
+expressions are not enough and other parser systems are too much:
+situations where you may write your own recursive descent parser.
+
+<p>
+Some unusual features of Yapps that may be of interest are:
+
+<p>
+
+<ol>
+<li>Yapps produces recursive descent parsers that are readable by
+   humans, as opposed to table-driven parsers that are difficult to
+   read.  A Yapps parser for a simple calculator looks similar to the
+   one that Mark Lutz wrote by hand for <span  class="textit">Programming Python.</span>
+
+<p>
+</li>
+<li>Yapps also allows for rules that accept parameters and pass
+   arguments to be used while parsing subexpressions.  Grammars that
+   allow for arguments to be passed to subrules and for values to be
+   passed back are often called <span  class="textit">attribute grammars.</span>  In many
+   cases parameterized rules can be used to perform actions at ``parse
+   time'' that are usually delayed until later.  For example,
+   information about variable declarations can be passed into the
+   rules that parse a procedure body, so that undefined variables can
+   be detected at parse time.  The types of defined variables can be
+   used in parsing as well--for example, if the type of <tt>X</tt> is
+   known, we can determine whether <tt>X(1)</tt> is an array reference or 
+   a function call.
+
+<p>
+</li>
+<li>Yapps grammars are fairly easy to write, although there are
+   some inconveniences having to do with ELL(1) parsing that have to be
+   worked around.  For example, rules have to be left factored and
+   rules may not be left recursive.  However, neither limitation seems 
+   to be a problem in practice.  
+
+<p>
+Yapps grammars look similar to the notation used in the Python
+   reference manual, with operators like <code>*</code>, <code>+</code>, <code>|</code>,
+   <code>[]</code>, and <code>()</code> for patterns, names (<tt>tim</tt>) for rules,
+   regular expressions (<code>"[a-z]+"</code>) for tokens, and <code>#</code> for
+   comments.
+
+<p>
+</li>
+<li>The Yapps parser generator is written as a single Python module
+   with no C extensions.  Yapps produces parsers that are written
+   entirely in Python, and require only the Yapps run-time module (5k)
+   for support.
+
+<p>
+</li>
+<li>Yapps's scanner is context-sensitive, picking tokens based on
+   the types of the tokens accepted by the parser.  This can be
+   helpful when implementing certain kinds of parsers, such as for a
+   preprocessor.
+
+<p>
+</li>
+</ol>
+
+<p>
+There are several disadvantages of using Yapps over another parser system:
+
+<p>
+
+<ol>
+<li>Yapps parsers are <tt>ELL(1)</tt> (Extended LL(1)), which is
+   less powerful than <tt>LALR</tt> (used by <tt>PyLR</tt>) or
+   <tt>SLR</tt> (used by <tt>kjParsing</tt>), so Yapps would not be a
+   good choice for parsing complex languages.  For example, allowing
+   both <tt>x := 5;</tt> and <tt>x;</tt> as statements is difficult
+   because we must distinguish based on only one token of lookahead.
+   Seeing only <tt>x</tt>, we cannot decide whether we have an
+   assignment statement or an expression statement.  (Note however
+   that this kind of grammar can be matched with backtracking; see
+   section <a href="node10.html#sec:future"><img  align="BOTTOM" border="1" alt="[*]"
+ src="http://www.stanford.edu/icons/latex2html/crossref.png"></a>.)
+
+<p>
+</li>
+<li>The scanner that Yapps provides can only read from strings, not
+   files, so an entire file has to be read in before scanning can
+   begin.  It is possible to build a custom scanner, though, so in
+   cases where stream input is needed (from the console, a network, or
+   a large file are examples), the Yapps parser can be given a custom
+   scanner that reads from a stream instead of a string.
+
+<p>
+</li>
+<li>Yapps is not designed with efficiency in mind.
+
+<p>
+</li>
+</ol>
+
+<p>
+Yapps provides an easy to use parser generator that produces parsers
+similar to what you might write by hand.  It is not meant to be a
+solution for all parsing problems, but instead an aid for those times
+you would write a parser by hand rather than using one of the more
+powerful parsing packages available.
+
+<p>
+Yapps 2.0 is easier to use than Yapps 1.0.  New features include a
+less restrictive input syntax, which allows mixing of sequences,
+choices, terminals, and nonterminals; optional matching; the ability
+to insert single-line statements into the generated parser; and
+looping constructs <code>*</code> and <code>+</code> similar to the repetitive
+matching constructs in regular expressions.  Unfortunately, the
+addition of these constructs has made Yapps 2.0 incompatible with
+Yapps 1.0, so grammars will have to be rewritten.  See section
+<a href="#sec:Upgrading"><img  align="BOTTOM" border="1" alt="[*]"
+ src="http://www.stanford.edu/icons/latex2html/crossref.png"></a> for tips on changing Yapps 1.0 grammars for use
+with Yapps 2.0.
+
+<p>
+
+<div class="navigation"><hr>
+<!--Navigation Panel-->
+<a name="tex2html50"
+  href="node2.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html48"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html42"
+  href="yapps2.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html51"
+  href="node2.html">2 Examples</a>
+<b> Up:</b> <a name="tex2html49"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html43"
+  href="yapps2.html">Yapps 2.0 Manual</a></div>
+<!--End of Navigation Panel-->
+<address>
+Amit J Patel, amitp@cs.stanford.edu
+</address>
+</body>
+</html>

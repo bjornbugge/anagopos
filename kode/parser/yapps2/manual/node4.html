@@ -1,0 +1,172 @@
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html>
+<head>
+<title>4 Customization</title>
+<meta name="description" content="4 Customization">
+<meta name="keywords" content="yapps2">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="LaTeX2HTML v2K.1beta">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="yapps2.css">
+
+<link rel="next" href="node5.html">
+<link rel="previous" href="node3.html">
+<link rel="up" href="yapps2.html">
+<link rel="next" href="node5.html">
+</head>
+
+<body bgcolor=white text=black link=#004080 vlink=#006020>
+
+<div class="navigation"><!--Navigation Panel-->
+<a name="tex2html89"
+  href="node5.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html87"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html81"
+  href="node3.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html90"
+  href="node5.html">5 Parser Mechanics</a>
+<b> Up:</b> <a name="tex2html88"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html82"
+  href="node3.html">3 Grammars</a>
+<br>
+<br></div>
+<!--End of Navigation Panel-->
+<!--Table of Child-Links-->
+<a name="CHILD_LINKS"><strong>Subsections</strong></a>
+
+<ul class="ChildLinks">
+<li><a name="tex2html91"
+  href="#SECTION00041000000000000000"><span class="arabic">4</span>.<span class="arabic">1</span> Customizing Parsers</a>
+<li><a name="tex2html92"
+  href="#SECTION00042000000000000000"><span class="arabic">4</span>.<span class="arabic">2</span> Customizing Scanners</a>
+</ul>
+<!--End of Table of Child-Links-->
+<hr>
+
+<h1><a name="SECTION00040000000000000000">
+<span class="arabic">4</span> Customization</a>
+</h1>
+
+<p>
+Both the parsers and the scanners can be customized.  The parser is
+usually extended by subclassing, and the scanner can either be
+subclassed or completely replaced.
+
+<p>
+
+<h2><a name="SECTION00041000000000000000">
+<span class="arabic">4</span>.<span class="arabic">1</span> Customizing Parsers</a>
+</h2>
+
+<p>
+If additional fields and methods are needed in order for a parser to
+work, Python subclassing can be used.  (This is unlike parser classes
+written in static languages, in which these fields and methods must be
+defined in the generated parser class.)  We simply subclass the
+generated parser, and add any fields or methods required.  Expressions
+in the grammar can call methods of the subclass to perform any actions
+that cannot be expressed as a simple expression.  For example,
+consider this simple grammar:
+
+<p>
+<pre>
+parser X:
+    rule goal:  "something"  {{ self.printmsg() }}
+</pre>
+
+<p>
+The <tt>printmsg</tt> function need not be implemented in the parser
+class <tt>X</tt>; it can be implemented in a subclass:
+
+<p>
+<pre>
+import Xparser
+
+class MyX(Xparser.X):
+    def printmsg(self):
+        print "Hello!"
+</pre>
+
+<p>
+
+<h2><a name="SECTION00042000000000000000">
+<span class="arabic">4</span>.<span class="arabic">2</span> Customizing Scanners</a>
+</h2>
+
+<p>
+The generated parser class is not dependent on the generated scanner
+class.  A scanner object is passed to the parser object's constructor
+in the <tt>parse</tt> function.  To use a different scanner, write
+your own function to construct parser objects, with an instance of a
+different scanner.  Scanner objects must have a <tt>token</tt> method
+that accepts an integer <tt>N</tt> as well as a list of allowed token
+types, and returns the Nth token, as a tuple.  The default scanner
+raises <tt>NoMoreTokens</tt> if no tokens are available, and
+<tt>SyntaxError</tt> if no token could be matched.  However, the
+parser does not rely on these exceptions; only the <tt>parse</tt>
+convenience function (which calls <tt>wrap_error_reporter</tt>) and
+the <tt>print_error</tt> error display function use those exceptions.
+
+<p>
+The tuples representing tokens have four elements.  The first two are
+the beginning and ending indices of the matched text in the input
+string.  The third element is the type tag, matching either the name
+of a named token or the quoted regexp of an inline or ignored token.
+The fourth element of the token tuple is the matched text.  If the
+input string is <tt>s</tt>, and the token tuple is
+<tt>(b,e,type,val)</tt>, then <tt>val</tt> should be equal to
+<tt>s[b:e]</tt>.
+
+<p>
+The generated parsers do not the beginning or ending index.  They use
+only the token type and value.  However, the default error reporter
+uses the beginning and ending index to show the user where the error
+is.
+
+<p>
+
+<div class="navigation"><hr>
+<!--Navigation Panel-->
+<a name="tex2html89"
+  href="node5.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html87"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html81"
+  href="node3.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html90"
+  href="node5.html">5 Parser Mechanics</a>
+<b> Up:</b> <a name="tex2html88"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html82"
+  href="node3.html">3 Grammars</a></div>
+<!--End of Navigation Panel-->
+<address>
+Amit J Patel, amitp@cs.stanford.edu
+</address>
+</body>
+</html>

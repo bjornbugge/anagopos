@@ -1,0 +1,145 @@
+
+<!--Converted with LaTeX2HTML 2K.1beta (1.48)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<html>
+<head>
+<title>B. Upgrading</title>
+<meta name="description" content="B. Upgrading">
+<meta name="keywords" content="yapps2">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="Generator" content="LaTeX2HTML v2K.1beta">
+<meta http-equiv="Content-Style-Type" content="text/css">
+
+<link rel="STYLESHEET" href="yapps2.css">
+
+<link rel="next" href="node8.html">
+<link rel="previous" href="node6.html">
+<link rel="up" href="yapps2.html">
+<link rel="next" href="node8.html">
+</head>
+
+<body bgcolor=white text=black link=#004080 vlink=#006020>
+
+<div class="navigation"><!--Navigation Panel-->
+<a name="tex2html126"
+  href="node8.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html124"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html118"
+  href="node6.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html127"
+  href="node8.html">C. Troubleshooting</a>
+<b> Up:</b> <a name="tex2html125"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html119"
+  href="node6.html">A. Grammar for Parsers</a>
+<br>
+<br></div>
+<!--End of Navigation Panel-->
+
+<h1><a name="SECTION00070000000000000000">
+B. Upgrading</a>
+</h1>
+
+<p>
+Yapps 2.0 is not backwards compatible with Yapps 1.0.  In this section 
+are some tips for upgrading:
+
+<p>
+
+<ol>
+<li>Yapps 1.0 was distributed as a single file.  Yapps 2.0 is
+   instead distributed as two Python files: a <span  class="textit">parser generator</span>
+   (26k) and a <span  class="textit">parser runtime</span> (5k).  You need both files to
+   create parsers, but you need only the runtime (<tt>yappsrt.py</tt>)
+   to use the parsers.
+
+<p>
+</li>
+<li>Yapps 1.0 supported Python 1.4 regular expressions from the
+   <tt>regex</tt> module.  Yapps 2.0 uses Python 1.5 regular
+   expressions from the <tt>re</tt> module.  <span  class="textit">The new syntax for
+     regular expressions is not compatible with the old syntax.</span>
+   Andrew Kuchling has a <a name="tex2html3"
+  href="http://www.python.org/doc/howto/regex-to-re/">guide to converting
+     regular
+     expressions</a>
+on his
+   web page.
+
+<p>
+</li>
+<li>Yapps 1.0 wants a pattern and then a return value in <code>-&gt;</code>
+   <code>&lt;&lt;...&gt;&gt;</code>.  Yapps 2.0 allows patterns and Python statements to
+   be mixed.  To convert a rule like this:
+
+<p>
+<pre>
+rule R: A B C -&gt; &lt;&lt; E1 &gt;&gt;
+      | X Y Z -&gt; &lt;&lt; E2 &gt;&gt;
+</pre>
+
+<p>
+to Yapps 2.0 form, replace the return value specifiers with return
+   statements:
+
+<p>
+<pre>
+rule R: A B C {{ return E1 }}
+      | X Y Z {{ return E2 }}
+</pre>
+
+<p>
+</li>
+<li>Yapps 2.0 does not perform tail recursion elimination.  This
+   means any recursive rules you write will be turned into recursive
+   methods in the parser.  The parser will work, but may be slower.
+   It can be made faster by rewriting recursive rules, using instead
+   the looping operators <code>*</code> and <code>+</code> provided in Yapps 2.0.
+
+<p>
+</li>
+</ol>
+
+<p>
+
+<div class="navigation"><hr>
+<!--Navigation Panel-->
+<a name="tex2html126"
+  href="node8.html">
+<img width="37" height="24" align="BOTTOM" border="0" alt="next"
+ src="http://www.stanford.edu/icons/latex2html/next.png"></a> 
+<a name="tex2html124"
+  href="yapps2.html">
+<img width="26" height="24" align="BOTTOM" border="0" alt="up"
+ src="http://www.stanford.edu/icons/latex2html/up.png"></a> 
+<a name="tex2html118"
+  href="node6.html">
+<img width="63" height="24" align="BOTTOM" border="0" alt="previous"
+ src="http://www.stanford.edu/icons/latex2html/prev.png"></a>   
+<br>
+<b> Next:</b> <a name="tex2html127"
+  href="node8.html">C. Troubleshooting</a>
+<b> Up:</b> <a name="tex2html125"
+  href="yapps2.html">Yapps 2.0 Manual</a>
+<b> Previous:</b> <a name="tex2html119"
+  href="node6.html">A. Grammar for Parsers</a></div>
+<!--End of Navigation Panel-->
+<address>
+Amit J Patel, amitp@cs.stanford.edu
+</address>
+</body>
+</html>
