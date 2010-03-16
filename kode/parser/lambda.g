@@ -1,7 +1,6 @@
 parser Lambda:
     token END: "$"
-    token NUM: "[0-9]+"
-	token LAM: "[£]+"
+	token LAM: "[£”]+"
 	token VAR: "[a-zA-Z_]+"
 
     rule goal:           expr END         {{ return expr }}
@@ -19,5 +18,4 @@ parser Lambda:
                        )*                 {{ return v }}
 
     # A term is either a number or an expression surrounded by parentheses
-    rule term:           NUM              {{ return atoi(NUM) }}
-                       | "\\(" expr "\\)" {{ return expr }}
+    rule term:           "\\(" expr "\\)" {{ return expr }}
