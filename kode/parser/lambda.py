@@ -6,56 +6,51 @@ class LambdaScanner(Scanner):
     patterns = [
         ('"\\\\)"', re.compile('\\)')),
         ('"\\\\("', re.compile('\\(')),
+        ('""', re.compile('')),
         ('END', re.compile('$')),
         ('LAM', re.compile('#')),
         ('DOT', re.compile('.')),
         ('VAR', re.compile('[a-zA-Z_]+')),
+        ('ID', re.compile('[a-zA-Z_]+')),
     ]
     def __init__(self, str):
         Scanner.__init__(self,None,[],str)
 
 class Lambda(Parser):
     def goal(self):
-        term = self.term()
+        EXP = self.EXP()
         END = self._scan('END')
-        print "term end"
+        print "end;"
 
     def x(self):
         VAR = self._scan('VAR')
-        print "VAR"
+        print "var"
 
-    def term(self):
+    def EXP(self):
+        _token_ = self._peek('""', 'VAR', 'LAM', '"\\\\("')
+        if _token_ != '""':
+            EXP2 = self.EXP2()
+            EXP = self.EXP()
+            print "EXP;"
+        else:# == '""'
+            self._scan('""')
+
+    def EXP2(self):
         _token_ = self._peek('VAR', 'LAM', '"\\\\("')
         if _token_ == 'VAR':
-            x = self.x()
-            print "rule -> "
+            VAR = self._scan('VAR')
+            print "VAR;"
         elif _token_ == 'LAM':
-            abstraction = self.abstraction()
-            print "rule -> "
+            LAM = self._scan('LAM')
+            VAR = self._scan('VAR')
+            DOT = self._scan('DOT')
+            EXP = self.EXP()
+            print "ABS;"
         else:# == '"\\\\("'
-            parentheses = self.parentheses()
-            print "rule -> "
-        else:# == 'LAM'
-            term2 = self.term2()
-            print "rule -> "
-
-    def term2(self):
-        term = self.term()
-        term2 = self.term2()
-        print "term"
-
-    def abstraction(self):
-        LAM = self._scan('LAM')
-        x = self.x()
-        DOT = self._scan('DOT')
-        term = self.term()
-        print "abstraction"
-
-    def parentheses(self):
-        self._scan('"\\\\("')
-        term = self.term()
-        self._scan('"\\\\)"')
-        print "parentheses"
+            self._scan('"\\\\("')
+            EXP = self.EXP()
+            self._scan('"\\\\)"')
+            print "PAR;"
 
 
 def parse(rule, text):
