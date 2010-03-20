@@ -18,23 +18,31 @@ class Lambda(Parser):
     def goal(self):
         term = self.term()
         END = self._scan('END')
-        print "term"
+        print "term end"
 
     def x(self):
         VAR = self._scan('VAR')
-        print "var"
+        print "VAR"
 
     def term(self):
         _token_ = self._peek('VAR', 'LAM', '"\\\\("')
         if _token_ == 'VAR':
             x = self.x()
-            
+            print "rule -> "
         elif _token_ == 'LAM':
             abstraction = self.abstraction()
-            
+            print "rule -> "
         else:# == '"\\\\("'
             parentheses = self.parentheses()
-            
+            print "rule -> "
+        else:# == 'LAM'
+            term2 = self.term2()
+            print "rule -> "
+
+    def term2(self):
+        term = self.term()
+        term2 = self.term2()
+        print "term"
 
     def abstraction(self):
         LAM = self._scan('LAM')
@@ -45,7 +53,6 @@ class Lambda(Parser):
 
     def parentheses(self):
         self._scan('"\\\\("')
-        term = self.term()
         term = self.term()
         self._scan('"\\\\)"')
         print "parentheses"
