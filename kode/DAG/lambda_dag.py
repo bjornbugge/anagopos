@@ -1,98 +1,86 @@
-"""
+'''
 DAG-representation of lambda terms.
-"""
+'''
 
-class Node(object):
-	"""
-	A node in a graph...
-	"""
+class LambdaNode(object):
 	def __init__(self):
-		self.children = []
+		self.leftchild = None
+		self.rightchild = None
+		self.parent = None
 		
-	def add(self, nodes):
-		self.children.extend(nodes)
+	def add(self, node):
+		'''
+		Add a child node. If this node already has two children, nothing happens.
+		'''
+		if self.leftchild is None:
+			self.leftchild = node
+			node.parent = self
+	 	elif self.rightchild is None:
+			self.rightchild = node
+			node.parent = self
 	
-	def remove(self, nodes):
-		for n in nodes:
-			self.children.remove(n)
+	def remove(self, node):
+		'''
+		Remove the node if it is a child.
+		'''
+		if self.leftchild == node:
+			self.leftchild = None
+			node.parent = None
+		elif self.rightchild == node:
+			self.rightchild = None
+			node.parent = None
 	
-	def clone(self):
-		return NotImplementedError('')
-
-class LambdaNode(Node):
-	def alphaconvert(self, convertfrom, convertto):
-		for c in self.children:
-			c.alphaconvert(convertfrom, convertto)
-	
-	def leftchild(self):
-		return self.children[0]
-
-	def rightchild(self):
-		return self.children[1]
-	
+	def swap(self, old, new):
+		'''
+		Swap the old node with the new node -- if the old node is a child.
+		'''
+		if self.leftchild == old:
+			self.leftchild = new
+			new.parent = self
+			old.parent = None
+		elif self.rightchild == old:
+			self.rightchild = new
+			new.parent = self
+			old.parent = None
 
 class Abstraction(LambdaNode):
 	"""
 	A lambda abstraction. Knows which descending nodes it binds.
 	"""
-	def assignvar(self, variablenode):
-		self.variables.extend(variablenode)
-	
 	def __init__(self):
-		self.children = []
+		super(Abstraction, self).__init__()
 		self.variables = []
 	
-	def alphaconvert(self, convertfrom, convertto):
-		for v in self.variables:
-			if v.name == convertfrom:
-				v.name = convertto
-		for c in self.children:
-			if c not in self.variables:
-				c.alphaconvert(convertfrom, convertto)
-	
-	def reduce(self, term):
-		for c in self.children:
-			if c in self.variables:
-				self.children.insert(self.children.index(c), term)
-				self.children.remove(c)
-			else:
-				c.reduce()
-	
-	def clone(self):
-		n = Abstraction()
-		n.add([c.clone() for c in self.children])
-		n.assignvar([v.clone() for v in self.variables])
-		return n
+	def assignvar(self, variablenode):
+		'''
+		Register the node as a variable bound by this abstractor.
+		'''
+		self.variables.append(variablenode)
 	
 	def __repr__(self):
-		return "$"+self.variables[0].name+".("+ [c.__repr__() for c in self.children].__repr__() +")"
+		return "$" + self.variables[0].name + "." + str(self.leftchild)
 
 
 class Application(LambdaNode):
 	"""
 	Lambda application.
-	"""
-	def clone(self):
-		n = Application()
-		n.add([c.clone() for c in self.children])
-		return n
-	
+	"""		
 	def __repr__(self):
-		return "(" + self.leftchild().__repr__() + " " + self.rightchild().__repr__() + ")"
+		return "(" + str(self.leftchild) + " " + str(self.rightchild) + ")"
 
 class Variable(LambdaNode):
 	"""
 	A variable. Can be either bound or free.
 	"""	
 	def __init__(self, n):
-		self.bound = False
-		self.children = [] # A variable can't have children
+		super(Variable, self).__init__()
 		self.name = n
 	
-	def clone(self):
-		n = Variable(self.name)
-		n.bound = self.bound
-		return n
+	def add(self, node):
+		pass # A variable can't have children
 	
+	def remove(self, node):
+		pass
+		
 	def __repr__(self):
 		return self.name
