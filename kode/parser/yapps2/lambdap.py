@@ -17,40 +17,41 @@ class LambdaScanner(Scanner):
         Scanner.__init__(self,None,[],str)
 
 class Lambda(Parser):
-    def goal(self):
-        EXP = self.EXP()
-        END = self._scan('END')
-        print "end;"
-
-    def x(self):
-        VAR = self._scan('VAR')
-        print "var"
-
     def EXP(self):
-        _token_ = self._peek('""', 'VAR', 'LAM', '"\\\\("')
-        if _token_ != '""':
+        _token_ = self._peek('LAM', '""', 'VAR', '"\\\\("')
+        if _token_ not in ['LAM', '""']:
             EXP2 = self.EXP2()
             EXP = self.EXP()
-            print "EXP;"
-        else:# == '""'
-            self._scan('""')
-
-    def EXP2(self):
-        _token_ = self._peek('VAR', 'LAM', '"\\\\("')
-        if _token_ == 'VAR':
-            VAR = self._scan('VAR')
-            print "VAR;"
+            A = Application()
+            child1 = EXP2
+            child2 = EXP
+            A.add(child1)
+            A.add(child2)
+            return A
         elif _token_ == 'LAM':
             LAM = self._scan('LAM')
             VAR = self._scan('VAR')
             DOT = self._scan('DOT')
             EXP = self.EXP()
-            print "ABS;"
+            A = Abstraction()
+            child = EXP
+            A.add(child)
+            return A
+        else:# == '""'
+            self._scan('""')
+            print "EMPTY;"
+
+    def EXP2(self):
+        _token_ = self._peek('VAR', '"\\\\("')
+        if _token_ == 'VAR':
+            VAR = self._scan('VAR')
+            x = Variable(VAR)
+            return x
         else:# == '"\\\\("'
             self._scan('"\\\\("')
             EXP = self.EXP()
             self._scan('"\\\\)"')
-            print "PAR;"
+            return EXP
 
 
 def parse(rule, text):
