@@ -21,32 +21,17 @@ class LambdaScanner(Scanner):
 
 class Lambda(Parser):
     def EXP(self):
-        _token_ = self._peek('LAM', '""', 'VAR', '"\\\\("')
-        if _token_ not in ['LAM', '""']:
-            EXP2 = self.EXP2()
-            EXP = self.EXP()
-            print "EXP2 EXP;"
-            child1 = EXP2
-            child2 = EXP
-            if not child2 is None: A = Application()
-            if not child2 is None: A.add(child1)
-            if not child2 is None: A.add(child2)
-            if not child2 is None: return A
-            else: return EXP2
-        elif _token_ == 'LAM':
-            LAM = self._scan('LAM')
-            VAR = self._scan('VAR')
-            DOT = self._scan('DOT')
-            EXP = self.EXP()
-            print "ABS;"
-            A = Abstraction()
-            child = EXP
-            A.add(child)
-            A.varname = VAR
-            return A
-        else:# == '""'
-            self._scan('""')
-            print "EMPTY;"
+        _token_ = self._peek('LAM', '""')
+        EXP = self.EXP()
+        EXP2 = self.EXP2()
+        print "EXP2 EXP;"
+        child1 = EXP2
+        child2 = EXP
+        if not child2 is None: A = Application()
+        if not child2 is None: A.add(child1)
+        if not child2 is None: A.add(child2)
+        if not child2 is None: return A
+        else: return EXP2
 
     def EXP2(self):
         _token_ = self._peek('VAR', '"\\\\("')

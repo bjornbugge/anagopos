@@ -12,7 +12,7 @@ parser Lambda:
 	# If x is a variable, then x ∈ Λ
 	# If x is a variable and M ∈ Λ, then (λx.M) ∈ Λ
 	# If M, N ∈ Λ, then (M N) ∈ Λ
-		
+	
 	rule EXP:			EXP2 EXP					
 {{	print "EXP2 EXP;"	}}
 {{	child1 = EXP2	}}
