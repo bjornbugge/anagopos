@@ -27,7 +27,7 @@ parser Lambda:
 {{	A = Abstraction()	}}
 {{	child = EXP	}}
 {{	A.add(child)	}}
-{{	A.assignvar(child)	}}
+{{	A.varname = VAR	}}
 {{	return A	}}
 
 						| ""						{{ print "EMPTY;" }}

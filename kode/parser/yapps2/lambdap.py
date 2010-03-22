@@ -41,7 +41,7 @@ class Lambda(Parser):
             A = Abstraction()
             child = EXP
             A.add(child)
-            A.assignvar(child)
+            A.varname = VAR
             return A
         else:# == '""'
             self._scan('""')
