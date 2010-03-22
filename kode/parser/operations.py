@@ -1,6 +1,29 @@
 from lambda_dag import *
 from math import floor, log
 from copy import deepcopy
+from collections import deque
+
+def assignvariables(root):
+	'''
+	Alters the DAG such that every Abstraction node knows which descending 
+	Variable nodes it binds.
+	'''
+	def _assignall(node, abstractorstack):
+		if type(node) is Variable:
+			for abstractor in abstractorstack:
+				if node.name == abstractor.varname:
+					abstractor.assignvar(node)
+					break
+		elif type(node) is Abstraction:
+			abstractorstack.appendleft(node)
+			node.variables = []
+			_assignall(node.leftchild, abstractorstack)
+			abstractorstack.popleft()
+		else: # type(node) is Application
+			_assignall(node.leftchild, abstractorstack)
+			_assignall(node.rightchild, abstractorstack)
+	
+	_assignall(root, deque([]))
 
 def findredexes(root):
 	'''
@@ -96,6 +119,7 @@ def alphaconvert(term, newname):
 	'''
 	for v in term.variables:
 		v.name = newname
+	term.varname = newname
 	
 def sanitize(term):
 	'''
@@ -181,9 +205,11 @@ if __name__ == "__main__":
 	appl.add(lY)
 	appl.add(z)
 	lX.add(x)
-	lX.assignvar(x)
+	# lX.assignvar(x)
+	lX.varname = 'x'
 	lY.add(y)
-	lY.assignvar(y)
+	# lY.assignvar(y)
+	lY.varname = 'y'
 	# appl2.add(lA)
 	# 	appl2.add(b)
 	# 	lA.add(appl3)

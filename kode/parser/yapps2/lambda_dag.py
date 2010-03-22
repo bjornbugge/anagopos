@@ -50,15 +50,18 @@ class Abstraction(LambdaNode):
 	def __init__(self):
 		super(Abstraction, self).__init__()
 		self.variables = []
+		self.varname = ''
 	
 	def assignvar(self, variablenode):
 		'''
 		Register the node as a variable bound by this abstractor.
 		'''
 		self.variables.append(variablenode)
+		if self.varname == '':
+			self.varname = variablenode.name
 	
 	def __repr__(self):
-		return "#" + self.variables[0].name + "." + str(self.leftchild)
+		return "#" + self.varname + "." + str(self.leftchild)
 
 
 class Application(LambdaNode):
