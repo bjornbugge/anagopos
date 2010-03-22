@@ -9,6 +9,7 @@ class LambdaScanner(Scanner):
         ('"\\\\)"', re.compile('\\)')),
         ('"\\\\("', re.compile('\\(')),
         ('""', re.compile('')),
+        ('[ \r\t\n]+', re.compile('[ \r\t\n]+')),
         ('END', re.compile('$')),
         ('LAM', re.compile('#')),
         ('DOT', re.compile('.')),
@@ -16,7 +17,7 @@ class LambdaScanner(Scanner):
         ('ID', re.compile('[a-zA-Z_]+')),
     ]
     def __init__(self, str):
-        Scanner.__init__(self,None,[],str)
+        Scanner.__init__(self,None,['[ \r\t\n]+'],str)
 
 class Lambda(Parser):
     def EXP(self):
