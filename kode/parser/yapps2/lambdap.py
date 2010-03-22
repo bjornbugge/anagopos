@@ -1,3 +1,5 @@
+from lambda_dag import *
+
 from string import *
 import re
 from yappsrt import *
@@ -22,20 +24,24 @@ class Lambda(Parser):
         if _token_ not in ['LAM', '""']:
             EXP2 = self.EXP2()
             EXP = self.EXP()
-            A = Application()
+            print "EXP2 EXP;"
             child1 = EXP2
             child2 = EXP
-            A.add(child1)
-            A.add(child2)
-            return A
+            if not child2 is None: A = Application()
+            if not child2 is None: A.add(child1)
+            if not child2 is None: A.add(child2)
+            if not child2 is None: return A
+            else: return EXP2
         elif _token_ == 'LAM':
             LAM = self._scan('LAM')
             VAR = self._scan('VAR')
             DOT = self._scan('DOT')
             EXP = self.EXP()
+            print "ABS;"
             A = Abstraction()
             child = EXP
             A.add(child)
+            A.assignvar(child)
             return A
         else:# == '""'
             self._scan('""')
@@ -45,12 +51,14 @@ class Lambda(Parser):
         _token_ = self._peek('VAR', '"\\\\("')
         if _token_ == 'VAR':
             VAR = self._scan('VAR')
+            print "VAR = ", VAR
             x = Variable(VAR)
             return x
         else:# == '"\\\\("'
             self._scan('"\\\\("')
             EXP = self.EXP()
             self._scan('"\\\\)"')
+            print "PAR"
             return EXP
 
 

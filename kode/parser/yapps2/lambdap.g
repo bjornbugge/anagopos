@@ -1,5 +1,4 @@
 from lambda_dag import *
-import yapps2
 %%
 
 parser Lambda:
@@ -14,24 +13,30 @@ parser Lambda:
 	# If M, N ∈ Λ, then (M N) ∈ Λ
 	
 	rule EXP:			EXP2 EXP					
-{{	A = Application()	}}
+{{	print "EXP2 EXP;"	}}
 {{	child1 = EXP2	}}
 {{	child2 = EXP	}}
-{{	A.add(child1)	}}
-{{	A.add(child2)	}}
-{{	return A	}}
+{{	if not child2 is None: A = Application()	}}
+{{	if not child2 is None: A.add(child1)	}}
+{{	if not child2 is None: A.add(child2)	}}
+{{	if not child2 is None: return A	}}
+{{	else: return EXP2 }}
 
 						| LAM VAR DOT EXP
+{{	print "ABS;"	}}
 {{	A = Abstraction()	}}
 {{	child = EXP	}}
 {{	A.add(child)	}}
+{{	A.assignvar(child)	}}
 {{	return A	}}
 
 						| ""						{{ print "EMPTY;" }}
 
 	rule EXP2:			VAR
+{{	print "VAR = ", VAR	}}
 {{	x = Variable(VAR)	}}
 {{	return x	}}
 
 						| "\\(" EXP "\\)"
+{{	print "PAR"	}}
 {{	return EXP	}}
