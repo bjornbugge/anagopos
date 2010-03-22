@@ -23,6 +23,24 @@ def findredexes(root):
 	_find(root, bitstrings, 1)
 	return bitstrings
 
+def findredexesdirectly(root):
+	'''
+	Returns a list containing pointers to the Application nodes in the DAG
+	whose left child is a redex.
+	'''
+	def _find(node, redexes):
+		if type(node) is Application:
+			if type(node.leftchild) is Abstraction:
+				redexes.append(node)
+		if not node.leftchild is None:
+			_find(node.leftchild, redexes)
+			if not node.rightchild is None:
+				_find(node.rightchild, redexes)
+	
+	rs = []
+	_find(root, rs)
+	return rs
+
 def getnode(root, position):
 	'''
 	Returns the node at the given position. The position must be positive.
@@ -158,7 +176,7 @@ if __name__ == "__main__":
 	# a = Variable('a')
 	# b = Variable('b')
 	
-	rn.add(lX)
+	rn.add(lX)	
 	rn.add(appl)
 	appl.add(lY)
 	appl.add(z)

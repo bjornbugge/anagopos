@@ -58,7 +58,7 @@ class Abstraction(LambdaNode):
 		self.variables.append(variablenode)
 	
 	def __repr__(self):
-		return "$" + self.variables[0].name + "." + str(self.leftchild)
+		return "#" + self.variables[0].name + "." + str(self.leftchild)
 
 
 class Application(LambdaNode):
