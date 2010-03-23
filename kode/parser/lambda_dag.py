@@ -67,14 +67,14 @@ class Abstraction(LambdaNode):
 class Application(LambdaNode):
 	"""
 	Lambda application.
-	"""		
+	"""
 	def __repr__(self):
 		return "(" + str(self.leftchild) + " " + str(self.rightchild) + ")"
 
 class Variable(LambdaNode):
 	"""
 	A variable. Can be either bound or free.
-	"""	
+	"""
 	def __init__(self, n):
 		super(Variable, self).__init__()
 		self.name = n

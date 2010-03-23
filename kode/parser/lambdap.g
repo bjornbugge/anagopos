@@ -1,4 +1,4 @@
-# from lambda_dag import *
+from lambda_dag import *
 
 # The parser works on strings preprocessed by preprocessor.preprocess(x).
 %%
@@ -29,3 +29,31 @@ parser Lambda:
 										{{ A.varname = VAR }}
 										{{ return A }}
 					| ""
+
+%%
+
+def preprocess(term):
+	'''
+	Perform preprocessing on a string representation of a lambda term. 
+	Preprocessing in this context means insert all missing parentheses,
+	making the structure of the term explicit.
+	'''
+	out = ''
+	count = 0
+	for ch in term:
+		out = out + ch
+		if ch == '.':
+			out = out + '('
+			count = count + 1
+		if ch == ')' and count > 0:
+			out = out + ')'
+			count = count - 1
+	
+	for i in range(count):
+		out = out + ')'
+	
+	return out
+
+def parse(text):
+    P = Lambda(LambdaScanner(preprocess(text)))
+    return wrap_error_reporter(P, 'Terms')

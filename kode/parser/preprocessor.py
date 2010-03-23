@@ -11,7 +11,7 @@ def preprocess(term):
 		if ch == '.':
 			out = out + '('
 			count = count + 1
-		if ch == ')':
+		if ch == ')' and count > 0:
 			out = out + ')'
 			count = count - 1
 	
