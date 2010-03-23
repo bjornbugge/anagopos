@@ -2,4 +2,20 @@
 
 \chapter{The parser and YAPPS2 parser generator}
 
-This is about the parser.
+To generate the parser, we have used the YAPPS2 \cite{YAPPPS2} parser
+generator. This is a Python parser generator with the below focuses, and did
+therefore seem to meet our needs.
+
+\begin{itemize}
+	\item Easy to use
+	\item Usable with simple grammars
+	\item produces human-readable code
+\end{itemize}
+
+Our grammer, as defined in the preliminaries chapter, looks the following:
+
+\begin{align*}
+	x\in\Lambda \\
+	M\in\Lambda &\Rightarrow (\lam{x}{M})\in\Lambda \\
+	M, N\in\Lambda &\Rightarrow (M N)\in\Lambda
+\end{align*}
