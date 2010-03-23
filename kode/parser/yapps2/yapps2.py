@@ -30,7 +30,8 @@ from yappsrt import *
 import sys
 import re
 
-INDENT = " "*4
+# "We don't use soft tabs mofo!" -- Bjorn March 23. 2010
+INDENT = "\t"
 
 class Generator:
     def __init__(self, name, options, tokens, rules):

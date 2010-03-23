@@ -173,8 +173,8 @@ def reductiongraph(root, strategy = standardstrategy):
 	# return graph
 	
 	for (k,v) in graph:
-		sanitize(k)
-		sanitize(v)
+		# sanitize(k)
+		# sanitize(v)
 		print str(k) + "\t\t---->\t\t" + str(v)
 	
 if __name__ == "__main__":
