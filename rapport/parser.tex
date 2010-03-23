@@ -1,6 +1,10 @@
 %!TEX root = rapport.tex
 
-\chapter{The parser and YAPPS2 parser generator}
+\chapter{The parser and YAPPS2 parser generator (draft)}
+
+We have used our grammar, as defined in the preliminaries chapter. We have
+furthermore also kept the greediness, also defined in the the preliminaries
+chapter.
 
 We decided to use a parser generator because our needs for the parser was
 fairly simple. There exist numerous parser generator for Python
@@ -15,15 +19,21 @@ based on Python 1.5 and has the below focus points:
 	\item produces human-readable code
 \end{itemize}
 
-Being easy to use was obviously a good thing, but the latter two matched the
-best. Our grammar is quite small and if we would need to edit the produced
-parser it would be nice to have readable code produced.
+We made our decision based on the fact that our grammar is quite small, and if
+we would need to edit the produced parser, it would be nice to have readable
+code produced.
 
-We have used our grammer, as defined in the preliminaries chapter, which looks
-the following:
+\section{Pre-processing}
 
-\begin{align*}
-	x\in\Lambda \\
-	M\in\Lambda &\Rightarrow (\lam{x}{M})\in\Lambda \\
-	M, N\in\Lambda &\Rightarrow (M N)\in\Lambda
-\end{align*}
+We have chosen to run the lambda term through a pre-processing script before
+parsing it. This pre-processing script adds all possible parentheses. We
+decided on this pre-processing to make it easier to keep both the
+left-associativeness and the greediness. Now the parser does not have to worry
+about left-associativeness because the parentheses does this.
+
+\section{YAPPS2}
+
+The YAPPS2 parser generater was simple to use and generated an easy readable
+parser file.
+
+More to come....
