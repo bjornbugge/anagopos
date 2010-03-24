@@ -1,0 +1,101 @@
+%!TEX root = rapport.tex
+
+\chapter{Graph Drawing}
+
+% Polyline, straightline, orthogonal drawings.
+% Use a graphic standard to define elements of the graph drawing.
+% Aesthetics: distance between adjacent nodes, minimum bounding box, crossing edges,
+%			symmetries, bendings of edges, uniform edge lengths, uniform vertex distribution.
+% Aesthetics are in general NP-hard.
+% Aesthethics are often "competitive" -- optimality of one means suboptimality of another one.
+% "Spring algorithms": Edges are springs and vertices are rings. (gdbiblio: 43)
+% 	http://en.wikipedia.org/wiki/Force-based_algorithms
+% Simulated annealing approach; uses an energy function. (gdbiblio: 50)
+% Mixture of different heuristics presented in (gdbiblio: 52).
+
+% Non-planarity: Make non-planar graphs planar (gdbiblio: 55) "planarization"
+% Find the maximum, planar subgraph (NP-hard) or find a small number of edges to delete
+%	in order to make the graph planar. (gdbiblio 55-66) Or find subgraph with minimum number
+%	of crossings (NP-hard) (gdbiblio 67).
+%	Or one can split the graph to planarize it (gdbiblio: 68)
+
+% Automatic layout of orthogonal grid drawings graphs (gdbiblio 72,73)
+%	Allow homogenous treatment w/ same aesthetics of a wide range of graphs.
+
+% To draw a non-planar graph: planarize it and apply planar drawing algorithm.
+% Draw: 
+%	Test planarity of graph (gdbiblio: 78-83)
+%	Construct planar representation (gdbiblio: 84)
+%	Planar representation with drawing algorithm.
+% Every planar graph can be drawn as a planar straightline graph (gdbiblio: 85-87)
+% Convex drawings are planar straightline drawings where every face is drawn as 
+%	a convex polygon (gdbiblio: 89,90)
+% Minimize the line length in a straightline planar drawing with a convex boundary (gdbiblio: 94,95)
+% O(n) algorithm for drawing planar straightline: (gdbiblio: 97)
+% Display symmetries in planar straightline drawings: (gdbiblio: 98-101)
+% Every planar graph can be drawn as planar straightline grid drawing with area O(n^2) (gdbiblio: 102-104)
+% Different planar graph drawing algorithms are compared in (gdbiblio: 106)
+
+% Orthogonal grid drawings were motivated by circuit layout.
+% Aesthetic: minimize the area and the number of bends.
+% Every planar graph (degree at most 4) can be drawn as a planar orthogonal 
+%	grid layout with area O(n^2) 
+% It is NP-hard to test whether a planar graph can be drawn orthogonally without bends (gdbiblio: 112)
+%	and it is NP-hard to minimize the number of bends!
+% Minimize the number of bends in O(n^2log n) in an embedded setting (gdbiblio: 113)
+% Heurstics for drawing orthogonal grid drawings with O(n) bends in (gdbiblio: 115)
+% Survey of orthogonal drawing algorithms in (gdbiblio: 122)
+
+% Visibility representations: represent each vertex as a horisontal line and each 
+%	edge as a horisontal line. The edge lines intersects exactly those two vertices
+%	that the connect. (gdbiblio: 124)
+% Algorithms for constructing visiility representations in linear time given in (gdbiblio: 132-136)
+
+
+
+
+
+
+
+% Hvad _er_ det at "tegne" en graf?
+%	Det er en projektion af en graf G(V,E) på planet, således at hver
+%	knude i V er repræsenteret ved et grafisk symbol, og så der mellem
+%	alle tegnene for knuder (V_1,V_2)\in E er et linjestykke...
+
+% Hvilke problemer støder man på når man tegner en graf?
+%	Hvordan skal knuderne placeres?
+%	Hvordan undgår man at kanter overlapper?
+%	Hvor store skal knuderne være?
+%	Hvad skal bruges som pile?
+%	Når en ikke-planar graf tegnes, hvordan mindsker man antallet af overlap?
+%		Er der et teoretisk minimum evt.?
+%	Er der mange der begynder at tegne i tre dimensioner som en løsning?
+%		Enhver graf kan realiseret uden overlap i 3D (se DujomovicWood).
+%	Hvordan repræsenterer folk de krydsninger der uundgåeligt kommer i visse
+%	grafer?
+%	Hvordan ser det ud mht. størrelsesforholdet mlm. kanter og knuder?
+
+
+% Hvordan udregner folk afstanden mlm. knuderne?
+
+% Hvordan håndterer folk problemet med non-planaritet?
+%   "Confluent Drawings.."-solution
+%    3-dimensional drawing: "Three-Dimensional Grid Drawings with Sub-quadratic Volume⋆"
+
+% Hvordan tegner folk pilehovederne i en retningsbestemt graf?
+
+% Hvordan anvender folk farver i graftegningen?
+
+% Hvilke programmer til tegning af grafer eksisterer der?
+
+
+
+% Planarity problems:
+%   "Confluent Drawings.."-solution
+%    3-dimensional drawing: "Three-Dimensional Grid Drawings with Sub-quadratic Volume⋆"
+
+% G. Di Battista, P. Eades, R. Tamassia, and I. G. Tollis, 
+%   Graph Drawing, Prentice Hall, Upper Saddle River, NJ, 1999.
+
+% Pilehoveder?
+

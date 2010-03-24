@@ -1,12 +1,14 @@
 %!TEX root = rapport.tex
 
-\chapter{Representation of lambda terms in Python}
+\chapter{Representation of Lambda Terms in Python}
 
-A lambda term is represented as a directed acyclic graph (DAG). There are
-three types of nodes: abstraction, application and variable.
+A lambda term is represented as a directed acyclic graph (DAG). The nodes of the
+DAG are encoded in Python as objects. There are three types of nodes: 
+abstraction, application and variable:
 \begin{description}
 	\item[Abstraction nodes] define scopes for bound variables and can be thought
-	of as the encoding of the $\lambda$s in the DAG-structure.
+	of as the encoding of the $\lambda$s in the DAG-structure. This node type
+	always has one child.
 	
 	\item[Application nodes] have two children. The first of these
 	is either the DAG-representation of some \emph{active} subterm of 
@@ -17,36 +19,44 @@ three types of nodes: abstraction, application and variable.
 	
 	\item[Variable nodes] represent free or bound variables. A bound 
 	variable is associated with a scope, represented by an ancestral
-	abstraction node.
+	abstraction node. Variable nodes cannot have descendants.
 \end{description}
+
+This representation is straightforwardly encoded in Python with a general node
+class, \pycode{LambdaNode}, which has a subclass for each node type.
+\begin{itemize}
+	\item Each \pycode{LambdaNode}-object maintains pointers to its immediate 
+	descendants as well as a pointer to its parent node.
+	
+	\item The abstraction nodes furthermore maintain a list of pointers to the
+	variable nodes that represent the variables bound by this particular abstractor.
+	These variable nodes must be descendants of the abstraction node, although 
+	not necessarily direct descendants.
+	
+	\item Every abstraction node knows the name of the variable that it binds.
+	This is done in order to be able to easily build the list of bound 
+	variables after parsing a string representation of a lambda term. When
+	the list of variables has been built, this name is not important anymore, 
+	but it still serves as a means of producing human-readable output of the DAG.
+	
+	\item When a term is reduced, the problem is attacked ``top-down'', i.e. we first
+	see the abstraction node, and then we have to deal with its variables.
+	Therefore there is no need for a doubly linked connection between abstraction
+	nodes and variable nodes, and we can safely encode the relationship as a simple
+	list of bound nodes in each abstraction node.
+\end{itemize}
+
 A term that is not in $\beta$-normal-form has at least one $\beta$-contractum,
 and therefore the DAG-representation of that term contains at least one
 application node. More specifically, for each possible one-step
 $\beta$-reduction in a term $M$, its DAG will contain one application node.
+The first descendant of this node will be an abstraction node, while the
+second, ``rightmost'', descendant will be the argument that will be applied to
+the function represented by the abstraction node. 
 
-The representation is straightforwardly encoded in Python with a general node
-class, \pycode{Node}, which has a subclass for each node type. Each
-\pycode{Node}-object maintains a list of its immediate descendants. The
-abstraction nodes furthermore maintain a list of variable nodes representing
-the particular variable that the abstraction node ``binds''. These variable
-nodes need not be direct descendants. 
+Given this DAG, it is possible to implement the aforementioned operations on lambda
+terms by treewalks. 
 
-When a term is reduced, the problem is attacked ``top-down'', i.e. we first
-see the abstraction node, and then we have to deal with its variables.
-Therefore there is no need for a doubly linked connection between abstraction
-nodes and variable nodes, and we can safely encode the relationship as a simple
-list of bound nodes in each abstraction node.
-
-A variable node need not know its ``original name'', meaning the name
-associated with the variable in the original textual representation given by
-the user. After $\alpha$-conversion, this name does not matter, and after a
-sequence of $\beta$-reductions the overall structure of the term will be so
-far from the original, that all variables will be ``new'' defined. However, in
-order to be able to get nice (textual) representations of lambda terms from
-the DAG representations, we will name all variables with an ordinary name
-($v_0$, $v_1$, $v_2$, etc.). The bound variables will get their names from the
-lists in the abstraction nodes that maintain the abstractor-variable
-relationship, whereas the free variables will contain their names themselves.
 
 % Callback functions? Hvad skal de bruges til?
 
@@ -124,10 +134,3 @@ relationship, whereas the free variables will contain their names themselves.
 %   Lx  z
 %   |
 %   x
-
-
-
-
-%% Dicts
-
-% For every active subterm n in M, S(M) 

@@ -2,16 +2,6 @@
 
 \chapter{Preliminaries: Basic Lambda Calculus}
 
-% The untyped lambda calculus was introduced in 1936 by Alonzo Church
-% [reference] as part of the search for a solid foundation for mathematics. It is
-% heavily intertwined with the notion of a ``function'', in the sense that logic
-% and mathematics is represented with only functions and untyped variables that
-% can be either free or bound.
-
-
-% alt er funktioner
-% eksempler
-
 As a very informal example, here is a function that doubles an integer:
 \begin{equation*}
 	(\lam{x}{x+x})2=4.
@@ -83,7 +73,7 @@ two groups; the free and the bound variables.
 	\begin{align*}
 		FV(x)&=\{x\} \\
 		FV(\lam{x}{M})&= FV(M) - \{x\} \\
-		FV((M N)) &= FV(M) \cup FV(N)
+		FV(M N) &= FV(M) \cup FV(N)
 	\end{align*}
 \end{definition}
 \begin{definition}
@@ -137,7 +127,7 @@ A lambda term $M$ is composed of several parts which we call \emph{subterms}.
 		\begin{align*}
 			Sub(x) &=\{x\} \\
 			Sub(\lam{x}{N}) &= Sub(N) \cup \{\lam{x}{N}\} \\
-			Sub(M N) &= Sub(M) \cup Sub(N) \cup Sub(M N)
+			Sub(M N) &= Sub(M) \cup Sub(N)  \cup \{M N\} %FIXME det ser da underligt ud?
 		\end{align*}
 		\item A subterm $N$ of $M$ is called \emph{active} if $N L \subset M$ 
 		for a term $L$ and \emph{passive} otherwise.
@@ -193,15 +183,14 @@ $\equiv_\alpha$.
 
 \begin{definition}
 	\begin{enumerate}
-		\item A context $C[\ ]$ is an ``unfinished term'' with holes in it. 
+		\item A context $C[\ ]$ is an ``unfinished term'' with one hole in it. 
 		\item The set $Con$ contains all contexts and is defined as the smallest
 		set satisfying these constraints:
 		\begin{align*}
 			[\ ]&\in Con \\
 			M\in\Lambda\Rightarrow M[\ ]&\in Con \\
 			M\in\Lambda\Rightarrow [\ ]M&\in Con \\
-			C\in Con\Rightarrow C[\ ]&\in Con \\
-			C\in Con\Rightarrow [\ ]C&\in Con
+			C\in Con\Rightarrow \lam{x}{C} &\in Con
 		\end{align*}
 		\item Terms can be plugged into the holes, thus completing the term. 
 		\item When plugging a term into a hole, we do not work modulo 
@@ -321,10 +310,10 @@ is the contractum of the terms represented by the nodes parents.
 	The \emph{$\beta$ reduction graph} of $M$, written $G_\beta(M)$, consists
 	of the nodes in the set $V$ and the arcs in the multiset $A$. The set
 	of nodes and multiset of arcs in $G_\beta(M)$ are defined as:
-\begin{align*}
-	V&=\{N\in\Lambda|M\Barrow N\} \\
-	A&=\{(N_0, N_1)\in\Lambda^2|N_0,N_1\in V\wedge N_0\barrow N_1\}
-\end{align*}
+	\begin{align*}
+		V&=\{N\in\Lambda|M\Barrow N\} \\
+		A&=\{(N_0, N_1)\in\Lambda^2|N_0,N_1\in V\wedge N_0\barrow N_1\}
+	\end{align*}
 	Since $A$ can contain duplicates it follows that if there are more than one
 	different reduction step from $N_0$ to $N_1$, that many arcs will be included 
 	in $G_\beta(M)$.
