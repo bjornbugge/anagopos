@@ -2,6 +2,99 @@
 
 \chapter{Graph Drawing}
 
+A \emph{graph drawing} is an embedding of the abstract, mathematical concept
+of a graph on a two-dimensional surface. A \emph{graphic standard} is the
+translation between the abstract graph and graphi symbols representing the
+graph. Different graphic standards exist, but the most common ones represent
+vertices by dots or filled circles and edges $(u,v)$ by curves connecting the
+symbols representing $u$ and $v$. In this chapter we will briefly summarize
+the different, relevant graphic standards and methods for drawing them.
+
+\section{Aesthetics}
+
+Graph drawing was motivated by the need for conveying information embedded in
+graphs to humans, for instance in the fields of VLSI circuit design, social
+network analysis and algorithm visualization. Thus, the quality of a graph drawing
+depends heavily on its ability to clearly convey its information,
+making it easy for the reader to decipher it. Different \emph{aesthetic
+measures} have therefore been developed, depending on the type of information
+that the graph must deliver. Some common aesthetics are:
+\begin{itemize}
+	\item The distance between adjacent nodes is
+	sought to be minimized, since it can be difficult to get an overview of the
+	drawing if edges tend to be very long.
+	
+	\item The area covered by the graph -- the minimum bounding box of the 
+	graph -- can also be an important factor, especially if the drawing is 
+	supposed to be in print.
+	
+	\item When a lot of edges in the graph cross, the informativeness of the 
+	graph rapidly deteriorates. Therefore it is desirable to minimize the 
+	number of crossing edges in the drawing. In general, it is impossible to 
+	remove all crossing edges.
+	
+	\item If the data contains symmetries we naturally want those to be
+	represented as graphical symmetries too.
+	
+	\item Edges should contains as few bends as possible.
+	
+	\item Edges should have uniform length.
+	
+	\item The vertices must be distributed uniformly on the graphic.
+\end{itemize}
+
+Most often, graph aesthetics are ``competitive'' so that optimality of one
+aesthetic measure means suboptimlaity of another. Aesthetic measures can be
+regarded as optimization goals for graph drawing algorithms. They are in
+general NP-hard, so heuristic approaches are used
+\cite{Johnson1982,Johnson1984,Garey1983}.
+
+\section{Straight-line Drawing}
+
+For an undirected graph, the graphic standard with all edges represented by
+straight lines is called a \emph{straight-line drawing}. Eades presented an
+approach to straight-line drawing using a spring-metaphor \cite{Eades1984}. In
+this system, vertices are regarded as rings and edges are regarded as springs.
+The springs attract the rings if they are too far apart and repel them if they
+are too close. This category of drawing algorithms is called
+``force-directed'' algorithms.
+
+In \cite{Lipton1985} the authors present an approach that focus mainly on
+capturing symmetries in the graphs. However, this approach is computationally
+very expensive when compared to \cite{Eades1984}.
+
+Another approach is to associate an energy function to a drawing, representing
+the ``quality'' of the drawing with respect to the chosen aesthetic measures
+by an amount of energy, and then use simulated annealing to compute the
+two-dimensional graph embedding \cite{Davidson1996}.
+
+A mixture of different techniques is presented by Tunkelang in
+\cite{Tunkelang1992} that focus on computing the aesthetic cost of a drawing,
+the order of node placement and local optimization techniques.
+
+\section{Planarity Issues}
+
+The graphs that can be drawn without any crossing edges are called
+\emph{planar graphs}. Not all graphs are planar, a famous example being $K_5$
+-- the complete graph with five vertices. There exist many algorithms that
+draw planar graphs, so to draw a non-planar graph it is common to start with
+making the graph planar, a process known as \emph{planarization}, and then
+draw the planar version. Afterwards, the drawing can be altered such that it
+represents the original non-planar graph. 
+
+There exist different methods for planarization. Cai et. al. present an
+$O(m\log n)$-time algorithm for finding the \emph{maximal planar subgraph}
+\cite{Cai1993}. One can also try to find the drawing with the minimum number
+of edge crossings. This problem is NP-hard as shown in \cite{Garey1983}, but
+heuristics for minimizing the number of crossings are given in
+\cite{Ferrari1969}. Another planarization technique is called
+\emph{splitting}. A splitting operation converts a node $v$ to two nodes $v_1$
+and $v_2$, attaching the neightbours of $v$ to either $v_1$ or $v_2$.
+Heuristics for planarization by splitting are discussed in \cite{Eades1993}. 
+% Splitting number is NP-hard.
+
+
+% General:
 % Polyline, straightline, orthogonal drawings.
 % Use a graphic standard to define elements of the graph drawing.
 % Aesthetics: distance between adjacent nodes, minimum bounding box, crossing edges,
@@ -13,6 +106,7 @@
 % Simulated annealing approach; uses an energy function. (gdbiblio: 50)
 % Mixture of different heuristics presented in (gdbiblio: 52).
 
+% Planarity issues:
 % Non-planarity: Make non-planar graphs planar (gdbiblio: 55) "planarization"
 % Find the maximum, planar subgraph (NP-hard) or find a small number of edges to delete
 %	in order to make the graph planar. (gdbiblio 55-66) Or find subgraph with minimum number
@@ -22,6 +116,7 @@
 % Automatic layout of orthogonal grid drawings graphs (gdbiblio 72,73)
 %	Allow homogenous treatment w/ same aesthetics of a wide range of graphs.
 
+% Planar, undirected graphs:
 % To draw a non-planar graph: planarize it and apply planar drawing algorithm.
 % Draw: 
 %	Test planarity of graph (gdbiblio: 78-83)
@@ -36,6 +131,7 @@
 % Every planar graph can be drawn as planar straightline grid drawing with area O(n^2) (gdbiblio: 102-104)
 % Different planar graph drawing algorithms are compared in (gdbiblio: 106)
 
+% Orthogonal grid drawings:
 % Orthogonal grid drawings were motivated by circuit layout.
 % Aesthetic: minimize the area and the number of bends.
 % Every planar graph (degree at most 4) can be drawn as a planar orthogonal 
@@ -46,10 +142,25 @@
 % Heurstics for drawing orthogonal grid drawings with O(n) bends in (gdbiblio: 115)
 % Survey of orthogonal drawing algorithms in (gdbiblio: 122)
 
+% Visibility representations:
 % Visibility representations: represent each vertex as a horisontal line and each 
 %	edge as a horisontal line. The edge lines intersects exactly those two vertices
 %	that the connect. (gdbiblio: 124)
 % Algorithms for constructing visiility representations in linear time given in (gdbiblio: 132-136)
+% Construct constrained visibility representations (Edges of given paths aligned): (gdbiblio: 137)
+
+% Misc. graphic standards (for undirected graphs):
+% Algorithms for planar polyline grid drawing in (gdbiblio: 140,141)
+% Graphic standard where vertices on horisontal line and edges are halfcircles: (gdbiblio: 142)
+% Graphic standard: Tesellation representation: (gdbiblio: 148)
+% Algorithm that maps vertices to grid points: (gdbiblio: 149)
+
+% Acyclic DAGs:
+% Used to represent hierachical structure; PERT diagrams, dependency graphs. 
+% Customary to let edges flow in the same direction: top-bottom or left-right.
+% A graph is upward if all edges flow upwards.
+% Digraph of partial ordered set represented by upward straight-line drawings; order diagrams, Hasse diagrams.
+% Algorithm for order diagrams: (gdbiblio: 150)
 
 
 

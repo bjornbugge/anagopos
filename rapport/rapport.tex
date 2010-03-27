@@ -14,7 +14,7 @@
 \usepackage[toc,page]{appendix}
 \usepackage{sectsty}
 \usepackage{subfigure}
-
+\usepackage{natbib}
 
 % TODO Lav theoremstyle så den er ordenlig!
 \newtheoremstyle{mystyle}% ⟨name⟩ 
@@ -78,18 +78,19 @@
 % \input{abstract.tex}
 
 % Table of content
-\tableofcontents
+% \tableofcontents
 %\listoftables
 %\listoffigures
 %\newpage
 %
 % Chapters
-\input{introduction.tex}
-\input{projectConstraints.tex}
-\input{lambda_theory.tex}
-\input{existing_visualizations.tex}
-\input{lambda_representation.tex}
-\input{parser.tex}
+% \input{introduction.tex}
+% \input{projectConstraints.tex}
+% \input{lambda_theory.tex}
+% \input{existing_visualizations.tex}
+% \input{lambda_representation.tex}
+% \input{parser.tex}
+\input{graph_drawing_litterature.tex}
 
 % Appendices
 
@@ -100,7 +101,9 @@
 %
 % Bibliography
 \bibliographystyle{abbrv}
-\bibliography{bibliography}
+\bibliography{bibliography,bibl_graph_drawing}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
