@@ -30,6 +30,7 @@ replacing $x$ with the number 2.
 	\end{align*}
 	where $V$ is the countable, infinite set containing variable names $v_0,v_1,v_2,\hdots$.
 	The set of all lambda terms $\Lambda$ is defined inductively as follows:
+	\label{def:grammar}
 	\begin{align*}
 		x\in\Lambda \\
 		M\in\Lambda &\Rightarrow (\lam{x}{M})\in\Lambda \\
@@ -38,6 +39,7 @@ replacing $x$ with the number 2.
 where $x\in V$.
 \end{definition}
 \begin{convention}
+	\label{con:con1}
 	A term $\lam{x}{M}$ is called a function.
 \end{convention}
 \begin{convention}
@@ -56,6 +58,7 @@ where $x\in V$.
 	\end{equation*}
 \end{convention}
 \begin{convention}
+	\label{con:con2}
 	Functions take exactly one argument, but as syntactic sugar we use:
 	\begin{equation*}
 		\lam{xy}{xy}\equiv\lam{x}{\lam{y}{xy}}
