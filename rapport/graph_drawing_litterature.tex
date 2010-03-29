@@ -4,13 +4,13 @@
 
 A \emph{graph drawing} is an embedding of the abstract, mathematical concept
 of a graph on a two-dimensional surface. A \emph{graphic standard} is the
-translation between the abstract graph and graphi symbols representing the
+translation between the abstract graph and graphic symbols representing the
 graph. Different graphic standards exist, but the most common ones represent
 vertices by dots or filled circles and edges $(u,v)$ by curves connecting the
 symbols representing $u$ and $v$. In this chapter we will briefly summarize
 the different, relevant graphic standards and methods for drawing them.
 
-Battista et. al. give a thorough overview of the literature in several
+Battista et. al. give a more thorough overview of the literature in several
 different areas of research related to graph drawing in \cite{DiBattista1994}.
 
 \section{Aesthetics}
@@ -157,8 +157,9 @@ is NP-hard \cite{Garg1994}.
 In a \emph{visibility representation}, each vertex is represented as a
 horizontal line and each edge as a vertical line. The vertical lines intersect
 exactly those horizontal lines that the corresponding edges connect
-\cite{Duchet1983}. Visibility representations were originally motivated by
-VLSI layout because it gives regular, modular graphs \cite{Schlag1985}. 
+\cite{Duchet1983}, see Figure \ref{fig:images_graphs_visibility_repr_1}.
+Visibility representations were originally motivated by VLSI layout because it
+gives regular, modular graphs \cite{Schlag1985}.
 
 An overview of different classes of visibility representations and linear time
 drawing algorithms is given by Tamassia et. al. \cite{Tamassia1986}. Often the
@@ -169,6 +170,19 @@ resulting directed graph is acyclic and has excatly one source -- a vertex
 having only outgoing edges -- and exactly one sink -- a vertex with only
 incoming edges. Properties of bipolar orientations are investigated in
 \cite{Fraysseix1993}.
+
+\begin{figure}[htbp]
+	\centering
+	\subfigure{
+		\includegraphics[height=1in]{../images/graphs/visibility_repr_1.png}
+	}
+	\subfigure{
+		\includegraphics[height=1in]{../images/graphs/visibility_repr_2.png}
+	}
+	\caption{A graph $G$ and its visibility representation.}
+	\label{fig:images_graphs_visibility_repr_1}
+\end{figure}
+
 
 \section{Miscellaneous Graphic Standards}
 
