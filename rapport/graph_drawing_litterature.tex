@@ -10,7 +10,7 @@ vertices by dots or filled circles and edges $(u,v)$ by curves connecting the
 symbols representing $u$ and $v$. In this chapter we will briefly summarize
 the different, relevant graphic standards and methods for drawing them.
 
-Battista et. al. give a more thorough overview of the literature in several
+Battista et al. give a more thorough overview of the literature in several
 different areas of research related to graph drawing in \cite{DiBattista1994}.
 
 \section{Aesthetics}
@@ -21,8 +21,7 @@ network analysis and algorithm visualization. Thus, the quality of a graph
 drawing depends heavily on its ability to clearly convey its information,
 making it easy for the reader to decipher it. Different \emph{aesthetic
 measures} have therefore been developed, depending on the type of information
-that the graph must deliver. A study of graph drawing aesthetics is presented
-in \cite{Purchase1997}. Some common aesthetics are:
+that the graph must deliver. Common aesthetics are \cite{DiBattista1994}:
 \begin{itemize}
 	\item The distance between adjacent nodes is
 	sought to be minimized, since it can be difficult to get an overview of the
@@ -46,9 +45,12 @@ in \cite{Purchase1997}. Some common aesthetics are:
 	
 	\item The vertices must be distributed uniformly on the graphic.
 \end{itemize}
+Studies of graph drawing aesthetics are presented in
+\cite{Purchase1997,Purchase2001,Purchase2010}. They indicate that the most
+important aesthetic measure is the number of edge crossings.
 
 Most often, graph aesthetics are ``competitive'' so that optimality of one
-aesthetic measure means suboptimlaity of another. Aesthetic measures can be
+aesthetic measure means suboptimality of another. Aesthetic measures can be
 regarded as optimization goals for graph drawing algorithms. They are in
 general NP-hard, so heuristic approaches are used
 \cite{Johnson1982,Johnson1984,Garey1983}.
@@ -57,13 +59,30 @@ general NP-hard, so heuristic approaches are used
 
 The graphs that can be drawn without any crossing edges are called
 \emph{planar graphs}. Not all graphs are planar, a famous example being $K_5$
--- the complete graph with five vertices. There exist many algorithms that
-draw planar graphs, so to draw a non-planar graph it is common to start with
-making the graph planar, a process known as \emph{planarization}, and then
-draw the planar version. Afterwards, the drawing can be altered such that it
-represents the original non-planar graph. 
+-- the complete graph with five vertices (Figure \ref{fig:images_graphs_k5}).
+There exist many algorithms that draw planar graphs, so to draw a non-planar
+graph it is common to start with making the graph planar, a process known as
+\emph{planarization}, and then draw the planar version. Afterwards, the
+drawing can be altered such that it represents the original non-planar graph.
 
-There exist different methods for planarization. Cai et. al. present an
+\begin{figure}[htbp]
+	\centering
+	\begin{tabular}{cc}
+		\subfigure[$K_4$.]{
+			\includegraphics[height=1.3in]{../images/graphs/k4.png}
+			\label{fig:images_graphs_k4}
+		}\hspace{1.5em}
+		&
+		\subfigure[$K_5$.]{
+			\includegraphics[height=1.3in]{../images/graphs/k5.png}
+			\label{fig:images_graphs_k5}
+		}		
+	\end{tabular}
+	\caption{Examples of a planar and a non-planar graph; the complete graph
+	with 4 and 5 nodes, respectively.}
+\end{figure}
+
+There exist different methods for planarization. Cai et al. present an
 $O(m\log n)$-time algorithm for finding the \emph{maximal planar subgraph}
 \cite{Cai1993}. One can also try to find the drawing with the minimum number
 of edge crossings. This problem is NP-hard as shown in \cite{Garey1983}, but
@@ -83,9 +102,9 @@ planar representation and then use a drawing algorithm to draw this
 representation.
 
 A \emph{path addition} approach to planarity testing was presented by Hopcroft
-\cite{Hopcroft1974,Deo1976}. Another approach called the \emph{verted
+\cite{Hopcroft1974,Deo1976}. Another approach called the \emph{vertex
 addition} approach is presented in \cite{Booth1976}. Both of these methods for
-planarity testing runs in linear time. Chiba et. al. modified the methods of
+planarity testing runs in linear time. Chiba et al. modified the methods of
 \cite{Booth1976} to construct planar representations \cite{Chiba1985}.
 
 \section{Straight-line Drawing}
@@ -114,14 +133,21 @@ the order of node placement and local optimization techniques.
 It was shown early that every planar graph can be drawn as a planar
 straight-line drawing \cite{Wagner1936,Fary1948,Stein1951}. Tutte studied
 \emph{convex drawings} of planar graphs, which is a drawing where the faces
-consisting of the graph edges are all convex polygons \cite{Tutte1960}.
-Thomassen furthermore characterized the class of graphs that can be embedded
-in a convex drawing \cite{Thomassen1980}, and Chiba et. al. give a linear time
-algorithm for making convex drawings using Thomassen's results
-\cite{Chiba1984}.
+consisting of the graph edges are all convex polygons \cite{Tutte1960} (Figure
+\ref{fig:images_graphs_convex_1}). Thomassen furthermore characterized the
+class of graphs that can be embedded in a convex drawing \cite{Thomassen1980},
+and Chiba et al. give a linear time algorithm for making convex drawings using
+Thomassen's results \cite{Chiba1984}.
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[height=1.5in]{../images/graphs/convex_1.png}
+	\caption{A convex drawing of a graph. All faces are drawn as convex 
+	polygons. (Taken from \cite{DiBattista1994}, Figure 8.)}
+	\label{fig:images_graphs_convex_1}
+\end{figure}
 
 An aesthetic measure for straight-line drawings is the total edge length.
-Becker et. al. show that the there is a unique and convex optimal straight-line
+Becker et al. show that the there is a unique and convex optimal straight-line
 drawing with the external face a prescribed convex polygon \cite{Becker1987}.
 On the other hand, constructing a planar straight-line drawing with a
 prescribed edge length, as measured by the Euclidean metric, is NP-hard
@@ -134,16 +160,16 @@ angle size between edges, the edge length and the face area.
 \section{Orthogonal Grid Drawing}
 
 The graphic standard where all edges are either parallel or orthogonal and
-fixed to a grid is called \emph{orthogonal grid drawing}. This type of drawing
-was originally motivated by circuit layout problems. A common aesthetic
-measure for this type of graph is the amount of bends on edges, as well as the
-area that the drawing covers. These aesthetics not only affect readability; in
-circuit design they have a direct impact on the quality of the circuit that is
-produced.
+fixed to a grid is called \emph{orthogonal grid drawing}, see Figure
+\ref{fig:images_graphs_orthogonal_1}. This type of drawing was originally
+motivated by circuit layout problems. A common aesthetic measure for this type
+of graph is the amount of bends on edges, as well as the area that the drawing
+covers. These aesthetics not only affect readability; in circuit design they
+have a direct impact on the quality of the circuit that is produced.
 
 In \cite{Batini1984,Tamassia1988} the authors present a general method for the
 construction of orthogonal grid drawings. It can be subdivided into three
-steps: first the graph is planarized, then an orthohonal shape is computed
+steps: first the graph is planarized, then an orthogonal shape is computed
 based on the planarized graph, and lastly this shape is made as compact as
 possible to produce the final drawing. This general approch allows orthogonal
 grid drawings of many different types of graphs.
@@ -151,6 +177,13 @@ grid drawings of many different types of graphs.
 It is an NP-complete problem to determine whether a graph can be embedded in a
 planar orthogonal drawing without bends, whence the bend-minimization problem
 is NP-hard \cite{Garg1994}.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[height=1in]{../images/graphs/orthogonal_1.png}
+	\caption{An orthogonal grid drawing of a graph.}
+	\label{fig:images_graphs_orthogonal_1}
+\end{figure}
 
 \section{Visibility Representations}
 
@@ -162,13 +195,13 @@ Visibility representations were originally motivated by VLSI layout because it
 gives regular, modular graphs \cite{Schlag1985}.
 
 An overview of different classes of visibility representations and linear time
-drawing algorithms is given by Tamassia et. al. \cite{Tamassia1986}. Often the
+drawing algorithms is given by Tamassia et al. \cite{Tamassia1986}. Often the
 first step in creating a visibility representation of an undirected graph is
 to create a \emph{bipolar orientation} of it. A bipolar orientation of an
 undirected graph is an orientations of the edges of the graph such that the
-resulting directed graph is acyclic and has excatly one source -- a vertex
-having only outgoing edges -- and exactly one sink -- a vertex with only
-incoming edges. Properties of bipolar orientations are investigated in
+resulting \emph{directed} graph is acyclic and has excatly one source -- a
+vertex having only outgoing edges -- and exactly one sink -- a vertex with
+only incoming edges. Properties of bipolar orientations are investigated in
 \cite{Fraysseix1993}.
 
 \begin{figure}[htbp]
@@ -188,7 +221,13 @@ incoming edges. Properties of bipolar orientations are investigated in
 
 Ozawa proposes a graphic standard where all vertices are dots on a straight
 line, and edges are drawn as half-circles over or under the line
-\cite{Ozawa1980}.
+\cite{Ozawa1980}, as exemplified in Figure \ref{fig:images_graphs_circles_1}.
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[height=0.6in]{../images/graphs/circles_1.png}
+	\caption{The approach suggested by Ozawa \cite{Ozawa1980}.}
+	\label{fig:images_graphs_circles_1}
+\end{figure}
 
 For cubic graphs that are planar, Kant proposes a method for placing them on a
 hexagonal grid in linear time \cite{Kant1992}.
@@ -199,12 +238,40 @@ as the two corresponding polygons being geometrically adjacent
 \cite{Bhasker1988}. A variant of this graphic standard is the
 \emph{tessellation representation} in which vertices, edges and faces of a
 planar embedding of a graph is represented as rectangles, and adjacencies
-between rectangles correspond to incidencies in the graph \cite{Tamassia1989}.
+between rectangles correspond to incidencies in the graph \cite{Tamassia1989}
+-- see Figure \ref{fig:images_graphs_tessellation}.
 
-Dickerson et. al. present the graphic standard \emph{confluent drawing} along
-with heuristics for it \cite{Dickerson2005}. In this approach, groups of edges are
+\begin{figure}[htbp]
+	\centering
+	\subfigure{
+		\includegraphics[height=2in]{../images/graphs/tessellation_1.png}
+	}
+	\subfigure{
+		\includegraphics[height=2in]{../images/graphs/tessellation_2.png}
+	}
+	\caption{A tessellation representation of a graph. (Taken from 
+	\cite{DiBattista1994}, Figure 11.)}
+	\label{fig:images_graphs_tessellation}
+\end{figure}
+
+Dickerson et al. present the graphic standard \emph{confluent drawing} along
+with heuristics for it \cite{Dickerson2005} -- see Figure
+\ref{fig:images_graphs_confluent}. In this approach, groups of edges are
 merged together to what the authors call ``tracks'', and the graph can then be
-drawn without crossing edges. 
+drawn without crossing edges.
+
+\begin{figure}[htbp]
+	\centering
+	\subfigure{
+		\includegraphics[height=1in]{../images/graphs/confluent_1.png}
+	}
+	\subfigure{
+		\includegraphics[height=1in]{../images/graphs/confluent_2.png}
+	}
+	\caption{A non-confluent and a confluent drawing of the same graph. 
+	(Taken from \cite{Dickerson2005}, Figure 5.)}
+	\label{fig:images_graphs_confluent}
+\end{figure}
 
 \section{Directed Graphs}
 
@@ -241,7 +308,7 @@ hierachical drawing has three steps: assign vertices to the different lines
 such that all edges point upwards, find a permutation of the vertices in which
 no edges overlap and finally tune the positions of the vertices to minimize
 the number of edge bends. A comprehensive approach is presented by Sugiyama
-et. al. \cite{Sugiyama1981}. The algorithms used at the three steps are
+et al. \cite{Sugiyama1981}. The algorithms used at the three steps are
 analysed in \cite{Lin1992}.
 
 For a directed graph that contains cycles it is often desirable to represent
@@ -255,38 +322,7 @@ mentioned can be used. If the representation of flow in the graph is not
 important, the acyclic techniques can be applied directly, ignoring the edge
 directions.
 
-
-
-% Hvad _er_ det at "tegne" en graf?
-%	Det er en projektion af en graf G(V,E) på planet, således at hver
-%	knude i V er repræsenteret ved et grafisk symbol, og så der mellem
-%	alle tegnene for knuder (V_1,V_2)\in E er et linjestykke...
-
-% Hvilke problemer støder man på når man tegner en graf?
-%	Hvordan skal knuderne placeres?
-%	Hvordan undgår man at kanter overlapper?
-%	Hvor store skal knuderne være?
-%	Hvad skal bruges som pile?
-%	Når en ikke-planar graf tegnes, hvordan mindsker man antallet af overlap?
-%		Er der et teoretisk minimum evt.?
-%	Er der mange der begynder at tegne i tre dimensioner som en løsning?
-%		Enhver graf kan realiseret uden overlap i 3D (se DujomovicWood).
-%	Hvordan repræsenterer folk de krydsninger der uundgåeligt kommer i visse
-%	grafer?
-%	Hvordan ser det ud mht. størrelsesforholdet mlm. kanter og knuder?
-
-
-% Hvordan udregner folk afstanden mlm. knuderne?
-
-% Hvordan håndterer folk problemet med non-planaritet?
-%   "Confluent Drawings.."-solution
-%    3-dimensional drawing: "Three-Dimensional Grid Drawings with Sub-quadratic Volume⋆"
-
-% Hvordan tegner folk pilehovederne i en retningsbestemt graf?
-
-% Hvordan anvender folk farver i graftegningen?
-
-% Hvilke programmer til tegning af grafer eksisterer der?
+% Nævn noget om store grafer samt problemstillinger mht. navigation (Herman2000).
 
 
 

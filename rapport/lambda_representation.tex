@@ -48,11 +48,11 @@ class, \pycode{LambdaNode}, which has a subclass for each node type.
 
 A term that is not in $\beta$-normal-form has at least one $\beta$-contractum,
 and therefore the DAG-representation of that term contains at least one
-application node. More specifically, for each possible one-step
-$\beta$-reduction in a term $M$, its DAG will contain one application node.
-The first descendant of this node will be an abstraction node, while the
-second, ``rightmost'', descendant will be the argument that will be applied to
-the function represented by the abstraction node. 
+application node and one abstraction node. More specifically, for each
+possible one-step $\beta$-reduction in a term $M$, its DAG will contain one
+application node. The first descendant of this node will be an abstraction
+node, while the second, ``rightmost'', descendant will be the argument that
+will be applied to the function represented by the abstraction node.
 
 Given this DAG, it is possible to implement the aforementioned operations on lambda
 terms by treewalks. 
