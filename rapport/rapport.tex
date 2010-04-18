@@ -1,4 +1,4 @@
-\documentclass[11pt,oneside,a4paper]{report}
+\documentclass[oneside,twocolumn]{report}
 
 
 % Packages to use
@@ -16,6 +16,7 @@
 \usepackage{subfigure}
 \usepackage{natbib}
 \usepackage{url}
+\usepackage[labelfont=bf,up,textfont=it,up]{caption}
 
 % TODO Lav theoremstyle så den er ordenlig!
 \newtheoremstyle{mystyle}% ⟨name⟩ 
@@ -37,7 +38,7 @@
 
 
 \title{Visualization of $\beta$-reduction-graphs in the lambda calculus}
-\author{Niels Bjørn Bugge Grathwohl & Jens Duelund Pallesen}
+\author{Niels Bjørn Bugge Grathwohl \and Jens Duelund Pallesen}
 \date{\large \today}
 
 
@@ -52,8 +53,8 @@
 
 
 % Margins
-% \geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
-\usepackage{fullpage}
+\geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
+% \usepackage{fullpage}
 
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}

@@ -65,7 +65,7 @@ graph it is common to start with making the graph planar, a process known as
 \emph{planarization}, and then draw the planar version. Afterwards, the
 drawing can be altered such that it represents the original non-planar graph.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 	\centering
 	\begin{tabular}{cc}
 		\subfigure[$K_4$.]{
@@ -138,7 +138,7 @@ consisting of the graph edges are all convex polygons \cite{Tutte1960} (Figure
 class of graphs that can be embedded in a convex drawing \cite{Thomassen1980},
 and Chiba et al. give a linear time algorithm for making convex drawings using
 Thomassen's results \cite{Chiba1984}.
-\begin{figure}[htbp]
+\begin{figure}[t]
 	\centering
 		\includegraphics[height=1.5in]{../images/graphs/convex_1.png}
 	\caption{A convex drawing of a graph. All faces are drawn as convex 
@@ -178,7 +178,7 @@ It is an NP-complete problem to determine whether a graph can be embedded in a
 planar orthogonal drawing without bends, whence the bend-minimization problem
 is NP-hard \cite{Garg1994}.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 	\centering
 		\includegraphics[height=1in]{../images/graphs/orthogonal_1.png}
 	\caption{An orthogonal grid drawing of a graph.}
@@ -204,7 +204,7 @@ vertex having only outgoing edges -- and exactly one sink -- a vertex with
 only incoming edges. Properties of bipolar orientations are investigated in
 \cite{Fraysseix1993}.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 	\centering
 	\subfigure{
 		\includegraphics[height=1in]{../images/graphs/visibility_repr_1.png}
@@ -222,7 +222,7 @@ only incoming edges. Properties of bipolar orientations are investigated in
 Ozawa proposes a graphic standard where all vertices are dots on a straight
 line, and edges are drawn as half-circles over or under the line
 \cite{Ozawa1980}, as exemplified in Figure \ref{fig:images_graphs_circles_1}.
-\begin{figure}[htbp]
+\begin{figure}[t]
 	\centering
 		\includegraphics[height=0.6in]{../images/graphs/circles_1.png}
 	\caption{The approach suggested by Ozawa \cite{Ozawa1980}.}
@@ -241,7 +241,7 @@ planar embedding of a graph is represented as rectangles, and adjacencies
 between rectangles correspond to incidencies in the graph \cite{Tamassia1989}
 -- see Figure \ref{fig:images_graphs_tessellation}.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 	\centering
 	\subfigure{
 		\includegraphics[height=2in]{../images/graphs/tessellation_1.png}
@@ -260,7 +260,7 @@ with heuristics for it \cite{Dickerson2005} -- see Figure
 merged together to what the authors call ``tracks'', and the graph can then be
 drawn without crossing edges.
 
-\begin{figure}[htbp]
+\begin{figure}[t]
 	\centering
 	\subfigure{
 		\includegraphics[height=1in]{../images/graphs/confluent_1.png}
@@ -322,13 +322,82 @@ mentioned can be used. If the representation of flow in the graph is not
 important, the acyclic techniques can be applied directly, ignoring the edge
 directions.
 
-% Nævn noget om store grafer samt problemstillinger mht. navigation (Herman2000).
+\section{Issues Related to Large Graphs}
+
+When the size of the graph to be drawn becomes sufficiently large, a host of
+new issues appears. First of all there is the question about performance;
+several algorithms discussed above and in the referenced papers would be
+unacceptably slow if applied to a graph with e.g. $10^4$ nodes and
+$3\cdot10^4$ edges. It can therefore sometimes be necessary to alter the
+methods. Furthermore there is the problem of room -- there simply has to be
+enough room on the monitor for the drawing to fit.
+
+For a large graph with $10^4$ nodes and $3\cdot10^4$ edges, the probability
+that the graph is planar is very small, and since a planarity check on such a
+graph will be slow it is usually just skipped. When dealing with large graphs,
+the planarity issue is in other words mostly ignored.
+
+Since a lot of applications of graph drawing techniques operate with large
+graphs that cannot be placed all at once on a normal computer monitor, methods
+to single out special parts of the drawing and only show these have been
+developed. Since one will usually be interested in the whole graph, or at
+least most of it, navigational methods have also been studied. 
+
+One method to solve the problem og showing a huge drawing on a relatively
+small monitor is to use a ``fisheye'' effect. This effect functions as a
+``magnifying glass'' that highlights, or enlarges, the area of the graph
+currently in focus while at the same time minimizing the other parts. Using
+this, a user can navigate and study a large graph that would otherwise be
+drawn with node and edge representations too small for the human eye to
+discern. The method utilizes a distortion function, $d:[0,1]\mapsto[0,1]$,
+that monotonically maps the interval $[0,1]$ to itself. Figure
+\ref{fig:images_fisheye_distortion} shows an example of a distortion function
+as well as an illustration of its effects on a plane.
+\begin{figure}[t]
+	\centering
+	\subfigure{
+		\includegraphics[height=1.7in]{../images/fisheye_distortion.png}
+	}
+	\subfigure{
+		\includegraphics[height=1.9in]{../images/fisheye_distortion_func.png}
+	}
+	\caption{Distortion of a regular grid along with an example of a distortion function. The blue and
+	red line represent two different distortion functions, and the black line is 
+	the ``normal'', non-distorted view. 
+	(Taken from \cite{Herman2000}, Figure 17 and 18.)}
+	\label{fig:images_fisheye_distortion}
+\end{figure}
+
+A related method is to draw the graph in a hyperbolic coordinate system
+instead of an Euclidean. This gives the impression that the graph is drawn on
+a sphere, where the graph elements lying on the part of the sphere pointing
+towards the observer appear to be enlarged. If this sphere can be rotated by
+the user, she can decide which parts of the graph to enlarge and which not,
+analogously to the fisheye effect.
+
+If a graph drawing algorithm can reduce the amount of elements, large-scale
+structures can be represented in a comprehensible fashion, even though the
+underlying graph may contain too many nodes for a normal drawing method. This
+approach is called \emph{clustering}. The essence of the method is to find
+groups, or clusters, in the graph that have something in common and then draw
+the graph consisting of the clusters instead of the original graph. If the
+clustering algorithm is chosen properly, structures in graphs otherwise
+seemingly chaotic can be easily discerned. One challenging part of the
+approach is to find a sensible balance between number of clusters and number
+of nodes per cluster, as well as devising a fitting similarity measure for the
+clustering algorithm. 
+
+% Relatedly, methods that can intelligently hide parts of the graph deemed
+% non-interesting can also greatly increase the clarity of the drawing. 
+
+% clustering
+% hiding
+% no planarity check/solution
+% incremental exploration
+% focus+context (hyperbolic, fisheye etc.)
+% navigation
 
 
-
-% Planarity problems:
-%   "Confluent Drawings.."-solution
-%    3-dimensional drawing: "Three-Dimensional Grid Drawings with Sub-quadratic Volume⋆"
 
 % G. Di Battista, P. Eades, R. Tamassia, and I. G. Tollis, 
 %   Graph Drawing, Prentice Hall, Upper Saddle River, NJ, 1999.
