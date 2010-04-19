@@ -91,7 +91,7 @@ def betareduce(term, redexpos):
 	The position denotes an Application node with an active subterm as 
 	left child, as returned from the function findredexes(x)
 	'''
-	# The copy that are transformed into a contractum.
+	# The copy that is transformed into a contractum.
 	contractum = deepcopy(term)
 	appl = getnode(contractum, redexpos)
 	
@@ -102,13 +102,17 @@ def betareduce(term, redexpos):
 	
 	# Remove the argument.
 	appl.remove(appl.rightchild)
+	
 	# Remove the abstractor.
 	c.parent.swap(c, c.leftchild)
 	
-	if redexpos == 1: # The top node has been reduced
+	if redexpos == 1: # The top node has been reduced.
 		contractum = c.leftchild
 	else:
 		appl.parent.swap(appl, c.leftchild)
+	
+	# Refresh variable bindings so newly copied variables are known by abstractors.
+	assignvariables(contractum)
 	
 	return (term, contractum)
 
@@ -141,127 +145,29 @@ def sanitize(term):
 		alphaconvert(abstraction, 'v' + str(c))
 		c = c + 1
 
-def standardstrategy(root, redexes):
-	'''
-	Given a lambda term and a list of redex positions, this function returns 
-	a permutation of the redex list, representing a particular reduction 
-	strategy (i.e. the order that reductions should be performed in).
-	'''
-	# redexes.reverse()
-	return redexes # Very basic strategy!
-
-
-def reductiongraph(root, strategy = standardstrategy):
+def reductiongraph(root, maximum = 20):
 	'''
 	Computes the reduction graph and returns it as a set of 
 	(redex, contractum)-pairs.
 	'''
 	work = [root]
-	graph = set()
+	graph = []
 	guard = 0
-	while len(work) > 0 and guard < 20:
+	while len(work) > 0 and guard < maximum:
 		term = work[0]
-		positions = strategy(term, findredexes(term))
+		positions = findredexes(term)
 		for pos in positions:
 			pair = betareduce(term, pos)
-			graph.add(pair)
+			graph.append(pair)
 			if not pair[1] in work:
 				work.append(pair[1])
 		del work[0]
 		guard = guard + 1
 	
-	# return graph
-	
-	for (k,v) in graph:
-		# sanitize(k)
-		# sanitize(v)
-		print str(k) + "\t\t---->\t\t" + str(v)
-	
-if __name__ == "__main__":
-#          @
-#         / \
-#        Lx  ---@
-#        |     / \
-#        x    Ly  z
-#             |
-#             y
-	rn = Application()
-	appl = Application()
-	# appl2 = Application()
-	# appl3 = Application()
-	
-	lX = Abstraction()
-	# lA = Abstraction()
-	lY = Abstraction()
-	
-	x = Variable('x')
-	y = Variable('y')
-	z = Variable('z')
-	# a = Variable('a')
-	# b = Variable('b')
-	
-	rn.add(lX)	
-	rn.add(appl)
-	appl.add(lY)
-	appl.add(z)
-	lX.add(x)
-	# lX.assignvar(x)
-	lX.varname = 'x'
-	lY.add(y)
-	# lY.assignvar(y)
-	lY.varname = 'y'
-	# appl2.add(lA)
-	# 	appl2.add(b)
-	# 	lA.add(appl3)
-	# 	appl3.add(x)
-	# 	appl3.add(a)
-	# 	lA.assignvar(a)
-	# 	lX.add(appl2)
-	# 	lX.assignvar(x)
-	
-#        @
-#       / \
-#      La  Lb
-#      |   |
-#      @   ---@
-#     / \    / \
-#    @   a   @  b
-#   / \     / \
-#  a   a   b   b
+	return graph
+	#
+	#for (k,v) in graph:
+	#	# sanitize(k)
+	#	# sanitize(v)
+	#	print str(k) + "\t\t---->\t\t" + str(v)
 
-	w31 = Abstraction()
-	a1 = Variable('a')
-	a2 = deepcopy(a1)
-	a3 = deepcopy(a2)
-	g1 = Application()
-	g1.add(a1)
-	g1.add(a2)
-	g2 = Application()
-	g2.add(g1)
-	g2.add(a3)
-	w31.add(g2)
-	w31.assignvar(a1)
-	w31.assignvar(a2)
-	w31.assignvar(a3)
-	
-	w32 = Abstraction()
-	b1 = Variable('b')
-	b2 = deepcopy(b1)
-	b3 = deepcopy(b2)
-	g3 = Application()
-	g3.add(b1)
-	g3.add(b2)
-	g4 = Application()
-	g4.add(g3)
-	g4.add(b3)
-	w32.add(g4)
-	w32.assignvar(b1)
-	w32.assignvar(b2)
-	w32.assignvar(b3)
-	
-	g0 = Application()
-	g0.add(w31)
-	g0.add(w32)
-	
-	print str(rn)
-	print str(g0)
