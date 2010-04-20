@@ -10,10 +10,15 @@ ESCAPE = '\033'
 
 class TestGraph(Graph):
 	
-	print "4723947234"
+	print "Press ESC to exit"
 
 	def __init__ ( self ):
 		Graph.__init__(self)
+		# node1 = Node()
+		# node2 = Node()
+		# node1.add_child(node2)
+		# self.nodes.append(node1)
+		# self.nodes.append(node2)
 		node1 = Node()
 		node2 = Node()
 		node3 = Node()
@@ -109,7 +114,7 @@ def keyPressed(*args):
 	    sys.exit()
 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
-    glClearColor(0.0, 0.0, 0.0, 0.0)	# This Will Clear The Background Color To Black
+    glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To Black
     glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
     glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
     glEnable(GL_DEPTH_TEST)				# Enables Depth Testing
@@ -148,6 +153,14 @@ def DrawGLScene():
 	glutSwapBuffers()
 
 def DrawGraph(graph):
+	
+	# glColor3f(1.0, 0.0, 0.0)
+	# glBegin(GL_TRIANGLES);
+	# glVertex2f(2.1, 3.1);
+	# glVertex2f(1.2, 2.2);
+	# glVertex2f(3.3, 1.3);
+	# glEnd();
+	
 	for node in graph.nodes:
 		print "Node x: "
 		print node.x/100
@@ -155,8 +168,8 @@ def DrawGraph(graph):
 		print "Node y: "
 		print float(node.y)/100
 		print float(node.y)
-		glPointSize(5.0);
-		glColor3f(0.3, 0.5, 1.0)
+		glPointSize(10.0);
+		glColor3f(0.0, 0.0, 0.0)
 		glEnable(GL_POINT_SMOOTH)
 		glBegin(GL_POINTS)
 		glVertex2f(float(node.x)/100, float(node.y)/100)
@@ -165,11 +178,40 @@ def DrawGraph(graph):
 	for node in graph.nodes:
 		for edge in node.children:
 			far_node = edge.get_far(node)
-			glLineWidth(1.0)
-			glEnable(GL_LINE_SMOOTH)
+			# Arrow (triangle)
+			# glColor3f(1.0, 0.0, 0.0)
+			# glBegin(GL_TRIANGLES);
+			# glVertex2f(float(far_node.x)/100, float(far_node.y)/100);
+			# glVertex2f(((float(node.y)/100)), ((float(far_node.y)/100)));
+			# glVertex2f(((float(far_node.x)/100)), ((float(node.x)/100)));
+			# glEnd();
+			# glPointSize(5.0);
+			# glColor3f(0.3, 0.5, 0.1)
+			# glEnable(GL_POINT_SMOOTH)
+			# glBegin(GL_POINTS)
+			# if node.x < far_node.x:
+			# 	print "1"
+			# 	px = (float(node.x)/100)+0.03
+			# else:
+			# 	print "2"
+			# 	px = (float(node.x)/100)-0.03
+			# if node.y > far_node.y:
+			# 	print "3"
+			# 	py = (float(node.y)/100)-0.03
+			# else:
+			# 	print "4"
+			# 	py = (float(node.y)/100)+0.03
+            # 
+			# glVertex2f(px, py)
+
+			# glEnd()
+			# Line
+			glLineWidth(2.0)
+			# glEnable(GL_LINE_SMOOTH)
 			glBegin(GL_LINES)
+			glColor3f(0.0, 0.0, 1.0)
 			glVertex2f(float(node.x)/100, float(node.y)/100)
-			glColor3f(1.0, 0.0, 0.0)
+			glColor3f(0.0, 1.0, 1.0)
 			glVertex2f(float(far_node.x)/100, float(far_node.y)/100)
 			glEnd()
 

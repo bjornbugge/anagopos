@@ -57,7 +57,7 @@ def keyPressed(*args):
 	    sys.exit()
 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
-    glClearColor(0.0, 0.0, 0.0, 0.0)	# This Will Clear The Background Color To Black
+    glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To Black
     glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
     glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
     glEnable(GL_DEPTH_TEST)				# Enables Depth Testing
@@ -99,8 +99,8 @@ def DrawGLScene():
 
 def DrawGraph(graph):
 	for node in graph.nodes:
-		glPointSize(5.0);
-		glColor3f(0.3, 0.5, 1.0)
+		glPointSize(10.0);
+		glColor3f(0.0, 0.0, 0.0)
 		glEnable(GL_POINT_SMOOTH)
 		glBegin(GL_POINTS)
 		glVertex2f(float(node.x)/100, float(node.y)/100)
@@ -109,11 +109,12 @@ def DrawGraph(graph):
 	for node in graph.nodes:
 		for edge in node.children:
 			far_node = edge.get_far(node)
-			glLineWidth(1.0)
+			glLineWidth(2.0)
 			# glEnable(GL_LINE_SMOOTH)
 			glBegin(GL_LINES)
-			glColor3f(1.0, 0.0, 0.0)
+			glColor3f(0.0, 0.0, 1.0)
 			glVertex2f(float(node.x)/100, float(node.y)/100)
+			glColor3f(0.0, 1.0, 1.0)
 			glVertex2f(float(far_node.x)/100, float(far_node.y)/100)
 			glEnd()
 
