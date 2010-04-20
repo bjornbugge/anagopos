@@ -1,4 +1,4 @@
-from lambda_dag import *
+from computegraph.lambda_dag import *
 
 # The parser works on strings preprocessed by preprocessor.preprocess(x).
 

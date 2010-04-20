@@ -33,9 +33,9 @@ def randomdag():
 		
 		if r < p['abstraction']:
 			_lp = p
-			_lp['variable'] = _lp['variable'] + 0.07
-			_lp['abstraction'] = _lp['abstraction'] - 0.06
-			_lp['application'] = _lp['application'] - 0.01
+			_lp['variable'] = _lp['variable'] + 0.09
+			_lp['abstraction'] = _lp['abstraction'] - 0.07
+			_lp['application'] = _lp['application'] - 0.02
 
 			node = Abstraction()
 			boundvars = boundvars + 1
