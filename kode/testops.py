@@ -1,5 +1,5 @@
-from operations import *
-from lambda_dag import *
+from computegraph.operations import *
+from computegraph.lambda_dag import *
 from copy import deepcopy
 
 def test():
@@ -25,6 +25,10 @@ def test():
 	g = reductiongraph(t3)
 	
 	return g
+
+
+	
+
 
 if __name__ == "__main__":
 	

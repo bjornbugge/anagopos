@@ -1,9 +1,9 @@
-from operations import *
-from lambda_dag import *
+import computegraph.operations as operations
+from computegraph.lambda_dag import *
 from copy import deepcopy
 from random import uniform, randint
 
-# Den giver 367 reduktioner med grænse på 20:
+
 # (#B1.(#B2.#B3.#B4.B1 #B5.#B6.#B7.((#B8.#B9.#B10.B6 (#B11.B1 (B7 #B12.#B13.B5))) #B14.B5)) #B15.F1)
 
 def generatereductiongraph():
@@ -11,10 +11,10 @@ def generatereductiongraph():
 	Generate a random beta-reduction graph.
 	'''
 	term = randomdag()
-	assignvariables(term)
+	operations.assignvariables(term)
 	print term
 	print "----"
-	return reductiongraph(term)
+	return operations.reductiongraph(term)
 
 def randomdag():
 	'''

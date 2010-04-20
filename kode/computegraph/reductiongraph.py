@@ -32,7 +32,7 @@ class Graph(object):
 		operations.sanitize(term)
 		try:
 			node = self.nodesdict[str(term)]
-			nodes.append(node) # Append to list if we made a new node.
+			self.nodes.append(node) # Append to list if we made a new node.
 		except KeyError:
 			node = Node(term, 'N'+str(len(self.nodesdict)))
 			self.nodesdict[str(term)] = node

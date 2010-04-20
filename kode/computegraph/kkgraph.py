@@ -7,16 +7,18 @@ import random
 import numpy
 import reductiongraph
 
-class Node(reductiongraph.Node):
-	def __init__(self):
-		super(reductiongraph.Node, self).__init__()
-		random.seed()
-		self.x = random.randint(1,200)
-		self.y = random.randint(1,200)
-
 class KKGraph(reductiongraph.Graph):
-	def __init__( self ):
+	def __init__(self, graph):
 		super(reductiongraph.Graph, self).__init__()
+		
+		self.nodesdict = {}
+		self.nodes = []
+		
+		for (key, node) in graph.nodesdict.iteritems():
+			self.nodesdict[key] = node
+			self.nodes.append(node)
+			node.x = random.randint(1, 200)
+			node.y = random.randint(1, 200)
 		
 		self.spring = 1
 		self.max_passes = 5000
