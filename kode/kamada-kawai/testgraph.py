@@ -4,15 +4,12 @@ import cairo
 import time
 from graph import Graph
 from graph import Node
-# from OpenGL.GLUT import *
-# from OpenGL.GLU import *
-# from OpenGL.GL import *
 
 class TestGraph(gtk.DrawingArea, Graph):
 	__gsignals__ = {
-				"expose-event": "override",
-				"configure_event": "override",
-			}
+		"expose-event": "override",
+		"configure_event": "override",
+	}
 
 	def __init__ ( self ):
 		gtk.DrawingArea.__init__(self)
@@ -43,13 +40,20 @@ class TestGraph(gtk.DrawingArea, Graph):
 		self.nodes.append(node7)
 
 	def do_configure_event ( self, event ):
-			(self.__width, self.__height) = self.window.get_size()
-			self.queue_draw()
-			
+		(self.__width, self.__height) = self.window.get_size()
+		self.queue_draw()
+		
 	def do_expose_event ( self, event ):
 		print "exposing"
 		self.__cr = self.window.cairo_create()
 		self.__render()
+
+	def iter_done( self ):
+		print "drawing" 
+		while gtk.events_pending():
+			gtk.main_iteration(False)		
+		self.queue_draw()
+		time.sleep(0.03)
 
 	def __render( self ):
 		self.__cr.rectangle(0,0,self.__width, self.__height)
@@ -68,6 +72,7 @@ class TestGraph(gtk.DrawingArea, Graph):
 
 		self.__cr.save()
 		for node in self.nodes:
+			print node.x
 			self.__cr.arc(node.x, node.y, 5, 0, math.pi*2)
 			self.__cr.set_source_rgb(0xcc/255.0, 0, 0)
 			self.__cr.fill_preserve()
@@ -75,8 +80,8 @@ class TestGraph(gtk.DrawingArea, Graph):
 			self.__cr.stroke()
 		self.__cr.restore()
 
-# def update_layout( widget, testgraph ):
-# 	testgraph.update_layout()
+def update_layout( widget, testgraph ):
+	testgraph.update_layout()
 
 if __name__ == "__main__":
 	window = gtk.Window()
@@ -87,17 +92,18 @@ if __name__ == "__main__":
 
 	testgraph = TestGraph()
 
-	# update_button = gtk.Button("Organise graph")
-	# update_button.connect("clicked", update_layout, testgraph)
-	
-	testgraph.update_layout()
+	update_button = gtk.Button("Organise graph")
+	update_button.connect("clicked", update_layout, testgraph)
 
 	vbox = gtk.VBox(False, 10)
-	vbox.pack_start(testgraph, True, True, 00)
+	vbox.pack_start(testgraph, True, True, 0)
+	vbox.pack_start(update_button, False, False, 0)
 
 	window.add(vbox)
 
 	testgraph.show()
 	vbox.show()
+	update_button.show()
 	window.present()
 	gtk.main()
+

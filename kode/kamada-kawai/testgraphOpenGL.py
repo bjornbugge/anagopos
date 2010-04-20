@@ -21,12 +21,16 @@ class TestGraph(Graph):
 		node5 = Node()
 		node6 = Node()
 		node7 = Node()
+		node8 = Node()
+		node9 = Node()
 		node1.add_child(node2)
 		node2.add_child(node3)
 		node3.add_child(node1)
 		node2.add_child(node7)
 		node7.add_child(node6)
 		node7.add_child(node5)
+		node7.add_child(node8)
+		node7.add_child(node9)
 		node2.add_child(node4)
 		node4.add_child(node6)
 		node5.add_child(node2)
@@ -38,39 +42,63 @@ class TestGraph(Graph):
 		self.nodes.append(node5)
 		self.nodes.append(node6)
 		self.nodes.append(node7)
-		
+		self.nodes.append(node8)
+		self.nodes.append(node9)
+
 		print "nu8f8rf30"
-		
-		for node in self.nodes:
-			print "nodes"
-			for edge in node.children:
-				far_node = edge.get_far(node)
-				print "edge in node"
-				
 
 	# def __render( self ):
-	# 	self.__cr.rectangle(0,0,self.__width, self.__height)
-	# 	self.__cr.set_source_rgb(1,1,1)
-	# 	self.__cr.fill()
-	# 
-	# 	self.__cr.save()
-	# 	self.__cr.set_source_rgb(0,0,0)
+	# 	
+	# 	# glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+	# 	# glLoadIdentity()					# Reset The View 
+    #     # 
+	# 	# # Move Left 1.5 units and into the screen 6.0 units.
+	# 	# glTranslatef(-1.5, 0.0, -6.0)
+	# 	
 	# 	for node in self.nodes:
 	# 		for edge in node.children:
 	# 			far_node = edge.get_far(node)
-	# 			self.__cr.move_to(node.x, node.y)
-	# 			self.__cr.line_to(far_node.x, far_node.y)
-	# 			self.__cr.stroke()
-	# 	self.__cr.restore()
-	# 
-	# 	self.__cr.save()
+	# 			glLineWidth(5.0)
+	# 			glBegin(GL_LINES)
+	# 			glVertex2f(node.x, node.y)
+	# 			glColor3f(1.0, 0.0, 0.0)
+	# 			glVertex2f(far_node.x, far_node.y)
+	# 			glEnd()
+    # 
 	# 	for node in self.nodes:
-	# 		self.__cr.arc(node.x, node.y, 5, 0, math.pi*2)
-	# 		self.__cr.set_source_rgb(0xcc/255.0, 0, 0)
-	# 		self.__cr.fill_preserve()
-	# 		self.__cr.set_source_rgb(0xa4/255.0, 0, 0)
-	# 		self.__cr.stroke()
-	# 	self.__cr.restore()
+	# 		print "Node x: "
+	# 		print node.x
+	# 		print "Node y: "
+	# 		print node.y
+	# 		glPointSize(20.0);
+	# 		glColor3f(0.3, 0.5, 1.0)
+	# 		glEnable(GL_POINT_SMOOTH)
+	# 		glBegin(GL_POINTS)
+	# 		glVertex2f(node.x, node.y)
+	# 		glEnd()
+		
+			# self.__cr.rectangle(0,0,self.__width, self.__height)
+			# self.__cr.set_source_rgb(1,1,1)
+			# self.__cr.fill()
+			# 
+			# self.__cr.save()
+			# self.__cr.set_source_rgb(0,0,0)
+			# for node in self.nodes:
+			# 	for edge in node.children:
+			# 		far_node = edge.get_far(node)
+			# 		self.__cr.move_to(node.x, node.y)
+			# 		self.__cr.line_to(far_node.x, far_node.y)
+			# 		self.__cr.stroke()
+			# self.__cr.restore()
+			# 
+			# self.__cr.save()
+			# for node in self.nodes:
+			# 	self.__cr.arc(node.x, node.y, 5, 0, math.pi*2)
+			# 	self.__cr.set_source_rgb(0xcc/255.0, 0, 0)
+			# 	self.__cr.fill_preserve()
+			# 	self.__cr.set_source_rgb(0xa4/255.0, 0, 0)
+			# 	self.__cr.stroke()
+			# self.__cr.restore()
 
 def update_layout( widget, testgraph ):
 	testgraph.update_layout()
@@ -95,45 +123,57 @@ def InitGL(Width, Height):				# We call this right after our OpenGL window is cr
     glMatrixMode(GL_MODELVIEW)
 
 def DrawGLScene():
+	
 	# Clear The Screen And The Depth Buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	glLoadIdentity()					# Reset The View 
 
 	# Move Left 1.5 units and into the screen 6.0 units.
 	glTranslatef(-1.5, 0.0, -6.0)
-
-	# def __render( self ):
-	# 	self.__cr.rectangle(0,0,self.__width, self.__height)
-	# 	self.__cr.set_source_rgb(1,1,1)
-	# 	self.__cr.fill()
-	# 
-	# 	self.__cr.save()
-	# 	self.__cr.set_source_rgb(0,0,0)
-	# 	for node in self.nodes:
-	# 		for edge in node.children:
-	# 			far_node = edge.get_far(node)
-	# 			self.__cr.move_to(node.x, node.y)
-	# 			self.__cr.line_to(far_node.x, far_node.y)
-	# 			self.__cr.stroke()
-	# 	self.__cr.restore()
-	# 
-	# 	self.__cr.save()
-	# 	for node in self.nodes:
-	# 		self.__cr.arc(node.x, node.y, 5, 0, math.pi*2)
-	# 		self.__cr.set_source_rgb(0xcc/255.0, 0, 0)
-	# 		self.__cr.fill_preserve()
-	# 		self.__cr.set_source_rgb(0xa4/255.0, 0, 0)
-	# 		self.__cr.stroke()
-	# 	self.__cr.restore()
+	
+	# glPointSize(20.0);
+	# glColor3f(0.3, 0.5, 1.0)
+	# glEnable(GL_POINT_SMOOTH)
+	# glBegin(GL_POINTS)
+	# # glEnable(GL_POINT_SMOOTH)
+	# # glPointSize(2.0);
+	# glVertex2f(2.2, 1.8)
+	# glEnd()
+	
+	testgraph = TestGraph()
+	testgraph.update_layout()
+	DrawGraph(testgraph)
 
 	#  since this is double buffered, swap the buffers to display what just got drawn. 
 	glutSwapBuffers()
 
-if __name__ == "__main__":
+def DrawGraph(graph):
+	for node in graph.nodes:
+		print "Node x: "
+		print node.x/100
+		print node.x
+		print "Node y: "
+		print float(node.y)/100
+		print float(node.y)
+		glPointSize(5.0);
+		glColor3f(0.3, 0.5, 1.0)
+		glEnable(GL_POINT_SMOOTH)
+		glBegin(GL_POINTS)
+		glVertex2f(float(node.x)/100, float(node.y)/100)
+		glEnd()
+		
+	for node in graph.nodes:
+		for edge in node.children:
+			far_node = edge.get_far(node)
+			glLineWidth(1.0)
+			glEnable(GL_LINE_SMOOTH)
+			glBegin(GL_LINES)
+			glVertex2f(float(node.x)/100, float(node.y)/100)
+			glColor3f(1.0, 0.0, 0.0)
+			glVertex2f(float(far_node.x)/100, float(far_node.y)/100)
+			glEnd()
 
-	testgraph = TestGraph()
-	
-	testgraph.update_layout()
+if __name__ == "__main__":
 	
 	print "ksdlkasdlkasd"
 	
@@ -145,11 +185,11 @@ if __name__ == "__main__":
 	glutInitWindowPosition(0, 0)
 	window = glutCreateWindow("Graphs")
 	glutDisplayFunc(DrawGLScene)
-	glutIdleFunc(DrawGLScene)
+	# glutIdleFunc(DrawGLScene)
 	glutKeyboardFunc(keyPressed)
 	# glutReshapeFunc(ReSizeGLScene)
 	# glutKeyboardFunc(keyPressed)
-	# InitGL(1024, 768)
+	InitGL(1024, 768)
 	glutMainLoop()
 
 	print "fmoiersmfsmr"
