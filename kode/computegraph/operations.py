@@ -115,6 +115,7 @@ def betareduce(term, redexpos):
 	# Refresh variable bindings so newly copied variables are known by abstractors.
 	assignvariables(contractum)
 	
+	contractum.dirty = True
 	return (term, contractum)
 
 def alphaconvert(term, newname):
@@ -130,7 +131,11 @@ def sanitize(term):
 	'''
 	Gives the bound variables in the abstractors unique names. The variables
 	are named vX with X unique for each abstraction.
+	If the term has its dirty flag set to False, sanitize() don't do anything.
 	'''
+	if not term.dirty:
+		return
+	
 	def _getabstractors(node, abstractors):
 		if type(node) is Abstraction:
 			abstractors.append(node)
@@ -145,76 +150,33 @@ def sanitize(term):
 	for abstraction in abstractors:
 		alphaconvert(abstraction, 'v' + str(c))
 		c = c + 1
+	
+	term.dirty = False
 
 def reductiongraph(root, maximum = 20):
 	'''
-	Computes the reduction graph and returns it as a set of 
-	(redex, contractum)-pairs.
+	Computes the reduction graph and returns it in the format specified
+	in reductiongraph.py.
 	'''
 	work = [root]
-	graph = []
+	graph = Graph()
 	guard = 0
+	reductions = 0
 	while len(work) > 0 and (maximum == 0 or guard < maximum):
 		term = work[0]
 		positions = findredexes(term)
 		for pos in positions:
-			pair = betareduce(term, pos)
-			graph.append(pair)
-			if not pair[1] in work:
-				work.append(pair[1])
+			(term, contractum) = betareduce(term, pos)
+			n1 = graph.addnode(term)
+			n2 = graph.addnode(contractum)
+			n1.addchild(n2)
+			
+			if not contractum in work:
+				work.append(contractum)
+			
+			reductions = reductions + 1
+			print "Performed " + str(reductions) + " reductions."	
 		del work[0]
 		guard = guard + 1
 	
 	return graph
-	#
-	#for (k,v) in graph:
-	#	# sanitize(k)
-	#	# sanitize(v)
-	#	print str(k) + "\t\t---->\t\t" + str(v)
-
-def makegraph(g):
-	def _in(nodes, node):
-		for (n1, n2) in nodes:
-			if compareterms(n1, node):
-				return n2
-		return None
-		
-	nodes = [] # Contains (term, node)-pairs
-	
-	for (redex, contractum) in g:
-		print redex
-		print contractum
-		print "---"
-		oldnode1 = _in(nodes, redex)
-		if not oldnode1:
-			print "making new node1"
-			node1 = ReductionGraphNode(redex)
-			nodes.append((redex, node1))
-		else:
-			node1 = oldnode1
-		
-		oldnode2 = _in(nodes, contractum)
-		if not oldnode2:
-			print "making new node"
-			node2 = ReductionGraphNode(contractum)
-			nodes.append((contractum, node2))
-		else:
-			node2 = oldnode2
-		print node1
-		print node2
-		print "//////////"
-		
-		node1.addchild(node2)
-		
-	return nodes[0][1]
-
-def compareterms(terma, termb):
-	'''
-	Return True if terma represent the same lambda term as termb, 
-	up to alpha-congruency.
-	'''
-	a = deepcopy(terma)
-	b = deepcopy(termb)
-	sanitize(a)
-	sanitize(b)
-	return str(a) == str(b)

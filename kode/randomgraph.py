@@ -1,7 +1,10 @@
-from lambda_dag import *
 from operations import *
+from lambda_dag import *
 from copy import deepcopy
 from random import uniform, randint
+
+# Den giver 367 reduktioner med grænse på 20:
+# (#B1.(#B2.#B3.#B4.B1 #B5.#B6.#B7.((#B8.#B9.#B10.B6 (#B11.B1 (B7 #B12.#B13.B5))) #B14.B5)) #B15.F1)
 
 def generatereductiongraph():
 	'''
@@ -11,7 +14,7 @@ def generatereductiongraph():
 	assignvariables(term)
 	print term
 	print "----"
-	reductiongraph(term)
+	return reductiongraph(term)
 
 def randomdag():
 	'''

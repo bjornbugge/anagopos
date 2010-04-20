@@ -1,3 +1,5 @@
+import operations
+
 '''
 DAG-representation of lambda terms.
 '''
@@ -7,6 +9,7 @@ class LambdaNode(object):
 		self.leftchild = None
 		self.rightchild = None
 		self.parent = None
+		self.dirty = True # Indicates whether the term can be sanitized.
 		
 	def add(self, node):
 		'''
@@ -42,6 +45,18 @@ class LambdaNode(object):
 			self.rightchild = new
 			new.parent = self
 			old.parent = None
+	
+	def __eq__(self, other):
+		'''
+		Equality of two DAGs is defined as the string equality of their 
+		normalized string representations.
+		'''
+		operations.sanitize(self)
+		operations.sanitize(other)
+		return str(self) == str(other)
+	
+	def __ne__(self, other):
+		return not self.__eq__(self, other)
 
 class Abstraction(LambdaNode):
 	"""

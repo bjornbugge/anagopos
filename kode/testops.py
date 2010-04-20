@@ -26,18 +26,6 @@ def test():
 	
 	return g
 
-
-def test2():
-	g = test()
-	graph = Graph()
-	n1 = Node(g[0][0])
-	n2 = Node(g[0][1])
-	n1.addchild(n2)
-	graph.nodes.append(n1)
-	graph.nodes.append(n2)
-	
-	return graph
-
 if __name__ == "__main__":
 	
 #          @
@@ -125,5 +113,6 @@ if __name__ == "__main__":
 	g0.add(w31)
 	g0.add(w32)
 	
+	assignvariables(rn)
 	print str(rn)
 	print str(g0)
