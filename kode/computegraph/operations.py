@@ -175,7 +175,7 @@ def reductiongraph(root, maximum = 20):
 				work.append(contractum)
 			
 			reductions = reductions + 1
-			print "Performed " + str(reductions) + " reductions."	
+			# print "Performed " + str(reductions) + " reductions."
 		del work[0]
 		guard = guard + 1
 	

@@ -8,40 +8,17 @@ import lambdaparser as parser
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
+import randomgraph
 
 ESCAPE = '\033'
 global term
 global graph
-def drawtest():
-	term = Abstraction()
-	term.varname = 'B1'
-	t1 = Application()
-	term.add(t1)
-	t2 = Abstraction()
-	t2.varname = 'B2'
-	t1.add(t2)
-	v1 = Variable('B1')
-	# v2 = Variable('B2')
-	v2 = Application()
-	v2.add(Variable('B2'))
-	v2.add(Variable('B2'))
-	t1.add(v1)
-	t2.add(v2)
-	t3 = Application()
-	t3.add(term)
-	v3 = Variable('B3')
-	t3.add(v3)
-	operations.assignvariables(t3)
-	g = operations.reductiongraph(t3)
-	# g er en normal reductiongraph nu.
-	print g
-	kkGraph = KKGraph(g)
-	return kkGraph
 
 def graphify():
 	global term
 	global graph
-	if not graph:
+	
+	if graph is None:
 		operations.assignvariables(term)
 		g = operations.reductiongraph(term)
 	else:
@@ -79,17 +56,6 @@ def DrawGLScene():
 	# Move Left 1.5 units and into the screen 6.0 units.
 	glTranslatef(-1.5, 0.0, -6.0)
 	
-	# glPointSize(20.0);
-	# glColor3f(0.3, 0.5, 1.0)
-	# glEnable(GL_POINT_SMOOTH)
-	# glBegin(GL_POINTS)
-	# # glEnable(GL_POINT_SMOOTH)
-	# # glPointSize(2.0);
-	# glVertex2f(2.2, 1.8)
-	# glEnd()
-	
-	# testgraph = TestGraph()
-	
 	testgraph = graphify()
 	testgraph.update_layout()
 	DrawGraph(testgraph)
@@ -118,17 +84,20 @@ def DrawGraph(graph):
 			glVertex2f(float(far_node.x)/100, float(far_node.y)/100)
 			glEnd()
 
-# if __name__ == "__main__":
 def draw(termstr = '', gr = None):
 	global graph
 	global term
+	graph = None
 	
 	if termstr == '' and gr == None:
-		return
-	if gr:
-		graph = gr
+		graph = randomgraph.generatereductiongraph()
+		while len(graph.nodes) == 0 or len(graph.nodes) > 50: # For now, draw only smaller graphs.
+			graph = randomgraph.generatereductiongraph()
 	else:
-		term = parser.parse(termstr)
+		if gr:
+			graph = gr
+		else:
+			term = parser.parse(termstr)
 	
 	global window
 	glutInit(sys.argv)
@@ -143,3 +112,6 @@ def draw(termstr = '', gr = None):
 	glutKeyboardFunc(keyPressed)
 	InitGL(1024, 768)
 	glutMainLoop()
+
+if __name__ == "__main__":
+	draw()

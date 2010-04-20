@@ -5,6 +5,7 @@ from random import uniform, randint
 
 
 # (#B1.(#B2.#B3.#B4.B1 #B5.#B6.#B7.((#B8.#B9.#B10.B6 (#B11.B1 (B7 #B12.#B13.B5))) #B14.B5)) #B15.F1)
+# #B1.(#B2.#B3.B2 #B4.(B4 (((#B5.#B6.(#B7.B5 B5) #B8.#B9.B9) #B10.#B11.B1) ((F1 (#B12.B12 B1)) B1))))
 
 def generatereductiongraph():
 	'''
