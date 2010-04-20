@@ -2,6 +2,7 @@ from lambda_dag import *
 from math import floor, log
 from copy import deepcopy
 from collections import deque
+from reductiongraph import *
 
 def assignvariables(root):
 	'''
@@ -153,7 +154,7 @@ def reductiongraph(root, maximum = 20):
 	work = [root]
 	graph = []
 	guard = 0
-	while len(work) > 0 and guard < maximum:
+	while len(work) > 0 and (maximum == 0 or guard < maximum):
 		term = work[0]
 		positions = findredexes(term)
 		for pos in positions:
@@ -171,3 +172,49 @@ def reductiongraph(root, maximum = 20):
 	#	# sanitize(v)
 	#	print str(k) + "\t\t---->\t\t" + str(v)
 
+def makegraph(g):
+	def _in(nodes, node):
+		for (n1, n2) in nodes:
+			if compareterms(n1, node):
+				return n2
+		return None
+		
+	nodes = [] # Contains (term, node)-pairs
+	
+	for (redex, contractum) in g:
+		print redex
+		print contractum
+		print "---"
+		oldnode1 = _in(nodes, redex)
+		if not oldnode1:
+			print "making new node1"
+			node1 = ReductionGraphNode(redex)
+			nodes.append((redex, node1))
+		else:
+			node1 = oldnode1
+		
+		oldnode2 = _in(nodes, contractum)
+		if not oldnode2:
+			print "making new node"
+			node2 = ReductionGraphNode(contractum)
+			nodes.append((contractum, node2))
+		else:
+			node2 = oldnode2
+		print node1
+		print node2
+		print "//////////"
+		
+		node1.addchild(node2)
+		
+	return nodes[0][1]
+
+def compareterms(terma, termb):
+	'''
+	Return True if terma represent the same lambda term as termb, 
+	up to alpha-congruency.
+	'''
+	a = deepcopy(terma)
+	b = deepcopy(termb)
+	sanitize(a)
+	sanitize(b)
+	return str(a) == str(b)

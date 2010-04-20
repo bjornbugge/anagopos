@@ -1,6 +1,6 @@
 %!TEX root = rapport.tex
 
-\chapter{Graph Drawing}
+\chapter{Graph Drawing}\label{chap:graph_drawing}
 
 A \emph{graph drawing} is an embedding of the abstract, mathematical concept
 of a graph on a two-dimensional surface. A \emph{graphic standard} is the
@@ -330,12 +330,13 @@ several algorithms discussed above and in the referenced papers would be
 unacceptably slow if applied to a graph with e.g. $10^4$ nodes and
 $3\cdot10^4$ edges. It can therefore sometimes be necessary to alter the
 methods. Furthermore there is the problem of room -- there simply has to be
-enough room on the monitor for the drawing to fit.
+enough room on the monitor for the drawing to fit. In this section we will
+briefly discuss a few such methods. A more rigorous study can be found in
+\cite{Herman2000}.
 
 For a large graph with $10^4$ nodes and $3\cdot10^4$ edges, the probability
 that the graph is planar is very small, and since a planarity check on such a
-graph will be slow it is usually just skipped. When dealing with large graphs,
-the planarity issue is in other words mostly ignored.
+graph will be slow it is usually just skipped. 
 
 Since a lot of applications of graph drawing techniques operate with large
 graphs that cannot be placed all at once on a normal computer monitor, methods
@@ -343,7 +344,7 @@ to single out special parts of the drawing and only show these have been
 developed. Since one will usually be interested in the whole graph, or at
 least most of it, navigational methods have also been studied. 
 
-One method to solve the problem og showing a huge drawing on a relatively
+One method to solve the problem of showing a huge drawing on a relatively
 small monitor is to use a ``fisheye'' effect. This effect functions as a
 ``magnifying glass'' that highlights, or enlarges, the area of the graph
 currently in focus while at the same time minimizing the other parts. Using
@@ -351,8 +352,8 @@ this, a user can navigate and study a large graph that would otherwise be
 drawn with node and edge representations too small for the human eye to
 discern. The method utilizes a distortion function, $d:[0,1]\mapsto[0,1]$,
 that monotonically maps the interval $[0,1]$ to itself. Figure
-\ref{fig:images_fisheye_distortion} shows an example of a distortion function
-as well as an illustration of its effects on a plane.
+\ref{fig:images_fisheye_distortion} shows an example of two distortion functions
+as well as an illustration of the effects on a plane.
 \begin{figure}[t]
 	\centering
 	\subfigure{

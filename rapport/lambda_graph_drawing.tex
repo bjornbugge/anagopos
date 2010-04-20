@@ -2,6 +2,24 @@
 
 \chapter{What to do?} % Find et bedre navn!
 
+There are three main properties that need to be adressed when drawing
+$\beta$-reduction graphs:
+\begin{itemize}
+	\item $\beta$-reduction graphs can be \emph{huge}, or even have an infinite 
+	amount of nodes, so drawing algorithms have to be very efficient.
+	
+	\item The graphs are directed, so arrow heads need to be drawn. Since an edge
+	can be drawn spanning a lot of screen area, the type of arrow has to be 
+	designed such that it is clear to see where an edge starts from the arrow 
+	head alone and vice versa.
+	
+	\item Planarity checks have to be skipped: the graphs are huge,
+	so a planarity check is expensive and the probability that the graphs are planar
+	is very small.
+\end{itemize}
+
+% Severeal links can connect two nodes, what to do to reduce clutter???
+
 % Properties of lambda graphs:
 % huge
 % directed, so arrow heads are needed!

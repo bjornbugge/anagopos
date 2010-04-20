@@ -1,4 +1,4 @@
-\documentclass[oneside,twocolumn]{report}
+\documentclass[oneside]{report}
 
 
 % Packages to use
@@ -19,15 +19,15 @@
 \usepackage[labelfont=bf,up,textfont=it,up]{caption}
 
 % TODO Lav theoremstyle så den er ordenlig!
-\newtheoremstyle{mystyle}% ⟨name⟩ 
-{5pt}%	⟨Space above⟩ 
-{25pt}%	⟨Space below⟩ 
-{}%	⟨Body font⟩
-{\parindent}%	⟨Indent amount⟩
-{\bfseries}% ⟨Theorem head font⟩ 
-{:}%	⟨Punctuation after theorem head⟩ 
-{.5em}%	⟨Space after theorem head⟩
-{}%	⟨Theorem head spec (can be left empty, meaning ‘normal’)⟩
+\newtheoremstyle{mystyle}	% Name
+{5pt}		%	Space above
+{25pt}		%	Space below
+{}			%	Body font
+{\parindent}%	Indent amount
+{\bfseries}	%	Theorem head font
+{:}			%	Punctuation after theorem head
+{.5em}		%	Space after theorem head
+{}			%	Theorem head spec (can be left empty, meaning ‘normal’)
 
 \theoremstyle{mystyle}
 \newtheorem{definition}{Definition}[section]
@@ -87,13 +87,15 @@
 %\newpage
 %
 % Chapters
-% \input{introduction.tex}
-% \input{projectConstraints.tex}
-% \input{lambda_theory.tex}
-% \input{existing_visualizations.tex}
-% \input{lambda_representation.tex}
-% \input{parser.tex}
+%\input{introduction.tex}
+%\input{projectConstraints.tex}
+%\input{lambda_theory.tex}
+%\input{existing_visualizations.tex}
+%\input{lambda_representation.tex}
+%\input{parser.tex}
 \input{graph_drawing_litterature.tex}
+\input{lambda_graph_drawing.tex}
+
 
 % Appendices
 

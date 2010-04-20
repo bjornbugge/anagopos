@@ -21,14 +21,22 @@ def test():
 	t3.add(term)
 	v3 = Variable('B3')
 	t3.add(v3)
-	
-	print t3
-	print "--"
 	assignvariables(t3)
 	g = reductiongraph(t3)
 	
 	return g
 
+
+def test2():
+	g = test()
+	graph = Graph()
+	n1 = Node(g[0][0])
+	n2 = Node(g[0][1])
+	n1.addchild(n2)
+	graph.nodes.append(n1)
+	graph.nodes.append(n2)
+	
+	return graph
 
 if __name__ == "__main__":
 	
