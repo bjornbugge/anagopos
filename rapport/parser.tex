@@ -1,6 +1,6 @@
 %!TEX root = rapport.tex
 
-\chapter{The parser and YAPPS2 parser generator (draft)}
+\chapter{The parser and YAPPS2 parser generator}
 
 We have used our grammar, defined according to Definition \ref{def:grammar} in
 the preliminaries chapter, which is followed by the conventions
@@ -16,9 +16,9 @@ When these steps are complete the reduction graphs can be created.
 \section{Pre-processing}
 
 We have chosen to run the lambda term through a pre-processing script before
-parsing it. This pre-processing script adds all possible parentheses. That
-means the parser does not need to worry about left-associativeness, since the
-parentheses eliminate this problem.
+parsing it. This pre-processing script adds all possible parentheses. This
+solution was easier than to implement it into the grammar. We now fulfill the
+conventions mentioned earlier in the chapter.
 
 \section{YAPPS2}
 
@@ -29,6 +29,10 @@ YAPPS2 generates code according to the Python 1.5 standard. Our primary reason
 for choosing it was its production on human-readable code.
 
 YAPPS2 takes a LL(1) grammar as input and gives a parser file as output. We
-have, as earlier described, directly used the grammar from the preliminaries
+have, as earlier described, used the grammar from the preliminaries
 chapter. This has been written in LL(1) form in a .py file and given as an
 argument when running YAPPS2.
+<<<<<<< .mine
+
+Now we have our parser in a Python file, which we will use throughout the
+project.
