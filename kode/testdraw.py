@@ -10,6 +10,7 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
 import randomgraph
+import graphicsutils
 
 ESCAPE = '\033'
 global term
@@ -26,15 +27,17 @@ def graphify():
 	else:
 		g = graph
 	
-	kkGraph = KKGraph(g)
+	kkGraph = KKGraph(g, 400, 400)
 	print "Drawing: "
 	print g
 	return kkGraph
 
 def keyPressed(*args):
 	# If escape is pressed, kill everything.
-    if args[0] == ESCAPE:
+	if args[0] == ESCAPE:
 	    sys.exit()
+	elif args[0] == 'u':
+		DrawGLScene()
 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
     glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To White
@@ -68,12 +71,16 @@ def DrawGLScene():
 
 def DrawGraph(graph):
 	for node in graph.nodes:
+		x = float(node.x)/100
+		y = float(node.y)/100
 		glPointSize(10.0);
 		glColor3f(0.0, 0.0, 0.0)
 		glEnable(GL_POINT_SMOOTH)
 		glBegin(GL_POINTS)
-		glVertex2f(float(node.x)/100, float(node.y)/100)
+		glVertex2f(x, y)
 		glEnd()
+		glColor3f(1.0, 0.0, 0.0)
+		graphicsutils.drawtext(x, y, node.name)
 		
 	for node in graph.nodes:
 		for edge in node.children:
