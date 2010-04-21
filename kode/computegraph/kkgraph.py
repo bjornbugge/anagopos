@@ -8,7 +8,7 @@ import numpy
 import reductiongraph
 
 class KKGraph(reductiongraph.Graph):
-	def __init__(self, graph):
+	def __init__(self, graph, width = 200, height = 200):
 		super(reductiongraph.Graph, self).__init__()
 		
 		self.nodesdict = {}
@@ -25,8 +25,8 @@ class KKGraph(reductiongraph.Graph):
 		self.min_epsilon = 1
 		self.updates = 1
 		self.pad = 10
-		self.width = 200
-		self.height = 200
+		self.width = width
+		self.height = height
 	
 	def update_layout( self ):
 		for node in self.nodes:

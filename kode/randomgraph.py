@@ -7,7 +7,8 @@ import lambdaparser as parser
 
 # ((#B1.(B1) #B2.((#B3.((#B4.((#B5.(B4) #B6.(#B7.(#B8.(#B9.(B6)))))) #B10.(#B11.(#B12.(B12))))) #B13.(#B14.(#B15.(#B16.(B14))))))) #B17.(#B18.((#B19.(#B20.(#B21.(B17))) B17))))
 # (#B1.((#B2.(#B3.(#B4.((#B5.(B3) B1)))) (#B6.(#B7.(#B8.(#B9.(B9)))) B1))) ((((#B10.(#B11.(B10)) #B12.((#B13.(#B14.(B12)) B12))) #B15.(#B16.(((B16 #B17.(#B18.(B18))) #B19.(#B20.(#B21.(#B22.(#B23.(B19))))))))) #B24.(#B25.(B25))) #B26.(#B27.(#B28.(#B29.((B28 #B30.(B28))))))))
-
+# #B1.(#B2.(#B3.(((#B4.((#B5.(#B6.(#B7.(B4))) #B8.(B3))) B3) (#B9.((#B10.(#B11.(B3)) B3)) (#B12.(#B13.(#B14.(#B15.(#B16.(B13))))) B1))))))
+# #B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))
 def generatereductiongraph():
 	'''
 	Generate a random beta-reduction graph.
@@ -18,6 +19,12 @@ def generatereductiongraph():
 	print "----"
 	g1 = operations.reductiongraph(term)
 	return g1
+
+def getgraph(termstr):
+	term = parser.parse(termstr)
+	operations.assignvariables(term)
+	g = operations.reductiongraph(term)
+	return g
 
 def generateterms():
 	term1 = randomdag()
