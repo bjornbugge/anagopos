@@ -160,7 +160,7 @@ def DrawGraph(graph):
 	# glVertex2f(1.2, 2.2);
 	# glVertex2f(3.3, 1.3);
 	# glEnd();
-	
+	glColor3f(1.0, 0.0, 0.0)
 	for node in graph.nodes:
 		print "Node x: "
 		print node.x/100
@@ -169,11 +169,11 @@ def DrawGraph(graph):
 		print float(node.y)/100
 		print float(node.y)
 		glPointSize(10.0);
-		glColor3f(0.0, 0.0, 0.0)
 		glEnable(GL_POINT_SMOOTH)
 		glBegin(GL_POINTS)
 		glVertex2f(float(node.x)/100, float(node.y)/100)
 		glEnd()
+		glColor3f(0.0, 0.0, 0.0)
 		
 	for node in graph.nodes:
 		for edge in node.children:

@@ -70,16 +70,17 @@ def DrawGLScene():
 	glutSwapBuffers()
 
 def DrawGraph(graph):
+	glColor3f(1.0, 0.0, 0.0)
 	for node in graph.nodes:
 		x = float(node.x)/100
 		y = float(node.y)/100
 		glPointSize(10.0);
-		glColor3f(0.0, 0.0, 0.0)
 		glEnable(GL_POINT_SMOOTH)
 		glBegin(GL_POINTS)
 		glVertex2f(x, y)
 		glEnd()
-		glColor3f(1.0, 0.0, 0.0)
+		glColor3f(0.0, 0.0, 0.0)
+		# glColor3f(1.0, 0.0, 0.0)
 		# graphicsutils.drawtext(x, y, node.name)
 		
 	for node in graph.nodes:
@@ -94,7 +95,7 @@ def DrawGraph(graph):
 			
 			glLineWidth(2.0)
 			glBegin(GL_LINES)
-			glColor3f(0.0, 0.2, 0.6)
+			glColor3f(0.3, 0.2, 0.6)
 			glVertex2f(X1, Y1)
 			glVertex2f(X2, Y2)
 			glEnd()
@@ -137,6 +138,7 @@ def DrawGraph(graph):
 			glVertex2f(X4,Y4);
 			glEnd();
 
+
 def draw(termstr = '', gr = None):
 	global graph
 	global term
@@ -163,6 +165,7 @@ def draw(termstr = '', gr = None):
 	# glutIdleFunc(DrawGLScene)
 	glutKeyboardFunc(keyPressed)
 	# glutReshapeFunc(ReSizeGLScene)
+	# glutFullScreen()
 	glutKeyboardFunc(keyPressed)
 	InitGL(1024, 768)
 	glutMainLoop()
