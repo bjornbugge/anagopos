@@ -104,7 +104,6 @@ def DrawGraph(graph):
 		glBegin(GL_POINTS)
 		glVertex2f(x, y)
 		glEnd()
-
 		
 		glColor3f(0.0, 0.0, 0.0)
 		graphicsutils.write(x-0.05, y-0.1, node.name)
