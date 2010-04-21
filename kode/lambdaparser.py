@@ -70,9 +70,9 @@ def preprocess(term):
 	'''
 	out = ''
 	count = 0
-	for ch in term:
+	for (i, ch) in enumerate(term):
 		out = out + ch
-		if ch == '.':
+		if ch == '.' and not term[i+1] == '(':
 			out = out + '('
 			count = count + 1
 		if ch == ')' and count > 0:
@@ -85,5 +85,6 @@ def preprocess(term):
 	return out
 
 def parse(text):
-    P = Lambda(LambdaScanner(preprocess(text)))
-    return wrap_error_reporter(P, 'Terms')
+	P = Lambda(LambdaScanner(preprocess(text)))
+	# P = Lambda(LambdaScanner(text))
+	return wrap_error_reporter(P, 'Terms')
