@@ -21,13 +21,12 @@ def graphify():
 	global graph
 	
 	if graph is None:
-		print "assigning vars"
 		operations.assignvariables(term)
 		g = operations.reductiongraph(term)
 	else:
 		g = graph
 	
-	kkGraph = KKGraph(g, 400, 400)
+	kkGraph = KKGraph(g, 300, 300)
 	print "Drawing: "
 	print g
 	return kkGraph
@@ -40,18 +39,19 @@ def keyPressed(*args):
 		DrawGLScene()
 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
-    glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To White
-    glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
-    glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
-    glEnable(GL_DEPTH_TEST)				# Enables Depth Testing
-    glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
-
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()					# Reset The Projection Matrix
+	glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To White
+	glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
+	# glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
+	glDisable(GL_DEPTH_TEST)			# Disables Depth Testing
+	glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
+	
+	
+	glMatrixMode(GL_PROJECTION)
+	glLoadIdentity()					# Reset The Projection Matrix
 										# Calculate The Aspect Ratio Of The Window
-    gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
-
-    glMatrixMode(GL_MODELVIEW)
+	gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
+	
+	glMatrixMode(GL_MODELVIEW)
 
 def DrawGLScene():
 	
@@ -60,7 +60,8 @@ def DrawGLScene():
 	glLoadIdentity()					# Reset The View 
 
 	# Move Left 1.5 units and into the screen 6.0 units.
-	glTranslatef(-1.5, 0.0, -6.0)
+	glTranslatef(-1.5, -1.0, -6.0)
+	# glTranslatef(0.0, 0.0, 0.0)
 	
 	testgraph = graphify()
 	testgraph.update_layout()
@@ -70,73 +71,43 @@ def DrawGLScene():
 	glutSwapBuffers()
 
 def DrawGraph(graph):
-	glColor3f(1.0, 0.0, 0.0)
+	# glEnable(GL_LINE_SMOOTH)
+	glEnable(GL_POINT_SMOOTH)
+	glLineWidth(1.1)
+	glPointSize(10.0);
+	
+	# Draw directed arcs.
+	glColor3f(0.0, 0.2, 0.6)
+	for node in graph.nodes:
+		for edge in node.children:			
+			far_node = edge.get_far(node)
+			
+			x1 = float(node.x)/100
+			y1 = float(node.y)/100
+			x2 = float(far_node.x)/100
+			y2 = float(far_node.y)/100
+			
+			glBegin(GL_LINES)
+			glVertex2f(x1, y1)
+			glVertex2f(x2, y2)
+			glEnd()
+			
+			graphicsutils.arrowhead(x1, y1, x2, y2, 0.15, 10)
+	
+	# Draw nodes.
 	for node in graph.nodes:
 		x = float(node.x)/100
 		y = float(node.y)/100
-		glPointSize(10.0);
-		glEnable(GL_POINT_SMOOTH)
+		
+		print "("+str(x)+", "+str(y)+")"
+		
 		glBegin(GL_POINTS)
 		glVertex2f(x, y)
 		glEnd()
-		glColor3f(0.0, 0.0, 0.0)
-		# glColor3f(1.0, 0.0, 0.0)
-		# graphicsutils.drawtext(x, y, node.name)
+
 		
-	for node in graph.nodes:
-		for edge in node.children:
-			
-			far_node = edge.get_far(node)
-			
-			X2 = float(far_node.x)/100
-			Y2 = float(far_node.y)/100
-			X1 = float(node.x)/100
-			Y1 = float(node.y)/100
-			
-			glLineWidth(2.0)
-			glBegin(GL_LINES)
-			glColor3f(0.3, 0.2, 0.6)
-			glVertex2f(X1, Y1)
-			glVertex2f(X2, Y2)
-			glEnd()
-			
-			Pi = math.pi
-			ArrowHeadLength1 = 0.13
-			ArrowHeadLength2 = 0.1
-			
-			LineAngle = math.atan((Y2-Y1)/(X2-X1))
-			
-			EndAngle1 = LineAngle + 10 * Pi/180
-			EndAngle2 = LineAngle - 10 * Pi/180
-			
-			if X1 < X2:
-				if Y1 < Y2:
-					Y3 = Y2 - ArrowHeadLength1 * math.sin(EndAngle1)
-					Y4 = Y2 - ArrowHeadLength1 * math.sin(EndAngle2)
-					X3 = X2 - ArrowHeadLength1 * math.cos(EndAngle1)
-					X4 = X2 - ArrowHeadLength1 * math.cos(EndAngle2)
-				else:
-					Y3 = Y2 - ArrowHeadLength1 * math.sin(EndAngle1)
-					Y4 = Y2 - ArrowHeadLength1 * math.sin(EndAngle2)
-					X3 = X2 - ArrowHeadLength1 * math.cos(EndAngle1)
-					X4 = X2 - ArrowHeadLength1 * math.cos(EndAngle2)
-			else:
-				if Y1 < Y2:
-					Y3 = Y2 + ArrowHeadLength1 * math.sin(EndAngle1)
-					Y4 = Y2 + ArrowHeadLength1 * math.sin(EndAngle2)
-					X3 = X2 + ArrowHeadLength1 * math.cos(EndAngle1)
-					X4 = X2 + ArrowHeadLength1 * math.cos(EndAngle2)
-				else:
-					Y3 = Y2 + ArrowHeadLength1 * math.sin(EndAngle1)
-					Y4 = Y2 + ArrowHeadLength1 * math.sin(EndAngle2)
-					X3 = X2 + ArrowHeadLength1 * math.cos(EndAngle1)
-					X4 = X2 + ArrowHeadLength1 * math.cos(EndAngle2)
-			
-			glBegin(GL_TRIANGLES);
-			glVertex2f(X2,Y2);
-			glVertex2f(X3,Y3);
-			glVertex2f(X4,Y4);
-			glEnd();
+		glColor3f(0.0, 0.0, 0.0)
+		graphicsutils.write(x-0.05, y-0.1, node.name)
 
 
 def draw(termstr = '', gr = None):
@@ -170,5 +141,8 @@ def draw(termstr = '', gr = None):
 	InitGL(1024, 768)
 	glutMainLoop()
 
-if __name__ == "__main__":
-	draw("#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))")
+def d():
+	draw('#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))')
+
+#if __name__ == "__main__":
+#	d()

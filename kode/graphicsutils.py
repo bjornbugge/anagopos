@@ -1,31 +1,53 @@
+import math
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
 
-def drawtext(xPos, yPos, text):
-	glMatrixMode(GL_PROJECTION)
-	glPushMatrix()
-	glLoadIdentity()
-	gluOrtho2D(0.0, GLUT_WINDOW_WIDTH, 0.0, GLUT_WINDOW_HEIGHT)
-	
-	glMatrixMode(GL_MODELVIEW)
-	glPushMatrix()
-	glLoadIdentity()
-	
-	glColor3f(0.0, 1.0, 0.0) # Green
-	
+def write(xPos, yPos, text, font = GLUT_BITMAP_9_BY_15):
+	'''
+	Writes text with a bitmap font on the (x,y) position indicated. The 
+	optional parameter font specify the GLUT bitmap font to use.
+	'''
 	glRasterPos2f(xPos, yPos)
-	
-	font = GLUT_BITMAP_9_BY_15
-	print font
-	
 	for c in text:
-		glutBitmapCharacter(font, c)
+		glutBitmapCharacter(font, ord(c))
 	
-	# Restore back the matrices.
+def arrowhead(x1, y1, x2, y2, arrowwidth = 0.13, angle = 10):
+	'''
+	Draws an arrow head on the line segment between the coordinate pairs
+	(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
+	'''
+	Pi = math.pi
+	LineAngle = math.atan((y2-y1)/(x2-x1))
 	
-	glMatrixMode(GL_MODELVIEW)
-	glPopMatrix()
+	EndAngle1 = LineAngle + angle * Pi/180
+	EndAngle2 = LineAngle - angle * Pi/180
 	
-	glMatrixMode(GL_PROJECTION)
-	glPopMatrix()
+	if x1 < x2:
+		if y1 < y2:
+			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
+			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
+			X3 = x2 - arrowwidth * math.cos(EndAngle1)
+			X4 = x2 - arrowwidth * math.cos(EndAngle2)
+		else:
+			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
+			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
+			X3 = x2 - arrowwidth * math.cos(EndAngle1)
+			X4 = x2 - arrowwidth * math.cos(EndAngle2)
+	else:
+		if y1 < y2:
+			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
+			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
+			X3 = x2 + arrowwidth * math.cos(EndAngle1)
+			X4 = x2 + arrowwidth * math.cos(EndAngle2)
+		else:
+			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
+			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
+			X3 = x2 + arrowwidth * math.cos(EndAngle1)
+			X4 = x2 + arrowwidth * math.cos(EndAngle2)
+	
+	glBegin(GL_TRIANGLES);
+	glVertex2f(x2,y2);
+	glVertex2f(X3,Y3);
+	glVertex2f(X4,Y4);
+	glEnd();

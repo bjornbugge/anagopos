@@ -14,11 +14,13 @@ class KKGraph(reductiongraph.Graph):
 		self.nodesdict = {}
 		self.nodes = []
 		
+		random.seed()
+		
 		for (key, node) in graph.nodesdict.iteritems():
 			self.nodesdict[key] = node
 			self.nodes.append(node)
-			node.x = random.randint(1, 200)
-			node.y = random.randint(1, 200)
+			node.x = random.randint(1, width)
+			node.y = random.randint(1, height)
 		
 		self.spring = 1
 		self.max_passes = 5000
