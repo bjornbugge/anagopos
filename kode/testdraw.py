@@ -1,16 +1,14 @@
 import math
 import time
 import computegraph.operations as operations
+import lambdaparser as parser
+import randomgraph
+import graphicsutils
 from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
-# from computegraph.lambda_dag import *
-# import computegraph.lambda_dag as lambda_dag
-import lambdaparser as parser
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
-import randomgraph
-import graphicsutils
 
 ESCAPE = '\033'
 global term
@@ -59,9 +57,7 @@ def DrawGLScene():
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	glLoadIdentity()					# Reset The View 
 
-	# Move Left 1.5 units and into the screen 6.0 units.
-	glTranslatef(-1.5, -1.0, -6.0)
-	# glTranslatef(0.0, 0.0, 0.0)
+	glTranslatef(0.0, 0.0, -7.0)
 	
 	testgraph = graphify()
 	testgraph.update_layout()
@@ -72,15 +68,22 @@ def DrawGLScene():
 
 def DrawGraph(graph):
 	# glEnable(GL_LINE_SMOOTH)
-	glEnable(GL_POINT_SMOOTH)
-	glLineWidth(1.1)
+	# glEnable(GL_POINT_SMOOTH)
 	glPointSize(10.0);
 	
 	# Draw directed arcs.
-	glColor3f(0.0, 0.2, 0.6)
+	glColor3f(0.2, 0.4, 0.8)
 	for node in graph.nodes:
-		for edge in node.children:			
+		for edge in node.children:
 			far_node = edge.get_far(node)
+			if node == far_node:
+				print "Circular edge."
+				continue
+				
+			width = 1.1
+			if edge.weight > 1:
+				width += edge.weight * 0.5
+			glLineWidth(width)
 			
 			x1 = float(node.x)/100
 			y1 = float(node.y)/100
@@ -93,20 +96,31 @@ def DrawGraph(graph):
 			glEnd()
 			
 			graphicsutils.arrowhead(x1, y1, x2, y2, 0.15, 10)
+			# graphicsutils.write((x1-x2)/2, (y1-y2)/2, str(weight), GLUT_BITMAP_HELVETICA_10)
+
+	
+	#glColor3f(0.0, 1.0, 0.0)
+	#glBegin(GL_POINTS)
+	#glVertex2f(0.0, 0.0)
+	#glColor3f(0.0, 0.0, 1.0)
+	#glVertex2f(1.0, 1.0)
+	#glEnd()
 	
 	# Draw nodes.
 	for node in graph.nodes:
-		x = float(node.x)/100
-		y = float(node.y)/100
+		x = float(node.x) / 100
+		y = float(node.y) / 100
 		
-		print "("+str(x)+", "+str(y)+")"
+		if node.name == 'N0':
+			glColor3f(1.0, 0.0, 0.0)
+		else:
+			glColor3f(0.0, 0.0, 0.0)
 		
 		glBegin(GL_POINTS)
 		glVertex2f(x, y)
 		glEnd()
 		
-		glColor3f(0.0, 0.0, 0.0)
-		graphicsutils.write(x-0.05, y-0.1, node.name)
+		graphicsutils.write(x-0.05, y-0.1, node.name, GLUT_BITMAP_HELVETICA_12)
 
 
 def draw(termstr = '', gr = None):
@@ -132,14 +146,14 @@ def draw(termstr = '', gr = None):
 	glutInitWindowPosition(0, 0)
 	window = glutCreateWindow("Graphs")
 	glutDisplayFunc(DrawGLScene)
-	# glutIdleFunc(DrawGLScene)
 	glutKeyboardFunc(keyPressed)
 	# glutReshapeFunc(ReSizeGLScene)
 	# glutFullScreen()
-	glutKeyboardFunc(keyPressed)
 	InitGL(1024, 768)
 	glutMainLoop()
 
+# OMEGA: (#x.(x x) #x.(x x))
+# OMEGA omega_3: ((#x.(x x) #x.(x x)) #x.((x x) x))
 def d():
 	draw('#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))')
 

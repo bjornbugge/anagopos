@@ -3,6 +3,7 @@ from computegraph.lambda_dag import *
 from copy import deepcopy
 
 def test():
+	# #B1.((#B2.((B2 B2)) B1))
 	term = Abstraction()
 	term.varname = 'B1'
 	t1 = Application()

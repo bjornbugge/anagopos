@@ -7,6 +7,14 @@ def write(xPos, yPos, text, font = GLUT_BITMAP_9_BY_15):
 	'''
 	Writes text with a bitmap font on the (x,y) position indicated. The 
 	optional parameter font specify the GLUT bitmap font to use.
+	Available fonts are:
+	GLUT_BITMAP_8_BY_13
+	GLUT_BITMAP_9_BY_15
+	GLUT_BITMAP_TIMES_ROMAN_10
+	GLUT_BITMAP_TIMES_ROMAN_24
+	GLUT_BITMAP_HELVETICA_10
+	GLUT_BITMAP_HELVETICA_12
+	GLUT_BITMAP_HELVETICA_18
 	'''
 	glRasterPos2f(xPos, yPos)
 	for c in text:
