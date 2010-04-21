@@ -51,6 +51,8 @@ class LambdaNode(object):
 		Equality of two DAGs is defined as the string equality of their 
 		normalized string representations.
 		'''
+		if other is None:
+			return False
 		operations.sanitize(self)
 		operations.sanitize(other)
 		return str(self) == str(other)
@@ -76,7 +78,7 @@ class Abstraction(LambdaNode):
 			self.varname = variablenode.name
 	
 	def __repr__(self):
-		return "#" + self.varname + "." + str(self.leftchild)
+		return "#" + self.varname + ".(" + str(self.leftchild) + ")"
 
 
 class Application(LambdaNode):

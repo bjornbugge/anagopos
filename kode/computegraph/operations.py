@@ -1,4 +1,5 @@
-from lambda_dag import *
+# from lambda_dag import *
+import lambda_dag
 from math import floor, log
 from copy import deepcopy
 from collections import deque
@@ -10,12 +11,12 @@ def assignvariables(root):
 	Variable nodes it binds.
 	'''
 	def _assignall(node, abstractorstack):
-		if type(node) is Variable:
+		if type(node) is lambda_dag.Variable:
 			for abstractor in abstractorstack:
 				if node.name == abstractor.varname:
 					abstractor.assignvar(node)
 					break
-		elif type(node) is Abstraction:
+		elif type(node) is lambda_dag.Abstraction:
 			abstractorstack.appendleft(node)
 			node.variables = []
 			_assignall(node.leftchild, abstractorstack)
@@ -33,8 +34,8 @@ def findredexes(root):
 	and "1" means right child. The root node has position 1.
 	'''
 	def _find(node, bitstrings, pos):
-		if type(node) is Application:
-			if type(node.leftchild) is Abstraction:
+		if type(node) is lambda_dag.Application:
+			if type(node.leftchild) is lambda_dag.Abstraction:
 				bitstrings.append(pos) # It is a redex!
 		
 		if not node.leftchild is None:
@@ -53,8 +54,8 @@ def findredexesdirectly(root):
 	whose left child is a redex.
 	'''
 	def _find(node, redexes):
-		if type(node) is Application:
-			if type(node.leftchild) is Abstraction:
+		if type(node) is lambda_dag.Application:
+			if type(node.leftchild) is lambda_dag.Abstraction:
 				redexes.append(node)
 		if not node.leftchild is None:
 			_find(node.leftchild, redexes)
@@ -133,11 +134,11 @@ def sanitize(term):
 	are named vX with X unique for each abstraction.
 	If the term has its dirty flag set to False, sanitize() don't do anything.
 	'''
-	if not term.dirty:
-		return
+	# if not term.dirty:
+		# return
 	
 	def _getabstractors(node, abstractors):
-		if type(node) is Abstraction:
+		if type(node) is lambda_dag.Abstraction:
 			abstractors.append(node)
 		if not node.leftchild is None:
 			_getabstractors(node.leftchild, abstractors)
@@ -175,7 +176,7 @@ def reductiongraph(root, maximum = 20):
 				work.append(contractum)
 			
 			reductions = reductions + 1
-			# print "Performed " + str(reductions) + " reductions."
+			print "Performed " + str(reductions) + " reductions."
 		del work[0]
 		guard = guard + 1
 	
