@@ -208,12 +208,71 @@ def DrawGraph(graph):
 			# Line
 			glLineWidth(2.0)
 			# glEnable(GL_LINE_SMOOTH)
+			# print "line vector is " + str(float(far_node.x)/100-float(node.x)/100) + "/" + str(float(far_node.y)/100-float(node.y)/100)
+			
+			X2 = float(far_node.x)/100
+			Y2 = float(far_node.y)/100
+			X1 = float(node.x)/100
+			Y1 = float(node.y)/100
+			
+			hx = float(far_node.x)/100-float(node.x)/100
+			hy = float(far_node.y)/100-float(node.y)/100
+			print "Haeldning X: " + str(hx)
+			print "Haeldning Y: " + str(hy)
+			
 			glBegin(GL_LINES)
 			glColor3f(0.0, 0.0, 1.0)
-			glVertex2f(float(node.x)/100, float(node.y)/100)
-			glColor3f(0.0, 1.0, 1.0)
-			glVertex2f(float(far_node.x)/100, float(far_node.y)/100)
+			glVertex2f(X1, Y1)
+			glColor3f(0.0, 0.0, 1.0)
+			glVertex2f(X2, Y2)
 			glEnd()
+			
+			Pi = math.pi
+			ArrowHeadLength1 = 0.1
+			ArrowHeadLength2 = 0.1
+			
+			LineAngle = math.atan((Y2-Y1)/(X2-X1))
+			
+			EndAngle1 = LineAngle + 10 * Pi/180
+			EndAngle2 = LineAngle - 10 * Pi/180
+			
+			if X1 < X2:
+				if Y1 < Y2:
+					Y3 = Y2 - ArrowHeadLength1 * math.sin(EndAngle1)
+					Y4 = Y2 - ArrowHeadLength1 * math.sin(EndAngle2)
+					X3 = X2 - ArrowHeadLength1 * math.cos(EndAngle1)
+					X4 = X2 - ArrowHeadLength1 * math.cos(EndAngle2)
+				else:
+					Y3 = Y2 - ArrowHeadLength1 * math.sin(EndAngle1)
+					Y4 = Y2 - ArrowHeadLength1 * math.sin(EndAngle2)
+					X3 = X2 - ArrowHeadLength1 * math.cos(EndAngle1)
+					X4 = X2 - ArrowHeadLength1 * math.cos(EndAngle2)
+			else:
+				if Y1 < Y2:
+					Y3 = Y2 + ArrowHeadLength1 * math.sin(EndAngle1)
+					Y4 = Y2 + ArrowHeadLength1 * math.sin(EndAngle2)
+					X3 = X2 + ArrowHeadLength1 * math.cos(EndAngle1)
+					X4 = X2 + ArrowHeadLength1 * math.cos(EndAngle2)
+				else:
+					Y3 = Y2 + ArrowHeadLength1 * math.sin(EndAngle1)
+					Y4 = Y2 + ArrowHeadLength1 * math.sin(EndAngle2)
+					X3 = X2 + ArrowHeadLength1 * math.cos(EndAngle1)
+					X4 = X2 + ArrowHeadLength1 * math.cos(EndAngle2)
+			
+			glBegin(GL_TRIANGLES);
+			glVertex2f(X2,Y2);
+			glVertex2f(X3,Y3);
+			glVertex2f(X4,Y4);
+			glEnd();
+			
+			# print "1"
+			# glBegin(GL_LINES)
+			# glColor3f(0.3, 0.3, 0.3)
+			# glVertex2f(float(node.x)/100, float(far_node.y)/100)
+			# glColor3f(0.1, 1.0, 0.8)
+			# glVertex2f((float(node.x)/100)+hy, (float(far_node.y)/100)-hx)
+			# glEnd()
+			# print "2" 
 
 if __name__ == "__main__":
 	
