@@ -54,6 +54,14 @@ def arrowhead(x1, y1, x2, y2, arrowwidth = 0.13, angle = 10):
 			X3 = x2 + arrowwidth * math.cos(EndAngle1)
 			X4 = x2 + arrowwidth * math.cos(EndAngle2)
 	
+	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glShadeModel(GL_SMOOTH);
+	
+	# glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+	# glEnable(GL_BLEND)
+	
 	glBegin(GL_TRIANGLES);
 	glVertex2f(x2,y2);
 	glVertex2f(X3,Y3);

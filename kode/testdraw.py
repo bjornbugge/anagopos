@@ -68,7 +68,7 @@ def DrawGLScene():
 
 def DrawGraph(graph):
 	# glEnable(GL_LINE_SMOOTH)
-	# glEnable(GL_POINT_SMOOTH)
+	glEnable(GL_POINT_SMOOTH)
 	glPointSize(10.0);
 	
 	# Draw directed arcs.
@@ -89,6 +89,11 @@ def DrawGraph(graph):
 			y1 = float(node.y)/100
 			x2 = float(far_node.x)/100
 			y2 = float(far_node.y)/100
+			
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+			glEnable(GL_BLEND)
+			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+			glEnable(GL_LINE_SMOOTH)
 			
 			glBegin(GL_LINES)
 			glVertex2f(x1, y1)
@@ -155,7 +160,8 @@ def draw(termstr = '', gr = None):
 # OMEGA: (#x.(x x) #x.(x x))
 # OMEGA omega_3: ((#x.(x x) #x.(x x)) #x.((x x) x))
 def d():
+	# draw()
 	draw('#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))')
 
-#if __name__ == "__main__":
-#	d()
+if __name__ == "__main__":
+	d()

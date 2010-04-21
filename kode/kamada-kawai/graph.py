@@ -6,6 +6,8 @@ import math
 import random
 import numpy
 
+resize = 0
+
 class Edge:
 	def __init__( self, source, destination ):
 		self.source_node = source
@@ -44,8 +46,16 @@ class Graph:
 		self.height = 200
 
 	def update_layout( self ):
-		for node in self.nodes:
-			self.__run_kk_on( node )
+		global resize
+		print "Resize: " + str(resize)
+		if resize == 0:
+			print "New resize: " + str(resize)
+			for node in self.nodes:
+				self.__run_kk_on( node )
+			resize = 0
+			print "Even newer resize: " + str(resize)
+		else:
+			print "Graph will not be re-calculated"
 
 	def __get_delta_m( self, i, l_matrix, k_matrix, x_array, y_array ):
 		nnodes = len(self.nodes)

@@ -8,6 +8,9 @@ from OpenGL.GL import *
 
 ESCAPE = '\033'
 
+resize = 0
+
+
 class TestGraph(Graph):
 	
 	print "Press ESC to exit"
@@ -128,7 +131,7 @@ def InitGL(Width, Height):				# We call this right after our OpenGL window is cr
     glMatrixMode(GL_MODELVIEW)
 
 def DrawGLScene():
-	
+	# print "Resize: " str(resize)
 	# Clear The Screen And The Depth Buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 	glLoadIdentity()					# Reset The View 
@@ -220,6 +223,11 @@ def DrawGraph(graph):
 			print "Haeldning X: " + str(hx)
 			print "Haeldning Y: " + str(hy)
 			
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+			glEnable(GL_BLEND)
+			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+			glEnable(GL_LINE_SMOOTH)
+			
 			glBegin(GL_LINES)
 			glColor3f(0.0, 0.0, 1.0)
 			glVertex2f(X1, Y1)
@@ -259,6 +267,11 @@ def DrawGraph(graph):
 					X3 = X2 + ArrowHeadLength1 * math.cos(EndAngle1)
 					X4 = X2 + ArrowHeadLength1 * math.cos(EndAngle2)
 			
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+			glEnable(GL_BLEND)
+			# glHint(GL_TRIANGLE_SMOOTH_HINT, GL_NICEST)
+			# glEnable(GL_TRIANGLE_SMOOTH)
+			
 			glBegin(GL_TRIANGLES);
 			glVertex2f(X2,Y2);
 			glVertex2f(X3,Y3);
@@ -274,8 +287,18 @@ def DrawGraph(graph):
 			# glEnd()
 			# print "2" 
 
+
+def processMouse(button,state,x,y):
+	if state == GLUT_DOWN:
+		if button == GLUT_LEFT_BUTTON:
+			print "LEFT CLICK - With coordinates: X = " + str(x) + " and Y = " + str(y)
+		elif button == GLUT_MIDDLE_BUTTON:
+			print "MIDDLE CLICK - With coordinates: X = " + str(x) + " and Y = " + str(y)
+		else:
+			print "RIGHT CLICK - With coordinates: X = " + str(x) + " and Y = " + str(y)
+
+
 if __name__ == "__main__":
-	
 	print "ksdlkasdlkasd"
 	
 	
@@ -288,6 +311,7 @@ if __name__ == "__main__":
 	glutDisplayFunc(DrawGLScene)
 	# glutIdleFunc(DrawGLScene)
 	glutKeyboardFunc(keyPressed)
+	glutMouseFunc(processMouse)
 	# glutReshapeFunc(ReSizeGLScene)
 	# glutKeyboardFunc(keyPressed)
 	InitGL(1024, 768)
