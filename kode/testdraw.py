@@ -3,7 +3,8 @@ import time
 import computegraph.operations as operations
 from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
-from computegraph.lambda_dag import *
+# from computegraph.lambda_dag import *
+# import computegraph.lambda_dag as lambda_dag
 import lambdaparser as parser
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -19,10 +20,12 @@ def graphify():
 	global graph
 	
 	if graph is None:
+		print "assigning vars"
 		operations.assignvariables(term)
 		g = operations.reductiongraph(term)
 	else:
 		g = graph
+	
 	kkGraph = KKGraph(g)
 	print "Drawing: "
 	print g
@@ -34,7 +37,7 @@ def keyPressed(*args):
 	    sys.exit()
 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
-    glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To Black
+    glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To White
     glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
     glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
     glEnable(GL_DEPTH_TEST)				# Enables Depth Testing
@@ -88,16 +91,17 @@ def draw(termstr = '', gr = None):
 	global graph
 	global term
 	graph = None
-	
-	if termstr == '' and gr == None:
+	term = ''
+	if not termstr == '':
+		term = parser.parse(termstr)
+	elif not gr == None:
+		graph = gr
+	else:
 		graph = randomgraph.generatereductiongraph()
 		while len(graph.nodes) == 0 or len(graph.nodes) > 50: # For now, draw only smaller graphs.
 			graph = randomgraph.generatereductiongraph()
-	else:
-		if gr:
-			graph = gr
-		else:
-			term = parser.parse(termstr)
+	
+	print term
 	
 	global window
 	glutInit(sys.argv)
@@ -113,5 +117,5 @@ def draw(termstr = '', gr = None):
 	InitGL(1024, 768)
 	glutMainLoop()
 
-if __name__ == "__main__":
-	draw()
+#if __name__ == "__main__":
+#	draw()

@@ -1,9 +1,8 @@
-# from lambda_dag import *
 import lambda_dag
-from math import floor, log
-from copy import deepcopy
-from collections import deque
-from reductiongraph import *
+import reductiongraph as graphrepr # nameclash!
+import math
+import copy
+import collections
 
 def assignvariables(root):
 	'''
@@ -25,7 +24,7 @@ def assignvariables(root):
 			_assignall(node.leftchild, abstractorstack)
 			_assignall(node.rightchild, abstractorstack)
 	
-	_assignall(root, deque([]))
+	_assignall(root, collections.deque([]))
 
 def findredexes(root):
 	'''
@@ -71,7 +70,7 @@ def getnode(root, position):
 	Returns the node at the given position. The position must be positive.
 	'''
 	def _getnode(node, p):
-		ex = int(floor(log(position, 2))) - p
+		ex = int(math.floor(math.log(position, 2))) - p
 		if ex < 0:
 			return node
 		if position & (2 ** ex) == 0: # Bit was 0; go left
@@ -94,13 +93,13 @@ def betareduce(term, redexpos):
 	left child, as returned from the function findredexes(x)
 	'''
 	# The copy that is transformed into a contractum.
-	contractum = deepcopy(term)
+	contractum = copy.deepcopy(term)
 	appl = getnode(contractum, redexpos)
 	
 	# The active subterm that we'll reduce.
 	c = appl.leftchild
 	for v in c.variables:
-		v.parent.swap(v, deepcopy(appl.rightchild))
+		v.parent.swap(v, copy.deepcopy(appl.rightchild))
 	
 	# Remove the argument.
 	appl.remove(appl.rightchild)
@@ -134,8 +133,8 @@ def sanitize(term):
 	are named vX with X unique for each abstraction.
 	If the term has its dirty flag set to False, sanitize() don't do anything.
 	'''
-	# if not term.dirty:
-		# return
+	if not term.dirty:
+		return
 	
 	def _getabstractors(node, abstractors):
 		if type(node) is lambda_dag.Abstraction:
@@ -160,7 +159,7 @@ def reductiongraph(root, maximum = 20):
 	in reductiongraph.py.
 	'''
 	work = [root]
-	graph = Graph()
+	graph = graphrepr.Graph()
 	guard = 0
 	reductions = 0
 	while len(work) > 0 and (maximum == 0 or guard < maximum):

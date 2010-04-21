@@ -1,11 +1,12 @@
 import computegraph.operations as operations
-from computegraph.lambda_dag import *
-from copy import deepcopy
-from random import uniform, randint
+import computegraph.lambda_dag as lambda_dag
+import copy
+import random
+import lambdaparser as parser
 
 
-# (#B1.(#B2.#B3.#B4.B1 #B5.#B6.#B7.((#B8.#B9.#B10.B6 (#B11.B1 (B7 #B12.#B13.B5))) #B14.B5)) #B15.F1)
-# #B1.(#B2.#B3.B2 #B4.(B4 (((#B5.#B6.(#B7.B5 B5) #B8.#B9.B9) #B10.#B11.B1) ((F1 (#B12.B12 B1)) B1))))
+# ((#B1.(B1) #B2.((#B3.((#B4.((#B5.(B4) #B6.(#B7.(#B8.(#B9.(B6)))))) #B10.(#B11.(#B12.(B12))))) #B13.(#B14.(#B15.(#B16.(B14))))))) #B17.(#B18.((#B19.(#B20.(#B21.(B17))) B17))))
+# (#B1.((#B2.(#B3.(#B4.((#B5.(B3) B1)))) (#B6.(#B7.(#B8.(#B9.(B9)))) B1))) ((((#B10.(#B11.(B10)) #B12.((#B13.(#B14.(B12)) B12))) #B15.(#B16.(((B16 #B17.(#B18.(B18))) #B19.(#B20.(#B21.(#B22.(#B23.(B19))))))))) #B24.(#B25.(B25))) #B26.(#B27.(#B28.(#B29.((B28 #B30.(B28))))))))
 
 def generatereductiongraph():
 	'''
@@ -15,7 +16,18 @@ def generatereductiongraph():
 	operations.assignvariables(term)
 	print term
 	print "----"
-	return operations.reductiongraph(term)
+	g1 = operations.reductiongraph(term)
+	return g1
+
+def generateterms():
+	term1 = randomdag()
+	operations.assignvariables(term1)
+	print term1
+	term2 = parser.parse(str(term1))
+	operations.assignvariables(term2)
+	print term2
+	print term1==term2
+	return (term1, term2)
 
 def randomdag():
 	'''
@@ -30,7 +42,7 @@ def randomdag():
 		global freevars
 		global boundvars
 		
-		r = uniform(0,1)
+		r = random.uniform(0,1)
 		
 		if r < p['abstraction']:
 			_lp = p
@@ -38,29 +50,29 @@ def randomdag():
 			_lp['abstraction'] = _lp['abstraction'] - 0.07
 			_lp['application'] = _lp['application'] - 0.02
 
-			node = Abstraction()
+			node = lambda_dag.Abstraction()
 			boundvars = boundvars + 1
 			b = 'B' + str(boundvars)
 			node.varname = b
 			node.add(_node(_lp, boundlist + [b]))
 			
 		elif r < p['abstraction'] + p['application']:
-			_lp = deepcopy(p)
+			_lp = copy.deepcopy(p)
 			_lp['abstraction'] = _lp['abstraction'] + 0.04
-			_lp['application'] = _lp['application'] - 0.04
+			_lp['application'] = _lp['application'] - 0.06
 			_lp['variable'] = _lp['variable'] + 0.02
 			
-			node = Application()
+			node = lambda_dag.Application()
 			node.add(_node(_lp, boundlist))
 			node.add(_node(p, boundlist))
 			
 		else:
-			if uniform(0,1) < p['boundvar'] and not len(boundlist) == 0:
-				name = boundlist[randint(0, len(boundlist) - 1)]
+			if random.uniform(0,1) < p['boundvar'] and not len(boundlist) == 0:
+				name = boundlist[random.randint(0, len(boundlist) - 1)]
 			else:
 				freevars = freevars + 1
 				name = 'F' + str(freevars)
-			node = Variable(name)
+			node = lambda_dag.Variable(name)
 		
 		return node
 	
