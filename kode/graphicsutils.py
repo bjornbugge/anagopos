@@ -20,7 +20,7 @@ def write(xPos, yPos, text, font = GLUT_BITMAP_9_BY_15):
 	for c in text:
 		glutBitmapCharacter(font, ord(c))
 	
-def arrowhead(x1, y1, x2, y2, arrowwidth = 0.13, angle = 10):
+def arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, angle = 10):
 	'''
 	Draws an arrow head on the line segment between the coordinate pairs
 	(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
@@ -31,38 +31,49 @@ def arrowhead(x1, y1, x2, y2, arrowwidth = 0.13, angle = 10):
 	EndAngle1 = LineAngle + angle * Pi/180
 	EndAngle2 = LineAngle - angle * Pi/180
 	
+	xOffset = noderadius * math.cos(LineAngle)
+	yOffset = noderadius * math.sin(LineAngle)
+		
 	if x1 < x2:
 		if y1 < y2:
+			# The line goes downwards-right.
+			x2 -= xOffset
+			y2 -= yOffset
+			
 			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
 			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
 			X3 = x2 - arrowwidth * math.cos(EndAngle1)
 			X4 = x2 - arrowwidth * math.cos(EndAngle2)
 		else:
+			# The line goes upwards-right.
+			x2 -= xOffset
+			y2 -= yOffset
+			
 			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
 			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
 			X3 = x2 - arrowwidth * math.cos(EndAngle1)
 			X4 = x2 - arrowwidth * math.cos(EndAngle2)
 	else:
 		if y1 < y2:
+			# The line goes downwards-left.
+			x2 += xOffset
+			y2 += yOffset
+			
 			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
 			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
 			X3 = x2 + arrowwidth * math.cos(EndAngle1)
 			X4 = x2 + arrowwidth * math.cos(EndAngle2)
 		else:
+			# The line goes upwards-left
+			x2 += xOffset
+			y2 += yOffset
+			
 			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
 			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
 			X3 = x2 + arrowwidth * math.cos(EndAngle1)
 			X4 = x2 + arrowwidth * math.cos(EndAngle2)
 	
-	
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glShadeModel(GL_SMOOTH);
-	
-	# glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-	# glEnable(GL_BLEND)
-	
-	glBegin(GL_TRIANGLES);
+	glBegin(GL_POLYGON);
 	glVertex2f(x2,y2);
 	glVertex2f(X3,Y3);
 	glVertex2f(X4,Y4);

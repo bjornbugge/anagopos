@@ -14,19 +14,21 @@ ESCAPE = '\033'
 global term
 global graph
 
+global pointSize
+pointSize = 26
+
 def graphify():
 	global term
 	global graph
 	
 	if graph is None:
 		operations.assignvariables(term)
-		g = operations.reductiongraph(term)
+		g = operations.reductiongraph(term, 40)
 	else:
 		g = graph
 	
-	kkGraph = KKGraph(g, 300, 300)
-	print "Drawing: "
-	print g
+	kkGraph = KKGraph(g, 800, 500)
+	print "Drawing graph with " + str(len(g.nodes)) + " nodes."
 	return kkGraph
 
 def keyPressed(*args):
@@ -36,43 +38,48 @@ def keyPressed(*args):
 	elif args[0] == 'u':
 		DrawGLScene()
 
-def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
-	glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To White
-	glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
-	# glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
-	glDisable(GL_DEPTH_TEST)			# Disables Depth Testing
-	glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
-	
-	
+def InitGL(Width, Height):
+	# Set 2D-mode
 	glMatrixMode(GL_PROJECTION)
-	glLoadIdentity()					# Reset The Projection Matrix
-										# Calculate The Aspect Ratio Of The Window
-	gluPerspective(45.0, float(Width)/float(Height), 0.1, 100.0)
-	
+	glPushMatrix()
+	glLoadIdentity()
+	gluOrtho2D(0, Width, 0, Height)
+	glScalef(1, -1, 1)
+	glTranslatef(0, -Height, 0)
 	glMatrixMode(GL_MODELVIEW)
+	
+	glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To White
+	# glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
+	glDisable(GL_DEPTH_TEST)			# Disables Depth Testing
+	# glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
+	
+	# Anti-aliasing/prettyness stuff
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+	glEnable(GL_BLEND)
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+	glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+	glEnable(GL_LINE_SMOOTH)
+	glEnable(GL_POINT_SMOOTH)
+	glEnable(GL_POLYGON_SMOOTH)
+	
+	global pointSize
+	glPointSize(pointSize)
 
 def DrawGLScene():
-	
-	# Clear The Screen And The Depth Buffer
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-	glLoadIdentity()					# Reset The View 
-
-	glTranslatef(0.0, 0.0, -7.0)
-	
 	testgraph = graphify()
-	testgraph.update_layout()
-	DrawGraph(testgraph)
+	testgraph.update_layout_animated(DrawGraph)
+	
 
 	#  since this is double buffered, swap the buffers to display what just got drawn. 
-	glutSwapBuffers()
+	# glutSwapBuffers()
 
 def DrawGraph(graph):
-	# glEnable(GL_LINE_SMOOTH)
-	glEnable(GL_POINT_SMOOTH)
-	glPointSize(10.0);
+	global pointSize
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+	glLineWidth(1.5)
 	
 	# Draw directed arcs.
-	glColor3f(0.2, 0.4, 0.8)
 	for node in graph.nodes:
 		for edge in node.children:
 			far_node = edge.get_far(node)
@@ -80,42 +87,37 @@ def DrawGraph(graph):
 				print "Circular edge."
 				continue
 				
-			width = 1.1
-			if edge.weight > 1:
-				width += edge.weight * 0.5
-			glLineWidth(width)
+			# width = 1.1
+#			if edge.weight > 1:
+#				width += edge.weight * 0.5
+#			glLineWidth(width)
 			
-			x1 = float(node.x)/100
-			y1 = float(node.y)/100
-			x2 = float(far_node.x)/100
-			y2 = float(far_node.y)/100
+			x1 = float(node.x)		#/100
+			y1 = float(node.y)		#/100
+			x2 = float(far_node.x)	#/100
+			y2 = float(far_node.y)	#/100
 			
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-			glEnable(GL_BLEND)
-			glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-			glEnable(GL_LINE_SMOOTH)
-			
+			glColor3f(0.2, 0.4, 0.8)
 			glBegin(GL_LINES)
 			glVertex2f(x1, y1)
 			glVertex2f(x2, y2)
 			glEnd()
 			
-			graphicsutils.arrowhead(x1, y1, x2, y2, 0.15, 10)
-			# graphicsutils.write((x1-x2)/2, (y1-y2)/2, str(weight), GLUT_BITMAP_HELVETICA_10)
-
+			glColor3f(0.1, 0.3, 0.7)
+			graphicsutils.arrowhead(x1, y1, x2, y2, pointSize / 2, 20, 12)
 	
-	#glColor3f(0.0, 1.0, 0.0)
-	#glBegin(GL_POINTS)
-	#glVertex2f(0.0, 0.0)
-	#glColor3f(0.0, 0.0, 1.0)
-	#glVertex2f(1.0, 1.0)
-	#glEnd()
+	glColor3f(0.7, 0.7, 0.7)
+	graphicsutils.write(0.0, 0.0, "(0,0)")
+	graphicsutils.write(100, 10, "(100,10)")
+	graphicsutils.write(100, 100, "(100,100)")
+	graphicsutils.write(200, 100, "(200,100)")
+	graphicsutils.write(500, 500, "(500,500)")
 	
 	# Draw nodes.
 	for node in graph.nodes:
-		x = float(node.x) / 100
-		y = float(node.y) / 100
-		
+		x = float(node.x) #/ 100
+		y = float(node.y) #/ 100
+		# print "(" + str(x) + ", " + str(y) + ")"
 		if node.name == 'N0':
 			glColor3f(1.0, 0.0, 0.0)
 		else:
@@ -125,7 +127,9 @@ def DrawGraph(graph):
 		glVertex2f(x, y)
 		glEnd()
 		
-		graphicsutils.write(x-0.05, y-0.1, node.name, GLUT_BITMAP_HELVETICA_12)
+		graphicsutils.write(x, y+pointSize, node.name, GLUT_BITMAP_HELVETICA_12)
+	
+	glutSwapBuffers()
 
 
 def draw(termstr = '', gr = None):
@@ -158,10 +162,12 @@ def draw(termstr = '', gr = None):
 	glutMainLoop()
 
 # OMEGA: (#x.(x x) #x.(x x))
-# OMEGA omega_3: ((#x.(x x) #x.(x x)) #x.((x x) x))
+# OMEGA omega_3: (#x.(x x) (#x.(x x) #x.((x x) x)))
+# omega_3 omega_3: (#x.((x x) x) #y.((y y) y))
 def d():
 	# draw()
 	draw('#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))')
+	# draw('(#x.(x x) #x.(x x))') # OMEGA
 
-if __name__ == "__main__":
-	d()
+#if __name__ == "__main__":
+#	d()

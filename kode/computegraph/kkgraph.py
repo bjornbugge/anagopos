@@ -31,8 +31,15 @@ class KKGraph(reductiongraph.Graph):
 		self.height = height
 	
 	def update_layout( self ):
+		self.drawingfunction = None
 		for node in self.nodes:
 			self.__run_kk_on( node )
+	
+	def update_layout_animated(self, drawingfunction):
+		self.drawingfunction = drawingfunction
+		for node in self.nodes:
+			self.__run_kk_on( node )
+		
 
 	def __get_delta_m( self, i, l_matrix, k_matrix, x_array, y_array ):
 		nnodes = len(self.nodes)
@@ -282,4 +289,7 @@ class KKGraph(reductiongraph.Graph):
 		"""
 		Placeholder function for calling a screen update
 		"""
+		if not self.drawingfunction is None:
+			self.drawingfunction(self)
+
 		pass
