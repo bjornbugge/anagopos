@@ -96,7 +96,7 @@ def InitGL(Width, Height):
 	glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To White
 	# glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
 	glDisable(GL_DEPTH_TEST)			# Disables Depth Testing
-	# glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
+	glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
 	
 	glutMouseFunc(processMouse)
 	
@@ -171,14 +171,10 @@ def DrawGraph(graph):
 	for node in graph.nodes:		
 		i = i + 1
 	
-		
 	global pointArray
-	# pointArray[7][1]
-	
 	pointArray = [[0 for col in range(3)] for row in range(i)]
 	
 	j = 0
-	
 	# Draw nodes.
 	for node in graph.nodes:
 		x = float(node.x) #/ 100
@@ -213,8 +209,6 @@ def processMouse(button, state, x, y):
 	
 	global pointX
 	global pointY
-	# print "Point X: " + str(pointX)
-	# print "Point Y: " + str(pointY)
 	
 	pointylow = pointY-10
 	pointyhigh = pointY+10
@@ -222,11 +216,8 @@ def processMouse(button, state, x, y):
 	pointxhigh = pointX+10
 	
 	global pointArray
-	# print "Point Array:"
-	# print pointArray
 	
 	for k in range(len(pointArray)):
-		# print "Point " + str(k) + " - X: " + str(pointArray[k][0]) + " Y: " + str(pointArray[k][1])
 		pointX = pointArray[k][0]
 		pointY = pointArray[k][1]
 		pointName = pointArray[k][2]
@@ -239,30 +230,13 @@ def processMouse(button, state, x, y):
 		if state == GLUT_UP:
 			if button == GLUT_LEFT_BUTTON:
 				if x>pointxlow and x<pointxhigh and y>pointylow and y<pointyhigh:
-					# print "you selected point: " + str(pointArray[k][2])
 					print "X: " + str(x)
 					print "Y: " + str(y)
 					lambdaTerm = str(pointArray[k][2])
 					print "Lambda Term: " + lambdaTerm
-					graphicsutils.write(x, y, lambdaTerm)
+					graphicsutils.write(x, y, lambdaTerm, GLUT_BITMAP_8_BY_13)
 					glutSwapBuffers()
 
-
-	# for x in pointArray:
-	# 	print x
-	# 	print pointArray[x]
-	
-	# State
-	# if state == GLUT_UP:
-	# 	if button == GLUT_LEFT_BUTTON:
-	# 		if x>pointxlow and x<pointxhigh and y>pointylow and y<pointyhigh:
-	# 			print "you hit the point"
-	# 		print "LEFT - X: " + str(x) + " Y: " + str(y)
-	# 	elif button == GLUT_RIGHT_BUTTON:
-	# 		print "RIGHT: - X: " + str(x) + " Y: " + str(y)
-	# 	else:
-	# 		print "MIDDLE: - X: " + str(x) + " Y: " + str(y)
-	
 
 def draw(termstr = '', gr = None):
 	global graph
