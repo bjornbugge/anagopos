@@ -35,43 +35,21 @@ def arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, angle = 10):
 	yOffset = noderadius * math.sin(LineAngle)
 		
 	if x1 < x2:
-		if y1 < y2:
-			# The line goes downwards-right.
-			x2 -= xOffset
-			y2 -= yOffset
-			
-			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
-			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
-			X3 = x2 - arrowwidth * math.cos(EndAngle1)
-			X4 = x2 - arrowwidth * math.cos(EndAngle2)
-		else:
-			# The line goes upwards-right.
-			x2 -= xOffset
-			y2 -= yOffset
-			
-			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
-			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
-			X3 = x2 - arrowwidth * math.cos(EndAngle1)
-			X4 = x2 - arrowwidth * math.cos(EndAngle2)
+		x2 -= xOffset
+		y2 -= yOffset
+		
+		Y3 = y2 - arrowwidth * math.sin(EndAngle1)
+		Y4 = y2 - arrowwidth * math.sin(EndAngle2)
+		X3 = x2 - arrowwidth * math.cos(EndAngle1)
+		X4 = x2 - arrowwidth * math.cos(EndAngle2)
 	else:
-		if y1 < y2:
-			# The line goes downwards-left.
-			x2 += xOffset
-			y2 += yOffset
-			
-			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
-			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
-			X3 = x2 + arrowwidth * math.cos(EndAngle1)
-			X4 = x2 + arrowwidth * math.cos(EndAngle2)
-		else:
-			# The line goes upwards-left
-			x2 += xOffset
-			y2 += yOffset
-			
-			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
-			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
-			X3 = x2 + arrowwidth * math.cos(EndAngle1)
-			X4 = x2 + arrowwidth * math.cos(EndAngle2)
+		x2 += xOffset
+		y2 += yOffset
+		
+		Y3 = y2 + arrowwidth * math.sin(EndAngle1)
+		Y4 = y2 + arrowwidth * math.sin(EndAngle2)
+		X3 = x2 + arrowwidth * math.cos(EndAngle1)
+		X4 = x2 + arrowwidth * math.cos(EndAngle2)
 	
 	glBegin(GL_POLYGON);
 	glVertex2f(x2,y2);
