@@ -45,7 +45,7 @@ def graphify():
 	
 	if graph is None:
 		operations.assignvariables(term)
-		g = operations.reductiongraph(term, 40)
+		g = operations.reductiongraph(term, 20)
 	else:
 		g = graph
 	
@@ -280,6 +280,7 @@ def draw(termstr = '', gr = None):
 # OMEGA: (#x.(x x) #x.(x x))
 # OMEGA omega_3: (#x.(x x) (#x.(x x) #x.((x x) x)))
 # omega_3 omega_3: (#x.((x x) x) #y.((y y) y))
+# WWW: #x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))
 def d():
 	# draw()
 	draw('#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))')
