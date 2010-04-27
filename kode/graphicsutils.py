@@ -26,7 +26,11 @@ def arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, angle = 10):
 	(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
 	'''
 	Pi = math.pi
-	LineAngle = math.atan((y2-y1)/(x2-x1))
+	x21 = x2-x1
+	if x21==0:
+		LineAngle = math.atan(0)
+	else:
+		LineAngle = math.atan((y2-y1)/(x2-x1))
 	
 	EndAngle1 = LineAngle + angle * Pi/180
 	EndAngle2 = LineAngle - angle * Pi/180
