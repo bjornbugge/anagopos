@@ -50,12 +50,9 @@ def graphify():
 	return kkGraph
 
 def keyPressed(*args):
-	# If escape is pressed, kill everything.
-	
+		
 	global window_x
 	global window_y
-	global resizeWindow
-	global resizeWindow
 	
 	if args[0] == ESCAPE:
 	    sys.exit()
@@ -68,23 +65,22 @@ def keyPressed(*args):
 		global window_height
 		global window_width
 		if fullScreen == 0:
+			global resizeWindow
+			resizeWindow = 0
 			window_width = glutGet(GLUT_WINDOW_WIDTH)
 			window_height = glutGet(GLUT_WINDOW_HEIGHT)
 			window_x = (glutGet(GLUT_SCREEN_WIDTH) - window_width)/2;
 			
 			window_y = (glutGet(GLUT_SCREEN_HEIGHT) - window_height)/2;
 			glutFullScreen()
-			fullScreen = 1
 			
-			resizeWindow = 0
+			fullScreen = 1
 		else:
 			print fullScreen
 			glutReshapeWindow(window_width,window_height)
 			glutPositionWindow(window_x,window_y)
 			fullScreen = 0
 			
-			resizeWindow = 0
-
 def InitGL(Width, Height):
 	# Set 2D-mode
 	glMatrixMode(GL_PROJECTION)
@@ -114,10 +110,10 @@ def InitGL(Width, Height):
 	glPointSize(pointSize)
 
 def DrawGLScene():
+	global resizeWindow
 	if resizeWindow == 0:
 		testgraph = graphify()
 		testgraph.update_layout_animated(DrawGraph)
-		global resizeWindow
 		resizeWindow = 1
 	else:
 		print "Will not update"
