@@ -50,14 +50,16 @@ def graphify():
 	return kkGraph
 
 def keyPressed(*args):
-		
+	
+	global resizeWindow
 	global window_x
 	global window_y
 	
 	if args[0] == ESCAPE:
 	    sys.exit()
 	elif args[0] == 'u':
-		global resizeWindow
+		global kkgraph
+		kkgraph = graphify()
 		resizeWindow = 0
 		DrawGLScene()
 	elif args[0] == 'f':
@@ -65,18 +67,14 @@ def keyPressed(*args):
 		global window_height
 		global window_width
 		if fullScreen == 0:
-			global resizeWindow
 			resizeWindow = 0
 			window_width = glutGet(GLUT_WINDOW_WIDTH)
 			window_height = glutGet(GLUT_WINDOW_HEIGHT)
-			window_x = (glutGet(GLUT_SCREEN_WIDTH) - window_width)/2;
-			
-			window_y = (glutGet(GLUT_SCREEN_HEIGHT) - window_height)/2;
+			window_x = glutGet(GLUT_WINDOW_X)
+			window_y = glutGet(GLUT_WINDOW_Y)
 			glutFullScreen()
-			
 			fullScreen = 1
 		else:
-			print fullScreen
 			glutReshapeWindow(window_width,window_height)
 			glutPositionWindow(window_x,window_y)
 			fullScreen = 0
@@ -106,17 +104,20 @@ def InitGL(Width, Height):
 	glEnable(GL_POINT_SMOOTH)
 	glEnable(GL_POLYGON_SMOOTH)
 	
+	global kkgraph
+	kkgraph = graphify()
+	
 	global pointSize
 	glPointSize(pointSize)
 
 def DrawGLScene():
 	global resizeWindow
+	global kkgraph
 	if resizeWindow == 0:
-		testgraph = graphify()
-		testgraph.update_layout_animated(DrawGraph)
+		kkgraph.update_layout_animated(DrawGraph)
 		resizeWindow = 1
 	else:
-		print "Will not update"
+		DrawGraph(kkgraph)
 
 	#  since this is double buffered, swap the buffers to display what just got drawn. 
 	# glutSwapBuffers()
