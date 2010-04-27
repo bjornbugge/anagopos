@@ -35,6 +35,10 @@ resizeWindow = 0
 global pointSize
 pointSize = 26
 
+global pointX
+global pointY
+
+
 def graphify():
 	global term
 	global graph
@@ -93,6 +97,8 @@ def InitGL(Width, Height):
 	# glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
 	glDisable(GL_DEPTH_TEST)			# Disables Depth Testing
 	# glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
+	
+	glutMouseFunc(processMouse)
 	
 	# Anti-aliasing/prettyness stuff
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -161,11 +167,23 @@ def DrawGraph(graph):
 	graphicsutils.write(200, 100, "(200,100)")
 	graphicsutils.write(500, 500, "(500,500)")
 	
+	i = 0
+	for node in graph.nodes:		
+		i = i + 1
+	
+		
+	global pointArray
+	# pointArray[7][1]
+	
+	pointArray = [[0 for col in range(3)] for row in range(i)]
+	
+	j = 0
+	
 	# Draw nodes.
 	for node in graph.nodes:
 		x = float(node.x) #/ 100
 		y = float(node.y) #/ 100
-		# print "(" + str(x) + ", " + str(y) + ")"
+
 		if node.name == 'N0':
 			glColor3f(1.0, 0.0, 0.0)
 		else:
@@ -175,10 +193,76 @@ def DrawGraph(graph):
 		glVertex2f(x, y)
 		glEnd()
 		
+		global pointArray
+		pointArray[j][0] = x
+		pointArray[j][1] = y
+		pointArray[j][2] = node.term
+		j = j + 1
+		
+		global pointX
+		pointX = x
+		
+		global pointY
+		pointY = y
+				
 		graphicsutils.write(x, y+pointSize, node.name, GLUT_BITMAP_HELVETICA_12)
 	
 	glutSwapBuffers()
 
+def processMouse(button, state, x, y):
+	
+	global pointX
+	global pointY
+	# print "Point X: " + str(pointX)
+	# print "Point Y: " + str(pointY)
+	
+	pointylow = pointY-10
+	pointyhigh = pointY+10
+	pointxlow = pointX-10
+	pointxhigh = pointX+10
+	
+	global pointArray
+	# print "Point Array:"
+	# print pointArray
+	
+	for k in range(len(pointArray)):
+		# print "Point " + str(k) + " - X: " + str(pointArray[k][0]) + " Y: " + str(pointArray[k][1])
+		pointX = pointArray[k][0]
+		pointY = pointArray[k][1]
+		pointName = pointArray[k][2]
+		
+		pointylow = pointY-10
+		pointyhigh = pointY+10
+		pointxlow = pointX-10
+		pointxhigh = pointX+10
+		
+		if state == GLUT_UP:
+			if button == GLUT_LEFT_BUTTON:
+				if x>pointxlow and x<pointxhigh and y>pointylow and y<pointyhigh:
+					# print "you selected point: " + str(pointArray[k][2])
+					print "X: " + str(x)
+					print "Y: " + str(y)
+					lambdaTerm = str(pointArray[k][2])
+					print "Lambda Term: " + lambdaTerm
+					graphicsutils.write(x, y, lambdaTerm)
+					glutSwapBuffers()
+
+
+	# for x in pointArray:
+	# 	print x
+	# 	print pointArray[x]
+	
+	# State
+	# if state == GLUT_UP:
+	# 	if button == GLUT_LEFT_BUTTON:
+	# 		if x>pointxlow and x<pointxhigh and y>pointylow and y<pointyhigh:
+	# 			print "you hit the point"
+	# 		print "LEFT - X: " + str(x) + " Y: " + str(y)
+	# 	elif button == GLUT_RIGHT_BUTTON:
+	# 		print "RIGHT: - X: " + str(x) + " Y: " + str(y)
+	# 	else:
+	# 		print "MIDDLE: - X: " + str(x) + " Y: " + str(y)
+	
 
 def draw(termstr = '', gr = None):
 	global graph
