@@ -55,6 +55,7 @@ def arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, angle = 10):
 		X3 = x2 + arrowwidth * math.cos(EndAngle1)
 		X4 = x2 + arrowwidth * math.cos(EndAngle2)
 	
+	glEnable(GL_POLYGON_SMOOTH)
 	glBegin(GL_POLYGON);
 	glVertex2f(x2,y2);
 	glVertex2f(X3,Y3);

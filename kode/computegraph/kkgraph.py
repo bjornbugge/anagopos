@@ -13,14 +13,9 @@ class KKGraph(reductiongraph.Graph):
 		
 		self.nodesdict = {}
 		self.nodes = []
+		self.graph = graph
 		
 		random.seed()
-		
-		for (key, node) in graph.nodesdict.iteritems():
-			self.nodesdict[key] = node
-			self.nodes.append(node)
-			node.x = random.randint(1, width)
-			node.y = random.randint(1, height)
 		
 		self.spring = 1
 		self.max_passes = 5000
@@ -29,11 +24,20 @@ class KKGraph(reductiongraph.Graph):
 		self.pad = 10
 		self.width = width
 		self.height = height
+		
+		self.reset()
 	
 	def update_layout( self ):
 		self.drawingfunction = None
 		for node in self.nodes:
 			self.__run_kk_on( node )
+	
+	def reset( self ):
+		for (key, node) in self.graph.nodesdict.iteritems():
+			self.nodesdict[key] = node
+			self.nodes.append(node)
+			node.x = random.randint(1, self.width)
+			node.y = random.randint(1, self.height)
 	
 	def update_layout_animated(self, drawingfunction):
 		self.drawingfunction = drawingfunction
