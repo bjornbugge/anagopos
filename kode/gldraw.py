@@ -18,14 +18,14 @@ class GlDraw(object):
 		self.term = None
 		self.graph = None
 		self.node = None
-		self.fullscreen = None
+		self.fullScreen = 0
 		self.dirty = None
 		self.window_height = 768
 		self.window_width = 1024
 		self.window_x = (glutGet(GLUT_SCREEN_WIDTH) - self.window_width)/2
 		self.window_y = (glutGet(GLUT_SCREEN_HEIGHT) - self.window_height)/2
 		self.resizeWindow = 0
-		self.pointSize = 26
+		self.pointSize = (((self.window_height + self.window_width)/2)/50)
 		self.pointX = None
 		self.pointY = None
 		self.pointArray = None
@@ -76,13 +76,19 @@ class GlDraw(object):
 		if args[0] == '\033':
 		    sys.exit()
 		elif args[0] == 'u':
+			self.pointSize = (((glutGet(GLUT_WINDOW_HEIGHT) + glutGet(GLUT_WINDOW_WIDTH))/2)/50)
+			k = 0
 			for node in self.graph.nodes:
 				node.x = random.randint(1, self.window_width)
 				node.y = random.randint(1, self.window_height)
+				self.pointArray[k][3] = 0
+				k = k + 1
 			self.graph.update_layout_animated(self.DrawGraph)
 			self.resizeWindow = 0
 			self.DrawGLScene()
+			glutSwapBuffers()
 		elif args[0] == 'f':
+			self.pointSize = (((glutGet(GLUT_WINDOW_HEIGHT) + glutGet(GLUT_WINDOW_WIDTH))/2)/50)
 			if self.fullScreen == 0:
 				self.resizeWindow = 0
 				self.window_width = glutGet(GLUT_WINDOW_WIDTH)
@@ -92,8 +98,8 @@ class GlDraw(object):
 				glutFullScreen()
 				self.fullScreen = 1
 			else:
-				glutReshapeWindow(window_width,window_height)
-				glutPositionWindow(window_x,window_y)
+				glutReshapeWindow(self.window_width,self.window_height)
+				glutPositionWindow(self.window_x,self.window_y)
 				self.fullScreen = 0
 
 
@@ -104,8 +110,10 @@ class GlDraw(object):
 		else:
 			self.DrawGraph(self.graph)
 			
+			
 			for k in range(len(self.pointArray)):
-				graphicsutils.write(self.pointArray[k][0]+self.pointSize, self.pointArray[k][1]+self.pointSize, str(self.pointArray[k][2]), GLUT_BITMAP_HELVETICA_12)
+				if self.pointArray[k][3] == 1:
+					graphicsutils.write(self.pointArray[k][0]+self.pointSize, self.pointArray[k][1]+self.pointSize, str(self.pointArray[k][2]), GLUT_BITMAP_HELVETICA_12)
 			glutSwapBuffers()
 
 
@@ -147,6 +155,7 @@ class GlDraw(object):
 		for node in self.graph.nodes:
 			self.pointArray[j][0] = float(node.x)
 			self.pointArray[j][1] = float(node.y)
+			self.pointArray[j][2] = node.term
     
 			if node.name == 'N0':
 				glColor3f(1.0, 0.0, 0.0)
@@ -173,15 +182,7 @@ class GlDraw(object):
 		pointyhigh = self.pointY+10
 		pointxlow = self.pointX-10
 		pointxhigh = self.pointX+10
-    
-		#if state == GLUT_UP and x<100 and y<100:
-		#	print "--------------------------------------------------------------------------------"
-		#	print "processMouseX - Point Array[" + str(0) + "]: " + str(self.pointArray[0][3])
-		#	print "processMouseX - Point Array[" + str(1) + "]: " + str(self.pointArray[1][3])
-		#	print "processMouseX - Point Array[" + str(2) + "]: " + str(self.pointArray[2][3])
-		#	print "processMouseX - Point Array[" + str(3) + "]: " + str(self.pointArray[3][3])
-		#	print "--------------------------------------------------------------------------------"
-    
+		
 		k = 0
 		for node in self.graph.nodes:
 			self.pointX = self.pointArray[k][0]
@@ -196,29 +197,12 @@ class GlDraw(object):
 			if state == GLUT_UP:
 				if button == GLUT_LEFT_BUTTON:
 					if x>pointxlow and x<pointxhigh and y>pointylow and y<pointyhigh:
-						if self.pointArray[k][3] == 0:
-							self.pointArray[k][2] = str(node.term)
-							self.pointArray[k][3] = 1
-						elif self.pointArray[k][3] == 1:
-							self.pointArray[k][2] = ""
+						if self.pointArray[k][3] == 1:
 							self.pointArray[k][3] = 0
-							
-						self.DrawGLScene()
-							
-						#if self.pointArray[k][3] == 1:
-						#	#print "processMouse0 - Point Array[" + str(k) + "]: " + str(self.pointArray[k][3])
-						#	self.DrawGLScene()
-						#	self.pointArray[k][3] = 1
-						#elif self.pointArray[k][3] == 0:
-						#	#print "processMouse1 - Point Array[" + str(k) + "]: " + str(self.pointArray[k][3])
-						#	self.DrawGLScene()
-						#	self.pointArray[k][3] = 1
-						#print "--------------------------------------------------"
-						#print self.pointArray[0]
-						#print self.pointArray[1]
-						#print self.pointArray[2]
-						#print self.pointArray[3]
-						#print "--------------------------------------------------"
+							self.DrawGLScene()
+						elif self.pointArray[k][3] == 0:
+							self.pointArray[k][3] = 1
+							self.DrawGLScene()
 			k = k + 1
 
 

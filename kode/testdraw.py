@@ -37,6 +37,6 @@ def graphify(termstr = '', gr = None):
 	return kkGraph
 
 if __name__ == "__main__":
-	kkgraph = graphify('#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))')
+	kkgraph = graphify('#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))')
 	g = gldraw.GlDraw()
 	g.draw(kkgraph)
