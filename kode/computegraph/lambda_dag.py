@@ -80,7 +80,6 @@ class Abstraction(LambdaNode):
 	def __repr__(self):
 		return "#" + self.varname + ".(" + str(self.leftchild) + ")"
 
-
 class Application(LambdaNode):
 	"""
 	Lambda application.

@@ -35,14 +35,14 @@ parser Lambda:
 def preprocess(term):
 	'''
 	Perform preprocessing on a string representation of a lambda term. 
-	Preprocessing in this context means insert all missing parentheses,
+	Preprocessing in this context means inserting all missing parentheses,
 	making the structure of the term explicit.
 	'''
 	out = ''
 	count = 0
-	for ch in term:
+	for (i, ch) in enumerate(term):
 		out = out + ch
-		if ch == '.':
+		if ch == '.' and not term[i + 1] == '(':
 			out = out + '('
 			count = count + 1
 		if ch == ')' and count > 0:
@@ -53,6 +53,7 @@ def preprocess(term):
 		out = out + ')'
 	
 	return out
+
 
 def parse(text):
     P = Lambda(LambdaScanner(preprocess(text)))
