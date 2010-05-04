@@ -143,12 +143,12 @@ class GlDraw(object):
 				glColor3f(0.1, 0.3, 0.7)
 				graphicsutils.arrowhead(x1, y1, x2, y2, self.pointSize / 2, 20, 12)
     
-		glColor3f(0.7, 0.7, 0.7)
-		graphicsutils.write(0.0, 0.0, "(0,0)")
-		graphicsutils.write(100, 10, "(100,10)")
-		graphicsutils.write(100, 100, "(100,100)")
-		graphicsutils.write(200, 100, "(200,100)")
-		graphicsutils.write(500, 500, "(500,500)")
+		#glColor3f(0.7, 0.7, 0.7)
+		#graphicsutils.write(0.0, 0.0, "(0,0)")
+		#graphicsutils.write(100, 10, "(100,10)")
+		#graphicsutils.write(100, 100, "(100,100)")
+		#graphicsutils.write(200, 100, "(200,100)")
+		#graphicsutils.write(500, 500, "(500,500)")
 		
 		j = 0
 		# Draw nodes.
