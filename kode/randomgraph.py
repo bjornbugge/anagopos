@@ -68,10 +68,14 @@ def randomdag():
 			_lp['abstraction'] = _lp['abstraction'] + 0.04
 			_lp['application'] = _lp['application'] - 0.06
 			_lp['variable'] = _lp['variable'] + 0.02
+			_rp = copy.deepcopy(p)
+			_rp['abstraction'] = _rp['abstraction'] + 0.02
+			_rp['application'] = _rp['application'] - 0.02
+			_rp['variable'] = _rp['variable']
 			
 			node = lambda_dag.Application()
 			node.add(_node(_lp, boundlist))
-			node.add(_node(p, boundlist))
+			node.add(_node(_rp, boundlist))
 			
 		else:
 			if random.uniform(0,1) < p['boundvar'] and not len(boundlist) == 0:

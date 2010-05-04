@@ -1,3 +1,4 @@
+import numpy as NP
 
 def dijkstra(G, v0):
 	def comparison(x, y):
@@ -26,7 +27,7 @@ def dijkstra(G, v0):
 		for edge in v.children + v.parents:
 			w = edge.get_far(v)
 			weight = 1 # Fixed weights
-			if w in Q:
+			if Q[w]:
 				L[w] = min(L[w], L[v] + weight)
 	return F
 
@@ -35,8 +36,10 @@ def alltoall_shortest(G):
 	V = G.nodes
 	for v in V:
 		d = dijkstra(G, v)
-		d.remove((v, 0))
+		# d.remove((v, 0))
 		for (w, dist) in d:
+			if w == v:
+				continue
 			distances[(v, w)] = dist
 	return distances
 

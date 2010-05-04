@@ -80,7 +80,7 @@ def getnode(root, position):
 			return _getnode(node.leftchild, p + 1)
 		else: # Bit was 1; go right
 			if ex == 0:
-				return node.rightchild
+				return node.rightchild # Stop recursion
 			
 			return _getnode(node.rightchild, p + 1)
 	
@@ -131,7 +131,7 @@ def sanitize(term):
 	'''
 	Gives the bound variables in the abstractors unique names. The variables
 	are named vX with X unique for each abstraction.
-	If the term has its dirty flag set to False, sanitize() don't do anything.
+	If the term has its dirty flag set to False, sanitize() doesn't do anything.
 	'''
 	if not term.dirty:
 		return
@@ -175,8 +175,9 @@ def reductiongraph(root, maximum = 20):
 				work.append(contractum)
 			
 			reductions = reductions + 1
-			# print "Performed " + str(reductions) + " reductions."
 		del work[0]
 		guard = guard + 1
-	
+	print "Performed " + str(reductions) + " reductions."
+	if len(work) > 0:
+		print "Incomplete reduction graph!"
 	return graph

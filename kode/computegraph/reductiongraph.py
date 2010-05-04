@@ -29,6 +29,11 @@ class Graph(object):
 		print o
 	
 	def addnode(self, term):
+		'''
+		Adds a node made from the given term to the graph and returns it.
+		If the node is alreade present in the graph, the method just returns it.
+		Nodes are compared modulo alpha-equivalence.
+		'''
 		operations.sanitize(term)
 		try:
 			node = self.nodesdict[str(term)]
