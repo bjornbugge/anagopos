@@ -5,7 +5,6 @@ import computegraph.operations as operations
 import lambdaparser as parser
 import randomgraph
 import graphicsutils
-import testdraw
 from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
 from OpenGL.GLUT import *
@@ -99,6 +98,28 @@ class GlDraw(object):
 				glutReshapeWindow(self.window_width,self.window_height)
 				glutPositionWindow(self.window_x,self.window_y)
 				self.fullscreen = 0
+		elif args[0] == 'n': # Step forwards
+			self.graphindex += 1
+			if self.graphindex == len(self.graphlist):
+				self.graphindex -= 1
+				return
+			
+			self.graph = self.graphlist[self.graphindex]
+			self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+			self.graph.update_layout()
+			self.DrawGraph(self.graph)
+		elif args[0] == 'b': # Step backwards
+			self.graphindex -= 1
+			if self.graphindex < 0:
+				self.graphindex = 0
+			self.graph = self.graphlist[self.graphindex]
+			self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+			self.graph.update_layout()
+			self.DrawGraph(self.graph)
+		elif args[0] == 'm': # Improve current graph
+			self.graph.update_layout()
+			self.DrawGraph(self.graph)
+		
 	
 	def DrawGLScene(self):
 		if self.resizeWindow == 0:
@@ -134,7 +155,7 @@ class GlDraw(object):
 				glColor3f(0.2, 0.4, 0.8)
 				glBegin(GL_LINES)
 				glVertex2f(x1, y1)
-				glColor3f(0.8, 0.4, 0.2)
+				glColor3f(0.9, 0.5, 0.2)
 				glVertex2f(x2, y2)
 				glEnd()
 				# glColor3f(0.1, 0.3, 0.7)
@@ -192,11 +213,21 @@ class GlDraw(object):
 							self.DrawGLScene()
 			k = k + 1
 	
-
+	def drawlist(self, graphlist):
+		self.graphindex = 0
+		self.graphlist = graphlist
+		self.graph = graphlist[0]
+		self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+		self.graph.update_layout_animated(self.DrawGraph)
+		glutMainLoop()
+	
 	def draw(self, kkgraph):
+		self.graphindex = 0
+		self.graphlist = [kkgraph]
 		self.graph = kkgraph
 		self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
 		# glutMainLoop()
-		self.graph.update_layout_animated(self.DrawGraph)
-		# self.DrawGraph(self.graph)
+		# self.graph.update_layout_animated(self.DrawGraph)
+		self.graph.update_layout()
+		self.DrawGraph(self.graph)
 		glutMainLoop()

@@ -24,9 +24,10 @@ class MajorizationGraph(reductiongraph.Graph):
 				node.y = random.randint(1, height)
 		
 		self.n = len(self.nodes)
-		
 		self.I = numpy.identity(self.n)
+		print "Making D matrix..."
 		self.D = self._get_D_matrix()
+		print "Making W matrix..."
 		self.W = self._get_W_matrix()
 		self.deltas = numpy.multiply(self.W, self.D)
 		
@@ -36,20 +37,23 @@ class MajorizationGraph(reductiongraph.Graph):
 		for i in xrange(self.n):
 			self.Xt[i,0] = self.nodes[i].x
 			self.Xt[i,1] = self.nodes[i].y
-		self.epsilon = 10**-3
+		self.epsilon = 10**-4
 		self.current_stress = None
+		print "Epsilon is " + str(self.epsilon)
 	
 	def update_layout(self):
 		e = 1000
 		numits = 0
 		while e > self.epsilon:
 			self._iter()
-			if numits % 50 == 0:
+			if numits % 25 == 0:
 				e = self.calc_epsilon()
-				print "Epsilon: " + str(e)
-				print "Stress:  " + str(self.current_stress)
+				print "-- epsilon: " + str(e)
+				print "-- stress:  " + str(self.current_stress)
 				self.iter_done()
 			numits += 1
+		print "Epsilon: " + str(e)
+		print "Stress:  " + str(self.current_stress)
 		print "Number of iterations: " + str(numits)
 		self.normalize()
 		# Assign calculated positions to nodes
@@ -83,21 +87,23 @@ class MajorizationGraph(reductiongraph.Graph):
 		b = LXt * self.Xt
 		x = solve(self.Lw, b)
 		Xt_new = x
-				
+		
 		self.Xt_old = deepcopy(self.Xt)
 		self.Xt = Xt_new
 	
 	def ata_dists(self, X):
+		'''
+		Computes the all-to-all distances in a 
+		'''
 		squared = lambda x:numpy.power(x, 2)
 		M1, M2 = numpy.meshgrid(X[:,0], X[:,0])
 		M3, M4 = numpy.meshgrid(X[:,1], X[:,1])
 		return numpy.sqrt(squared(M1 - M2) + squared(M3 - M4))
-			
+	
 	def stress(self, X):
-		squared = lambda x:numpy.power(x, 2)
 		dists = self.ata_dists(X)
-		E = numpy.multiply(self.W, squared(dists - self.D))
-		return E.sum() / 2 # Because we only look at those elms. with i<j we divide by two
+		E = numpy.multiply(self.W, numpy.power(dists - self.D, 2))
+		return E.sum() / 2 # Because we only look at those elms. with i>j we divide by two
 	
 	def _get_L(self, Z):
 		def func(M):
@@ -106,7 +112,7 @@ class MajorizationGraph(reductiongraph.Graph):
 			return numpy.multiply(self.deltas, dists)
 		
 		return self.laplace(Z, func)
-		
+	
 	def laplace(self, M, f):
 		L = f(M)
 		D = numpy.multiply(self.I, numpy.sum(L, axis=0))
@@ -118,46 +124,29 @@ class MajorizationGraph(reductiongraph.Graph):
 		return W
 	
 	def _get_D_matrix(self):
-		D = self._get_graph_distances()
+		(D, A) = self._get_graph_distances()
 		W = numpy.mat(numpy.zeros([self.n, self.n]))
-		N = numpy.mat(numpy.zeros([self.n, self.n])) # Neighbour?
-		isn = 1
-		isnn = 5
-		k = 0.8
+		if  self.n > 100:
+			alpha = 1
+		else:
+			alpha = 0.1
+		beta = 0
 		for i in xrange(self.n):
 			for j in xrange(i, self.n):
 				Ni = set(self.nodes[i].parents + self.nodes[i].children)
 				Nj = set(self.nodes[j].parents + self.nodes[j].children)
-				W[i,j] = k * (len(Ni.union(Nj)) - len(Ni.intersection(Nj)))
-				W[j,i] = k * (len(Ni.union(Nj)) - len(Ni.intersection(Nj)))
-				#or e in Ni:
-				#   if e.get_far(self.nodes[i]) == self.nodes[j]:
-				#   	# print "is neighbour"
-				#   	N[i,j] = isn
-				#   	N[j,i] = isn
-				#   else:
-				#   	# print "is not neighbour"
-				#   	N[i,j] = isnn
-				#   	N[j,i] = isnn
-		return numpy.multiply(D, W)
-		# return W
-		# return numpy.multiply(N, W)
-		# return D
+				W[i,j] = W[j,i] = 1 + len(Ni.union(Nj)) - len(Ni.intersection(Nj))
+		# return numpy.multiply(D, W)
+		return (1 - alpha) * D + alpha * W + beta * A
 		
 	def _get_graph_distances(self):
-		'''
-		Computes the all-to-all shortest distances and returns them in a 
-		lookup table.
-		'''
-		alltoalldistances = numpy.mat(numpy.zeros([self.n, self.n]))
-		atadists = SP.alltoall_shortest(self)
-		print "Converting distances to matrix form..."
-		for ((v, w), dist) in atadists.iteritems():
-			i = self.nodes.index(v)
-			j = self.nodes.index(w)
-			alltoalldistances[i, j] = dist
-		return alltoalldistances
-	
+		if self.n > 100:
+			# A = SP.adjacencymatrix(self)
+			A = 0
+			return (A, numpy.mat(numpy.ones([self.n, self.n])))
+		print "Computing all-pairs distances..."
+		return SP.floydwarshal(self)
+		
 	def iter_done(self):
 		'''
 		Placeholder function for calling a screen update

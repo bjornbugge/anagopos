@@ -181,3 +181,35 @@ def reductiongraph(root, maximum = 20):
 	if len(work) > 0:
 		print "Incomplete reduction graph!"
 	return graph
+
+def reductiongraphyield(root, start, end):
+	'''
+	Computes the reduction graph and returns it in the format specified
+	in reductiongraph.py.
+	'''
+	work = [root]
+	graph = graphrepr.Graph()
+	guard = 0
+	reductions = 0
+	while len(work) > 0 and (end == 0 or guard < end):
+		term = work[0]
+		positions = findredexes(term)
+		for pos in positions:
+			(term, contractum) = betareduce(term, pos)
+			n1 = graph.addnode(term)
+			n2 = graph.addnode(contractum)
+			n1.addchild(n2)
+			
+			if not contractum in work:
+				work.append(contractum)
+			
+			
+			reductions = reductions + 1
+		del work[0]
+		if guard >= start:
+			yield copy.deepcopy(graph)
+		guard = guard + 1
+	print "Performed " + str(reductions) + " reductions."
+	if len(work) > 0:
+		print "Incomplete reduction graph!"
+	

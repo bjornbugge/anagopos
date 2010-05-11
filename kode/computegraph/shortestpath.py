@@ -31,10 +31,46 @@ def dijkstra(G, v0):
 				L[w] = min(L[w], L[v] + weight)
 	return F
 
+def adjacencymatrix(G):
+	n = len(G.nodes)
+	A = NP.zeros([n, n])
+	for (i, v) in enumerate(G.nodes):
+		for e in v.parents + v.children:
+			j = G.nodes.index(e.get_far(v))
+			A[i, j] = 1
+	return A
+
+def floydwarshal(G):
+	'''
+	Computes the all-pairs shortest paths D and the adjacency matrix A and
+	returns them in a tuple (D, A) as NumPy-arrays.
+	'''
+	# Initialise the estimates from nodes and edges.
+	n = len(G.nodes)
+	A = adjacencymatrix(G)
+	# Set all distances to "infinite", except those between adjacent nodes.
+	D = NP.ones([n, n]) * (2 * n + 1)
+	D[A == 1] = 1
+	# Run the main loop of the algorithm.
+	for k in xrange(n):
+		for i in xrange(n):
+			for j in xrange(i, n):
+				D[i, j] = min(D[i, j], D[i, k] + D[k, j])
+	
+	# Set the diagonal to zeros.
+	D = D - D.diagonal() * NP.identity(n)
+	# Copy the upper triangle matrix to the lower.
+	T = NP.tri(n)
+	D = NP.multiply(D, T.T) + NP.multiply(D.T, T)
+	return (D, A)
+
+
 def alltoall_shortest(G):
+	print "Computing all-to-all distances..."
 	distances = {}
 	V = G.nodes
 	for v in V:
+		print "    - running Dijkstras algorithm..."
 		d = dijkstra(G, v)
 		# d.remove((v, 0))
 		for (w, dist) in d:
