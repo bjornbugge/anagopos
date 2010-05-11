@@ -49,6 +49,7 @@ class Edge(object):
 		self.weight = 1
 		self.source = source
 		self.destination = destination
+		self.ipoints = None
 
 	def get_far(self, node):
 		if self.source == node:
