@@ -51,7 +51,7 @@ class GraphViz(object):
 		
 		# Default to neato
 		# drawG = G.layout()
-		G.layout(prog='dot')
+		G.layout(prog='twopi')
 		# G.draw(fname,prog='sfdp')
 		
 		G.write("img/fdfsdfsdf2.dot")
@@ -60,12 +60,12 @@ class GraphViz(object):
 		
 		# G.write('img/testtest.dot')
 		# Disse virker:
-		#	circo	-	tegner i en cirkel
-		#	dot		-	tegner i niveauer
-		#	neato	-	(fejl) tegner anne knuder i samme punkt	
-		#	fdp		-	tegner paent, men virker lidt random
+		#	circo	-	tegner i en cirkel								- Bezier
+		#	dot		-	tegner i niveauer								+ Bezier
+		#	neato	-	(fejl) tegner anne knuder i samme punkt			- Bezier
+		#	fdp		-	tegner paent, men virker lidt random			- Bezier
 		#	sfdp	-	virker ikke!
-		#	twopi	-	tegner i flere cirkler
+		#	twopi	-	tegner i flere cirkler							- Bezier
 		# twopi, gvcolor, wc, ccomps, tred, sccmap, fdp, circo, neato, acyclic, nop, gvpr, dot
 		
 		#k = 0

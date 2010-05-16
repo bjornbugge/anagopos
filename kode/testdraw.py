@@ -36,6 +36,26 @@ def draw(term):
 	gldraw = GlDraw()
 	gldraw.draw(graph)
 
+def drawGV(term):
+	g = operations.reductiongraph(term, 20)
+	print "Graph has " + str(len(g.nodes)) + " nodes."
+	# graph = KKGraph(g, 800, 500)
+	gv = pygraphviztest.GraphViz()
+	gv.draw(g)
+	# graph = MajorizationGraph(g, 1000, 730)
+	# gldraw = GlDraw()
+	# gldraw.draw(graph)
+	
+def drawitGV(term):
+	gldraw = GlDraw()
+	mgs = []
+	for g in operations.reductiongraphyield(term, 0, 20):
+		if len(g.nodes) <= 0:
+			continue
+		mgs.append(MajorizationGraph(g, 1000, 730))
+	print "Drawing " + str(len(mgs)) + " different graph versions."
+	gldraw.drawlist(mgs)
+
 def drawit(term):
 	gldraw = GlDraw()
 	mgs = []
@@ -51,11 +71,11 @@ if __name__ == "__main__":
 	# kkgraph = graphify(t)
 	# g = pygraphviztest.GraphViz()
 	# # g = gldraw.GlDraw()
-	# g.draw(kkgraph)=======
+	# g.draw(kkgraph)
 	term = parser.parse(t)
 	operations.assignvariables(term)
-	drawit(term)
+	drawGV(term)
 	# graph = graphify(t)
 	# print "Drawing graph..."
 	# g = gldraw.GlDraw()
-	# g.draw(graph)>>>>>>> .r152
+	# g.draw(graph)

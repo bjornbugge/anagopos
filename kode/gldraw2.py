@@ -31,6 +31,16 @@ class GlDraw(object):
 		self.pointY = None
 		self.pointArray = None
 		self.InitGL(1024, 768)
+		self.ipoints = ipoints = [[0 for col in range(2)] for row in range(3)]
+		self.scalingX = None
+		self.scalingY = None
+		self.c1 = None
+		self.c2 = None
+		self.c3 = None
+		self.c1old = None
+		self.c2old = None
+		self.c3old = None
+		
 		
 	def InitGL(self, Width, Height):
 		
@@ -129,6 +139,46 @@ class GlDraw(object):
 			#		graphicsutils.write(self.pointArray[k][0]+self.pointSize, self.pointArray[k][1]+self.pointSize, str(self.pointArray[k][2]), GLUT_BITMAP_HELVETICA_12)
 			#glutSwapBuffers()
 
+	def drawLine(self, p1, p2):
+		glBegin(GL_LINES);
+		glColor3f(self.c1old, self.c2old, self.c3old)
+		glVertex2f(p1[0], p1[1]);
+		glColor3f(self.c1, self.c2, self.c3)
+		glVertex2f(p2[0], p2[1]);
+		glEnd();
+		self.c1old = self.c1
+		self.c2old = self.c2
+		self.c2old = self.c3
+		self.c1 = self.c1 + (0.035/5)
+		self.c2 = self.c2 - (0.01/5)
+		self.c3 = self.c3 - (0.024/5)	
+		
+	
+	def drawBezier(self, t):
+		# ipointsX = edge.ipoints[:][0]
+		# ipointsY = edge.ipoints[:][1]
+		# 
+		# 
+		# for s in edge.ipoints[0][0]:
+		
+		x = pow((1 - t), 2) * self.ipoints[0][0] + 2 * t * (1 -t) * self.ipoints[1][0] + pow(t, 2) * self.ipoints[2][0]
+		y = pow((1 - t), 2) * self.ipoints[0][1] + 2 * t * (1 -t) * self.ipoints[1][1] + pow(t, 2) * self.ipoints[2][1]
+		return [x,y]
+		
+		
+	# def drawBezier2(self, t):
+	# 	# ipointsX = edge.ipoints[:][0]
+	# 	# ipointsY = edge.ipoints[:][1]
+	# 	# 
+	# 	# 
+	# 	# for s in edge.ipoints[0][0]:
+	# 	
+	# 	for g in range(len(self.ipoints)):
+	# 		
+	# 
+	# 	x = pow((1 - t), 2) * self.ipoints[0][0] + 2 * t * (1 -t) * self.ipoints[1][0] + pow(t, 2) * self.ipoints[2][0]
+	# 	y = pow((1 - t), 2) * self.ipoints[0][1] + 2 * t * (1 -t) * self.ipoints[1][1] + pow(t, 2) * self.ipoints[2][1]
+	# 	return [x,y]
 
 	def DrawGraph(self, graph):
 		#print "4"
@@ -151,6 +201,9 @@ class GlDraw(object):
 		scalingX = (maxPosX)/(self.window_width-50)
 		scalingY = (maxPosY)/(self.window_height-50)
 		
+		self.scalingX = scalingX
+		self.scalingY = scalingY
+		
 		#print "Scaling X: " + str(scalingX)
 		#print "Scaling Y: " + str(scalingY)
 		#print "Width X: " + str(self.window_width)
@@ -171,35 +224,84 @@ class GlDraw(object):
 		for node in self.graph.nodes:
 			for edge in node.children:
 			
-				#print "1: " + str((edge.ipoints[0][0])/(scalingX)) + ", " + str((edge.ipoints[0][1])/(scalingY))
+				#print "1: " + str((edge[0][0])/(scalingX)) + ", " + str((edge.ipoints[0][1])/(scalingY))
 				#print "2: " + str(float(node.x)) + ", " + str(float(node.y))
+				
 				
 				far_node = edge.get_far(node)
 				if node == far_node:
 					print "Circular edge."
 					continue
 				
+				# glBegin(GL_LINES);
+				# glVertex2f(far_node.x, far_node.y);
+				# glVertex2f(edge.ipoints[1][0], edge.ipoints[1][1]);
+				# glEnd();
+				# 
+				# glBegin(GL_LINES);
+				# glVertex2f(node.x, node.y);
+				# glVertex2f(edge.ipoints[1][0], edge.ipoints[1][1]);
+				# glEnd();
+				
+				self.c1 = 0.2
+				self.c2 = 0.4
+				self.c3 = 0.8
+				self.c1old = 0.2
+				self.c2old = 0.4
+				self.c3old = 0.8
+				
+				self.ipoints[0][0] = node.x
+				self.ipoints[0][1] = node.y
+				self.ipoints[1][0] = (edge.ipoints[2][0]/self.scalingX)
+				self.ipoints[1][1] = (edge.ipoints[2][1]/self.scalingY)
+				self.ipoints[2][0] = far_node.x
+				self.ipoints[2][1] = far_node.y
+				
+				POld = [self.ipoints[0][0], self.ipoints[0][1]]
+				t = 0.00
+				# self.c1old = self.c1 - 0.035
+				# self.c2old = self.c2 + 0.01
+				# self.c3old = self.c3 + 0.024
+				#glColor3f(c1, c2, c3)
+				#glColor3f(0.9, 0.2, 0.3)
+				
+				# if len(edge.ipoints) == 9:
+				# 	print "Length of array: " + str(len(edge.ipoints))
+				# 	for g in range(101):
+				# 		P = self.drawBezier2(t)
+				# 		self.drawLine(POld, P)
+				# 		POld = P
+				# 		t = t + 0.01
+				# else:
+				# 	print "Length of array: " + str(len(edge.ipoints))
+				# 	for g in range(101):
+				# 		P = self.drawBezier(t)
+				# 		self.drawLine(POld, P)
+				# 		POld = P
+				# 		t = t + 0.01
+					
+				
 				#print "Edge points: " + str(edge.ipoints)
 				
-				glColor3f(0.2, 0.4, 0.0)
-				glBegin(GL_LINES)
-				glVertex2f(float(node.x), float(node.y))
-				#glColor3f(0.9, 0.2, 0.3)
-				glVertex2f((edge.ipoints[1][0])/(scalingX), (edge.ipoints[1][1])/(scalingY))
-				glEnd()
-				
-				hh = 1
-				edgelength = len(edge.ipoints)
-				for h in range(edgelength-2):
-					
-					glColor3f(0.2, 0.4, 0.0)
-					glBegin(GL_LINES)
-					glVertex2f((edge.ipoints[hh][0])/(scalingX), (edge.ipoints[hh][1])/(scalingY))
-					#glColor3f(0.9, 0.2, 0.3)
-					glVertex2f((edge.ipoints[hh+1][0])/(scalingX), (edge.ipoints[hh+1][1])/(scalingY))
-					glEnd()
-					
-					hh = hh + 1
+				# glColor3f(0.2, 0.4, 0.0)
+				# glBegin(GL_LINES)
+				# glVertex2f(float(node.x), float(node.y))
+				# #glColor3f(0.9, 0.2, 0.3)
+				# glVertex2f((edge.ipoints[1][0])/(scalingX), (edge.ipoints[1][1])/(scalingY))
+				# glEnd()
+				# 
+				# hh = 1
+				# edgelength = len(edge.ipoints)
+				# for h in range(edgelength-2):
+				# 	
+				# 	glColor3f(0.2, 0.4, 0.0)
+				# 	glBegin(GL_LINES)
+				# 	glVertex2f((edge.ipoints[hh][0])/(scalingX), (edge.ipoints[hh][1])/(scalingY))
+				# 	#glColor3f(0.9, 0.2, 0.3)
+				# 	glVertex2f((edge.ipoints[hh+1][0])/(scalingX), (edge.ipoints[hh+1][1])/(scalingY))
+				# 	glEnd()
+				# 	
+				# 	hh = hh + 1
 				
 				
 				
@@ -216,19 +318,19 @@ class GlDraw(object):
 				#glVertex2f(x2, y2)
 				#glEnd()
 				
-				#x1 = float(node.x)#/(scalingX)			#/100
-				#y1 = float(node.y)#/(scalingY)			#/100
-				#x2 = float(far_node.x)#/(scalingX)		#/100
-				#y2 = float(far_node.y)#/(scalingY)		#/100
-                #
-				#glColor3f(0.2, 0.4, 0.8)
-				#glBegin(GL_LINES)
-				#glVertex2f(x1, y1)
-				#glColor3f(0.9, 0.2, 0.3)
-				#glVertex2f(x2, y2)
-				#glEnd()
-                #
-				#glColor3f(0.1, 0.3, 0.7)
+				x1 = float(node.x)#/(scalingX)			#/100
+				y1 = float(node.y)#/(scalingY)			#/100
+				x2 = float(far_node.x)#/(scalingX)		#/100
+				y2 = float(far_node.y)#/(scalingY)		#/100
+                
+				glColor3f(0.2, 0.4, 0.8)
+				glBegin(GL_LINES)
+				glVertex2f(x1, y1)
+				glColor3f(0.9, 0.2, 0.3)
+				glVertex2f(x2, y2)
+				glEnd()
+                
+				glColor3f(0.1, 0.3, 0.7)
 				# graphicsutils.arrowhead(x1, y1, x2, y2, self.pointSize / 2, 20, 12)
     
 		#glColor3f(0.7, 0.7, 0.7)
