@@ -1,0 +1,45 @@
+----- Must have features -----
+ - Draw New term [button] (pop-up box with settings)
+	 - Enter term / Generate semi-random term
+	 - Set term settings (e.g. number of reductions)
+	 - Select drawing algorithm
+	 - select between color schemes
+	 
+ - Redraw Current Graph Completely [button] (e.g. redraw graph with new random node positions) (Shortcut: Shift-R)
+
+ - Optimize Graph Drawing of Current term [button] (e.g. redraw graph with the already calculated node positions) (Shortcut: Shift+O)
+ 
+ - Step Forward in Current Term [button] (Shortcut: Shift+F)
+
+ - Step Backward in Current Term [button] (Shortcut: Shift+B)
+
+ - Settings [button] (pop-up box with settings) (Shortcut: Shift+S)
+	 -- Hvilke settings menes der her? Farver og den slags? Er det ikke de
+		samme settings som i "Draw new term[...]"?
+
+ - Click on node to get term displayed (left-click)
+
+ - Click on node to get all outgoing edges highlighted (Shift+left-click)
+
+ - Design a proper interface that can abstract away the type of algorithm, and
+	whether it is a GrahViz- or a home-cooked one. Must be easily extendable.
+
+----- Nice to have features -----
+ - Zoom in to node
+
+ - Dragging a node to re-organize graph
+
+(- select if you want arrows)?
+
+(- Owerwrite default node size and line width if wanted)?
+
+- Highlight different reduction strategies?
+
+
+
+(- Show Current Term as Movie [button] (pop-up box with settings) (Shortcut: Shift+M)) 
+	-- At tegne en term som en "film" kan koges ned til at tilføje knuder løbende til en 
+	   allerede tegnet graf, altså at lave en "ny" graf med lidt flere knuder, men hvor 
+	   alle de knuder der også er i grafen til trinnet før har samme positioner som 
+	   de havde i trinnet før. Derfor er det her det samme som "Step forwards/backwards[...]".
+	
