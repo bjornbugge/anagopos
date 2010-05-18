@@ -3,7 +3,7 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
 
-def write(xPos, yPos, text, font = GLUT_BITMAP_9_BY_15):
+def write(xPos, yPos, text, font = GLUT_BITMAP_HELVETICA_12):
 	'''
 	Writes text with a bitmap font on the (x,y) position indicated. The 
 	optional parameter font specify the GLUT bitmap font to use.
@@ -26,8 +26,9 @@ def arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, angle = 10):
 	(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
 	'''
 	Pi = math.pi
-	x21 = x2-x1
-	if x21==0:
+	# x21 = x2-x1
+	# if x21==0:
+	if x2 - x1 == 0:
 		LineAngle = math.atan(0)
 	else:
 		LineAngle = math.atan((y2-y1)/(x2-x1))

@@ -17,19 +17,15 @@ class GlDraw(object):
 		self.term = None
 		self.graph = None
 		self.node = None
-		self.fullScreen = 0
+		self.fullscreen = 0
 		self.window_height = 768
 		self.window_width = 1024
 		self.resizeWindow = 0
 		self.pointSize = 10
-		self.pointX = None
-		self.pointY = None
 		self.pointArray = None
-		self.InitGL(1024, 768)
 			
 	def InitGL(self, Width, Height):
-		
-		glutInit(sys.argv)
+		glutInit()
 		glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
 		self.window_x = (glutGet(GLUT_SCREEN_WIDTH) - self.window_width)/2
 		self.window_y = (glutGet(GLUT_SCREEN_HEIGHT) - self.window_height)/2
@@ -56,7 +52,7 @@ class GlDraw(object):
 		glDisable(GL_DEPTH_TEST)			# Disables Depth Testing
 		glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
 		
-		# glutMouseFunc(self.processMouse)
+		glutMouseFunc(self.processMouse)
 		
 		# Anti-aliasing/prettyness stuff
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -119,7 +115,6 @@ class GlDraw(object):
 		elif args[0] == 'm': # Improve current graph
 			self.graph.update_layout()
 			self.DrawGraph(self.graph)
-		
 	
 	def DrawGLScene(self):
 		if self.resizeWindow == 0:
@@ -127,14 +122,12 @@ class GlDraw(object):
 			self.resizeWindow = 1
 		else:
 			self.DrawGraph(self.graph)
-			
-			
-			for k in range(len(self.pointArray)):
-				if self.pointArray[k][3] == 1:
-					graphicsutils.write(self.pointArray[k][0]+self.pointSize, self.pointArray[k][1]+self.pointSize, str(self.pointArray[k][2]), GLUT_BITMAP_HELVETICA_12)
+			p = self.pointSize
+			for (x, y, term, c) in self.pointArray:
+				if c == 1:
+					graphicsutils.write(x + p, y + p, str(term))
 			glutSwapBuffers()
-
-
+	
 	def DrawGraph(self, graph):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		glLineWidth(1)
@@ -163,8 +156,8 @@ class GlDraw(object):
 		
 		# Draw nodes.
 		for (j, node) in enumerate(self.graph.nodes):
-			self.pointArray[j][0] = float(node.x)
-			self.pointArray[j][1] = float(node.y)
+			self.pointArray[j][0] = node.x
+			self.pointArray[j][1] = node.y
 			self.pointArray[j][2] = node.term
     
 			if node.name == 'N0':
@@ -173,45 +166,25 @@ class GlDraw(object):
 				glColor3f(0.0, 0.0, 0.0)
 			
 			glBegin(GL_POINTS)
-			glVertex2f(self.pointArray[j][0], self.pointArray[j][1])
+			glVertex2f(node.x, node.y)
 			glEnd()
 			
-			self.pointX = self.pointArray[j][0]
-			self.pointY = self.pointArray[j][1]
-    
-			graphicsutils.write(self.pointArray[j][0], self.pointArray[j][1]+self.pointSize, node.name, GLUT_BITMAP_HELVETICA_12)
+			graphicsutils.write(node.x, node.y + self.pointSize, node.name)
 			
 		glutSwapBuffers()
-
-
+	
 	def processMouse(self, button, state, x, y):
-		    
-		pointylow = self.pointY-10
-		pointyhigh = self.pointY+10
-		pointxlow = self.pointX-10
-		pointxhigh = self.pointX+10
-
-		k = 0
-		for node in self.graph.nodes:
-			self.pointX = self.pointArray[k][0]
-			self.pointY = self.pointArray[k][1]
-			pointName = self.pointArray[k][2]
-			
-			pointylow = self.pointY-10
-			pointyhigh = self.pointY+10
-			pointxlow = self.pointX-10
-			pointxhigh = self.pointX+10
-			
+		r = 10
+		for (k, (pX, pY, n, c)) in enumerate(self.pointArray):
 			if state == GLUT_UP:
 				if button == GLUT_LEFT_BUTTON:
-					if x>pointxlow and x<pointxhigh and y>pointylow and y<pointyhigh:
-						if self.pointArray[k][3] == 1:
+					if int(x) in xrange(pX - r, pX + r) and int(y) in xrange(pY - r, pY + r):
+						if c == 1:
 							self.pointArray[k][3] = 0
 							self.DrawGLScene()
-						elif self.pointArray[k][3] == 0:
+						elif c == 0:
 							self.pointArray[k][3] = 1
 							self.DrawGLScene()
-			k = k + 1
 	
 	def drawlist(self, graphlist):
 		self.graphindex = 0
@@ -222,12 +195,4 @@ class GlDraw(object):
 		glutMainLoop()
 	
 	def draw(self, kkgraph):
-		self.graphindex = 0
-		self.graphlist = [kkgraph]
-		self.graph = kkgraph
-		self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
-		# glutMainLoop()
-		# self.graph.update_layout_animated(self.DrawGraph)
-		self.graph.update_layout()
-		self.DrawGraph(self.graph)
-		glutMainLoop()
+		self.drawlist([kkgraph])
