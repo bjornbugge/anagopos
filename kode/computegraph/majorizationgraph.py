@@ -37,7 +37,7 @@ class MajorizationGraph(reductiongraph.Graph):
 		for i in xrange(self.n):
 			self.Xt[i,0] = self.nodes[i].x
 			self.Xt[i,1] = self.nodes[i].y
-		self.epsilon = 10**-4
+		self.epsilon = 10**-5
 		self.current_stress = None
 		print "Epsilon is " + str(self.epsilon)
 	
@@ -85,7 +85,12 @@ class MajorizationGraph(reductiongraph.Graph):
 		LXt = self._get_L(self.Xt)
 		
 		b = LXt * self.Xt
-		x = solve(self.Lw, b)
+		try:
+			x = solve(self.Lw, b)
+		except:
+			print b
+			print self.Lw
+			raise Exception('Singular matrix')
 		Xt_new = x
 		
 		self.Xt_old = deepcopy(self.Xt)
@@ -126,7 +131,7 @@ class MajorizationGraph(reductiongraph.Graph):
 	def _get_D_matrix(self):
 		(D, A) = self._get_graph_distances()
 		W = numpy.mat(numpy.zeros([self.n, self.n]))
-		if  self.n > 100:
+		if not self._compute_distances():
 			alpha = 1
 		else:
 			alpha = 0.1
@@ -138,15 +143,21 @@ class MajorizationGraph(reductiongraph.Graph):
 				W[i,j] = W[j,i] = 1 + len(Ni.union(Nj)) - len(Ni.intersection(Nj))
 		# return numpy.multiply(D, W)
 		return (1 - alpha) * D + alpha * W + beta * A
-		
+	
 	def _get_graph_distances(self):
-		if self.n > 100:
+		if not self._compute_distances():
 			# A = SP.adjacencymatrix(self)
 			A = 0
 			return (A, numpy.mat(numpy.ones([self.n, self.n])))
 		print "Computing all-pairs distances..."
-		return SP.floydwarshal(self)
-		
+		# return SP.floydwarshal(self)
+		return SP.seidel(self)
+	
+	def _compute_distances(self):
+		# return self.n <= 100
+		# return True
+		return False
+	
 	def iter_done(self):
 		'''
 		Placeholder function for calling a screen update

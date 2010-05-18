@@ -10,6 +10,7 @@ class LambdaNode(object):
 		self.rightchild = None
 		self.parent = None
 		self.dirty = True # Indicates whether the term can be sanitized.
+		self.strrepr = ''
 		
 	def add(self, node):
 		'''
@@ -46,6 +47,15 @@ class LambdaNode(object):
 			new.parent = self
 			old.parent = None
 	
+	def makestr(self):
+		pass
+	
+	def copy(self):
+		'''
+		Use instead of the copy.deepcopy(), this is much much faster!
+		'''
+		pass
+	
 	def __eq__(self, other):
 		'''
 		Equality of two DAGs is defined as the string equality of their 
@@ -69,6 +79,15 @@ class Abstraction(LambdaNode):
 		self.variables = []
 		self.varname = ''
 	
+	def copy(self):
+		a = Abstraction()
+		c = self.leftchild.copy()
+		a.varname = self.varname
+		a.add(c)
+		a.dirty = self.dirty
+		a.strrepr = self.strrepr
+		return a
+	
 	def assignvar(self, variablenode):
 		'''
 		Register the node as a variable bound by this abstractor.
@@ -77,20 +96,55 @@ class Abstraction(LambdaNode):
 		if self.varname == '':
 			self.varname = variablenode.name
 	
+	def makestr(self):
+		self.leftchild.makestr()
+		self.strrepr = "#" + self.varname + ".(" + self.leftchild.strrepr + ")"
+	
 	def __repr__(self):
-		return "#" + self.varname + ".(" + str(self.leftchild) + ")"
+		return self.strrepr
+		# return "#" + self.varname + ".(" + str(self.leftchild) + ")"
 
 class Application(LambdaNode):
 	"""
 	Lambda application.
 	"""
+	def copy(self):
+		a = Application()
+		c1 = self.leftchild.copy()
+		c2 = self.rightchild.copy()
+		a.add(c1)
+		a.add(c2)
+		a.dirty = self.dirty
+		a.strrepr = self.strrepr
+		return a
+	
+	def makestr(self):
+		s1 = s2 = ''
+		if self.leftchild:
+			self.leftchild.makestr()
+			s1 = self.leftchild.strrepr
+		if self.rightchild:
+			self.rightchild.makestr()
+			s2 = self.rightchild.strrepr
+		self.strrepr = "(" + s1 + " " + s2 + ")"
+	
 	def __repr__(self):
-		return "(" + str(self.leftchild) + " " + str(self.rightchild) + ")"
+		return self.strrepr
+		# return "(" + str(self.leftchild) + " " + str(self.rightchild) + ")"
 
 class Variable(LambdaNode):
 	"""
 	A variable. Can be either bound or free.
 	"""
+	def copy(self):
+		v = Variable(self.name)
+		v.dirty = self.dirty
+		v.strrepr = self.strrepr
+		return v
+		
+	def makestr(self):
+		self.strrepr = self.name
+		
 	def __init__(self, n):
 		super(Variable, self).__init__()
 		self.name = n
@@ -102,4 +156,4 @@ class Variable(LambdaNode):
 		pass
 		
 	def __repr__(self):
-		return self.name
+		return self.strrepr

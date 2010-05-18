@@ -1,35 +1,5 @@
 import numpy as NP
-
-def dijkstra(G, v0):
-	def comparison(x, y):
-		if x[1] < y[1]: return -1
-		if x[1] == y[1]: return 0
-		return 1
-	def hasmore(D): return max(D.items(), key=lambda x:x[1])[1]
-	
-	Q = {}
-	for n in G.nodes:
-		Q[n] = True
-	F = []
-	L = {}
-	for node in Q:
-		L[node] = 2 * len(Q) # "Infinity"
-	L[v0] = 0
-	
-	while hasmore(Q):
-		v = None
-		l = L.items()
-		list.sort(l, cmp=comparison)
-		for (v, label) in l:
-			if Q[v]: break
-		F.append((v, L[v]))
-		Q[v] = False
-		for edge in v.children + v.parents:
-			w = edge.get_far(v)
-			weight = 1 # Fixed weights
-			if Q[w]:
-				L[w] = min(L[w], L[v] + weight)
-	return F
+# import pdb
 
 def adjacencymatrix(G):
 	n = len(G.nodes)
@@ -64,25 +34,63 @@ def floydwarshal(G):
 	D = NP.multiply(D, T.T) + NP.multiply(D.T, T)
 	return (D, A)
 
+def seidel(G):
+	'''
+	Implementation of the algorithm from 
+	"On the All-Pairs-Shortest-Path Problem"
+	by_ Raimund Seidel, (1992) (24th ANNUAL ACM STOC)
+	Returns (D, A) where D is the all-pairs-distances and A the adjacency
+	matrix of the graph G.
+	@inproceedings{129784,
+	 author = {Seidel, Raimund},
+	 title = {On the all-pairs-shortest-path problem},
+	 booktitle = {STOC '92: Proceedings of the twenty-fourth annual ACM symposium on Theory of computing},
+	 year = {1992},
+	 isbn = {0-89791-511-9},
+	 pages = {745--749},
+	 location = {Victoria, British Columbia, Canada},
+	 doi = {http://doi.acm.org/10.1145/129712.129784},
+	 publisher = {ACM},
+	 address = {New York, NY, USA},
+	 }
+	'''
+	def _APD(A):
+		n = len(A)
+		Z = NP.dot(A, A)
+		B = NP.zeros([n, n])
+		# (a_ij == 1 or z_ij > 0) ==> b_ij = 1
+		B[A == 1] = 1
+		B[Z > 0] = 1
+		# Set diagonal to zeros
+		B = B - B.diagonal() * NP.identity(n)
+		# If b_ij == 1, i different than j then return.
+		if (B + NP.identity(n)).all():
+			return 2 * B - A
+		T = _APD(B)
+		X = NP.dot(T, A)
+		degrees = NP.sum(A, axis=1)
+		# If x_ij >= t_ij * d_j
+		# then d_ij = 2 * t_ij
+		# else d_ij = 2 * t_ij - 1
+		S = NP.ones([n, n])
+		S[X >= T * NP.transpose(degrees)] = 0
+		D = 2 * T - S
+		return D
+	
+	A = adjacencymatrix(G)
+	return (_APD(A), A)
 
-def alltoall_shortest(G):
-	print "Computing all-to-all distances..."
-	distances = {}
-	V = G.nodes
-	for v in V:
-		print "    - running Dijkstras algorithm..."
-		d = dijkstra(G, v)
-		# d.remove((v, 0))
-		for (w, dist) in d:
-			if w == v:
-				continue
-			distances[(v, w)] = dist
-	return distances
+def testtime(numits):
+	from timeit import Timer
+	t1 = Timer("seidel(g)", "from shortestpath import *")
+	t2 = Timer("floydwarshal(g)", "from shortestpath import *")
+	# t3 = Timer("apd_dijkstra(g)", "from shortestpath import *")
+	print "With seidel():\t\t %.2f usec/pass" % (numits * t1.timeit(number=numits)/numits)
+	print "With floydwarshal():\t %.2f usec/pass" % (numits * t2.timeit(number=numits)/numits)
+	# print "With apd_dijkstra():\t %.2f usec/pass" % (numits * t3.timeit(number=numits)/numits)
 
 
-if __name__ == '__main__':
-	import reductiongraph as RG
-	import lambda_dag as LD
+def getgraph(s = 1000):
 	g = RG.Graph()
 	t1 = LD.Application()
 	t1.add(LD.Variable('v0'))
@@ -90,17 +98,20 @@ if __name__ == '__main__':
 	t2 = LD.Abstraction()
 	t2.add(LD.Variable('v0'))
 	t3 = LD.Abstraction()
-	t3_1 = LD.Application()
-	t3_1.add(LD.Variable('v0'))
-	t3_1.add(LD.Variable('v1'))
-	t3.add(t3_1)
+	ti = t3
+	for i in xrange(1000):
+		tinew = LD.Abstraction()
+		ti.add(tinew)
+		ti = tinew
+	ti.add(LD.Variable('BJ'))
+
 	t4 = LD.Application()
 	t4_1 = LD.Abstraction()
 	t4_1.add(LD.Variable('v0'))
 	t4_1.add(LD.Variable('v1'))
 	t4.add(t4_1)
 	t4.add(LD.Variable('v3'))
-	
+
 	n1=g.addnode(t1)
 	n2=g.addnode(t2)
 	n3=g.addnode(t3)
@@ -108,5 +119,67 @@ if __name__ == '__main__':
 	n1.addchild(n2)
 	n2.addchild(n3)
 	n1.addchild(n4)
+
+	return g
 	
-	v0 = g.nodes[0]
+import reductiongraph as RG
+import lambda_dag as LD
+g = RG.Graph()
+t1 = LD.Application()
+t1.add(LD.Variable('v0'))
+t1.add(LD.Variable('v1'))
+t2 = LD.Abstraction()
+t2.add(LD.Variable('v0'))
+t3 = LD.Abstraction()
+t3_1 = LD.Application()
+t3_1.add(LD.Variable('v0'))
+t3_1.add(LD.Variable('v1'))
+t3.add(t3_1)
+t4 = LD.Application()
+t4_1 = LD.Abstraction()
+t4_1.add(LD.Variable('v0'))
+t4_1.add(LD.Variable('v1'))
+t4.add(t4_1)
+t4.add(LD.Variable('v3'))
+
+n1=g.addnode(t1)
+n2=g.addnode(t2)
+n3=g.addnode(t3)
+n4=g.addnode(t4)
+n1.addchild(n2)
+n2.addchild(n3)
+n1.addchild(n4)
+
+v0 = g.nodes[0]
+	
+
+# 
+# if __name__ == '__main__':
+# 
+# 	g = RG.Graph()
+# 	t1 = LD.Application()
+# 	t1.add(LD.Variable('v0'))
+# 	t1.add(LD.Variable('v1'))
+# 	t2 = LD.Abstraction()
+# 	t2.add(LD.Variable('v0'))
+# 	t3 = LD.Abstraction()
+# 	t3_1 = LD.Application()
+# 	t3_1.add(LD.Variable('v0'))
+# 	t3_1.add(LD.Variable('v1'))
+# 	t3.add(t3_1)
+# 	t4 = LD.Application()
+# 	t4_1 = LD.Abstraction()
+# 	t4_1.add(LD.Variable('v0'))
+# 	t4_1.add(LD.Variable('v1'))
+# 	t4.add(t4_1)
+# 	t4.add(LD.Variable('v3'))
+# 	
+# 	n1=g.addnode(t1)
+# 	n2=g.addnode(t2)
+# 	n3=g.addnode(t3)
+# 	n4=g.addnode(t4)
+# 	n1.addchild(n2)
+# 	n2.addchild(n3)
+# 	n1.addchild(n4)
+# 	
+# 	v0 = g.nodes[0]

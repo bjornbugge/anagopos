@@ -1,8 +1,8 @@
 import lambda_dag
 import reductiongraph as graphrepr # nameclash!
 import math
-import copy
 import collections
+import pdb
 
 def assignvariables(root):
 	'''
@@ -93,13 +93,14 @@ def betareduce(term, redexpos):
 	left child, as returned from the function findredexes(x)
 	'''
 	# The copy that is transformed into a contractum.
-	contractum = copy.deepcopy(term)
+	contractum = _copyterm(term)
+	# pdb.set_trace()
 	appl = getnode(contractum, redexpos)
 	
 	# The active subterm that we'll reduce.
 	c = appl.leftchild
 	for v in c.variables:
-		v.parent.swap(v, copy.deepcopy(appl.rightchild))
+		v.parent.swap(v, _copyterm(appl.rightchild))
 	
 	# Remove the argument.
 	appl.remove(appl.rightchild)
@@ -144,13 +145,30 @@ def sanitize(term):
 			if not node.rightchild is None:
 				_getabstractors(node.rightchild, abstractors)
 	
+	def _getabstractorsiter(node):
+		nodelist = [node]
+		abstractors = []
+		while len(nodelist) > 0:
+			node = nodelist[0]
+			del nodelist[0]
+			if type(node) is lambda_dag.Abstraction:
+				abstractors.append(node)
+			if not node.leftchild is None:
+				nodelist.append(node.leftchild)
+				if not node.rightchild is None:
+					nodelist.append(node.rightchild)
+		return abstractors
+	
+	
 	abstractors = []
 	_getabstractors(term, abstractors)
+	# abstractors = _getabstractorsiter(term)
 	c = 0
 	for abstraction in abstractors:
 		alphaconvert(abstraction, 'v' + str(c))
 		c = c + 1
 	
+	term.makestr()
 	term.dirty = False
 
 def reductiongraph(root, maximum = 20):
@@ -203,13 +221,34 @@ def reductiongraphyield(root, start, end):
 			if not contractum in work:
 				work.append(contractum)
 			
-			
 			reductions = reductions + 1
 		del work[0]
 		if guard >= start:
-			yield copy.deepcopy(graph)
+			yield _copygraph(graph)
 		guard = guard + 1
 	print "Performed " + str(reductions) + " reductions."
 	if len(work) > 0:
 		print "Incomplete reduction graph!"
+
+def _copygraph(graph):
+	'''
+	Use this function instead of copy.deepcopy() because this one is much faster!
+	'''
+	graphcopy = graphrepr.Graph()
+	# Add nodes
+	for (key, node) in graph.nodesdict.iteritems():
+		graphcopy.addnode(node.term)
 	
+	# Add edges
+	for (key, node) in graph.nodesdict.iteritems():
+		nodecopy = graphcopy.nodesdict[key]
+		for c in node.children:
+			destkey = str(c.destination.term)
+			nodecopy.addchild(graphcopy.nodesdict[destkey])
+	
+	return graphcopy
+
+def _copyterm(term):
+	t = term.copy()
+	assignvariables(t)
+	return t

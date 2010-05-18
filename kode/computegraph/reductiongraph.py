@@ -43,6 +43,7 @@ class Graph(object):
 			self.nodes.append(node) # Append to list if we made a new node.
 		
 		return node
+	
 
 class Edge(object):
 	def __init__(self, source, destination):
@@ -67,7 +68,7 @@ class Node(object):
 	
 	def __repr__(self):
 		return "NODE " + str(self.term)
-	
+		
 	def addchild(self, child):
 		e = Edge(self, child)
 		
