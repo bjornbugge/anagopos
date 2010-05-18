@@ -11,7 +11,7 @@ class LambdaNode(object):
 		self.parent = None
 		self.dirty = True # Indicates whether the term can be sanitized.
 		self.strrepr = ''
-		
+	
 	def add(self, node):
 		'''
 		Add a child node. If this node already has two children, nothing happens.
@@ -130,7 +130,6 @@ class Application(LambdaNode):
 	
 	def __repr__(self):
 		return self.strrepr
-		# return "(" + str(self.leftchild) + " " + str(self.rightchild) + ")"
 
 class Variable(LambdaNode):
 	"""

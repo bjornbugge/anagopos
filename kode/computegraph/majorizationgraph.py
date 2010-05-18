@@ -6,6 +6,7 @@ import numpy
 import reductiongraph
 import shortestpath as SP
 from copy import deepcopy
+import time
 
 class MajorizationGraph(reductiongraph.Graph):
 	def __init__(self, graph = None, width = 200, height = 200):
@@ -37,7 +38,7 @@ class MajorizationGraph(reductiongraph.Graph):
 		for i in xrange(self.n):
 			self.Xt[i,0] = self.nodes[i].x
 			self.Xt[i,1] = self.nodes[i].y
-		self.epsilon = 10**-5
+		self.epsilon = 10**-10
 		self.current_stress = None
 		print "Epsilon is " + str(self.epsilon)
 	
@@ -129,20 +130,25 @@ class MajorizationGraph(reductiongraph.Graph):
 		return W
 	
 	def _get_D_matrix(self):
+		t = time.time()
 		(D, A) = self._get_graph_distances()
-		W = numpy.mat(numpy.zeros([self.n, self.n]))
+		print "D took: " + str(time.time() - t)
+		# W = numpy.mat(numpy.zeros([self.n, self.n]))
 		if not self._compute_distances():
 			alpha = 1
 		else:
 			alpha = 0.1
 		beta = 0
-		for i in xrange(self.n):
-			for j in xrange(i, self.n):
-				Ni = set(self.nodes[i].parents + self.nodes[i].children)
-				Nj = set(self.nodes[j].parents + self.nodes[j].children)
-				W[i,j] = W[j,i] = 1 + len(Ni.union(Nj)) - len(Ni.intersection(Nj))
+		#t = time.time()
+		#for i in xrange(self.n):
+		#	for j in xrange(i, self.n):
+		#		Ni = set(self.nodes[i].parents + self.nodes[i].children)
+		#		Nj = set(self.nodes[j].parents + self.nodes[j].children)
+		#		W[i,j] = W[j,i] = 1 + len(Ni.union(Nj)) - len(Ni.intersection(Nj))
+		#print "W took: " + str(time.time() - t)
 		# return numpy.multiply(D, W)
-		return (1 - alpha) * D + alpha * W + beta * A
+		# return (1 - alpha) * D + alpha * W + beta * A
+		return D
 	
 	def _get_graph_distances(self):
 		if not self._compute_distances():
@@ -155,8 +161,8 @@ class MajorizationGraph(reductiongraph.Graph):
 	
 	def _compute_distances(self):
 		# return self.n <= 100
-		# return True
-		return False
+		return True
+		# return False
 	
 	def iter_done(self):
 		'''

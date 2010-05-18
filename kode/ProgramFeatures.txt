@@ -24,22 +24,18 @@
  - Design a proper interface that can abstract away the type of algorithm, and
 	whether it is a GrahViz- or a home-cooked one. Must be easily extendable.
 
+ - Compare lambda terms better. Using the string comparison method is slow.
+
+ - When generating reduction graph with the "generator"-function, initialize
+   OpenGL stuff in the beginning and set it to listen to "graph ready"-events.
+   This way, the visualization begins immediately, reducing the perceived overhead.
+
 ----- Nice to have features -----
  - Zoom in to node
 
  - Dragging a node to re-organize graph
 
-(- select if you want arrows)?
-
-(- Owerwrite default node size and line width if wanted)?
-
 - Highlight different reduction strategies?
 
 - Home-cooked pickling. Pickle and cPickle cannot handle large reductiongraphs.
 
-(- Show Current Term as Movie [button] (pop-up box with settings) (Shortcut: Shift+M)) 
-	-- At tegne en term som en "film" kan koges ned til at tilføje knuder løbende til en 
-	   allerede tegnet graf, altså at lave en "ny" graf med lidt flere knuder, men hvor 
-	   alle de knuder der også er i grafen til trinnet før har samme positioner som 
-	   de havde i trinnet før. Derfor er det her det samme som "Step forwards/backwards[...]".
-	

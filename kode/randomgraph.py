@@ -15,6 +15,7 @@ def generatereductiongraph():
 	'''
 	term = randomdag()
 	operations.assignvariables(term)
+	term.makestr()
 	print term
 	print "----"
 	g1 = operations.reductiongraph(term)
