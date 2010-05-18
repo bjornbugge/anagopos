@@ -10,8 +10,9 @@ from computegraph.majorizationgraph import MajorizationGraph
 from computegraph.reductiongraph import *
 import pickle
 import copy
+import cProfile as profile
 
-#t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
+# t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
 # t = '(#x.((x x) x) #y.((y y) y))'
 # t = '#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))'
 # t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
@@ -20,31 +21,26 @@ import copy
 # t = '(#B1.(B1) (#B2.((#B3.((#B4.((B3 B3)) #B5.((B2 (#B6.(#B7.(#B8.(B7))) (#B9.(B9) B5)))))) #B10.(B10))) #B11.(#B12.(#B13.(B12)))))'
 # t = '(#B1.(#B2.(#B3.(#B4.(B2)))) #B5.(#B6.((#B7.(#B8.((#B9.(B7) B7))) ((#B10.(#B11.(#B12.(B11))) B5) ((#B13.((#B14.(#B15.(#B16.(#B17.(B17)))) (B5 B5))) (#B18.(#B19.(#B20.(B18))) #B21.((#B22.(B6) B21)))) (#B23.(#B24.(B5)) B5)))))))'
 # t = '((#B1.(B1) (#B2.(#B3.(#B4.(#B5.(#B6.(B5))))) #B7.(((#B8.(#B9.((#B10.(#B11.(#B12.(#B13.(B11)))) B9))) #B14.(#B15.(B7))) #B16.(#B17.(#B18.(#B19.(#B20.(#B21.(B21)))))))))) (#B22.((#B23.(#B24.(B24)) #B25.((#B26.(B26) #B27.(B27))))) #B28.(#B29.((B29 #B30.((F1 (B30 #B31.(#B32.(B29))))))))))'
-# t = '(((((#B1.(#B2.(#B3.(#B4.(#B5.(B1))))) (#B6.((#B7.(B6) #B8.(B6))) F1)) #B9.(B9)) (#B10.(#B11.(#B12.(#B13.(#B14.(B11))))) #B15.((#B16.(B16) #B17.(#B18.(#B19.((B17 #B20.(F2))))))))) (#B21.(((#B22.(#B23.(#B24.(B21))) (B21 #B25.(#B26.(B26)))) #B27.(#B28.(#B29.((B27 B29)))))) #B30.(#B31.((((#B32.(#B33.(B32)) B30) #B34.(B34)) #B35.(#B36.(#B37.(#B38.(B30))))))))) (#B39.(#B40.(#B41.(#B42.(B39)))) (#B43.((B43 B43)) #B44.(B44))))'
+t = '(((((#B1.(#B2.(#B3.(#B4.(#B5.(B1))))) (#B6.((#B7.(B6) #B8.(B6))) F1)) #B9.(B9)) (#B10.(#B11.(#B12.(#B13.(#B14.(B11))))) #B15.((#B16.(B16) #B17.(#B18.(#B19.((B17 #B20.(F2))))))))) (#B21.(((#B22.(#B23.(#B24.(B21))) (B21 #B25.(#B26.(B26)))) #B27.(#B28.(#B29.((B27 B29)))))) #B30.(#B31.((((#B32.(#B33.(B32)) B30) #B34.(B34)) #B35.(#B36.(#B37.(#B38.(B30))))))))) (#B39.(#B40.(#B41.(#B42.(B39)))) (#B43.((B43 B43)) #B44.(B44))))'
 # t = '#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))'
 # nedenstaaende har 600 knuder (med 200)
-t = '(((((#B1.(#B2.(#B3.(#B4.(#B5.(B1))))) (#B6.((#B7.(B6) #B8.(B6))) F1))#B9.(B9)) (#B10.(#B11.(#B12.(#B13.(#B14.(B11))))) #B15.((#B16.(B16)#B17.(#B18.(#B19.((B17 #B20.(F2)))))))))(#B21.(((#B22.(#B23.(#B24.(B21))) (B21 #B25.(#B26.(B26))))#B27.(#B28.(#B29.((B27 B29)))))) #B30.(#B31.((((#B32.(#B33.(B32)) B30)#B34.(B34)) #B35.(#B36.(#B37.(#B38.(B30)))))))))(#B39.(#B40.(#B41.(#B42.(B39)))) (#B43.((B43 B43)) #B44.(B44))))'
-
-filename = 'lastone.graph'
-forcenew = True
+# t = '(((((#B1.(#B2.(#B3.(#B4.(#B5.(B1))))) (#B6.((#B7.(B6) #B8.(B6))) F1))#B9.(B9)) (#B10.(#B11.(#B12.(#B13.(#B14.(B11))))) #B15.((#B16.(B16)#B17.(#B18.(#B19.((B17 #B20.(F2)))))))))(#B21.(((#B22.(#B23.(#B24.(B21))) (B21 #B25.(#B26.(B26))))#B27.(#B28.(#B29.((B27 B29)))))) #B30.(#B31.((((#B32.(#B33.(B32)) B30)#B34.(B34)) #B35.(#B36.(#B37.(#B38.(B30)))))))))(#B39.(#B40.(#B41.(#B42.(B39)))) (#B43.((B43 B43)) #B44.(B44))))'
+# The Y combinator
+# t = '#f.(#x.(f (x x))) (#x.(f (x x))) #y.y'
 
 def draw(term):
-	g = operations.reductiongraph(term, 8)
+	g = operations.reductiongraph(term, 500)
 	print "Graph has " + str(len(g.nodes)) + " nodes."
-	# graph = KKGraph(g, 800, 500)
 	graph = MajorizationGraph(g, 1000, 730)
 	gldraw = GlDraw()
+	gldraw.InitGL(1024, 760)
 	gldraw.draw(graph)
 
 def drawGV(term):
 	g = operations.reductiongraph(term, 20)
 	print "Graph has " + str(len(g.nodes)) + " nodes."
-	# graph = KKGraph(g, 800, 500)
 	gv = pygraphviztest.GraphViz()
 	gv.draw(g)
-	# graph = MajorizationGraph(g, 1000, 730)
-	# gldraw = GlDraw()
-	# gldraw.draw(graph)
 	
 def drawitGV(term):
 	gldraw = GlDraw()
@@ -54,16 +50,18 @@ def drawitGV(term):
 			continue
 		mgs.append(MajorizationGraph(g, 1000, 730))
 	print "Drawing " + str(len(mgs)) + " different graph versions."
+	gldraw.InitGL(1024, 760)
 	gldraw.drawlist(mgs)
 
 def drawit(term):
 	gldraw = GlDraw()
 	mgs = []
-	for g in operations.reductiongraphyield(term, 0, 20):
-		if len(g.nodes) <= 0:
+	for g in operations.reductiongraphyield(term, 0, 25):
+		if len(g.nodes) <= 5:
 			continue
 		mgs.append(MajorizationGraph(g, 1000, 730))
 	print "Drawing " + str(len(mgs)) + " different graph versions."
+	gldraw.InitGL(1024, 760)
 	gldraw.drawlist(mgs)
 
 if __name__ == "__main__":
@@ -74,7 +72,8 @@ if __name__ == "__main__":
 	# g.draw(kkgraph)
 	term = parser.parse(t)
 	operations.assignvariables(term)
-	drawGV(term)
+	# drawGV(term)
+	profile.run('draw(term)', 'testdraw.profile', sort = 1)
 	# graph = graphify(t)
 	# print "Drawing graph..."
 	# g = gldraw.GlDraw()
