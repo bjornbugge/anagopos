@@ -7,6 +7,7 @@ class Graph(object):
 		# to perform fast lookups. The list is needed in the kamada-kawai algorithm.
 		self.nodesdict = {}
 		self.nodes = []
+		self.newest = None
 	
 	def __repr__(self):
 		o = ''
@@ -28,7 +29,7 @@ class Graph(object):
 		
 		print o
 	
-	def addnode(self, term):
+	def addnode(self, term, name = None):
 		'''
 		Adds a node made from the given term to the graph and returns it.
 		If the node is already present in the graph, the method just returns it.
@@ -38,11 +39,23 @@ class Graph(object):
 		try:
 			node = self.nodesdict[str(term)]
 		except KeyError:
-			node = Node(term, 'N'+str(len(self.nodesdict)))
+			if name == None:
+				name = 'N'+str(len(self.nodesdict))
+			node = Node(term, name)
 			self.nodesdict[str(term)] = node
 			self.nodes.append(node) # Append to list if we made a new node.
 		
 		return node
+	
+	def getnewest(self):
+		if self.newest is None:
+			cur = 0
+			newest = None
+			for n in self.nodes:
+				if n.term.generation > cur:
+					newest = n
+			self.newest = newest
+		return self.newest
 	
 
 class Edge(object):
@@ -65,6 +78,7 @@ class Node(object):
 		self.parents = []
 		self.term = term
 		self.name = name
+		self.new = False
 	
 	def __repr__(self):
 		return "NODE " + str(self.term)

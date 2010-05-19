@@ -3,6 +3,7 @@ import reductiongraph as graphrepr # nameclash!
 import math
 import collections
 import pdb
+import copy
 
 def assignvariables(root):
 	'''
@@ -172,16 +173,19 @@ def reductiongraphyield(root, start, end):
 	in reductiongraph.py.
 	'''
 	work = [root]
+	root.redexpositions = findredexes(root)
 	graph = graphrepr.Graph()
 	guard = 0
 	reductions = 0
 	while len(work) > 0 and (end == 0 or guard < end):
 		term = work[0]
-		positions = findredexes(term)
+		term.generation = guard
+		positions = term.redexpositions
 		for pos in positions:
 			(term, contractum) = betareduce(term, pos)
 			n1 = graph.addnode(term)
 			n2 = graph.addnode(contractum)
+			contractum.redexpositions = findredexes(contractum)
 			n1.addchild(n2)
 			
 			if not contractum in work:
@@ -190,7 +194,8 @@ def reductiongraphyield(root, start, end):
 			reductions = reductions + 1
 		del work[0]
 		if guard >= start:
-			yield _copygraph(graph)
+			# yield _copygraph(graph)
+			yield copy.deepcopy(graph)
 		guard = guard + 1
 	print "Performed " + str(reductions) + " reductions."
 	if len(work) > 0:
@@ -202,7 +207,7 @@ def _copygraph(graph):
 	'''
 	graphcopy = graphrepr.Graph()
 	# Add nodes
-	map(lambda x:graphcopy.addnode(x[1].term), graph.nodesdict.iteritems())
+	map(lambda x:graphcopy.addnode(x[1].term, x[1].name), graph.nodesdict.iteritems())
 	
 	# Add edges
 	for (key, node) in graph.nodesdict.iteritems():
@@ -210,7 +215,7 @@ def _copygraph(graph):
 		for c in node.children:
 			destkey = str(c.destination.term)
 			nodecopy.addchild(graphcopy.nodesdict[destkey])
-	
+		
 	return graphcopy
 
 def _copyterm(term):

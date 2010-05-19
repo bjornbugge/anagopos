@@ -1,9 +1,6 @@
 import math
 import time
-import random
 import computegraph.operations as operations
-import lambdaparser as parser
-import randomgraph
 import graphicsutils
 from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
@@ -13,16 +10,17 @@ from OpenGL.GL import *
 
 
 class GlDraw(object):
-	def __init__(self):
+	def __init__(self, width = 1024, height = 768):
 		self.term = None
 		self.graph = None
 		self.node = None
 		self.fullscreen = 0
-		self.window_height = 768
-		self.window_width = 1024
+		self.window_height = height
+		self.window_width = width
 		self.resizeWindow = 0
-		self.pointSize = 10
+		self.pointSize = 5
 		self.pointArray = None
+		self.InitGL(width, height)
 			
 	def InitGL(self, Width, Height):
 		glutInit()
@@ -32,7 +30,7 @@ class GlDraw(object):
 		
 		self.resizeWindow = 0
 		
-		glutInitWindowSize(1024, 768)
+		glutInitWindowSize(Width, Height)
 		glutInitWindowPosition(self.window_x, self.window_y)
 		window = glutCreateWindow("Graphs")
 		glutDisplayFunc(self.DrawGLScene)
@@ -48,7 +46,6 @@ class GlDraw(object):
 		glMatrixMode(GL_MODELVIEW)
 		
 		glClearColor(1.0, 1.0, 1.0, 0.0)	# This Will Clear The Background Color To White
-		# glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
 		glDisable(GL_DEPTH_TEST)			# Disables Depth Testing
 		glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
 		
@@ -63,20 +60,13 @@ class GlDraw(object):
 		glEnable(GL_LINE_SMOOTH)
 		glEnable(GL_POINT_SMOOTH)
 		glEnable(GL_POLYGON_SMOOTH)
-		
-		glPointSize(self.pointSize)
+		# self.pointSize = (((glutGet(GLUT_WINDOW_HEIGHT) + glutGet(GLUT_WINDOW_WIDTH))/2)/50)
 	
 	def keyPressed(self, *args):
 		if args[0] == '\033':
 		    sys.exit()
 		elif args[0] == 'u':
-			self.pointSize = (((glutGet(GLUT_WINDOW_HEIGHT) + glutGet(GLUT_WINDOW_WIDTH))/2)/50)
-			k = 0
-			for node in self.graph.nodes:
-				node.x = random.randint(1, self.window_width)
-				node.y = random.randint(1, self.window_height)
-				self.pointArray[k][3] = 0
-				k = k + 1
+			self.graph.reset(clearstate = False)
 			self.graph.update_layout_animated(self.DrawGraph)
 			self.resizeWindow = 0
 			self.DrawGLScene()
@@ -99,19 +89,24 @@ class GlDraw(object):
 			if self.graphindex == len(self.graphlist):
 				self.graphindex -= 1
 				return
-			
 			self.graph = self.graphlist[self.graphindex]
-			self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
-			self.graph.update_layout()
-			self.DrawGraph(self.graph)
+			if self.graph.virgin:
+				self.graph.virgin = False
+				self.graph.initwith(self.graphlist[self.graphindex - 1])
+				self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+				self.graph.update_layout_animated(self.DrawGraph)
+			else:
+				self.DrawGraph(self.graph)
+			
 		elif args[0] == 'b': # Step backwards
 			self.graphindex -= 1
 			if self.graphindex < 0:
 				self.graphindex = 0
 			self.graph = self.graphlist[self.graphindex]
-			self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
-			self.graph.update_layout()
+			# self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+			# self.graph.update_layout()
 			self.DrawGraph(self.graph)
+		
 		elif args[0] == 'm': # Improve current graph
 			self.graph.update_layout()
 			self.DrawGraph(self.graph)
@@ -130,9 +125,9 @@ class GlDraw(object):
 	
 	def DrawGraph(self, graph):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-		glLineWidth(1)
 		
-		# Draw directed arcs.
+		# Draw directed arcs before the nodes so the arcs don't overlap the nodes.
+		newest = graph.getnewest()
 		for node in graph.nodes:
 			for edge in node.children:
 				far_node = edge.get_far(node)
@@ -144,18 +139,27 @@ class GlDraw(object):
 				y1 = float(node.y)		#/100
 				x2 = float(far_node.x)	#/100
 				y2 = float(far_node.y)	#/100
-    
-				glColor3f(0.2, 0.4, 0.8)
+				
+				# if node.new or far_node.new:
+				if node is newest:
+					glColor3f(153.0/255.0, 32.0/255.0, 32.0/255.0)
+					glLineWidth(2)
+				else:
+					glColor3f(130.0/255.0, 172.0/255.0, 245.0/255.0)
+					glLineWidth(1)
 				glBegin(GL_LINES)
 				glVertex2f(x1, y1)
-				glColor3f(0.9, 0.5, 0.2)
+				#if node.new or far_node.new:
+				#	glColor3f(32.0/255.0, 153.0/255.0, 34.0/255.0)
+				#else:
+				#	glColor3f(165.0/255.0, 255/255, 135.0/255.0)
+					
 				glVertex2f(x2, y2)
 				glEnd()
-				# glColor3f(0.1, 0.3, 0.7)
-				graphicsutils.arrowhead(x1, y1, x2, y2, self.pointSize / 2, 10, 13)
+				glColor3f(255.0/255.0, 150.0/255.0, 31.0/255.0)
+				graphicsutils.arrowhead(x1, y1, x2, y2, self.pointSize / 2, 15, 12)
 		
-		# Draw nodes.
-		for (j, node) in enumerate(self.graph.nodes):
+		for (j, node) in enumerate(graph.nodes):
 			self.pointArray[j][0] = node.x
 			self.pointArray[j][1] = node.y
 			self.pointArray[j][2] = node.term
@@ -165,12 +169,22 @@ class GlDraw(object):
 			else:
 				glColor3f(0.0, 0.0, 0.0)
 			
+			if len(node.term.redexpositions) == 0:
+				# glColor3f(0.7, 0.7, 0.0)
+				p = 5 * self.pointSize
+			elif node is newest:
+				p = 2 * self.pointSize
+			else:
+				p = self.pointSize
+			
+			glPointSize(p)
+			
 			glBegin(GL_POINTS)
 			glVertex2f(node.x, node.y)
 			glEnd()
 			
-			graphicsutils.write(node.x, node.y + self.pointSize, node.name)
-			
+			graphicsutils.write(node.x, node.y + p, node.name)
+		
 		glutSwapBuffers()
 	
 	def processMouse(self, button, state, x, y):
@@ -191,7 +205,8 @@ class GlDraw(object):
 		self.graphlist = graphlist
 		self.graph = graphlist[0]
 		self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
-		self.graph.update_layout_animated(self.DrawGraph)
+		# self.graph.update_layout_animated(self.DrawGraph)
+		self.graph.update_layout()
 		glutMainLoop()
 	
 	def draw(self, kkgraph):

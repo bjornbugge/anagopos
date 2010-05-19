@@ -87,41 +87,8 @@ def testtime(numits):
 	# t3 = Timer("apd_dijkstra(g)", "from shortestpath import *")
 	print "With seidel():\t\t %.2f usec/pass" % (numits * t1.timeit(number=numits)/numits)
 	print "With floydwarshal():\t %.2f usec/pass" % (numits * t2.timeit(number=numits)/numits)
-	# print "With apd_dijkstra():\t %.2f usec/pass" % (numits * t3.timeit(number=numits)/numits)
 
 
-def getgraph(s = 1000):
-	g = RG.Graph()
-	t1 = LD.Application()
-	t1.add(LD.Variable('v0'))
-	t1.add(LD.Variable('v1'))
-	t2 = LD.Abstraction()
-	t2.add(LD.Variable('v0'))
-	t3 = LD.Abstraction()
-	ti = t3
-	for i in xrange(1000):
-		tinew = LD.Abstraction()
-		ti.add(tinew)
-		ti = tinew
-	ti.add(LD.Variable('BJ'))
-
-	t4 = LD.Application()
-	t4_1 = LD.Abstraction()
-	t4_1.add(LD.Variable('v0'))
-	t4_1.add(LD.Variable('v1'))
-	t4.add(t4_1)
-	t4.add(LD.Variable('v3'))
-
-	n1=g.addnode(t1)
-	n2=g.addnode(t2)
-	n3=g.addnode(t3)
-	n4=g.addnode(t4)
-	n1.addchild(n2)
-	n2.addchild(n3)
-	n1.addchild(n4)
-
-	return g
-	
 import reductiongraph as RG
 import lambda_dag as LD
 g = RG.Graph()
@@ -151,35 +118,3 @@ n2.addchild(n3)
 n1.addchild(n4)
 
 v0 = g.nodes[0]
-	
-
-# 
-# if __name__ == '__main__':
-# 
-# 	g = RG.Graph()
-# 	t1 = LD.Application()
-# 	t1.add(LD.Variable('v0'))
-# 	t1.add(LD.Variable('v1'))
-# 	t2 = LD.Abstraction()
-# 	t2.add(LD.Variable('v0'))
-# 	t3 = LD.Abstraction()
-# 	t3_1 = LD.Application()
-# 	t3_1.add(LD.Variable('v0'))
-# 	t3_1.add(LD.Variable('v1'))
-# 	t3.add(t3_1)
-# 	t4 = LD.Application()
-# 	t4_1 = LD.Abstraction()
-# 	t4_1.add(LD.Variable('v0'))
-# 	t4_1.add(LD.Variable('v1'))
-# 	t4.add(t4_1)
-# 	t4.add(LD.Variable('v3'))
-# 	
-# 	n1=g.addnode(t1)
-# 	n2=g.addnode(t2)
-# 	n3=g.addnode(t3)
-# 	n4=g.addnode(t4)
-# 	n1.addchild(n2)
-# 	n2.addchild(n3)
-# 	n1.addchild(n4)
-# 	
-# 	v0 = g.nodes[0]

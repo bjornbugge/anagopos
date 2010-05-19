@@ -11,6 +11,8 @@ class LambdaNode(object):
 		self.parent = None
 		self.dirty = True # Indicates whether the term can be sanitized.
 		self.strrepr = ''
+		self.redexepositions = []
+		self.generation = -1
 	
 	def add(self, node):
 		'''
@@ -86,6 +88,8 @@ class Abstraction(LambdaNode):
 		a.add(c)
 		a.dirty = self.dirty
 		a.strrepr = self.strrepr
+		a.redexepositions.extend(self.redexepositions)
+		a.generation = self.generation
 		return a
 	
 	def assignvar(self, variablenode):
@@ -116,6 +120,8 @@ class Application(LambdaNode):
 		a.add(c2)
 		a.dirty = self.dirty
 		a.strrepr = self.strrepr
+		a.redexepositions.extend(self.redexepositions)
+		a.generation = self.generation
 		return a
 	
 	def makestr(self):
@@ -139,6 +145,8 @@ class Variable(LambdaNode):
 		v = Variable(self.name)
 		v.dirty = self.dirty
 		v.strrepr = self.strrepr
+		v.redexepositions.extend(self.redexepositions)
+		v.generation = self.generation
 		return v
 		
 	def makestr(self):
