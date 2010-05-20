@@ -32,7 +32,7 @@ class GraphViz(object):
 		G = pgv.AGraph()
 		
 		for node in self.graph.nodes:
-			G.add_node(str(node.name))#,pos="300,200")
+			G.add_node(str(node.name))
 		
 		for node in self.graph.nodes:
 			for edge in node.children:
@@ -49,52 +49,34 @@ class GraphViz(object):
 		
 		print "3 - " + str(time.time())
 		
-		# Default to neato
-		# drawG = G.layout()
-		G.layout(prog='twopi')
-		# G.draw(fname,prog='sfdp')
-		
-		G.write("img/fdfsdfsdf2.dot")
+		G.layout(prog='dot')
+		G.draw("img/1111.png")
 		
 		print "4 - " + str(time.time())
 		
-		# G.write('img/testtest.dot')
-		# Disse virker:
-		#	circo	-	tegner i en cirkel								- Bezier
-		#	dot		-	tegner i niveauer								+ Bezier
-		#	neato	-	(fejl) tegner anne knuder i samme punkt			- Bezier
-		#	fdp		-	tegner paent, men virker lidt random			- Bezier
-		#	sfdp	-	virker ikke!
-		#	twopi	-	tegner i flere cirkler							- Bezier
-		# twopi, gvcolor, wc, ccomps, tred, sccmap, fdp, circo, neato, acyclic, nop, gvpr, dot
-		
-		#k = 0
-		#for node in self.graph.nodes:
-		#	nodePos = G.nodes()[k].attr["pos"]
-		#	newNodePos = string.split(nodePos,',')
-		#	posX = newNodePos[0]
-		#	posY = newNodePos[1]
-		#	node.x = float(posX)
-		#	node.y = float(posY)
-		#	# print "Node: " + str(node)
-		#	# print "X: " + str(posX)
-		#	# print "Y: " + str(posY)
-		#	k = k + 1
+		#G.write("img/fdfsdfsdf2.dot")
+		#G.draw("img/fdfsdfsdf2.png")
 		
 		print "5 - " + str(time.time())
 		
 		k = 0
+		n = 0
 		ll = 0
 
 		#for n in G.edges():
 		E = G.edges()
-		for node in self.graph.nodes:
-			ll = ll + 1
-			for edge in node.children:
+		N = G.nodes()
+		
+		for node in N:
+			graphnode = self.graph.nodenametable[node.name]
+			nodePos = node.attr["pos"]
+			graphnode.x = float(string.split(str(nodePos),',')[0])
+			graphnode.y = float(string.split(str(nodePos),',')[1])
+			for edge in graphnode.children:
 				edgePos = E[k].attr["pos"]
 				newEdgePos = string.split(edgePos,' ')
-				node1 = newEdgePos[1]
-				node2 = newEdgePos[len(newEdgePos)-1]
+				#node1 = newEdgePos[1]
+				#node2 = newEdgePos[len(newEdgePos)-1]
 				edge.ipoints = [[0 for col in range(2)] for row in range(len(newEdgePos))]
 				yy = 0
 				for y in range(len(newEdgePos)):
@@ -102,49 +84,48 @@ class GraphViz(object):
 					edge.ipoints[yy][1] = float(string.split(str(newEdgePos[y]),',')[1])
 					yy = yy + 1
 				
-				node.x = float(string.split(node1,',')[0])
-				node.y = float(string.split(node1,',')[1])
-				edge.get_far(node).x = float(string.split(node2,',')[0])
-				edge.get_far(node).y = float(string.split(node2,',')[1])
+				#node.x = float(string.split(node1,',')[0])
+				#node.y = float(string.split(node1,',')[1])
+				#edge.get_far(node).x = float(string.split(node2,',')[0])
+				#edge.get_far(node).y = float(string.split(node2,',')[1])
 				
 				#print "Edge: " + str(G.edges()[k][0]) + "  ----->  " + str(G.edges()[k][1]) + " - POS1: " + str(node1) + " - POS2: " + str(node2)
 				k=k+1
+			#edge.ipoints[0][0] = node.x
+			#edge.ipoints[0][1] = node.y
+			n = n + 1
+			#print "Graph Node: " + str(graphnode.name) + " - X: " + str(graphnode.x)
 		
+		graphnodeN1 = self.graph.nodenametable["N1"]
+		#print "N1 Child: " + str(graphnodeN1.children[0].ipoints)
 		
-		
-	#   h = 0
-	#   j = 0
-	#   for node in self.graph.nodes:
-	#   	#print "     " + str(h)
-	#   	for edge in node.children:
-	#   		
-	#   		edgePos = G.edges()[j].attr["pos"]
-	#   		newEdgePos = string.split(edgePos,' ')
-	#   		node1 = newEdgePos[1]
-	#   		node2 = newEdgePos[len(newEdgePos)-1]
-	#   		#print str(j) + " - Node 1: " +  str(node1)
-	#   		#print str(j) + " - Node 2: " + str(node2)
-	#   		
-	#   		node.x = float(string.split(node1,',')[0])
-	#   		node.y = float(string.split(node1,',')[1])
-	#   		
-	#   		edge.get_far(node).x = float(string.split(node2,',')[0])
-	#   		edge.get_far(node).y = float(string.split(node2,',')[1])
-	#   		
-	#   		j = j + 1
-	#   		
-	#   	h = h + 1
-				# far_node = edge.get_far(node)
-				# if node == far_node:
-				# 	print "Circular edge."
-				# 	continue
-                # 
-				# G.add_edge(str(node.name),str(far_node.name),color='pink',arrowhead='normal')
-		
-		
-		# Write previously positioned graph to PNG file
-		# G.draw('img/test.dot')
-		# G.draw('testfile.ps',prog='circo')
+		#for node in self.graph.nodes:
+		#	nodePos = N[n].attr["pos"]
+		#	node.x = float(string.split(str(nodePos),',')[0])
+		#	node.y = float(string.split(str(nodePos),',')[1])
+		#	ll = ll + 1
+		#	for edge in node.children:
+		#		edgePos = E[k].attr["pos"]
+		#		newEdgePos = string.split(edgePos,' ')
+		#		#node1 = newEdgePos[1]
+		#		#node2 = newEdgePos[len(newEdgePos)-1]
+		#		edge.ipoints = [[0 for col in range(2)] for row in range(len(newEdgePos))]
+		#		yy = 0
+		#		for y in range(len(newEdgePos)):
+		#			edge.ipoints[yy][0] = float(string.split(str(newEdgePos[y]),',')[0])
+		#			edge.ipoints[yy][1] = float(string.split(str(newEdgePos[y]),',')[1])
+		#			yy = yy + 1
+		#		
+		#		#node.x = float(string.split(node1,',')[0])
+		#		#node.y = float(string.split(node1,',')[1])
+		#		#edge.get_far(node).x = float(string.split(node2,',')[0])
+		#		#edge.get_far(node).y = float(string.split(node2,',')[1])
+		#		
+		#		#print "Edge: " + str(G.edges()[k][0]) + "  ----->  " + str(G.edges()[k][1]) + " - POS1: " + str(node1) + " - POS2: " + str(node2)
+		#		k=k+1
+		#	#edge.ipoints[0][0] = node.x
+		#	#edge.ipoints[0][1] = node.y
+		#	n = n + 1
 		
 		print "6 - " + str(time.time())
 		endtime = time.time()
@@ -168,5 +149,10 @@ class GraphViz(object):
 		for node in self.graph.nodes:
 			node.x = random.randint(1, 1000)
 			node.y = random.randint(1, 700)
+			for edge in node.children:
+				for y in range(len(edge.ipoints)):
+					edge.ipoints[y][0] = random.randint(1, 10)
+					edge.ipoints[y][1] = random.randint(1, 10)
+				#print "Points: " + str(edge.ipoints)
 		self.viz()
 		return self.graph

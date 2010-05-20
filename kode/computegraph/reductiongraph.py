@@ -7,6 +7,7 @@ class Graph(object):
 		# to perform fast lookups. The list is needed in the kamada-kawai algorithm.
 		self.nodesdict = {}
 		self.nodes = []
+		self.nodenametable = {}
 		self.newest = None
 	
 	def __repr__(self):
@@ -39,6 +40,9 @@ class Graph(object):
 		try:
 			node = self.nodesdict[str(term)]
 		except KeyError:
+			name = 'N'+str(len(self.nodesdict))
+			node = Node(term, name)
+			self.nodenametable[name] = node
 			if name == None:
 				name = 'N'+str(len(self.nodesdict))
 			node = Node(term, name)
