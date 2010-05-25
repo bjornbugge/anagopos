@@ -1,0 +1,26 @@
+- Egenskaber ved reduktionsgrafer relevante for visualiseringen af dem.
+  o Sammenhængende.
+  o (Kan være) Store!
+  o Med retning => pile.
+  o Høj spredning af knudevalens (måske?).
+
+- Beskrivelse af opbygningen af koden.
+  o Overvejelser mht. effektivitet.
+  o Gennemgang af algoritmerne anvendt, samt forklaring af GraphViz-biblioteket.
+  o (Kort) Beskrivelse af GUIen.
+  o Pointering af at det er "let" at tilføje nye tegnealgoritmer, samt at anvende
+    tegnemodulet til en helt anden type grafer af anden oprindelse end reduktionsgraferne.
+
+- Sammenligning af de forskellige visualiseringsalgoritmer på performance og æstetik.
+  o Diskussion af styrker og svagheder ved de forskellige algoritmer samt 
+    muligheder for at kombinere dem.
+
+- Overvejelser mht. det visuelle udtryk; farvevalg, størrelse på pilehoveder og den slags.
+
+- Diskussion af ekstra (ej implementerede) features.
+  o Farvning af "reduktionsrækkefølgen" vha. et farvenuancespænd på kanterne: 
+    De ældste kanter farves lysere end de nyeste kanter.
+  o Navigation, zoom/pan, fish eye, fastlåsning af visse knuder mens resten 
+    genpositioneres.
+
+- 
