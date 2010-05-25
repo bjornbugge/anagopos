@@ -9,6 +9,7 @@ class Graph(object):
 		self.nodes = []
 		self.nodenametable = {}
 		self.newest = None
+		self.virgin = True
 	
 	def __repr__(self):
 		o = ''

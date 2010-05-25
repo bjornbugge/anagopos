@@ -159,7 +159,6 @@ def reductiongraphyield(root, start, end):
 		positions = term.redexpositions
 		n1 = graph.addnode(term)
 		graph.newest = n1
-		print "Name of newest: " + str(graph.newest.name)
 		for pos in positions:
 			(term, contractum) = betareduce(term, pos)
 			
@@ -196,7 +195,6 @@ def _copygraph(graph):
 			nodecopy.addchild(graphcopy.nodesdict[destkey])
 	
 	newestkey = str(graph.newest.term)
-	print newestkey
 	graphcopy.newest = graphcopy.nodesdict[newestkey]
 	return graphcopy
 

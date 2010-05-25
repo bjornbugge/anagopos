@@ -8,6 +8,7 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from OpenGL.GL import *
 
+import pdb
 
 class GlDraw(object):
 	def __init__(self, width = 1024, height = 768):
@@ -125,9 +126,10 @@ class GlDraw(object):
 	
 	def DrawGraph(self, graph):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-		
+		newcolor = (153.0/255.0, 32.0/255.0, 32.0/255.0)
 		# Draw directed arcs before the nodes so the arcs don't overlap the nodes.
-		newest = graph.getnewest()
+		# pdb.set_trace()
+		newest = graph.newest
 		for node in graph.nodes:
 			for edge in node.children:
 				far_node = edge.get_far(node)
@@ -135,14 +137,14 @@ class GlDraw(object):
 					print "Circular edge."
 					continue
     
-				x1 = float(node.x)		#/100
-				y1 = float(node.y)		#/100
-				x2 = float(far_node.x)	#/100
-				y2 = float(far_node.y)	#/100
+				x1 = float(node.x)
+				y1 = float(node.y)
+				x2 = float(far_node.x)
+				y2 = float(far_node.y)
 				
 				# if node.new or far_node.new:
 				if node is newest:
-					glColor3f(153.0/255.0, 32.0/255.0, 32.0/255.0)
+					glColor3f(newcolor[0], newcolor[1], newcolor[2])
 					glLineWidth(2)
 				else:
 					glColor3f(130.0/255.0, 172.0/255.0, 245.0/255.0)
@@ -156,6 +158,7 @@ class GlDraw(object):
 					
 				glVertex2f(x2, y2)
 				glEnd()
+				
 				glColor3f(255.0/255.0, 150.0/255.0, 31.0/255.0)
 				graphicsutils.arrowhead(x1, y1, x2, y2, self.pointSize / 2, 15, 12)
 		
@@ -166,11 +169,12 @@ class GlDraw(object):
     
 			if node.name == 'N0':
 				glColor3f(1.0, 0.0, 0.0)
+			elif node is newest:
+				glColor3f(newcolor[0], newcolor[1], newcolor[2])
 			else:
 				glColor3f(0.0, 0.0, 0.0)
 			
 			if len(node.term.redexpositions) == 0:
-				# glColor3f(0.7, 0.7, 0.0)
 				p = 5 * self.pointSize
 			elif node is newest:
 				p = 2 * self.pointSize

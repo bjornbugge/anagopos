@@ -11,15 +11,13 @@ import scipy.weave as weave
 
 class MajorizationGraph(reductiongraph.Graph):
 	def __init__(self, graph, width = 200, height = 200, epsilon = 10**-3):
-		super(reductiongraph.Graph, self).__init__()
-		
+		for name, value in vars(graph).iteritems():
+			setattr(self, name, value)
+				
 		self.drawingfunction = None
-		self.nodesdict = graph.nodesdict
-		self.nodes = graph.nodes
 		self.width = width
 		self.height = height
 		numpy.random.seed()
-		self.newest = None
 		
 		self.n = len(self.nodes)
 		print "Size is " + str(self.n)
@@ -34,8 +32,6 @@ class MajorizationGraph(reductiongraph.Graph):
 		self.reset()
 		self.epsilon = epsilon
 		self.current_stress = None
-		self.virgin = True
-		
 		
 	def reset(self, f = 0, clearstate = True):
 		self.Xt[f:, 0] = self.width * numpy.random.random([self.n - f, 1])
@@ -66,8 +62,8 @@ class MajorizationGraph(reductiongraph.Graph):
 			numits += 1
 			if numits % 10 == 0:
 				e = self.calc_epsilon()
-				print "-- epsilon: " + str(e)
-				print "-- stress:  " + str(self.current_stress)
+				#print "-- epsilon: " + str(e)
+				#print "-- stress:  " + str(self.current_stress)
 				if math.isnan(e):
 					print "OHHH SHIIIITTT!"
 					self.reset(clearstate = False)
@@ -91,7 +87,6 @@ class MajorizationGraph(reductiongraph.Graph):
 	def calc_epsilon(self):
 		self.current_stress = self.stress(self.Xt)
 		s = self.stress(self.Xt_old)
-		print "s is " + str(s)
 		return (s - self.current_stress) / s
 	
 	def normalize(self):
