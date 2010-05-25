@@ -71,7 +71,6 @@ class Node(object):
 		self.parents = []
 		self.term = term
 		self.name = name
-		self.new = False
 	
 	def __repr__(self):
 		return "NODE " + str(self.term)

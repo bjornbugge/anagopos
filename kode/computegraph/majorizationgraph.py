@@ -13,7 +13,7 @@ class MajorizationGraph(reductiongraph.Graph):
 	def __init__(self, graph, width = 200, height = 200, epsilon = 10**-3):
 		for name, value in vars(graph).iteritems():
 			setattr(self, name, value)
-				
+		
 		self.drawingfunction = None
 		self.width = width
 		self.height = height

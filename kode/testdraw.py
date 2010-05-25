@@ -55,11 +55,11 @@ def drawitGV(term):
 
 def drawit(term):
 	mgs = []
-	for (i,g) in enumerate(operations.reductiongraphyield(term, 0, 25)):
+	for (i,g) in enumerate(operations.reductiongraphyield(term, 0, 100)):
 		#if len(g.nodes) <= 5:
 		#	continue
 		print "Graph no. " + str(i)
-		mgs.append(MajorizationGraph(g, 1000, 730, 10**-1))
+		mgs.append(MajorizationGraph(g, 1000, 730, 10**-2))
 	print "Drawing " + str(len(mgs)) + " different graph versions."
 	gldraw = GlDraw()
 	gldraw.drawlist(mgs)
