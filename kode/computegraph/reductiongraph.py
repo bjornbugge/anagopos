@@ -40,26 +40,14 @@ class Graph(object):
 		try:
 			node = self.nodesdict[str(term)]
 		except KeyError:
-			name = 'N'+str(len(self.nodesdict))
-			node = Node(term, name)
-			self.nodenametable[name] = node
 			if name == None:
-				name = 'N'+str(len(self.nodesdict))
+				name = 'N' + str(len(self.nodesdict))
 			node = Node(term, name)
 			self.nodesdict[str(term)] = node
 			self.nodes.append(node) # Append to list if we made a new node.
+			self.nodenametable[name] = node
 		
 		return node
-	
-	def getnewest(self):
-		if self.newest is None:
-			cur = 0
-			newest = None
-			for n in self.nodes:
-				if n.term.generation > cur:
-					newest = n
-			self.newest = newest
-		return self.newest
 	
 
 class Edge(object):
