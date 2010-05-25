@@ -139,33 +139,9 @@ def sanitize(term):
 	term.dirty = False
 
 def reductiongraph(root, maximum = 20):
-	'''
-	Computes the reduction graph and returns it in the format specified
-	in reductiongraph.py.
-	'''
-	work = [root]
-	graph = graphrepr.Graph()
-	guard = 0
-	reductions = 0
-	while len(work) > 0 and (maximum == 0 or guard < maximum):
-		term = work[0]
-		positions = findredexes(term)
-		for pos in positions:
-			(term, contractum) = betareduce(term, pos)
-			n1 = graph.addnode(term)
-			n2 = graph.addnode(contractum)
-			n1.addchild(n2)
-			
-			if not contractum in work:
-				work.append(contractum)
-			
-			reductions = reductions + 1
-		del work[0]
-		guard = guard + 1
-	print "Performed " + str(reductions) + " reductions."
-	if len(work) > 0:
-		print "Incomplete reduction graph!"
-	return graph
+	for g in reductiongraphyield(root, maximum, maximum):
+		return g
+
 
 def reductiongraphyield(root, start, end):
 	'''
@@ -177,13 +153,16 @@ def reductiongraphyield(root, start, end):
 	graph = graphrepr.Graph()
 	guard = 0
 	reductions = 0
-	while len(work) > 0 and (end == 0 or guard < end):
+	while len(work) > 0 and (end == 0 or guard <= end):
 		term = work[0]
 		term.generation = guard
 		positions = term.redexpositions
+		n1 = graph.addnode(term)
+		graph.newest = n1
+		print "Name of newest: " + str(graph.newest.name)
 		for pos in positions:
 			(term, contractum) = betareduce(term, pos)
-			n1 = graph.addnode(term)
+			
 			n2 = graph.addnode(contractum)
 			contractum.redexpositions = findredexes(contractum)
 			n1.addchild(n2)
@@ -194,8 +173,8 @@ def reductiongraphyield(root, start, end):
 			reductions = reductions + 1
 		del work[0]
 		if guard >= start:
-			# yield _copygraph(graph)
-			yield copy.deepcopy(graph)
+			yield _copygraph(graph)
+			# yield copy.deepcopy(graph)
 		guard = guard + 1
 	print "Performed " + str(reductions) + " reductions."
 	if len(work) > 0:
@@ -215,7 +194,10 @@ def _copygraph(graph):
 		for c in node.children:
 			destkey = str(c.destination.term)
 			nodecopy.addchild(graphcopy.nodesdict[destkey])
-		
+	
+	newestkey = str(graph.newest.term)
+	print newestkey
+	graphcopy.newest = graphcopy.nodesdict[newestkey]
 	return graphcopy
 
 def _copyterm(term):
