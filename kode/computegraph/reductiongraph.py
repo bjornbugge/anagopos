@@ -3,8 +3,6 @@ from copy import deepcopy
 
 class Graph(object):
 	def __init__(self):
-		# nodesdict and nodes contain the same nodes, we just use the dictionary
-		# to perform fast lookups. The list is needed in the kamada-kawai algorithm.
 		self.nodesdict = {}
 		self.nodes = []
 		self.nodenametable = {}

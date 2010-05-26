@@ -11,7 +11,7 @@ from OpenGL.GL import *
 import pdb
 
 class GlDraw(object):
-	def __init__(self, width = 1024, height = 768):
+	def __init__(self, width = 1024, height = 768, iterable = None):
 		self.term = None
 		self.graph = None
 		self.node = None
@@ -21,8 +21,10 @@ class GlDraw(object):
 		self.resizeWindow = 0
 		self.pointSize = 5
 		self.pointArray = None
+		self.graphiterable = iterable
+		self.graphlist = []
 		self.InitGL(width, height)
-			
+	
 	def InitGL(self, Width, Height):
 		glutInit()
 		glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
@@ -87,9 +89,20 @@ class GlDraw(object):
 				self.fullscreen = 0
 		elif args[0] == 'n': # Step forwards
 			self.graphindex += 1
-			if self.graphindex == len(self.graphlist):
-				self.graphindex -= 1
-				return
+			
+			if self.graphiterable is not None:
+				try:
+					g = self.graphiterable.next()
+					self.graphlist.append(g)
+				except StopIteration:
+					# We have all the graphs.
+					self.graphiterable = None
+					self.graphindex -= 1
+					print "StopIteration!"
+			else:
+				if self.graphindex == len(self.graphlist):
+					self.graphindex -= 1
+			
 			self.graph = self.graphlist[self.graphindex]
 			if self.graph.virgin:
 				self.graph.virgin = False
@@ -187,6 +200,7 @@ class GlDraw(object):
 			glVertex2f(node.x, node.y)
 			glEnd()
 			
+			glColor3f(0.0, 0.0, 0.0)
 			graphicsutils.write(node.x, node.y + p, node.name)
 		
 		glutSwapBuffers()
@@ -203,6 +217,18 @@ class GlDraw(object):
 						elif c == 0:
 							self.pointArray[k][3] = 1
 							self.DrawGLScene()
+	
+	def drawiter(self):
+		if self.graphiterable is None:
+			print "self.graphiterable is None"
+			return
+		
+		self.graphlist.append(self.graphiterable.next())
+		self.graphindex = 0
+		self.graph = self.graphlist[0]
+		self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+		self.graph.update_layout()
+		glutMainLoop()
 	
 	def drawlist(self, graphlist):
 		self.graphindex = 0

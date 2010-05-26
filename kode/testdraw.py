@@ -64,7 +64,16 @@ def drawit(term):
 	gldraw = GlDraw()
 	gldraw.drawlist(mgs)
 
+def drawit2(term):
+	def f(term):
+		for g in operations.reductiongraphyield(term, 0, 100):
+			yield KKGraph(g,1000,730)
+			# yield MajorizationGraph(g, 1000, 730, 10**-1)
+	
+	gldraw = GlDraw(iterable = f(term))
+	gldraw.drawiter()
+
 if __name__ == "__main__":
 	term = parser.parse(t)
 	operations.assignvariables(term)
-	drawit(term)
+	drawit2(term)

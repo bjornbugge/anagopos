@@ -9,7 +9,8 @@ import reductiongraph
 
 class KKGraph(reductiongraph.Graph):
 	def __init__(self, graph, width = 200, height = 200):
-		super(reductiongraph.Graph, self).__init__()
+		for name, value in vars(graph).iteritems():
+			setattr(self, name, value)
 		
 		self.nodesdict = {}
 		self.nodes = []
@@ -24,6 +25,7 @@ class KKGraph(reductiongraph.Graph):
 		self.pad = 10
 		self.width = width
 		self.height = height
+		self.virgin = True
 		
 		self.reset()
 	
@@ -31,6 +33,9 @@ class KKGraph(reductiongraph.Graph):
 		self.drawingfunction = None
 		for node in self.nodes:
 			self.__run_kk_on( node )
+	
+	def initwith(self, g):
+		self.reset()
 	
 	def reset( self ):
 		for (key, node) in self.graph.nodesdict.iteritems():

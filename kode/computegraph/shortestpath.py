@@ -58,63 +58,72 @@ def seidel(G):
 		n = len(A)
 		Z = NP.dot(A, A)
 		B = NP.zeros([n, n])
+		
 		# (a_ij == 1 or z_ij > 0) ==> b_ij = 1
 		B[A == 1] = 1
 		B[Z > 0] = 1
+		
 		# Set diagonal to zeros
 		B = B - B.diagonal() * NP.identity(n)
+		
 		# If b_ij == 1, i different than j then return.
 		if (B + NP.identity(n)).all():
 			return 2 * B - A
 		T = _APD(B)
 		X = NP.dot(T, A)
+		
 		degrees = NP.sum(A, axis=1)
+		
 		# If x_ij >= t_ij * d_j
 		# then d_ij = 2 * t_ij
 		# else d_ij = 2 * t_ij - 1
 		S = NP.ones([n, n])
 		S[X >= T * NP.transpose(degrees)] = 0
 		D = 2 * T - S
+		
 		return D
 	
 	A = adjacencymatrix(G)
 	return (_APD(A), A)
 
-def testtime(numits):
-	from timeit import Timer
-	t1 = Timer("seidel(g)", "from shortestpath import *")
-	t2 = Timer("floydwarshal(g)", "from shortestpath import *")
-	# t3 = Timer("apd_dijkstra(g)", "from shortestpath import *")
-	print "With seidel():\t\t %.2f usec/pass" % (numits * t1.timeit(number=numits)/numits)
-	print "With floydwarshal():\t %.2f usec/pass" % (numits * t2.timeit(number=numits)/numits)
 
 
-import reductiongraph as RG
-import lambda_dag as LD
-g = RG.Graph()
-t1 = LD.Application()
-t1.add(LD.Variable('v0'))
-t1.add(LD.Variable('v1'))
-t2 = LD.Abstraction()
-t2.add(LD.Variable('v0'))
-t3 = LD.Abstraction()
-t3_1 = LD.Application()
-t3_1.add(LD.Variable('v0'))
-t3_1.add(LD.Variable('v1'))
-t3.add(t3_1)
-t4 = LD.Application()
-t4_1 = LD.Abstraction()
-t4_1.add(LD.Variable('v0'))
-t4_1.add(LD.Variable('v1'))
-t4.add(t4_1)
-t4.add(LD.Variable('v3'))
 
-n1=g.addnode(t1)
-n2=g.addnode(t2)
-n3=g.addnode(t3)
-n4=g.addnode(t4)
-n1.addchild(n2)
-n2.addchild(n3)
-n1.addchild(n4)
-
-v0 = g.nodes[0]
+if __name__ == '__main__':
+	def testtime(numits):
+		from timeit import Timer
+		t1 = Timer("seidel(g)", "from shortestpath import *")
+		t2 = Timer("floydwarshal(g)", "from shortestpath import *")
+		# t3 = Timer("apd_dijkstra(g)", "from shortestpath import *")
+		print "With seidel():\t\t %.2f usec/pass" % (numits * t1.timeit(number=numits)/numits)
+		print "With floydwarshal():\t %.2f usec/pass" % (numits * t2.timeit(number=numits)/numits)
+	
+	import reductiongraph as RG
+	import lambda_dag as LD
+	g = RG.Graph()
+	t1 = LD.Application()
+	t1.add(LD.Variable('v0'))
+	t1.add(LD.Variable('v1'))
+	t2 = LD.Abstraction()
+	t2.add(LD.Variable('v0'))
+	t3 = LD.Abstraction()
+	t3_1 = LD.Application()
+	t3_1.add(LD.Variable('v0'))
+	t3_1.add(LD.Variable('v1'))
+	t3.add(t3_1)
+	t4 = LD.Application()
+	t4_1 = LD.Abstraction()
+	t4_1.add(LD.Variable('v0'))
+	t4_1.add(LD.Variable('v1'))
+	t4.add(t4_1)
+	t4.add(LD.Variable('v3'))
+	
+	n1=g.addnode(t1)
+	n2=g.addnode(t2)
+	n3=g.addnode(t3)
+	n4=g.addnode(t4)
+	n1.addchild(n2)
+	n2.addchild(n3)
+	n1.addchild(n4)
+	
+	v0 = g.nodes[0]
