@@ -26,6 +26,7 @@ class GlDraw(object):
 		self.InitGL(width, height)
 	
 	def InitGL(self, Width, Height):
+		print "0"
 		glutInit()
 		glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
 		self.window_x = (glutGet(GLUT_SCREEN_WIDTH) - self.window_width)/2
@@ -126,7 +127,9 @@ class GlDraw(object):
 			self.DrawGraph(self.graph)
 	
 	def DrawGLScene(self):
+		print "3"
 		if self.resizeWindow == 0:
+			print "4"
 			self.graph.update_layout_animated(self.DrawGraph)
 			self.resizeWindow = 1
 		else:
@@ -138,6 +141,7 @@ class GlDraw(object):
 			glutSwapBuffers()
 	
 	def DrawGraph(self, graph):
+		print "4"
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		newcolor = (153.0/255.0, 32.0/255.0, 32.0/255.0)
 		# Draw directed arcs before the nodes so the arcs don't overlap the nodes.
@@ -231,12 +235,14 @@ class GlDraw(object):
 		glutMainLoop()
 	
 	def drawlist(self, graphlist):
+		print "1"
 		self.graphindex = 0
 		self.graphlist = graphlist
 		self.graph = graphlist[0]
 		self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
 		# self.graph.update_layout_animated(self.DrawGraph)
 		self.graph.update_layout()
+		print "2"
 		glutMainLoop()
 	
 	def draw(self, kkgraph):

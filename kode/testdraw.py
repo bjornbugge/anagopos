@@ -4,13 +4,17 @@ import randomgraph
 import graphicsutils
 import pygraphviztest
 #import gldraw
+import gldraw2
 from gldraw import GlDraw
 from computegraph.kkgraph import KKGraph
 from computegraph.majorizationgraph import MajorizationGraph
+from computegraph.dotgraph import DotGraph
 from computegraph.reductiongraph import *
+from majorizationgraph2 import MajorizationGraph2
 import pickle
 import copy
 import cProfile as profile
+
 
 # t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
 # t = '(#x.((x x) x) #y.((y y) y))'
@@ -45,17 +49,16 @@ def drawGV(term):
 
 def drawitGV(term):
 	mgs = []
-	for g in operations.reductiongraphyield(term, 0, 20):
-		if len(g.nodes) <= 0:
-			continue
-		mgs.append(MajorizationGraph(g, 1000, 730))
-	print "Drawing " + str(len(mgs)) + " different graph versions."
+	for (i,g) in enumerate(operations.reductiongraphyield(term, 0, 500)):
+		mgs.append(DotGraph(g))
 	gldraw = GlDraw()
 	gldraw.drawlist(mgs)
+	#g = gldraw2.GlDraw()
+	#g.drawlist(mgs)
 
 def drawit(term):
 	mgs = []
-	for (i,g) in enumerate(operations.reductiongraphyield(term, 0, 100)):
+	for (i,g) in enumerate(operations.reductiongraphyield(term, 0, 500)):
 		#if len(g.nodes) <= 5:
 		#	continue
 		print "Graph no. " + str(i)
@@ -76,4 +79,4 @@ def drawit2(term):
 if __name__ == "__main__":
 	term = parser.parse(t)
 	operations.assignvariables(term)
-	drawit2(term)
+	drawitGV(term)

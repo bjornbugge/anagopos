@@ -5,6 +5,7 @@ import computegraph.operations as operations
 import lambdaparser as parser
 import randomgraph
 import graphicsutils
+import gldraw2
 import testdraw
 import pygraphviztest
 from computegraph.kkgraph import KKGraph
@@ -26,7 +27,7 @@ class GlDraw(object):
 		self.window_x = (glutGet(GLUT_SCREEN_WIDTH) - self.window_width)/2
 		self.window_y = (glutGet(GLUT_SCREEN_HEIGHT) - self.window_height)/2
 		self.resizeWindow = 0
-		self.pointSize = 5# (((self.window_height + self.window_width)/2)/50)
+		self.pointSize = 5
 		self.pointX = None
 		self.pointY = None
 		self.pointArray = None
@@ -121,6 +122,28 @@ class GlDraw(object):
 				glutReshapeWindow(self.window_width,self.window_height)
 				glutPositionWindow(self.window_x,self.window_y)
 				self.fullScreen = 0
+		elif args[0] == 'n': # Step forwards
+			self.graphindex += 1
+			if self.graphindex == len(self.graphlist):
+				self.graphindex -= 1
+				return
+			self.graph = self.graphlist[self.graphindex]
+			if self.graph.virgin:
+				self.graph.virgin = False
+				self.graph.initwith(self.graphlist[self.graphindex - 1])
+				self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+				#self.graph.update_layout_animated(self.DrawGraph)
+			else:
+				self.DrawGraph(self.graph)
+        
+		elif args[0] == 'b': # Step backwards
+			self.graphindex -= 1
+			if self.graphindex < 0:
+				self.graphindex = 0
+			self.graph = self.graphlist[self.graphindex]
+			# self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+			# self.graph.update_layout()
+			self.DrawGraph(self.graph)
 
 
 	def DrawGLScene(self):
@@ -187,8 +210,20 @@ class GlDraw(object):
 	#	x = pow((1 - t), 2) * self.ipoints[0][0] + 2 * t * (1 -t) * self.ipoints[1][0] + pow(t, 2) * self.ipoints[2][0]
 	#	y = pow((1 - t), 2) * self.ipoints[0][1] + 2 * t * (1 -t) * self.ipoints[1][1] + pow(t, 2) * self.ipoints[2][1]
 	#	return [x,y]
+	
+	def drawlist(self, graphlist):
+		self.graphindex = 0
+		self.graphlist = graphlist
+		self.graph = graphlist[0]
+		#print "Graph: " + str(self.graph)
+		# self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+		# self.graph.update_layout_animated(self.DrawGraph)
+		glutMainLoop()
 
 	def DrawGraph(self, graph):
+		
+		self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
+		
 		#print "4"
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		glLineWidth(1)
@@ -196,6 +231,7 @@ class GlDraw(object):
 		# print "Gamle positioner"
 		h = 0
 		for node in self.graph.nodes:
+			print "Node: " + str(node.x)
 			self.pointArray[h][0] = float(node.x)
 			self.pointArray[h][1] = float(node.y)
 			# print "X: " + str(self.pointArray[h][0])
@@ -256,7 +292,10 @@ class GlDraw(object):
 				self.c2old = 0.63722
 				self.c3old = 0.99976
 				
+				print "edge.ipoints" + str(edge.ipoints)
+				
 				self.ipoints = [[0 for col in range(2)] for row in range(len(edge.ipoints))]
+				#self.ipoints = [[0 for col in range(2)] for row in range(len(edge.ipoints))]
 				
 				ff = 0
 				for point in range(len(edge.ipoints)):
@@ -274,7 +313,7 @@ class GlDraw(object):
 				POld = [self.ipoints[0][0], self.ipoints[0][1]]
 				t = 0.00
 				
-				bezier = 1
+				bezier = 0
 				
 				
 				if bezier == 1:
