@@ -8,7 +8,7 @@ import shortestpath as SP
 from copy import deepcopy
 import time
 import scipy.weave as weave
-import pygraphviztest
+import pygraphviz
 
 class DotGraph(reductiongraph.Graph):
 	def __init__(self, graph):
@@ -28,7 +28,7 @@ class DotGraph(reductiongraph.Graph):
 	
 	def update_layout(self):
 		print "-----------------------------------------------------------------------------------------------"
-		gv = pygraphviztest.GraphViz("dot")
+		gv = pygraphviz.GraphViz("dot")
 		gv.draw(self)
 		
 	def update_layout_animated(self, f):

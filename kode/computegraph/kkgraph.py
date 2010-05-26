@@ -56,7 +56,7 @@ class KKGraph(reductiongraph.Graph):
 		x_partial = 0
 		y_partial = 0
 
-		for j in range(nnodes):
+		for j in xrange(nnodes):
 			if i != j:
 				dx = x_array[i] - x_array[j]
 				dy = y_array[i] - y_array[j]
