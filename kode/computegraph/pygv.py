@@ -4,15 +4,14 @@ import computegraph.operations as operations
 import lambdaparser as parser
 import randomgraph
 import graphicsutils
-import gldraw2
 import pygraphviz as pgv
 import string
 import random
-from computegraph.kkgraph import KKGraph
+#from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
-from OpenGL.GLUT import *
-from OpenGL.GLU import *
-from OpenGL.GL import *
+#from OpenGL.GLUT import *
+#from OpenGL.GLU import *
+#from OpenGL.GL import *
 
 
 # Her begynder pygraphviz koden
@@ -74,22 +73,8 @@ class GraphViz(object):
 		
 		self.G = G
 		
-	def draw(self, kkgraph):
+	def draw(self, graph):
 		#print "0 - " + str(time.time())
-		self.graph = kkgraph
-		self.viz()
-		return self.graph
-	
-	def update(self, kkgraph):
-		self.graph = kkgraph
-		#print "random knuder"
-		for node in self.graph.nodes:
-			node.x = random.randint(1, 1000)
-			node.y = random.randint(1, 700)
-			for edge in node.children:
-				for y in range(len(edge.ipoints)):
-					edge.ipoints[y][0] = random.randint(1, 10)
-					edge.ipoints[y][1] = random.randint(1, 10)
-				#print "Points: " + str(edge.ipoints)
+		self.graph = graph
 		self.viz()
 		return self.graph

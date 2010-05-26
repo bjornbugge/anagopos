@@ -58,6 +58,9 @@ class MajorizationGraph(RG.Graph):
 		#print "Number of iterations: " + str(numits)
 		self._assignnodepositions()
 	
+	def scale(self, width, heigth, graph):
+		print "will not scale"
+	
 	def update_layout_animated(self, f):
 		self.drawingfunction = f
 		self.update_layout()

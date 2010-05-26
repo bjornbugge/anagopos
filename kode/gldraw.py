@@ -141,6 +141,7 @@ class GlDraw(object):
 			glutSwapBuffers()
 	
 	def DrawGraph(self, graph):
+		self.graph.scale(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT))
 		print "4"
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		newcolor = (153.0/255.0, 32.0/255.0, 32.0/255.0)

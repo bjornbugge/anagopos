@@ -8,7 +8,7 @@ import shortestpath as SP
 from copy import deepcopy
 import time
 import scipy.weave as weave
-import pygraphviz
+import pygv
 
 class DotGraph(reductiongraph.Graph):
 	def __init__(self, graph):
@@ -28,9 +28,28 @@ class DotGraph(reductiongraph.Graph):
 	
 	def update_layout(self):
 		print "-----------------------------------------------------------------------------------------------"
-		gv = pygraphviz.GraphViz("dot")
+		gv = pygv.GraphViz("dot")
 		gv.draw(self)
 		
 	def update_layout_animated(self, f):
 		self.update_layout()
 		f(self)
+		
+	def scale(self, width, heigth):
+		#print "will scale"
+		#print width
+		#print heigth
+		Xs = []
+		Ys = []
+		for node in self.nodes:
+			Xs.append(node.x)
+			Ys.append(node.y)
+			
+		maxPosX = max(Xs)
+		maxPosY = max(Ys)
+		scalingX = (maxPosX)/(width-50)
+		scalingY = (maxPosY)/(heigth-50)
+		
+		for node in self.nodes:
+			node.x = float(node.x)/(scalingX)
+			node.y = float(node.y)/(scalingY)
