@@ -28,7 +28,7 @@ class GraphViz(object):
 		# Adds nodes in graph to the GraphViz graph
 		G = pgv.AGraph()
 		for node in self.graph.nodes:
-			G.add_node(str(node.name),width="0.00",heigth="0.00",fixedsize="true",margin="0.00",label="no",shape="none")
+			G.add_node(str(node.name),width="0.00",heigth="0.00",fixedsize="0",margin="0.00",label=" ",shape="none",fontsize="8")
 		
 		# Adds edges in graph to the GraphViz graph
 		for node in self.graph.nodes:
@@ -42,7 +42,7 @@ class GraphViz(object):
 		#G.write("img/beforelayout.dot")
 		G.layout(prog=self.alg)
 		#G.write("img/afterlayout.dot")
-		#G.draw("img/1111.png")
+		G.draw("img/1111.png")
 		
 		k = 0
 		n = 0
