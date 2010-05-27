@@ -24,9 +24,9 @@ class GlDraw(object):
 		self.graphiterable = iterable
 		self.graphlist = []
 		self.InitGL(width, height)
+		self.ipoints = None
 	
 	def InitGL(self, Width, Height):
-		print "0"
 		glutInit()
 		glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
 		self.window_x = (glutGet(GLUT_SCREEN_WIDTH) - self.window_width)/2
@@ -127,9 +127,7 @@ class GlDraw(object):
 			self.DrawGraph(self.graph)
 	
 	def DrawGLScene(self):
-		print "3"
 		if self.resizeWindow == 0:
-			print "4"
 			self.graph.update_layout_animated(self.DrawGraph)
 			self.resizeWindow = 1
 		else:
@@ -142,44 +140,70 @@ class GlDraw(object):
 	
 	def DrawGraph(self, graph):
 		self.graph.scale(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT))
-		print "4"
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		newcolor = (153.0/255.0, 32.0/255.0, 32.0/255.0)
 		# Draw directed arcs before the nodes so the arcs don't overlap the nodes.
 		# pdb.set_trace()
-		newest = graph.newest
-		for node in graph.nodes:
-			for edge in node.children:
-				far_node = edge.get_far(node)
-				if node == far_node:
-					print "Circular edge."
-					continue
-    
-				x1 = float(node.x)
-				y1 = float(node.y)
-				x2 = float(far_node.x)
-				y2 = float(far_node.y)
-				
-				# if node.new or far_node.new:
-				if node is newest:
-					glColor3f(newcolor[0], newcolor[1], newcolor[2])
-					glLineWidth(2)
-				else:
-					glColor3f(130.0/255.0, 172.0/255.0, 245.0/255.0)
-					glLineWidth(1)
-				glBegin(GL_LINES)
-				glVertex2f(x1, y1)
-				#if node.new or far_node.new:
-				#	glColor3f(32.0/255.0, 153.0/255.0, 34.0/255.0)
-				#else:
-				#	glColor3f(165.0/255.0, 255/255, 135.0/255.0)
-					
-				glVertex2f(x2, y2)
-				glEnd()
-				
-				glColor3f(255.0/255.0, 150.0/255.0, 31.0/255.0)
-				graphicsutils.arrowhead(x1, y1, x2, y2, self.pointSize / 2, 15, 12)
 		
+		# Newest
+		newest = graph.newest
+		
+		# Drawing bezier curves if graph is using the dot layout
+		if graph.bezier:
+			for node in self.graph.nodes:
+				for edge in node.children:
+					self.ipoints = edge.ipoints
+					far_node = edge.get_far(node)
+					#edge.ipoints[0][0] = node.x
+					#edge.ipoints[0][1] = node.y
+					#edge.ipoints[len(edge.ipoints)-1][0] = far_node.x
+					#edge.ipoints[len(edge.ipoints)-1][1] = far_node.y
+					
+					POld = [edge.ipoints[0][0], edge.ipoints[0][1]]
+					t = 0.00
+					l = len(edge.ipoints)
+					for g in range(101):
+						P = self.drawBezierGen(t, l)
+						self.drawLine(POld, P)
+						POld = P
+						t = t + 0.01
+						
+		# Drawing regular straight edges
+		else:
+			for node in graph.nodes:
+				for edge in node.children:
+					#print "IPOINTS: " + str(edge.ipoints)
+					far_node = edge.get_far(node)
+					if node == far_node:
+						print "Circular edge."
+						continue
+        	
+					x1 = float(node.x)
+					y1 = float(node.y)
+					x2 = float(far_node.x)
+					y2 = float(far_node.y)
+					
+					# if node.new or far_node.new:
+					if node is newest:
+						glColor3f(newcolor[0], newcolor[1], newcolor[2])
+						glLineWidth(2)
+					else:
+						glColor3f(130.0/255.0, 172.0/255.0, 245.0/255.0)
+						glLineWidth(1)
+					glBegin(GL_LINES)
+					glVertex2f(x1, y1)
+					#if node.new or far_node.new:
+					#	glColor3f(32.0/255.0, 153.0/255.0, 34.0/255.0)
+					#else:
+					#	glColor3f(165.0/255.0, 255/255, 135.0/255.0)
+						
+					glVertex2f(x2, y2)
+					glEnd()
+					
+					glColor3f(255.0/255.0, 150.0/255.0, 31.0/255.0)
+					graphicsutils.arrowhead(x1, y1, x2, y2, self.pointSize / 2, 15, 12)
+		
+		# Drawing nodes
 		for (j, node) in enumerate(graph.nodes):
 			self.pointArray[j][0] = node.x
 			self.pointArray[j][1] = node.y
@@ -206,7 +230,9 @@ class GlDraw(object):
 			glEnd()
 			
 			glColor3f(0.0, 0.0, 0.0)
-			graphicsutils.write(node.x, node.y + p, node.name)
+			
+			# Drawing node names
+			#graphicsutils.write(node.x, node.y + p, node.name)
 		
 		glutSwapBuffers()
 	
@@ -234,16 +260,47 @@ class GlDraw(object):
 		self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
 		self.graph.update_layout()
 		glutMainLoop()
+		
+	def drawLine(self, p1, p2):
+		glBegin(GL_LINES);
+		#glColor3f(self.c1old, self.c2old, self.c3old)
+		glVertex2f(p1[0], p1[1]);
+		#glColor3f(self.c1, self.c2, self.c3)
+		glVertex2f(p2[0], p2[1]);
+		glEnd();
+		#self.c1old = self.c1
+		#self.c2old = self.c2
+		#self.c2old = self.c3
+		#self.c1 = self.c1 + (0.040000/5)
+		#self.c2 = self.c2 - (0.026861/5)
+		#self.c3 = self.c3 - (0.019988/5)
+    
+	def binomial(self, n, i):
+		bin = math.factorial(n)/(math.factorial(i) * math.factorial(n - i))
+		return bin
+    
+	def drawBezierGen(self, t, l):
+		#l = len(self.ipoints)
+		n = l-1
+		#print "Length: " + str(l)
+		x = y = 0
+		for i in range(l):
+			#print "I: " + str(i)
+			#print "!: " + str((math.factorial(n)/(math.factorial(i) * math.factorial(n - i))))
+			x = x + self.binomial(n,i) * pow((1 - t),n-i) * pow(t,i) * self.ipoints[i][0]
+			y = y + self.binomial(n,i) * pow((1 - t),n-i) * pow(t,i) * self.ipoints[i][1]
+			#glBegin(GL_POINTS)
+			#glVertex2f(self.ipoints[i][0], self.ipoints[i][1])
+			#glEnd()
+		return [x,y]
 	
 	def drawlist(self, graphlist):
-		print "1"
 		self.graphindex = 0
 		self.graphlist = graphlist
 		self.graph = graphlist[0]
 		self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
 		# self.graph.update_layout_animated(self.DrawGraph)
 		self.graph.update_layout()
-		print "2"
 		glutMainLoop()
 	
 	def draw(self, kkgraph):

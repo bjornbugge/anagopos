@@ -7,11 +7,7 @@ import graphicsutils
 import pygraphviz as pgv
 import string
 import random
-#from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
-#from OpenGL.GLUT import *
-#from OpenGL.GLU import *
-#from OpenGL.GL import *
 
 
 # Her begynder pygraphviz koden
@@ -23,14 +19,16 @@ class GraphViz(object):
 		self.G = None
 		self.alg = alg
 			
-	def viz( self ):
+	def viz(self, graph):
+		self.graph = graph
+		
 		# Start time
 		inittime = time.time()
 		
 		# Adds nodes in graph to the GraphViz graph
 		G = pgv.AGraph()
 		for node in self.graph.nodes:
-			G.add_node(str(node.name))
+			G.add_node(str(node.name),width="0.00",heigth="0.00",fixedsize="true",margin="0.00",label="no",shape="none")
 		
 		# Adds edges in graph to the GraphViz graph
 		for node in self.graph.nodes:
@@ -59,6 +57,7 @@ class GraphViz(object):
 			nodePos = node.attr["pos"]
 			graphnode.x = float(string.split(str(nodePos),',')[0])
 			graphnode.y = float(string.split(str(nodePos),',')[1])
+			#print "Node X: " + str(graphnode.x)
 			for edge in graphnode.children:
 				edgePos = E[k].attr["pos"]
 				newEdgePos = string.split(edgePos,' ')
@@ -67,14 +66,9 @@ class GraphViz(object):
 					edge.ipoints[y][0] = float(string.split(str(newEdgePos[y]),',')[0])
 					edge.ipoints[y][1] = float(string.split(str(newEdgePos[y]),',')[1])
 				k=k+1
+				#print "	Node X: " + str(edge.ipoints[0][0])
 			n = n + 1
-
+			
 		endtime = time.time()
 		
-		self.G = G
-		
-	def draw(self, graph):
-		#print "0 - " + str(time.time())
-		self.graph = graph
-		self.viz()
-		return self.graph
+		print "	Total time used by GraphViz: " + str(endtime - inittime) + "\n"

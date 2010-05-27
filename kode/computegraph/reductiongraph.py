@@ -8,6 +8,7 @@ class Graph(object):
 		self.nodenametable = {}
 		self.newest = None
 		self.virgin = True
+		self.bezier = False
 	
 	def __repr__(self):
 		o = ''

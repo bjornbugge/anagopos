@@ -27,9 +27,10 @@ class DotGraph(reductiongraph.Graph):
 		self.reset()
 	
 	def update_layout(self):
-		print "-----------------------------------------------------------------------------------------------"
+		print "Updating layout using dot"
+		self.bezier = True
 		gv = pygv.GraphViz("dot")
-		gv.draw(self)
+		gv.viz(self)
 		
 	def update_layout_animated(self, f):
 		self.update_layout()
@@ -53,3 +54,7 @@ class DotGraph(reductiongraph.Graph):
 		for node in self.nodes:
 			node.x = float(node.x)/(scalingX)
 			node.y = float(node.y)/(scalingY)
+			for edge in node.children:
+				for point in range(len(edge.ipoints)):
+					edge.ipoints[point][0] = float(edge.ipoints[point][0])/(scalingX)
+					edge.ipoints[point][1] = float(edge.ipoints[point][1])/(scalingY)
