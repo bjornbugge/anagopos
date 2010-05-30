@@ -29,10 +29,12 @@ class LambdaNode(object):
 		'''
 		Remove the node if it is a child.
 		'''
-		if self.leftchild == node:
+		# Use identity, not equality. The DAG must contain the node in order to
+		# be able to delete it.
+		if self.leftchild is node:
 			self.leftchild = None
 			node.parent = None
-		elif self.rightchild == node:
+		elif self.rightchild is node:
 			self.rightchild = None
 			node.parent = None
 	
@@ -40,11 +42,13 @@ class LambdaNode(object):
 		'''
 		Swap the old node with the new node -- if the old node is a child.
 		'''
-		if self.leftchild == old:
+		# Use identity, not equality. The DAG must contain the nodes in order to
+		# be able to swap them.
+		if self.leftchild is old:
 			self.leftchild = new
 			new.parent = self
 			old.parent = None
-		elif self.rightchild == old:
+		elif self.rightchild is old:
 			self.rightchild = new
 			new.parent = self
 			old.parent = None

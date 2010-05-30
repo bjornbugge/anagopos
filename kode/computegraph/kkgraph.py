@@ -6,6 +6,7 @@ import math
 import random
 import numpy
 import reductiongraph
+import shortestpath as SP
 
 class KKGraph(reductiongraph.Graph):
 	def __init__(self, graph, width = 200, height = 200):
@@ -49,25 +50,38 @@ class KKGraph(reductiongraph.Graph):
 		for node in self.nodes:
 			self.__run_kk_on( node )
 		
-
+	
+	
 	def __get_delta_m( self, i, l_matrix, k_matrix, x_array, y_array ):
-		nnodes = len(self.nodes)
-		delta_m = 0
-		x_partial = 0
-		y_partial = 0
-
-		for j in xrange(nnodes):
-			if i != j:
-				dx = x_array[i] - x_array[j]
-				dy = y_array[i] - y_array[j]
-				dd = math.sqrt(dx * dx + dy * dy)
-				km_val = k_matrix[i, j]
-				lm_val = l_matrix[i, j]
-				x_partial += km_val * (dx - lm_val * dx / dd)
-				y_partial += km_val * (dy - lm_val * dy / dd)
-		
-		delta_m = math.sqrt((x_partial * x_partial) + (y_partial * y_partial))
+		squared = lambda x:numpy.power(x, 2)
+		M1, M2 = numpy.meshgrid(x_array, x_array)
+		M3, M4 = numpy.meshgrid(y_array, y_array)
+		dxs = (M1 - M2)
+		dys = (M3 - M4)
+		dds = numpy.sqrt(squared(dxs) + squared(dys))
+		xpars = numpy.multiply(k_matrix, numpy.multiply(dxs - l_matrix, numpy.divide(dxs, dds)))
+		ypars = numpy.multiply(k_matrix, numpy.multiply(dys - l_matrix, numpy.divide(dys, dds)))
+		xsum = numpy.sum(xpars)
+		ysum = numpy.sum(ypars)
+		delta_m = math.sqrt(xsum**2 + ysum**2)
 		return delta_m
+		#nnodes = len(self.nodes)
+		#delta_m = 0
+		#x_partial = 0
+		#y_partial = 0
+        #
+		#for j in xrange(nnodes):
+		#	if i != j:
+		#		dx = x_array[i] - x_array[j]
+		#		dy = y_array[i] - y_array[j]
+		#		dd = math.sqrt(dx * dx + dy * dy)
+		#		km_val = k_matrix[i, j]
+		#		lm_val = l_matrix[i, j]
+		#		x_partial += km_val * (dx - lm_val * dx / dd)
+		#		y_partial += km_val * (dy - lm_val * dy / dd)
+		#
+		#delta_m = math.sqrt((x_partial * x_partial) + (y_partial * y_partial))
+		#return delta_m
 
 	# the bulk of the KK inner loop, estimates location of local minima
 	def __get_deltas( self, i, l_matrix, k_matrix, x_array, y_array ):
@@ -105,21 +119,33 @@ class KKGraph(reductiongraph.Graph):
 		return (x_delta, y_delta)
 
 	def __get_energy( self, l_matrix, k_matrix, x_array, y_array ):
-		nnodes = len(self.nodes)
-		energy = 0.0
-		for i in range(nnodes - 1):
-			for j in range(nnodes):
-				dx = x_array[i] - x_array[j]
-				dy = y_array[i] - y_array[j]
-				lij = l_matrix[i, j]
-				a = 0.5 * k_matrix[i, j]
-				b = (dx * dx + dy * dy + lij * lij - 2 * lij * math.sqrt(dx * dx + dy * dy))
-				c = (a * b)
-				# work around a weird nan bug in python
-				if a > 1e308:
-					c = 0.0
-				energy = energy + c
-		return energy
+		squared = lambda x:numpy.power(x, 2)
+		
+		M1, M2 = numpy.meshgrid(x_array, x_array)
+		M3, M4 = numpy.meshgrid(y_array, y_array)
+		dxs2 = squared(M1 - M2)
+		dys2 = squared(M3 - M4)
+		A = 0.5 * k_matrix
+		B = dxs2 + dys2 + squared(l_matrix) - 2 * l_matrix * numpy.sqrt(dxs2 + dys2)
+		C = numpy.multiply(A, B)
+		
+		return numpy.sum(C)
+		
+		#nnodes = len(self.nodes)
+		#energy = 0.0
+		#for i in range(nnodes - 1):
+		#	for j in range(nnodes):
+		#		dx = x_array[i] - x_array[j]
+		#		dy = y_array[i] - y_array[j]
+		#		lij = l_matrix[i, j]
+		#		a = 0.5 * k_matrix[i, j]
+		#		b = (dx * dx + dy * dy + lij * lij - 2 * lij * math.sqrt(dx * dx + dy * dy))
+		#		c = (a * b)
+		#		# work around a weird nan bug in python
+		#		if a > 1e308:
+		#			c = 0.0
+		#		energy = energy + c
+		#return energy
 
 	def __get_diameter( self, dist_matrix ):
 		nnodes = len(self.nodes)
@@ -150,71 +176,74 @@ class KKGraph(reductiongraph.Graph):
 
 	# FIXME HUGE bug here regarding priority list and dist matrix always being 0
 	def __get_idist_matrix ( self ):
-		nnodes = len(self.nodes)
-		dist_matrix = numpy.ndarray((nnodes, nnodes))
-
-		# Set each array element to infinity
-		for i in range(nnodes):
-			for j in range(nnodes):
-				dist_matrix[i, j] = 1e308
-
-		for node in self.nodes:
-			i = self.nodes.index(node)
-			node_queue = []
-			checked_nodes = []
-			priority_list = []
-
-			# find paths to all nodes connected to i
-			dist_matrix[i, i] = 0.0
-			checked_nodes.append(node)
-			priority_list.append(0.0)
-			node_queue.append(node)
-
-			while len(node_queue) > 0:
-				# find node with smallest priority value
-				fringe_node_priority = 1e308
-				fringe_node_index = sys.maxint
-
-				for n in range(len(priority_list)):
-					if priority_list[n] < fringe_node_priority:
-						fringe_node_index = n
-						fringe_node_priority = priority_list[fringe_node_index]
-
-				fringe_node = node_queue[fringe_node_index]
-				fringe_node_dist = priority_list[fringe_node_index]
-				node_queue.remove(fringe_node)
-				priority_list.remove(priority_list[fringe_node_index])
-				checked_nodes.append(fringe_node)
-
-				# put distance in matrix
-				index = self.nodes.index(fringe_node)
-				dist_matrix[i, index] = fringe_node_dist
-				dist_matrix[index, i] = fringe_node_dist
-
-				# loop over its edges, adding nodes to queue
-				edges = fringe_node.parents + fringe_node.children
-				for edge in edges:
-					work_node = edge.get_far(fringe_node)
-					try:
-						checked_nodes.index(work_node)
-					except:
-						# calc work_node's distance from node
-						work_node_dist = fringe_node_dist + edge.weight
-						try:
-							prev_dist_index = node_queue.index(work_node)
-						except:
-							prev_dist_index = -1
-
-						if prev_dist_index >= 0:
-							# check if it has a lower distance
-							if priority_list[prev_dist_index] > work_node_dist:
-								# repace it with new value
-								priority_list[prev_dist_index] = work_node_dist
-						else:
-							# add the worknode to the queue with priority
-							priority_list.append (work_node_dist)
-							node_queue.append (work_node)
-		return dist_matrix
+		(D, A) = SP.seidel(self)
+		return D
+		
+		#nnodes = len(self.nodes)
+		#dist_matrix = numpy.ndarray((nnodes, nnodes))
+        #
+		## Set each array element to infinity
+		#for i in range(nnodes):
+		#	for j in range(nnodes):
+		#		dist_matrix[i, j] = 1e308
+        #
+		#for node in self.nodes:
+		#	i = self.nodes.index(node)
+		#	node_queue = []
+		#	checked_nodes = []
+		#	priority_list = []
+        #
+		#	# find paths to all nodes connected to i
+		#	dist_matrix[i, i] = 0.0
+		#	checked_nodes.append(node)
+		#	priority_list.append(0.0)
+		#	node_queue.append(node)
+        #
+		#	while len(node_queue) > 0:
+		#		# find node with smallest priority value
+		#		fringe_node_priority = 1e308
+		#		fringe_node_index = sys.maxint
+        #
+		#		for n in range(len(priority_list)):
+		#			if priority_list[n] < fringe_node_priority:
+		#				fringe_node_index = n
+		#				fringe_node_priority = priority_list[fringe_node_index]
+        #
+		#		fringe_node = node_queue[fringe_node_index]
+		#		fringe_node_dist = priority_list[fringe_node_index]
+		#		node_queue.remove(fringe_node)
+		#		priority_list.remove(priority_list[fringe_node_index])
+		#		checked_nodes.append(fringe_node)
+        #
+		#		# put distance in matrix
+		#		index = self.nodes.index(fringe_node)
+		#		dist_matrix[i, index] = fringe_node_dist
+		#		dist_matrix[index, i] = fringe_node_dist
+        #
+		#		# loop over its edges, adding nodes to queue
+		#		edges = fringe_node.parents + fringe_node.children
+		#		for edge in edges:
+		#			work_node = edge.get_far(fringe_node)
+		#			try:
+		#				checked_nodes.index(work_node)
+		#			except:
+		#				# calc work_node's distance from node
+		#				work_node_dist = fringe_node_dist + edge.weight
+		#				try:
+		#					prev_dist_index = node_queue.index(work_node)
+		#				except:
+		#					prev_dist_index = -1
+        #
+		#				if prev_dist_index >= 0:
+		#					# check if it has a lower distance
+		#					if priority_list[prev_dist_index] > work_node_dist:
+		#						# repace it with new value
+		#						priority_list[prev_dist_index] = work_node_dist
+		#				else:
+		#					# add the worknode to the queue with priority
+		#					priority_list.append (work_node_dist)
+		#					node_queue.append (work_node)
+		#return dist_matrix
 
 	def __run_kk_on( self, node ):
 		nnodes = len(self.nodes)

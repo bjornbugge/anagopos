@@ -82,14 +82,16 @@ def betareduce(term, redexpos):
 	
 	# The active subterm that we'll reduce.
 	c = appl.leftchild
+	
 	for v in c.variables:
 		v.parent.swap(v, _copyterm(appl.rightchild))
 	
 	# Remove the argument.
 	appl.remove(appl.rightchild)
-	
+
 	# Remove the abstractor.
-	c.parent.swap(c, c.leftchild)
+	# c.parent.swap(c, c.leftchild)
+	appl.swap(c, c.leftchild)
 	
 	if redexpos == 1: # The top node has been reduced.
 		contractum = c.leftchild
@@ -98,7 +100,7 @@ def betareduce(term, redexpos):
 	
 	# Refresh variable bindings so newly copied variables are known by abstractors.
 	assignvariables(contractum)
-	
+
 	contractum.dirty = True
 	return (term, contractum)
 
@@ -153,11 +155,15 @@ def reductiongraphyield(root, start, end):
 	graph = graphrepr.Graph()
 	guard = 0
 	reductions = 0
+	alreadydone = []
 	while len(work) > 0 and (end == 0 or guard <= end):
 		term = work[0]
 		term.generation = guard
 		positions = term.redexpositions
 		n1 = graph.addnode(term)
+		if n1.name in alreadydone:
+			del work[0]
+			continue
 		graph.newest = n1
 		for pos in positions:
 			(term, contractum) = betareduce(term, pos)
@@ -170,6 +176,7 @@ def reductiongraphyield(root, start, end):
 				work.append(contractum)
 			
 			reductions = reductions + 1
+		alreadydone.append(n1.name)
 		del work[0]
 		if guard >= start:
 			yield _copygraph(graph)

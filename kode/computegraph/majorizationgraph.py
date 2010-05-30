@@ -7,6 +7,9 @@ from copy import deepcopy
 import time
 
 class MajorizationGraph(RG.Graph):
+	'''
+	Implementation of Gansner2004-approach.
+	'''
 	def __init__(self, graph, width = 200, height = 200, epsilon = 10**-3):
 		for name, value in vars(graph).iteritems():
 			setattr(self, name, value)
@@ -22,17 +25,29 @@ class MajorizationGraph(RG.Graph):
 		self.D = self._get_D_matrix()
 		self.W = self._get_W_matrix()
 		self.deltas = numpy.multiply(self.W, self.D)
-		
+		self.chol = False
 		self.Lw = self._laplace(None, lambda x:self.W)
 		self.Xt_old = numpy.mat(numpy.zeros([self.n, 2]))
 		self.Xt = numpy.mat(numpy.zeros([self.n, 2]))
 		self.reset()
+		# self._makechol()
 		self.epsilon = epsilon
 		self.current_stress = None
+
+
+	
+	def _makechol(self):
+		self.Lw = self.Lw[1:, 1:]
+		self.Lw = numpy.linalg.cholesky(self.Lw)
+		# self.W = self.W[1:, 1:]
+		# self.D = self.D[1:, 1:]
+		self.chol = True
 		
 	def reset(self, f = 0, clearstate = True):
 		self.Xt[f:, 0] = self.width * numpy.random.random([self.n - f, 1])
 		self.Xt[f:, 1] = self.height * numpy.random.random([self.n - f, 1])
+		if self.chol:
+			self.Xt[0,:] = [0, 0]
 	
 	def initwith(self, othergraph):
 		m = len(othergraph.nodes)
@@ -47,7 +62,7 @@ class MajorizationGraph(RG.Graph):
 			self._iter()
 			self._iter_done()
 			numits += 1
-			if numits % 1 == 0:
+			if numits % 10 == 0:
 				e = self._calc_epsilon()
 				if math.isnan(e):
 					print "OHHH SHIIIITTT!"
@@ -92,9 +107,20 @@ class MajorizationGraph(RG.Graph):
 		
 		LXt = self._get_L(self.Xt)
 		
+		print str(LXt.shape)
+		print str(self.Xt.shape)
 		b = LXt * self.Xt
+		if self.chol:
+			b = b[1:]
 		try:
-			x = solve(self.Lw, b)
+			if self.chol:
+				y = solve(self.Lw, b)
+				x = solve(self.Lw.T, y)
+				a = numpy.mat(numpy.zeros([self.n, self.n]))
+				a[1:, 1:] = x
+				x = a
+			else:
+				x = solve(self.Lw, b)
 			Xt_new = x
 			self.Xt_old = deepcopy(self.Xt)
 			self.Xt = Xt_new
@@ -117,13 +143,20 @@ class MajorizationGraph(RG.Graph):
 	
 	def _stress(self, X):
 		dists = self._ata_dists(X)
+		if self.chol:
+			pass
+			
 		E = numpy.multiply(self.W, numpy.power(dists - self.D, 2))
 		return E.sum() / 2 # Because we only look at those elms. with i>j we divide by two
 	
 	def _get_L(self, Z):
 		def func(M):
 			dists = self._ata_dists(M)
+			print str(dists.shape)
+			print str(self.I.shape)
+			print str(self.deltas.shape)
 			dists = (1 / (dists + self.I)) - self.I # Perform inversion
+			
 			return numpy.multiply(self.deltas, dists)
 		
 		return self._laplace(Z, func)
@@ -134,7 +167,8 @@ class MajorizationGraph(RG.Graph):
 		return D - L
 	
 	def _get_W_matrix(self):
-		k = 4
+		A = SP.adjacencymatrix(self)
+		k = A.sum(axis=0).max()
 		W = k / (numpy.power(self.D + self.I, 2)) - (k * self.I)
 		return W
 	
