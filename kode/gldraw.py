@@ -2,7 +2,6 @@ import math
 import time
 import computegraph.operations as operations
 import graphicsutils
-from OpenGL.Tk import *
 from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
 from OpenGL.GLUT import *
