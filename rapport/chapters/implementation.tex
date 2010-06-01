@@ -1,27 +1,10 @@
-%!TEX root = rapport.tex
+%!TEX root = ../rapport.tex
 
 \chapter{Implementation}
 
 In this Chapter we will briefly discuss the implementation of the concepts
 presented in the preceding Chapters. The presentation here is only
-superficial; for details the actual source code must be consulted.
-
-\section{The Parser}
-
-We have implemented a parser for the grammar specified in Definition
-\ref{def:grammar} with a few subtle differences. First of all, the symbol used
-for $\lambda$ is a \texttt{\#}. Secondly, all lambda expressions fed into the
-parser are run through a preprocessing step that adds all implied parentheses
-to the string. This step is included to make the parser definition itself
-simpler. The preprocessing step ensures that Conventions \ref{con:assoc} and
-\ref{con:extent} are followed.
-
-We used a parser generator to make the parser, since we found it simpler and
-more straightforward than to implement it from scratch. There exist numerous
-parser generators for Python \cite{pythonParserGeneratorList}. We chose YAPPS2
-(Yet Another Python Parser System 2) \cite{YAPPS2} because it is designed such
-that it generates human-readable code. YAPPS2 takes a specification of an
-LL(1) grammar and writes the Python code for the corresponding parser.
+superficial; for details the actual source code should be consulted.
 
 \section{Representation of Lambda Terms}
 
@@ -77,11 +60,24 @@ application node. The first descendant of this node will be an abstraction
 node, while the second, ``rightmost'', descendant will be the argument that
 will be applied to the function represented by the abstraction node.
 
-%Given this DAG, it is possible to implement the aforementioned operations on lambda
-%terms by treewalks. 
+\section{Parsing}
 
+We have implemented a parser that generates the aforementioned representation
+for the grammar specified in Definition \ref{def:grammar} with a few subtle
+differences. First of all, the symbol used for $\lambda$ is a \texttt{\#}.
+Secondly, all lambda expressions fed into the parser are run through a
+preprocessing step that adds all implied parentheses to the string. This step
+is included to make the parser definition itself simpler. The preprocessing
+step ensures that Conventions \ref{con:assoc} and \ref{con:extent} are
+followed.
 
-% Beskrivelse af repræsentation af reduktionsgrafer
+We used a parser generator to make the parser, since we found it simpler and
+more straightforward than to implement it from scratch. There exist numerous
+parser generators for Python \cite{pythonParserGeneratorList}. We chose YAPPS2
+(Yet Another Python Parser System 2) \cite{YAPPS2} because it is designed such
+that it generates human-readable code. YAPPS2 takes a specification of an
+LL(1) grammar and writes the Python code for the corresponding parser.
+
 \section{Representation of $\beta$-reduction Graphs}
 
 A reduction graph is represented in Python as an instance of the
@@ -96,7 +92,7 @@ as instances of the \pycode{Node}-class, in three different data structures:
 	
 	\item A list of the nodes. This is included to ensure that the nodes can be
 	accessed in a consistent ordering, since the Python function \pycode{dict.items()}
-	returns the dictionarys elements in an arbitrary order.
+	returns the elements of the dictionary in an arbitrary order.
 \end{enumerate}
 A \pycode{Graph}-object contains exactly one \pycode{Node} representing a
 lambda term; if one tries to add an existing node, nothing happens.
@@ -106,7 +102,6 @@ represents. It furthermore has a list of its children and a list of its
 parents. These lists contain instances of the \pycode{Edge}-class, which
 basically just implements a coupling between two \pycode{Node}-objects.
 
-% Beskrivelse af funktionerne der genererer reduktionsgraferne
 \section{Generation of $\beta$-reduction Graphs}
 
 In the file \texttt{operations.py}, the functions necessary for the generation
@@ -136,7 +131,6 @@ distinct objects, instead of a collection of references to the same set of
 \pycode{Node}s. The built-in copy operation \pycode{copy.deepcopy()} proved to
 be too slow, so a custom deep copy operation was implemented.
 
-% Beskrivelse af mulighederne for udvidelse med nye tegnealgoritmer
 \section{Drawing Algorithms}
 
 A drawing algorithm is implemented in a class that inherits from
@@ -148,4 +142,17 @@ drawing algorithms, a new class extending the \pycode{Graph}-class and the
 \pycode{DrawingAlgorithm}-class merely serves as an interface, guaranteeing
 that all required methods are present.
 
+Most of the implemented drawing algorithms are actually layers on top of the
+graph drawing library GraphViz \cite{GraphViz}. This library offers
+implementations of different graph drawing algorithms. 
 
+The following drawing algorithms are implemented:
+\begin{description}
+	\item[Neato] (GraphViz)
+	\item[Dot] (GraphViz)
+	\item[Kamada-Kaway] 
+	\item[Majorization] 
+	\item[Circo] (GraphViz)
+	\item[Twopi] (GraphViz)
+	\item[Fdp] (GraphViz)
+\end{description}
