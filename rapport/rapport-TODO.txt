@@ -1,11 +1,11 @@
-- Egenskaber ved reduktionsgrafer relevante for visualiseringen af dem.
-  o Sammenhængende.
-  o (Kan være) Store!
-  o Med retning => pile.
-  o Høj spredning af knudevalens (måske?).
-
-- Overvejelser mht. det visuelle udtryk; farvevalg, størrelse på pilehoveder 
-  og den slags.
+# - Egenskaber ved reduktionsgrafer relevante for visualiseringen af dem.
+#   o Sammenhængende.
+#   o (Kan være) Store!
+#   o Med retning => pile.
+#   o Høj spredning af knudevalens (måske?).
+# 
+# - Overvejelser mht. det visuelle udtryk; farvevalg, størrelse på pilehoveder 
+#   og den slags.
 
 - Beskrivelse af opbygningen af koden.
   o Overvejelser mht. effektivitet.
@@ -26,6 +26,9 @@
     muligheder for at kombinere dem.
   o Tegninger af de grafer der også vises eksempler på i Lambda Caluculus-kapitlet
     m. forskellige tegnealgoritmer.
+
+- Præsentation af resultater med _mange_ screenshots og forklaringer af, hvorfor
+  netop denne graf er interessant!
 
 - Diskussion af ekstra (ej implementerede) features.
   o Farvning af "reduktionsrækkefølgen" vha. et farvenuancespænd på kanterne: 

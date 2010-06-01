@@ -39,26 +39,24 @@ replacing $x$ with the number 2.
 where $x\in V$.
 \end{definition}
 \begin{convention}
-	\label{con:con1}
 	A term $\lam{x}{M}$ is called a function.
 \end{convention}
 \begin{convention}
 	For brevity, we leave out the outermost parentheses.
 \end{convention}
-\begin{convention}
+\begin{convention}\label{con:assoc}
 	Evaluation is left associative:
 	\begin{equation*}
 		M N P \equiv (M N) P
 	\end{equation*}
 \end{convention}
-\begin{convention}
+\begin{convention}\label{con:extent}
 	Function bodies extend as far as possible:
 	\begin{equation*}
 		\lam{x}{M N}\equiv\lam{x}{(M N)}\not\equiv(\lam{x}{M})N
 	\end{equation*}
 \end{convention}
 \begin{convention}
-	\label{con:con2}
 	Functions take exactly one argument, but as syntactic sugar we use:
 	\begin{equation*}
 		\lam{xy}{xy}\equiv\lam{x}{\lam{y}{xy}}
@@ -79,7 +77,7 @@ two groups; the free and the bound variables.
 		FV(M N) &= FV(M) \cup FV(N)
 	\end{align*}
 \end{definition}
-\begin{definition}
+\begin{definition}\mbox{}
 	\begin{enumerate}
 		\item If $FV(M)=\emptyset$, $M$ is said to be \emph{closed}.
 		\item The set of all closed terms is denoted $\Lambda^0$.
@@ -110,7 +108,7 @@ Substitution is defined as follows (\cite{Barendregt} 2.1.15):
 \end{align*}
 \end{definition}
 Using this definition, the following result can be shown (\cite{Barendregt} p. 28):
-\begin{lemma}\label{lem:subst}
+\begin{lemma}\label{lem:subst}\mbox{}
 	\begin{enumerate}
 		\item $M=M'\Rightarrow M[x:=N]=M'[x:=N]$.
 		\item $N=N'\Rightarrow M[x:=N]=M[x:=N']$.
@@ -123,7 +121,7 @@ is closed under substitution with equals.
 \section{Subterms}
 
 A lambda term $M$ is composed of several parts which we call \emph{subterms}.
-\begin{definition}
+\begin{definition}\mbox{}
 	\begin{enumerate}
 		\item $N\subset M$ denotes that $N$ is a subterm of $M$. The set $Sub(M)$ is the 
 		smallest set such that all subterms of $M$ are contained in $Sub(M)$:
@@ -159,7 +157,7 @@ by a lambda term. Thus, the two terms
 \end{align*}
 denote the same function, namely the identity. This gives rise to a definition of congruence
 that is essential in the lambda calculus.
-\begin{definition}
+\begin{definition}\mbox{}
 	\begin{enumerate}
 		\item For a term $M$, \emph{change of bound variables} is defined as a substitution
 		of a part of $M$, $\lam{x}{N}$, with $\lam{y}{N[x:=y]}$, i.e. all occurences of $x$
@@ -184,7 +182,7 @@ $\equiv_\alpha$.
 
 \section{Contexts}
 
-\begin{definition}
+\begin{definition}\mbox{}
 	\begin{enumerate}
 		\item A context $C[\ ]$ is an ``unfinished term'' with one hole in it. 
 		\item The set $Con$ contains all contexts and is defined as the smallest
@@ -216,7 +214,7 @@ reduction captures the notion of ``substituting in'' terms for bound variables,
 and can be intuitively thought of as ``solving'' a lambda term by reducing it
 to a (sometimes) simpler form.
 
-\begin{definition}\label{def:betareduction}
+\begin{definition}\label{def:betareduction}\mbox{}
 	\begin{enumerate}
 		\item \emph{$\beta$-reduction} is a binary relation $\BETA\subseteq\Lambda^2$ such that
 		\begin{equation*}
@@ -280,8 +278,6 @@ The following example from \cite{Barendregt} p. 52 illustrates the concept:
 \end{align*}
 \end{example}
 
-% Skal der være noget om kontekster?
-
 \section{Reduction Graphs}
 
 When a $\beta$-redex $M$ contains subterms $\Delta_{0\hdots n}$ that are themselves 
@@ -321,7 +317,7 @@ is the contractum of the terms represented by the nodes parents.
 	different reduction step from $N_0$ to $N_1$, that many arcs will be included 
 	in $G_\beta(M)$.
 \end{definition}
-\begin{example}
+\begin{example}\mbox{}
 	\begin{enumerate}
 		\item The reduction graph illustrated in Figure \ref{fig:images_graphs_graf2}
 		for the term $\I x$, $G_\beta(\I x)$, with

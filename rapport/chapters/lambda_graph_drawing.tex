@@ -1,0 +1,71 @@
+%!TEX root = rapport.tex
+
+\chapter{Relevant Properties of $\beta$-reduction Graphs}
+
+There are four main properties that need to be adressed when drawing
+$\beta$-reduction graphs.
+
+\section{Size}
+
+Reduction graphs vary greatly in size, from one node to an infinite amount of
+nodes and edges. For example, $G_\beta(\lam{x}{x})$ contains one node and zero
+edges since there are no reducts in the term. On the other hand, the graph
+$G_\beta((\lam{x}{xxx})(\lam{x}{xxx}))$ contains infinitely many nodes and
+edges. A drawing algorithm for such graphs must therefore be able to cope with
+small graphs as well as very large graphs. 
+
+
+% Flere eksempler?
+
+\section{Direction}
+
+The graphs are directed, so arrow heads need to be drawn. Since an edge can be
+drawn spanning a lot of screen area, the type of arrow has to be designed such
+that it is clear to see where an edge starts from the arrow head alone and
+vice versa. An alternative to arrows is drawing the edges with a colour
+gradient. In this approach, an edge would be couloured e.g. green at the start
+and red at the end, interpolating the colours on the edge line. The benefit of
+such an approach would be that it is easy to see tendencies if there is a
+visual clutter of edges having the same general direction.
+
+\section{Planarity}
+
+As a consequence of Lemma \ref{lem:complete} we know that in the general case,
+a reduction graph can contain as its subgraph $K_5$, whence the graph is
+non-planar according to Kuratowski's theorem. Thus, it is in general not
+possible to planarize a reduction graph.
+
+\begin{lemma}\label{lem:complete}
+	$\forall n\in\N:\ \exists M\in\Lambda$ such that the $\beta$-reduction graph of $M$
+	contains the complete (undirected) graph of $n$ nodes, $K_n$.
+\end{lemma}
+\begin{proof}[Sketch of proof]
+	Let $n>1\in\N$. (The case $n=1$ is trivial, as $K_1$ contains no edges.)
+	Let $M\in\Lambda$ be
+	\begin{equation*}
+		(\lam{x_1}{y}) ((\lam{x_2}{y}) ((\lam{x_3}{y})\hdots(\lam{x_{n-1}}{y})))
+	\end{equation*}
+	$M$ has $n-1$ distinct reducts of the form
+	\begin{align*}
+		&(\lam{x_1}{y}), \\
+		&(\lam{x_1}{y})((\lam{x_2}{y}) y), \\
+		&(\lam{x_1}{y})((\lam{x_2}{y}) ((\lam{x_3}{y}) y)),\ \hdots
+	\end{align*}
+	Call them $r_1,\hdots,r_{n-1}$ from smallest to greatest. For every
+	$1\leq i < j \leq n-1$ we have $r_j\barrow r_i$. Thus, since $M\barrow r_i$ 
+	for $1\leq i \leq n-1$, we have for every pair $(N_0,N_1)$ in the $\beta$-reduction 
+	graph that $N_0\barrow N_1$ or $N_1\barrow N_0$, whence the underlying 
+	undirected graph of the reduction graph is $K_n$.
+\end{proof}
+
+\section{In- and out-degree of nodes}
+
+The in- and out-degree of nodes varies a lot; the amount of redexes in terms
+can be very different from term to term, resulting in varying out-degrees,
+while some nodes can have a potientially infinitely high in-degree. For
+example, in the reduction graph for the term $(\lam{a}{b}) (\lam{x}{(xxx)}
+\lam{y}{(yyy)})$, every node of the reduction graph has an out-degree equal to
+2 and an in-degree of 1, except the one node representing the normal form ---
+that node has an infinitely high in-degree and an out-degree of 0.
+
+

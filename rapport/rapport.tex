@@ -18,7 +18,7 @@
 \usepackage{url}
 \usepackage[labelfont=bf,up,textfont=it,up]{caption}
 
-% TODO Lav theoremstyle så den er ordenlig!
+% TODO Lav theoremstyle så den er ordentlig!
 \newtheoremstyle{mystyle}	% Name
 {5pt}		%	Space above
 {25pt}		%	Space below
@@ -53,8 +53,8 @@
 
 
 % Margins
-\geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
-% \usepackage{fullpage}
+% \geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
+\usepackage{fullpage}
 
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
@@ -67,7 +67,7 @@
 \newcommand{\W}{\textsf{\textbf{W}}}
 
 % Bruges til Python-kode.
-\newcommand{\pycode}[1]{\texttt{#1}}
+\newcommand{\pycode}[1]{\textbf{\texttt{#1}}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -75,10 +75,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Title page
-% \input{title.tex}
+% \input{chapters/title.tex}
 
 % Abstract
-% \input{abstract.tex}
+% \input{chapters/abstract.tex}
 
 % Table of content
 % \tableofcontents
@@ -87,26 +87,18 @@
 %\newpage
 %
 % Chapters
-%\input{introduction.tex}
-%\input{projectConstraints.tex}
-%\input{lambda_theory.tex}
-\input{existing_visualizations.tex}
-%\input{lambda_representation.tex}
-%\input{parser.tex}
-\input{graph_drawing_litterature.tex}
-\input{lambda_graph_drawing.tex}
+%\input{chapters/introduction.tex}
+%\input{chapters/projectConstraints.tex}
+%\input{chapters/lambda_theory.tex}
+%\input{chapters/existing_visualizations.tex}
+%\input{chapters/parser.tex}
+%\input{chapters/graph_drawing_litterature.tex}
+\input{chapters/lambda_graph_drawing.tex}
+\input{chapters/code.tex}
 
-
-% Appendices
-
-%\appendix
-% \input{appendixA.tex}
-% \input{appendixB.tex}
-%\input{appendixC.tex}
-%
 % Bibliography
-\bibliographystyle{abbrv}
-\bibliography{bibliography,bibl_graph_drawing}
+%\bibliographystyle{abbrv}
+%\bibliography{bibliography,bibl_graph_drawing}
 
 
 

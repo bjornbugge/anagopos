@@ -1,0 +1,151 @@
+%!TEX root = rapport.tex
+
+\chapter{Implementation}
+
+In this Chapter we will briefly discuss the implementation of the concepts
+presented in the preceding Chapters. The presentation here is only
+superficial; for details the actual source code must be consulted.
+
+\section{The Parser}
+
+We have implemented a parser for the grammar specified in Definition
+\ref{def:grammar} with a few subtle differences. First of all, the symbol used
+for $\lambda$ is a \texttt{\#}. Secondly, all lambda expressions fed into the
+parser are run through a preprocessing step that adds all implied parentheses
+to the string. This step is included to make the parser definition itself
+simpler. The preprocessing step ensures that Conventions \ref{con:assoc} and
+\ref{con:extent} are followed.
+
+We used a parser generator to make the parser, since we found it simpler and
+more straightforward than to implement it from scratch. There exist numerous
+parser generators for Python \cite{pythonParserGeneratorList}. We chose YAPPS2
+(Yet Another Python Parser System 2) \cite{YAPPS2} because it is designed such
+that it generates human-readable code. YAPPS2 takes a specification of an
+LL(1) grammar and writes the Python code for the corresponding parser.
+
+\section{Representation of Lambda Terms}
+
+A lambda term is represented as a directed acyclic graph (DAG). The nodes of the
+DAG are encoded in Python as objects. There are three types of nodes: 
+abstraction, application and variable:
+\begin{description}
+	\item[Abstraction nodes] define scopes for bound variables and can be thought
+	of as the encoding of the $\lambda$s in the DAG-structure. This node type
+	always has one child.
+	
+	\item[Application nodes] have two children. The first of these
+	is either the DAG-representation of some \emph{active} subterm of 
+	$M$, or another application node. The second child is the DAG-representation
+	of the ``argument'', that is, the lambda term that are to be substituted
+	in place for a bound variable. An application node represents a possible
+	one-step $\beta$-reduction.
+	
+	\item[Variable nodes] represent free or bound variables. A bound 
+	variable is associated with a scope, represented by an ancestral
+	abstraction node. Variable nodes cannot have descendants.
+\end{description}
+
+This representation is straightforwardly encoded in Python with a general node
+class, \pycode{LambdaNode}, which has a subclass for each node type.
+\begin{itemize}
+	\item Each \pycode{LambdaNode}-object maintains pointers to its immediate 
+	descendants as well as a pointer to its parent node.
+	
+	\item The abstraction nodes furthermore maintain a list of pointers to the
+	variable nodes that represent the variables bound by this particular abstractor.
+	These variable nodes must be descendants of the abstraction node, although 
+	not necessarily direct descendants.
+	
+	\item Every abstraction node knows the name of the variable that it binds.
+	This is done in order to be able to easily build the list of bound 
+	variables after parsing a string representation of a lambda term. When
+	the list of variables has been built, this name is not important anymore, 
+	but it still serves as a means of producing human-readable output of the DAG.
+	
+	\item When a term is reduced, the problem is attacked ``top-down'', i.e. we first
+	see the abstraction node, and then we have to deal with its variables.
+	Therefore there is no need for a doubly linked connection between abstraction
+	nodes and variable nodes, and we can safely encode the relationship as a simple
+	list of bound nodes in each abstraction node.
+\end{itemize}
+
+A term that is not in $\beta$-normal-form has at least one $\beta$-contractum,
+and therefore the DAG-representation of that term contains at least one
+application node and one abstraction node. More specifically, for each
+possible one-step $\beta$-reduction in a term $M$, its DAG will contain one
+application node. The first descendant of this node will be an abstraction
+node, while the second, ``rightmost'', descendant will be the argument that
+will be applied to the function represented by the abstraction node.
+
+%Given this DAG, it is possible to implement the aforementioned operations on lambda
+%terms by treewalks. 
+
+
+% Beskrivelse af repræsentation af reduktionsgrafer
+\section{Representation of $\beta$-reduction Graphs}
+
+A reduction graph is represented in Python as an instance of the
+\pycode{Graph}-class. A \pycode{Graph}-object contains its nodes, represented
+as instances of the \pycode{Node}-class, in three different data structures:
+\begin{enumerate}
+	\item A dictionary with references to the nodes, where the keys are normalized string 
+	representations of the lambda terms represented by the nodes.
+	
+	\item Another dictionary with references to the same nodes, but keyed on the
+	names of the nodes instead of the lambda terms.
+	
+	\item A list of the nodes. This is included to ensure that the nodes can be
+	accessed in a consistent ordering, since the Python function \pycode{dict.items()}
+	returns the dictionarys elements in an arbitrary order.
+\end{enumerate}
+A \pycode{Graph}-object contains exactly one \pycode{Node} representing a
+lambda term; if one tries to add an existing node, nothing happens.
+
+A \pycode{Node}-object has a name and a reference to the lambda term that it
+represents. It furthermore has a list of its children and a list of its
+parents. These lists contain instances of the \pycode{Edge}-class, which
+basically just implements a coupling between two \pycode{Node}-objects.
+
+% Beskrivelse af funktionerne der genererer reduktionsgraferne
+\section{Generation of $\beta$-reduction Graphs}
+
+In the file \texttt{operations.py}, the functions necessary for the generation
+of reduction graphs are implemented. The main function here is
+\pycode{reductiongraphiter()} which returns an iterator over the different
+``generations'' of the reduction graph. Each generation is a reduction graph
+containing everything from the generation immediately before, along with the
+contracta of all the redexes of one term that was not reduced in the graph of
+the preceding generation. Thus, the longer one iterates, the bigger and more
+complete a reduction graph is returned. 
+
+The function takes three arguments: the lambda term in whose reduction graph
+we are interested, a start parameter controlling when the iterator should
+start emitting graphs (making it possible to return only the ten last graphs)
+and an end parameter that controls for how long the computation shall
+continue, i.e. how many terms should be reduced.
+
+In the case of reduction graphs of infinite size, the computation only halts
+when the given maximum is reached. For finite graphs, the computation halts
+either when the maximum is reached or when the graph is fully computed,
+depending on the chosen maximum value.
+
+Each time a reduction graph is returned by Pythons \pycode{yield}-statement, a
+deep copy operation is performed. This is done in order to ensure that later
+stages in the program indeed sees the different generations of graphs as
+distinct objects, instead of a collection of references to the same set of
+\pycode{Node}s. The built-in copy operation \pycode{copy.deepcopy()} proved to
+be too slow, so a custom deep copy operation was implemented.
+
+% Beskrivelse af mulighederne for udvidelse med nye tegnealgoritmer
+\section{Drawing Algorithms}
+
+A drawing algorithm is implemented in a class that inherits from
+\pycode{Graph}, i.e. it is itself a reduction graph that implements a
+``drawing interface'', specifying the methods that start the actual algorithm
+that assigns x- and y-coordinates to nodes. To extend the software with new
+drawing algorithms, a new class extending the \pycode{Graph}-class and the
+\pycode{DrawingAlgorithm}-class must be added. The
+\pycode{DrawingAlgorithm}-class merely serves as an interface, guaranteeing
+that all required methods are present.
+
+
