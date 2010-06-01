@@ -2,6 +2,7 @@ import math
 import time
 import computegraph.operations as operations
 import graphicsutils
+from OpenGL.Tk import *
 from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
 from OpenGL.GLUT import *
@@ -156,8 +157,29 @@ class GlDraw(object):
 					far_node = edge.get_far(node)
 					#edge.ipoints[0][0] = node.x
 					#edge.ipoints[0][1] = node.y
-					#edge.ipoints[len(edge.ipoints)-1][0] = far_node.x
-					#edge.ipoints[len(edge.ipoints)-1][1] = far_node.y
+					
+					#glPointSize(30)
+					destX = edge.destination.x
+					destY = edge.destination.y
+					#print "Dest X: " + str(lastX)
+					#print "Dest Y: " + str(lastY)
+					#glBegin(GL_POINTS)
+					#glVertex2f(lastX, lastY)
+					#glEnd()
+					#glPointSize(5)
+					
+					lastX = edge.ipoints[len(edge.ipoints)-1][0]
+					lastY = edge.ipoints[len(edge.ipoints)-1][1]
+					if node.y != edge.ipoints[0][1] or node.x != edge.ipoints[0][0]:
+						glBegin(GL_LINES)
+						glVertex2f(node.x, node.y)
+						glVertex2f(edge.ipoints[0][0], edge.ipoints[0][1])
+						glEnd()
+					if destY != lastY or destX != lastX:
+						glBegin(GL_LINES)
+						glVertex2f(far_node.x, far_node.y)
+						glVertex2f(lastX, lastY)
+						glEnd()
 					
 					POld = [edge.ipoints[0][0], edge.ipoints[0][1]]
 					t = 0.00
@@ -232,7 +254,7 @@ class GlDraw(object):
 			glColor3f(0.0, 0.0, 0.0)
 			
 			# Drawing node names
-			#graphicsutils.write(node.x, node.y + p, node.name)
+			graphicsutils.write(node.x, node.y + p, node.name)
 		
 		glutSwapBuffers()
 	

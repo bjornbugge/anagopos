@@ -39,9 +39,9 @@ class GraphViz(object):
 				G.add_edge(str(node.name),str(far_node.name))
 		
 		# Applies layout (algorithm) to the GraphViz graph
-		#G.write("img/beforelayout.dot")
+		G.write("img/beforelayout.dot")
 		G.layout(prog=self.alg)
-		#G.write("img/afterlayout.dot")
+		G.write("img/afterlayout.dot")
 		G.draw("img/1111.png")
 		
 		k = 0
@@ -59,7 +59,8 @@ class GraphViz(object):
 			graphnode.y = float(string.split(str(nodePos),',')[1])
 			#print "Node X: " + str(graphnode.x)
 			for edge in graphnode.children:
-				edgePos = E[k].attr["pos"]
+				e = G.get_edge(graphnode.name, edge.get_far(graphnode).name)
+				edgePos = e.attr["pos"]
 				newEdgePos = string.split(edgePos,' ')
 				edge.ipoints = [[0 for col in range(2)] for row in range(len(newEdgePos))]
 				for y in range(len(newEdgePos)):
