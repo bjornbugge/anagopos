@@ -49,7 +49,7 @@ class Graph(object):
 		
 		return node
 	
-	def scale(self, width, height, graph):
+	def scale(self, width, height):
 		pass
 
 class Edge(object):

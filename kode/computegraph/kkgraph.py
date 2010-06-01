@@ -7,8 +7,10 @@ import random
 import numpy
 import reductiongraph
 import shortestpath as SP
+from drawingalgorithm import DrawingAlgorithm
 
-class KKGraph(reductiongraph.Graph):
+# TODO Den her skal gaas igennem!
+class KKGraph(DrawingAlgorithm, reductiongraph.Graph):
 	def __init__(self, graph, width = 200, height = 200):
 		for name, value in vars(graph).iteritems():
 			setattr(self, name, value)
@@ -37,6 +39,9 @@ class KKGraph(reductiongraph.Graph):
 	
 	def initwith(self, g):
 		self.reset()
+	
+	def scale(self, width, height):
+		pass
 	
 	def reset( self ):
 		for (key, node) in self.graph.nodesdict.iteritems():

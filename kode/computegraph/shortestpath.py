@@ -38,7 +38,7 @@ def seidel(G):
 	'''
 	Implementation of the algorithm from 
 	"On the All-Pairs-Shortest-Path Problem"
-	by_ Raimund Seidel, (1992) (24th ANNUAL ACM STOC)
+	by Raimund Seidel, (1992) (24th ANNUAL ACM STOC)
 	Returns (D, A) where D is the all-pairs-distances and A the adjacency
 	matrix of the graph G.
 	@inproceedings{129784,

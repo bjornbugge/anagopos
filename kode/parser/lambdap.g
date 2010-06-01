@@ -6,7 +6,7 @@ from lambda_dag import *
 parser Lambda:
 	token LAM: "#"				# The abstractor symbol.
 	token DOT: "."				# A dot!
-	token VAR: "[a-zA-Z_0-9]"	# Variables have one-character names!
+	token VAR: "[a-zA-Z_]([0-9])*"	# Variables
 	
 	ignore: '\s'				# Ignore whitespace characters.	
 	
@@ -54,7 +54,7 @@ def preprocess(term):
 	
 	return out
 
-
 def parse(text):
-    P = Lambda(LambdaScanner(preprocess(text)))
-    return wrap_error_reporter(P, 'Terms')
+	P = Lambda(LambdaScanner(preprocess(text)))
+	# P = Lambda(LambdaScanner(text))
+	return wrap_error_reporter(P, 'Terms')

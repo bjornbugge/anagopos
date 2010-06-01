@@ -90,7 +90,6 @@ def betareduce(term, redexpos):
 	appl.remove(appl.rightchild)
 
 	# Remove the abstractor.
-	# c.parent.swap(c, c.leftchild)
 	appl.swap(c, c.leftchild)
 	
 	if redexpos == 1: # The top node has been reduced.
@@ -141,11 +140,11 @@ def sanitize(term):
 	term.dirty = False
 
 def reductiongraph(root, maximum = 20):
-	for g in reductiongraphyield(root, maximum, maximum):
+	for g in reductiongraphiter(root, maximum, maximum):
 		return g
 
 
-def reductiongraphyield(root, start, end):
+def reductiongraphiter(root, start, end):
 	'''
 	Computes the reduction graph and returns it in the format specified
 	in reductiongraph.py.

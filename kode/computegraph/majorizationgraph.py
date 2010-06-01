@@ -5,8 +5,9 @@ import reductiongraph as RG
 import shortestpath as SP
 from copy import deepcopy
 import time
+from drawingalgorithm import DrawingAlgorithm
 
-class MajorizationGraph(RG.Graph):
+class MajorizationGraph(DrawingAlgorithm, RG.Graph):
 	'''
 	Implementation of Gansner2004-approach.
 	'''
@@ -42,8 +43,8 @@ class MajorizationGraph(RG.Graph):
 		# self.W = self.W[1:, 1:]
 		# self.D = self.D[1:, 1:]
 		self.chol = True
-		
-	def reset(self, f = 0, clearstate = True):
+	
+	def reset(self, f = 0):
 		self.Xt[f:, 0] = self.width * numpy.random.random([self.n - f, 1])
 		self.Xt[f:, 1] = self.height * numpy.random.random([self.n - f, 1])
 		if self.chol:
@@ -54,6 +55,9 @@ class MajorizationGraph(RG.Graph):
 		self.Xt[0:m, :] = othergraph.Xt
 		self.reset(m)
 		self._assignnodepositions()
+	
+	def scale(self, width, height):
+		pass
 	
 	def update_layout(self):
 		e = 1000
@@ -104,8 +108,8 @@ class MajorizationGraph(RG.Graph):
 		
 		LXt = self._get_L(self.Xt)
 		
-		print str(LXt.shape)
-		print str(self.Xt.shape)
+		#print str(LXt.shape)
+		#print str(self.Xt.shape)
 		b = LXt * self.Xt
 		if self.chol:
 			b = b[1:]
@@ -149,9 +153,9 @@ class MajorizationGraph(RG.Graph):
 	def _get_L(self, Z):
 		def func(M):
 			dists = self._ata_dists(M)
-			print str(dists.shape)
-			print str(self.I.shape)
-			print str(self.deltas.shape)
+			#print str(dists.shape)
+			#print str(self.I.shape)
+			#print str(self.deltas.shape)
 			dists = (1 / (dists + self.I)) - self.I # Perform inversion
 			
 			return numpy.multiply(self.deltas, dists)

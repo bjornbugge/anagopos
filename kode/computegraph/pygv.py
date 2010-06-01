@@ -1,13 +1,6 @@
-import math
 import time
-import computegraph.operations as operations
-import lambdaparser as parser
-import randomgraph
-import graphicsutils
 import pygraphviz as pgv
 import string
-import random
-from computegraph.reductiongraph import *
 
 
 # Her begynder pygraphviz koden

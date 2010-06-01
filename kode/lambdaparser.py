@@ -13,8 +13,7 @@ class LambdaScanner(Scanner):
         ('"\\\\("', re.compile('\\(')),
         ('LAM', re.compile('#')),
         ('DOT', re.compile('.')),
-        # ('VAR', re.compile('[a-zA-Z_0-9]')),
-		('VAR', re.compile('[a-zA-Z_]([0-9])*')), # Allow for longer names.
+		('VAR', re.compile('[a-zA-Z_]([0-9])*')),
         ('\\s', re.compile('\\s')),
     ]
     def __init__(self, str):
