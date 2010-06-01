@@ -39,10 +39,10 @@ class GraphViz(object):
 				G.add_edge(str(node.name),str(far_node.name))
 		
 		# Applies layout (algorithm) to the GraphViz graph
-		G.write("img/beforelayout.dot")
+		#G.write("img/beforelayout.dot")
 		G.layout(prog=self.alg)
-		G.write("img/afterlayout.dot")
-		G.draw("img/1111.png")
+		#G.write("img/afterlayout.dot")
+		#G.draw("img/1111.png")
 		
 		k = 0
 		n = 0
