@@ -13,7 +13,7 @@ def generatereductiongraph():
 	'''
 	Generate a random beta-reduction graph.
 	'''
-	term = randomdag()
+	term = randomterm()
 	operations.assignvariables(term)
 	term.makestr()
 	print term
@@ -28,7 +28,7 @@ def getgraph(termstr):
 	return g
 
 def generateterms():
-	term1 = randomdag()
+	term1 = randomterm()
 	operations.assignvariables(term1)
 	print term1
 	term2 = parser.parse(str(term1))
@@ -37,7 +37,7 @@ def generateterms():
 	print term1==term2
 	return (term1, term2)
 
-def randomdag():
+def randomterm():
 	'''
 	Generate a pseude-random DAG-representation of a lambda term.
 	'''
@@ -85,7 +85,6 @@ def randomdag():
 				freevars = freevars + 1
 				name = 'F' + str(freevars)
 			node = lambda_dag.Variable(name)
-		
 		return node
 	
 	p = {'abstraction' 	: 0.6,
@@ -95,5 +94,6 @@ def randomdag():
 		 'boundvar'		: 0.95}
 
 	start = _node(p, [])
-	
+	operations.assignvariables(start)
+	start.makestr()
 	return start

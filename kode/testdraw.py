@@ -1,8 +1,9 @@
 import computegraph.operations as operations
 import lambdaparser as parser
 import randomgraph
-import graphicsutils
-from gldraw import GlDraw
+#import graphicsutils
+#from gldraw import GlDraw
+from gtkdraw import GtkDraw
 from computegraph.kkgraph import KKGraph
 from computegraph.majorizationgraph import MajorizationGraph
 from computegraph.dotgraph import DotGraph
@@ -48,11 +49,14 @@ def drawitGV(term):
 	mgs = []
 	for (i,g) in enumerate(operations.reductiongraphyield(term, 0, 500)):
 		mgs.append(DotGraph(g))
-	gldraw = GlDraw()
-	gldraw.drawlist(mgs)
+	#gldraw = GlDraw()
+	#gldraw.drawlist(mgs)
 	#g = gldraw2.GlDraw()
 	#g.drawlist(mgs)
-
+	print "asdasdasdasda"
+	gtkd = GtkDraw()
+	gtkd.draw
+	
 def drawit(term):
 	mgs = []
 	for (i,g) in enumerate(operations.reductiongraphyield(term, 0, 500)):

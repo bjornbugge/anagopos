@@ -2,6 +2,9 @@ import math
 import time
 import computegraph.operations as operations
 import graphicsutils
+import gtk
+import cairo
+import framework
 from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
 from OpenGL.GLUT import *
@@ -10,7 +13,7 @@ from OpenGL.GL import *
 
 import pdb
 
-class GlDraw(object):
+class GlDraw(gtk.DrawingArea, object):
 	def __init__(self, width = 1024, height = 768, iterable = None):
 		self.term = None
 		self.graph = None
@@ -25,6 +28,7 @@ class GlDraw(object):
 		self.graphlist = []
 		self.InitGL(width, height)
 		self.ipoints = None
+		self.cr = None
 	
 	def InitGL(self, Width, Height):
 		glutInit()
@@ -88,6 +92,9 @@ class GlDraw(object):
 				glutReshapeWindow(self.window_width,self.window_height)
 				glutPositionWindow(self.window_x,self.window_y)
 				self.fullscreen = 0
+				
+		elif args[0] == 'g':
+			self.drawgtk()
 		elif args[0] == 'n': # Step forwards
 			self.graphindex += 1
 			
@@ -323,6 +330,6 @@ class GlDraw(object):
 		# self.graph.update_layout_animated(self.DrawGraph)
 		self.graph.update_layout()
 		glutMainLoop()
-	
+			
 	def draw(self, kkgraph):
 		self.drawlist([kkgraph])

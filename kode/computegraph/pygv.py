@@ -1,4 +1,7 @@
 import time
+import computegraph.operations as operations
+import lambdaparser as parser
+import randomgraph
 import pygraphviz as pgv
 import string
 
