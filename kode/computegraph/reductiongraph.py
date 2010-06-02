@@ -1,4 +1,4 @@
-import operations
+import operations as OP
 from copy import deepcopy 
 
 class Graph(object):
@@ -7,8 +7,6 @@ class Graph(object):
 		self.nodes = []
 		self.nodenametable = {}
 		self.newest = None
-		self.virgin = True
-		self.bezier = False
 	
 	def __repr__(self):
 		o = ''
@@ -36,7 +34,7 @@ class Graph(object):
 		If the node is already present in the graph, the method just returns it.
 		Nodes are compared modulo alpha-equivalence.
 		'''
-		operations.sanitize(term)
+		OP.sanitize(term)
 		try:
 			node = self.nodesdict[str(term)]
 		except KeyError:
@@ -49,16 +47,12 @@ class Graph(object):
 		
 		return node
 	
-	def scale(self, width, height):
-		pass
-
 class Edge(object):
 	def __init__(self, source, destination):
 		self.weight = 1
 		self.source = source
 		self.destination = destination
-		self.ipoints = None
-
+	
 	def get_far(self, node):
 		if self.source == node:
 			return self.destination

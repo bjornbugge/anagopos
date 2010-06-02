@@ -1,4 +1,4 @@
-import operations
+import operations as OP
 
 '''
 DAG-representation of lambda terms.
@@ -9,11 +9,32 @@ class LambdaNode(object):
 		self.leftchild = None
 		self.rightchild = None
 		self.parent = None
-		self.dirty = True # Indicates whether the term can be sanitized.
+		
+		# Indicates whether the term can be sanitized.
+		self.dirty = True 
+		
+		# Cache a terms string representation in strrepr. Do this so that 
+		# each call to __repr__() doesn't calculate the representation again.
 		self.strrepr = ''
+		
+		# The positions of redexes in this term. The format of the positions
+		# is as specified in operations.findredexes().
 		self.redexepositions = []
-		self.generation = -1
 	
+	def __eq__(self, other):
+		'''
+		Equality of two DAGs is defined as the string equality of their 
+		normalized string representations to account for alpha congruence.
+		'''
+		if other is None:
+			return False
+		OP.sanitize(self)
+		OP.sanitize(other)
+		return str(self) == str(other)
+	
+	def __ne__(self, other):
+		return not self.__eq__(self, other)
+
 	def add(self, node):
 		'''
 		Add a child node. If this node already has two children, nothing happens.
@@ -54,32 +75,25 @@ class LambdaNode(object):
 			old.parent = None
 	
 	def makestr(self):
-		pass
+		'''
+		Make the string representation of the lambda term. After a call to
+		this method, self.strrepr is set with the correct string representation,
+		and calls to str() will return the value.
+		'''
+		raise NotImplementedError()
 	
 	def copy(self):
 		'''
+		Return a deep copy of the DAG.
 		Use instead of the copy.deepcopy(), this is much much faster!
 		'''
-		pass
-	
-	def __eq__(self, other):
-		'''
-		Equality of two DAGs is defined as the string equality of their 
-		normalized string representations.
-		'''
-		if other is None:
-			return False
-		operations.sanitize(self)
-		operations.sanitize(other)
-		return str(self) == str(other)
-	
-	def __ne__(self, other):
-		return not self.__eq__(self, other)
+		raise NotImplementedError()
+
 
 class Abstraction(LambdaNode):
-	"""
+	'''
 	A lambda abstraction. Knows which descending nodes it binds.
-	"""
+	'''
 	def __init__(self):
 		super(Abstraction, self).__init__()
 		self.variables = []
@@ -93,7 +107,6 @@ class Abstraction(LambdaNode):
 		a.dirty = self.dirty
 		a.strrepr = self.strrepr
 		a.redexepositions.extend(self.redexepositions)
-		a.generation = self.generation
 		return a
 	
 	def assignvar(self, variablenode):
@@ -110,12 +123,12 @@ class Abstraction(LambdaNode):
 	
 	def __repr__(self):
 		return self.strrepr
-		# return "#" + self.varname + ".(" + str(self.leftchild) + ")"
+
 
 class Application(LambdaNode):
-	"""
+	'''
 	Lambda application.
-	"""
+	'''
 	def copy(self):
 		a = Application()
 		c1 = self.leftchild.copy()
@@ -125,7 +138,6 @@ class Application(LambdaNode):
 		a.dirty = self.dirty
 		a.strrepr = self.strrepr
 		a.redexepositions.extend(self.redexepositions)
-		a.generation = self.generation
 		return a
 	
 	def makestr(self):
@@ -141,16 +153,16 @@ class Application(LambdaNode):
 	def __repr__(self):
 		return self.strrepr
 
+
 class Variable(LambdaNode):
-	"""
+	'''
 	A variable. Can be either bound or free.
-	"""
+	'''
 	def copy(self):
 		v = Variable(self.name)
 		v.dirty = self.dirty
 		v.strrepr = self.strrepr
 		v.redexepositions.extend(self.redexepositions)
-		v.generation = self.generation
 		return v
 		
 	def makestr(self):

@@ -143,7 +143,6 @@ def reductiongraph(root, maximum = 20):
 	for g in reductiongraphiter(root, maximum, maximum):
 		return g
 
-
 def reductiongraphiter(root, start, end):
 	'''
 	Computes the reduction graph and returns it in the format specified
@@ -157,13 +156,14 @@ def reductiongraphiter(root, start, end):
 	alreadydone = []
 	while len(work) > 0 and (end == 0 or guard <= end):
 		term = work[0]
-		term.generation = guard
 		positions = term.redexpositions
 		n1 = graph.addnode(term)
 		if n1.name in alreadydone:
 			del work[0]
 			continue
+		
 		graph.newest = n1
+		
 		for pos in positions:
 			(term, contractum) = betareduce(term, pos)
 			
@@ -175,18 +175,22 @@ def reductiongraphiter(root, start, end):
 				work.append(contractum)
 			
 			reductions = reductions + 1
+		
 		alreadydone.append(n1.name)
 		del work[0]
+		
 		if guard >= start:
 			yield _copygraph(graph)
-			# yield copy.deepcopy(graph)
+		
 		guard = guard + 1
+	
 	print "Performed " + str(reductions) + " reductions."
 	if len(work) > 0:
 		print "Incomplete reduction graph!"
 
 def _copygraph(graph):
 	'''
+	Perform a deep copy of the given graph.
 	Use this function instead of copy.deepcopy() because this one is much faster!
 	'''
 	graphcopy = graphrepr.Graph()
@@ -205,6 +209,10 @@ def _copygraph(graph):
 	return graphcopy
 
 def _copyterm(term):
+	'''
+	Perform a deep copy of the given term.
+	Use instead of copy.deepcopy() because this is faster.
+	'''
 	t = term.copy()
 	assignvariables(t)
 	return t
