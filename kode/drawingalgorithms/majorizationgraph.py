@@ -73,7 +73,7 @@ class MajorizationGraph(DrawingAlgorithm, RG.Graph):
 		m = len(othergraph.nodes)
 		names = [n.name for n in self.nodes]
 		new = range(self.n)
-		for (i, n) in enumerate(othergraph.nodes):
+		for i, n in enumerate(othergraph.nodes):
 			try:
 				j = names.index(n.name)
 				self.Xt[j] = othergraph.Xt[i]

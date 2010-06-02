@@ -1,10 +1,8 @@
+import random
 import math
 import time
 import computegraph.operations as operations
 import graphicsutils
-import gtk
-import cairo
-import framework
 from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
 from OpenGL.GLUT import *
@@ -13,7 +11,7 @@ from OpenGL.GL import *
 
 import pdb
 
-class GlDraw(gtk.DrawingArea, object):
+class GlDraw(object):
 	def __init__(self, width = 1024, height = 768, iterable = None):
 		self.term = None
 		self.graph = None
@@ -74,7 +72,7 @@ class GlDraw(gtk.DrawingArea, object):
 		if args[0] == '\033':
 		    sys.exit()
 		elif args[0] == 'u':
-			self.graph.reset(clearstate = False)
+			self.graph.reset()
 			self.graph.update_layout_animated(self.DrawGraph)
 			self.resizeWindow = 0
 			self.DrawGLScene()
@@ -92,9 +90,7 @@ class GlDraw(gtk.DrawingArea, object):
 				glutReshapeWindow(self.window_width,self.window_height)
 				glutPositionWindow(self.window_x,self.window_y)
 				self.fullscreen = 0
-				
-		elif args[0] == 'g':
-			self.drawgtk()
+		
 		elif args[0] == 'n': # Step forwards
 			self.graphindex += 1
 			
@@ -112,7 +108,7 @@ class GlDraw(gtk.DrawingArea, object):
 					self.graphindex -= 1
 			
 			self.graph = self.graphlist[self.graphindex]
-			if self.graph.virgin:
+			if not hasattr(self.graph, 'virgin'):
 				self.graph.virgin = False
 				self.graph.initwith(self.graphlist[self.graphindex - 1])
 				self.pointArray = [[0 for col in range(4)] for row in range(len(self.graph.nodes))]
@@ -156,7 +152,7 @@ class GlDraw(gtk.DrawingArea, object):
 		newest = graph.newest
 		
 		# Drawing bezier curves if graph is using the dot layout
-		if graph.bezier:
+		if hasattr(graph, 'bezier') and graph.bezier:
 			for node in self.graph.nodes:
 				for edge in node.children:
 					self.ipoints = edge.ipoints
@@ -172,6 +168,14 @@ class GlDraw(gtk.DrawingArea, object):
 					#glBegin(GL_POINTS)
 					#glVertex2f(lastX, lastY)
 					#glEnd()
+					#glPointSize(5)
+					#glColor3f(random.random(), random.random(), random.random())
+					#glPointSize(15)
+					#glBegin(GL_POINTS)					
+					#for p in edge.ipoints:
+					#	glVertex2f(p[0], p[1])
+					#glEnd()
+					#glColor3f(0,0,0)
 					#glPointSize(5)
 					
 					lastX = edge.ipoints[len(edge.ipoints)-1][0]

@@ -1,35 +1,17 @@
 from computegraph.operations import *
 from computegraph.lambda_dag import *
+import lambdaparser as par
 from copy import deepcopy
 
-def test():
-	# #B1.((#B2.((B2 B2)) B1))
-	term = Abstraction()
-	term.varname = 'B1'
-	t1 = Application()
-	term.add(t1)
-	t2 = Abstraction()
-	t2.varname = 'B2'
-	t1.add(t2)
-	v1 = Variable('B1')
-	# v2 = Variable('B2')
-	v2 = Application()
-	v2.add(Variable('B2'))
-	v2.add(Variable('B2'))
-	t1.add(v1)
-	t2.add(v2)
-	t3 = Application()
-	t3.add(term)
-	v3 = Variable('B3')
-	t3.add(v3)
-	assignvariables(t3)
-	g = reductiongraph(t3)
-	
-	return g
-
-
-	
-
+problemterm = '(#v0.((#v1.(#v2.(#v3.(v0))) #v4.(v4))) #v5.(#v6.((v6 v6))))'
+def test(t = problemterm):
+	term = par.parse(t)
+	operations.assignvariables(term)
+	mgs = []
+	gs = [g for g in operations.reductiongraphiter(term, 0, 1)]
+	for g in gs:
+		print g.tostring()
+	return gs
 
 if __name__ == "__main__":
 	

@@ -1,21 +1,18 @@
 import gtk
 import math
 import cairo
-import time
-import numpy
-from graph import Graph
-from graph import Node
 import computegraph.operations as operations
+import computegraph.randomgraph as randomgraph
 import lambdaparser as parser
-import randomgraph
-from computegraph.kkgraph import KKGraph
-from computegraph.majorizationgraph import MajorizationGraph
-from computegraph.dotgraph import DotGraph
-from computegraph.neatograph import NeatoGraph
-from computegraph.reductiongraph import *
-import pickle
-import copy
-import cProfile as profile
+
+# Drawing algorithms
+from drawingalgorithms.majorizationgraph import MajorizationGraph
+from drawingalgorithms.graphvizdrawers import CircoGraph
+from drawingalgorithms.graphvizdrawers import DotGraph
+from drawingalgorithms.graphvizdrawers import NeatoGraph
+from drawingalgorithms.graphvizdrawers import TwopiGraph
+from drawingalgorithms.graphvizdrawers import FdpGraph
+
 
 # t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
 # t = '(#x.((x x) x) #y.((y y) y))'
@@ -50,7 +47,7 @@ class GraphArea(gtk.DrawingArea):
 		print graph
 
 	def do_configure_event ( self, event ):
-		(self.__width, self.__height) = self.window.get_size()
+		self.__width, self.__height = self.window.get_size()
 		self.queue_draw()
 		
 	def do_expose_event ( self, event ):
@@ -89,46 +86,18 @@ class GraphArea(gtk.DrawingArea):
 			update = False
 			return update
 
-	def iter_done( self ):
-		print "drawing" 
-		while gtk.events_pending():
-			gtk.main_iteration(False)		
-		self.queue_draw()
-		time.sleep(0.03)
-		
-	def __scaling(self):
-		print "Will now scale"
-		self.Xs = []
-		self.Ys = []
-		for node in self.graph.nodes:
-			self.Xs.append(node.x)
-			self.Ys.append(node.y)
-			
-		maxPosX = max(self.Xs)
-		print "Max X: " + str(maxPosX)
-		maxPosY = max(self.Ys)
-		print "Max Y: " + str(maxPosY)
-		scalingX = float(maxPosX)/float(800)
-		scalingY = float(maxPosY)/float(700)
-		print "Scaling X: " + str(scalingX)
-		print "Scaling Y: " + str(scalingY)
-		
-		
-		for node in self.graph.nodes:
-			print str(node.x) + "/" + str(scalingX)
-			print str(node.y) + "/" + str(scalingY)
-			node.x = float(node.x)/(scalingX)
-			node.y = float(node.y)/(scalingY)
-			#for edge in node.children:
-			#	for point in range(len(edge.ipoints)):
-			#		edge.ipoints[point][0] = float(edge.ipoints[point][0])/(scalingX)
-			#		edge.ipoints[point][1] = float(edge.ipoints[point][1])/(scalingY)
-
+#	def iter_done( self ):
+#		print "drawing" 
+#		while gtk.events_pending():
+#			gtk.main_iteration(False)		
+#		self.queue_draw()
+#		time.sleep(0.03)
+	
 	def __render( self ):
 		if self.graph:
+			print "rendering"
 			self.graph.update_layout()
-			print self.graph
-			self.__scaling()
+			self.graph.scale(800, 700)
 			self.__cr.rectangle(0,0,self.__width, self.__height)
 			self.__cr.set_source_rgb(1,1,1)
 			self.__cr.fill()
@@ -211,12 +180,10 @@ class GraphArea(gtk.DrawingArea):
 			print "Graph not defined!"
 	
 def redraw(widget):
-	print "You have clicked something!!!"
-	drawing.queue_draw()
+	print "You have clicked redraw!!!"
 	
 def optimize(widget):
-	print "You have clicked something!!!"
-	drawing.queue_draw()
+	print "You have clicked optimize!!!"
 
 def back(widget):
 	print "Graph Number: " + str(graphnumber)
@@ -224,16 +191,57 @@ def back(widget):
 	if update:
 		drawing.queue_draw()
 	
-def drawgraph(widget, graph):
-	drawing.graph = graph
-	drawing.queue_draw()
-	
 def forward(widget):
 	print "Graph Number: " + str(graphnumber)
 	update = drawing.forward()
 	if update:
 		drawing.queue_draw()
-	
+
+def apply(widget):
+	startnum = int(start.get_text())
+	endnum = int(end.get_text())
+	term = parser.parse(entry.get_text())
+	mgs = []
+	operations.assignvariables(term)
+	selected = str(algo.get_child().get_text())
+	if selected == "Neato":
+		print "Neato"
+		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
+			mgs.append(NeatoGraph(g))
+	elif selected == "Dot":
+		print "Dot"
+		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
+			mgs.append(DotGraph(g))
+	elif selected == "TwoPi":
+		print "TwoPi"
+		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
+			mgs.append(TwopiGraph(g))
+	elif selected == "Circo":
+		print "Circo"
+		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
+			mgs.append(CircoGraph(g))
+	elif selected == "Fdp":
+		print "Fdp"
+		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
+			mgs.append(FdpGraph(g))
+	elif selected == "Matrix":
+		print "Majorization"
+		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
+			mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
+	print "mgs len: " + str(len(mgs))
+	drawing.mgs = mgs
+	drawing.initgraph(startnum)
+	drawing.queue_draw()
+
+def generateTerm(widget):
+	print "Now generating term"
+	randomterm = randomgraph.randomterm()
+	print "Random term: " + str(randomterm)
+	entry.set_text(str(randomterm))
+
+
+
+
 if __name__ == "__main__":
 	window = gtk.Window()
 	window.connect("delete-event", gtk.main_quit)
@@ -242,9 +250,6 @@ if __name__ == "__main__":
 	window.resize(width, height)
 	mgs = []
 	graph = None
-		
-	def main():
-		print "Main"
 	
 	drawing = GraphArea(graph)
 	
@@ -281,54 +286,8 @@ if __name__ == "__main__":
 	liststore.append(["Matrix"])
 	algo.set_text_column(0)
 	algo.set_active(0)
-
 	
-	def apply(widget):
-		startnum = start.get_text()
-		endnum = end.get_text()
-		term = entry.get_text()
-		term = parser.parse(term)
-		#drawing.mgs = []
-		mgs = []
-		#print "Term is: " + str(term)
-		#print "Start is: " + str(startnum)
-		#print "Ens is: " + str(endnum)
-		operations.assignvariables(term)
-		selected = str(algo.get_child().get_text())
-		if selected == "Neato":
-			print "Neato"
-			for (i,g) in enumerate(operations.reductiongraphyield(term, int(startnum), int(endnum))):
-				mgs.append(NeatoGraph(g))
-		elif selected == "Dot":
-			print "Dot"
-			for (i,g) in enumerate(operations.reductiongraphyield(term, int(startnum), int(endnum))):
-				mgs.append(DotGraph(g))
-		elif selected == "TwoPi":
-			print "TwoPi"
-			for (i,g) in enumerate(operations.reductiongraphyield(term, int(startnum), int(endnum))):
-				mgs.append(DotGraph(g))
-		elif selected == "Circo":
-			print "Circo"
-			for (i,g) in enumerate(operations.reductiongraphyield(term, int(startnum), int(endnum))):
-				mgs.append(DotGraph(g))
-		elif selected == "Fdp":
-			print "Fdp"
-			for (i,g) in enumerate(operations.reductiongraphyield(term, int(startnum), int(endnum))):
-				mgs.append(DotGraph(g))
-		elif selected == "Matrix":
-			print "Matrix"
-			for (i,g) in enumerate(operations.reductiongraphyield(term, int(startnum), int(endnum))):
-				mgs.append(DotGraph(g))
-		print "mgs len: " + str(len(mgs))
-		drawing.mgs = mgs
-		drawing.initgraph(startnum)
-		drawing.queue_draw()
 	
-	def generateTerm(widget):
-		print "Now generating term"
-		randomterm = randomgraph.randomterm()
-		print "Random term: " + str(randomterm)
-		entry.set_text(str(randomterm))
 	
 	b1.connect("clicked", generateTerm)
 	b2.connect("clicked", apply)

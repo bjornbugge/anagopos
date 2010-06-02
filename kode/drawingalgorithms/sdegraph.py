@@ -2,12 +2,13 @@ import random
 import numpy as NP
 import computegraph.reductiongraph as RG
 import shortestpath as SP
+from drawingalgorithm import DrawingAlgorithm
 
 # Implementation of the algorithm from 
 # "SDE: Graph Drawing Using Spectral  Distance Embedding" by Ali Civril, Malik Magdon-Ismail and Eli Bocek-Rivele
 
 # TODO Lav den...
-class SDEGraph(RG.Graph):
+class SDEGraph(DrawingAlgorithm, RG.Graph):
 	def __init__(self, graph = None, width = 200, height = 200):
 		super(reductiongraph.Graph, self).__init__()
 		

@@ -40,21 +40,4 @@ class DrawingAlgorithm(object):
 		'''
 		Scale the graph to fit into a box with the size "width" times "height".
 		'''
-		Xs = []
-		Ys = []
-		for node in self.nodes:
-			Xs.append(node.x)
-			Ys.append(node.y)
-			
-		maxPosX = max(Xs)
-		maxPosY = max(Ys)
-		scalingX = maxPosX / (width - 50)
-		scalingY = maxPosY / (heigth - 50)
-		
-		for node in self.nodes:
-			node.x = float(node.x) / scalingX
-			node.y = float(node.y) / scalingY
-			for edge in node.children:
-				for point in edge.ipoints:
-					point[0] = float(point[0]) / scalingX
-					point[1] = float(point[1]) / scalingY
+		raise NotImplementedError()

@@ -6,7 +6,7 @@ import pdb
 import computegraph.reductiongraph as RG
 from drawingalgorithm import DrawingAlgorithm
 
-def graphdrawer(drawer):
+def graphvizdrawer(drawer):
 	'''
 	Decorator function for creating PygraphViz-algorithms that
 	satisfy the specifications in drawingalgorithm.DrawingAlgorithm.
@@ -53,7 +53,7 @@ def graphdrawer(drawer):
 		self.G = pgv.AGraph()
 		for name in (n.name for n in self.nodes):
 			self.G.add_node(name, width = "0.00", heigth = "0.00", fixedsize = "0", 
-							margin = "0.00", label = " ", shape = "none", fontsize = "8")
+							margin = "0.00")#, label = " ", shape = "none"), fontsize = "8")
 		
 		# Adds edges in the graph to the GraphViz graph
 		for node in self.nodes:
@@ -92,23 +92,23 @@ def graphdrawer(drawer):
 		setattr(drawer, name, method)
 	return drawer
 
-@graphdrawer
+@graphvizdrawer
 class CircoGraph():
 	algorithm = 'circo'
 
-@graphdrawer
+@graphvizdrawer
 class DotGraph():
 	algorithm = 'dot'
 	bezier = True
 
-@graphdrawer
+@graphvizdrawer
 class NeatoGraph():
 	algorithm = 'neato'
 
-@graphdrawer
+@graphvizdrawer
 class FdpGraph():
 	algorithm = 'fdp'
 
-@graphdrawer
+@graphvizdrawer
 class TwopiGraph():
 	algorithm = 'twopi'

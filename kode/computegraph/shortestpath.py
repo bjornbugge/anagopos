@@ -1,5 +1,4 @@
 import numpy as NP
-# import pdb
 
 def adjacencymatrix(G):
 	n = len(G.nodes)
@@ -94,7 +93,6 @@ if __name__ == '__main__':
 		from timeit import Timer
 		t1 = Timer("seidel(g)", "from shortestpath import *")
 		t2 = Timer("floydwarshal(g)", "from shortestpath import *")
-		# t3 = Timer("apd_dijkstra(g)", "from shortestpath import *")
 		print "With seidel():\t\t %.2f usec/pass" % (numits * t1.timeit(number=numits)/numits)
 		print "With floydwarshal():\t %.2f usec/pass" % (numits * t2.timeit(number=numits)/numits)
 	
