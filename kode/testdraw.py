@@ -2,8 +2,6 @@ import computegraph.operations as operations
 from computegraph.reductiongraph import *
 import lambdaparser as parser
 from gldraw import GlDraw
-# from gtkdraw import GtkDraw
-
 from drawingalgorithms.majorizationgraph import MajorizationGraph
 from drawingalgorithms.graphvizdrawers import CircoGraph
 from drawingalgorithms.graphvizdrawers import DotGraph

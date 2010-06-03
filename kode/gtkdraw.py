@@ -44,7 +44,8 @@ class GraphArea(gtk.DrawingArea):
 		self.mgs = mgs
 		self.graphnumber = None
 		self.graph = None
-		print graph
+		self.currentgraph = None
+
 
 	def do_configure_event ( self, event ):
 		self.__width, self.__height = self.window.get_size()
