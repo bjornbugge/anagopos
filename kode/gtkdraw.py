@@ -49,9 +49,11 @@ class GraphArea(gtk.DrawingArea):
 		self.small_psize = 5
 		self.medium_psize = 10
 		self.large_psize = 15
+		self.arrow_color = (1.0, 36.0 / 255.0, 0.0)
 
 
 	def do_configure_event ( self, event ):
+		print "do_configure_event"
 		self.__width, self.__height = self.window.get_size()
 		self.queue_draw()
 		
@@ -72,24 +74,20 @@ class GraphArea(gtk.DrawingArea):
 		if self.graphnumber+2 <= len(self.mgs):
 			self.graphnumber = self.graphnumber + 1
 			self.graph = self.mgs[self.graphnumber]
-			update = True
-			return update
+			return True
 		else:
-			update = False
 			print "No more graphs"
-			return update
+			return False
 		
 	def back ( self ):
 		#print "next graph"
 		if self.graphnumber != 0:
 			self.graphnumber = self.graphnumber - 1
 			self.graph = self.mgs[self.graphnumber]
-			update = True
-			return update
+			return True
 		else:
 			print "No more graphs"
-			update = False
-			return update
+			return False
 
 #	def iter_done( self ):
 #		print "drawing" 
@@ -111,7 +109,6 @@ class GraphArea(gtk.DrawingArea):
 
 			# Edges
 			if hasattr(self.graph, 'bezier') and self.graph.bezier:
-
 				for node in self.graph.nodes:
 					for edge in node.children:
 						
@@ -147,7 +144,7 @@ class GraphArea(gtk.DrawingArea):
 						POld = [edge.ipoints[0][0], edge.ipoints[0][1]]
 						t = 0.00
 						l = len(edge.ipoints)
-						for g in range(21):
+						for g in xrange(21):
 							P = drawBezierGen(t, l, edge.ipoints)
 							self.__cr.move_to(POld[0], POld[1])
 							self.__cr.line_to(P[0], P[1])
@@ -166,19 +163,8 @@ class GraphArea(gtk.DrawingArea):
 						y1 = edge.ipoints[len(edge.ipoints)-1][1]
 						x2 = edge.get_far(node).x
 						y2 = edge.get_far(node).y
-                        
-						[X3, Y3, X4, Y4] = arrowhead(x1, y1, x2, y2, pdia)
-						self.__cr.set_source_rgb(255.0/255.0,36.0/255.0,0.0/255.0)
-						self.__cr.move_to(x2,y2)
-						self.__cr.line_to(X3,Y3)
-						self.__cr.stroke()
-						self.__cr.move_to(X3,Y3)
-						self.__cr.line_to(X4,Y4)
-						self.__cr.stroke()
-						self.__cr.move_to(X4,Y4)
-						self.__cr.line_to(x2,y2)
-						self.__cr.stroke()
-						self.__cr.fill()
+						
+						self.draw_arrowhead(x1, y1, x2, y2, pdia)
 				self.__cr.restore()
 				self.__cr.save()
 			else:
@@ -203,10 +189,6 @@ class GraphArea(gtk.DrawingArea):
 						self.__cr.line_to(far_node.x, far_node.y)
 						self.__cr.stroke()
 						
-						'''
-						Draws an arrow head on the line segment between the coordinate pairs
-						(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
-						'''
 						x1 = node.x
 						y1 = node.y
 						x2 = edge.get_far(node).x
@@ -220,20 +202,8 @@ class GraphArea(gtk.DrawingArea):
 							pdia = self.small_psize
 						#print "PDIA: " + str(pdia)
 						
-						[X3, Y3, X4, Y4] = arrowhead(x1, y1, x2, y2, pdia)
+						self.draw_arrowhead(x1, y1, x2, y2, pdia)
 						
-						self.__cr.set_source_rgb(255.0/255.0,36.0/255.0,0.0/255.0)
-						self.__cr.move_to(x2,y2)
-						self.__cr.line_to(X3,Y3)
-						self.__cr.stroke()
-						self.__cr.move_to(X3,Y3)
-						self.__cr.line_to(X4,Y4)
-						self.__cr.stroke()
-						self.__cr.move_to(X4,Y4)
-						self.__cr.line_to(x2,y2)
-						self.__cr.stroke()
-						
-						self.__cr.stroke()
 				self.__cr.restore()
 				self.__cr.save()
 			
@@ -248,7 +218,6 @@ class GraphArea(gtk.DrawingArea):
 					self.__cr.stroke()
 				elif node is self.graph.newest:
 					self.__cr.arc(node.x, node.y, self.medium_psize, 0, math.pi*2)
-					#self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
 					self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
 					self.__cr.fill_preserve()
 					self.__cr.set_source_rgb(0, 0, 0)
@@ -261,62 +230,75 @@ class GraphArea(gtk.DrawingArea):
 					self.__cr.stroke()
 			self.__cr.restore()
 
-def arrowhead(x1, y1, x2, y2, nodedia):
-	noderadius = nodedia/2
-	arrowwidth = 10
-	Pi = math.pi
-	angle = 20
-	#print "Node Radius: " + str(noderadius)
+	def draw_arrowhead(self, x1, y1, x2, y2, nodedia):
+		'''
+		Draws an arrow head on the line segment between the coordinate pairs
+		(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
+		'''
+		noderadius = nodedia / 2
+		arrowwidth = 10
+		Pi = math.pi
+		angle = 20
+		
+		if x1 - x2 == 0:
+			LineAngle = Pi / 2
+		else:
+			LineAngle = math.atan((y2 - y1) / (x2 - x1))
 	
-	if x1 - x2 == 0:
-		LineAngle = math.atan(0)
-	else:
-		LineAngle = math.atan((y2-y1)/(x2-x1))
-
-	EndAngle1 = LineAngle + angle * Pi/180
-	EndAngle2 = LineAngle - angle * Pi/180
-
-	xOffset = noderadius * math.cos(LineAngle)
-	yOffset = noderadius * math.sin(LineAngle)
-	if x1 < x2:
-		x2 -= xOffset
-		y2 -= yOffset
-
-		Y3 = y2 - arrowwidth * math.sin(EndAngle1)
-		Y4 = y2 - arrowwidth * math.sin(EndAngle2)
-		X3 = x2 - arrowwidth * math.cos(EndAngle1)
-		X4 = x2 - arrowwidth * math.cos(EndAngle2)
+		EndAngle1 = LineAngle + angle * Pi/180
+		EndAngle2 = LineAngle - angle * Pi/180
+	
+		xOffset = noderadius * math.cos(LineAngle)
+		yOffset = noderadius * math.sin(LineAngle)
+		if x1 < x2:
+			x2 -= xOffset
+			y2 -= yOffset
+	
+			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
+			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
+			X3 = x2 - arrowwidth * math.cos(EndAngle1)
+			X4 = x2 - arrowwidth * math.cos(EndAngle2)
+			
+			Y3 -= yOffset
+			Y4 -= yOffset
+			X3 -= xOffset
+			X4 -= xOffset
+		else:
+			x2 += xOffset
+			y2 += yOffset
+	
+			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
+			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
+			X3 = x2 + arrowwidth * math.cos(EndAngle1)
+			X4 = x2 + arrowwidth * math.cos(EndAngle2)
+			
+			Y3 += yOffset
+			Y4 += yOffset
+			X3 += xOffset
+			X4 += xOffset
 		
-		Y3 -= yOffset
-		Y4 -= yOffset
-		X3 -= xOffset
-		X4 -= xOffset
-	else:
-		x2 += xOffset
-		y2 += yOffset
-
-		Y3 = y2 + arrowwidth * math.sin(EndAngle1)
-		Y4 = y2 + arrowwidth * math.sin(EndAngle2)
-		X3 = x2 + arrowwidth * math.cos(EndAngle1)
-		X4 = x2 + arrowwidth * math.cos(EndAngle2)
-		
-		Y3 += yOffset
-		Y4 += yOffset
-		X3 += xOffset
-		X4 += xOffset
-	return [X3, Y3, X4, Y4]
+		# Draw the (filled) triangle.
+		ac = self.arrow_color
+		self.__cr.set_line_width(1)
+		self.__cr.set_source_rgb(ac[0], ac[1], ac[2])
+		self.__cr.move_to(x2,y2)
+		self.__cr.line_to(X3,Y3)
+		self.__cr.stroke_preserve()
+		self.__cr.line_to(X4,Y4)
+		self.__cr.stroke_preserve()
+		self.__cr.line_to(x2,y2)
+		self.__cr.stroke_preserve()
+		self.__cr.fill()
 
 def binomial(n, i):
-	bin = math.factorial(n)/(math.factorial(i) * math.factorial(n - i))
+	bin = math.factorial(n) / (math.factorial(i) * math.factorial(n - i))
 	return bin
 
 def drawBezierGen(t, l, ipoints):
-	n = l-1
-	x = y = 0
-	for i in range(l):
-		x = x + binomial(n,i) * pow((1 - t),n-i) * pow(t,i) * ipoints[i][0]
-		y = y + binomial(n,i) * pow((1 - t),n-i) * pow(t,i) * ipoints[i][1]
-	return [x,y]
+	n = l - 1
+	x = reduce(lambda x, b:x+b, (binomial(n, i) * pow((1 - t), n - i) * pow(t, i) * ipoints[i][0] for i in xrange(l)))
+	y = reduce(lambda y, b:y+b, (binomial(n, i) * pow((1 - t), n - i) * pow(t, i) * ipoints[i][1] for i in xrange(l)))
+	return [x, y]
 	
 def redraw(widget):
 	print "You have clicked redraw!!!"
@@ -338,6 +320,13 @@ def forward(widget):
 		drawing.graph.update_layout()
 		drawing.queue_draw()
 
+algorithms = {'Neato' : NeatoGraph,
+			'Dot' : DotGraph,
+			'TwoPi' : TwopiGraph,
+			'Circo' : CircoGraph,
+			'Fdp' : FdpGraph,
+			'Majorization' : MajorizationGraph}
+
 def apply(widget):
 	drawing.startnum = int(start.get_text())
 	drawing.endnum = int(end.get_text())
@@ -345,25 +334,13 @@ def apply(widget):
 	drawing.mgs = []
 	operations.assignvariables(drawing.term)
 	drawing.selected = str(algo.get_child().get_text())
-	if drawing.selected == "Neato":
+	try:
+		Drawer = algorithms[drawing.selected]
 		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(NeatoGraph(g))
-	elif drawing.selected == "Dot":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(DotGraph(g))
-	elif drawing.selected == "TwoPi":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(TwopiGraph(g))
-	elif drawing.selected == "Circo":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(CircoGraph(g))
-	elif drawing.selected == "Fdp":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(FdpGraph(g))
-	elif drawing.selected == "Matrix":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
-	drawing.mgs# = mgs
+			drawing.mgs.append(Drawer(g))
+	except KeyError:
+		pass
+	
 	drawing.initgraph(drawing.startnum)
 	drawing.graph.update_layout()
 	drawing.queue_draw()
@@ -379,25 +356,13 @@ def changed_cb(entry):
 	if hasattr(drawing, 'ready') and drawing.ready:
 		drawing.selected = entry.get_text()
 		drawing.mgs = []
-		if drawing.selected == "Neato":
+		try:
+			Drawer = algorithms[drawing.selected]
 			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-				drawing.mgs.append(NeatoGraph(g))
-		elif drawing.selected == "Dot":
-			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-				drawing.mgs.append(DotGraph(g))
-		elif drawing.selected == "TwoPi":
-			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-				drawing.mgs.append(TwopiGraph(g))
-		elif drawing.selected == "Circo":
-			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-				drawing.mgs.append(CircoGraph(g))
-		elif drawing.selected == "Fdp":
-			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-				drawing.mgs.append(FdpGraph(g))
-		elif drawing.selected == "Matrix":
-			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-				drawing.mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
-		drawing.mgs
+				drawing.mgs.append(Drawer(g))
+		except KeyError:
+			pass
+		
 		drawing.graph = drawing.mgs[drawing.graphnumber]
 		drawing.graph.update_layout()
 		drawing.queue_draw()
@@ -507,12 +472,7 @@ if __name__ == "__main__":
 	algo = gtk.ComboBoxEntry()
 	liststore = gtk.ListStore(str)
 	algo.set_model(liststore)
-	liststore.append(["Neato"])
-	liststore.append(["Dot"])
-	liststore.append(["TwoPi"])
-	liststore.append(["Circo"])
-	liststore.append(["Fdp"])
-	liststore.append(["Matrix"])
+	[liststore.append([k]) for k in algorithms.keys()]
 	algo.set_text_column(0)
 	algo.set_active(0)
 	algo.child.connect('changed', changed_cb)

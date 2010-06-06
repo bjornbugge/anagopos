@@ -28,9 +28,11 @@ class LambdaNode(object):
 		'''
 		if other is None:
 			return False
-		OP.sanitize(self)
-		OP.sanitize(other)
-		return str(self) == str(other)
+		s = OP.sanitize
+		st = str
+		s(self)
+		s(other)
+		return st(self) == st(other)
 	
 	def __ne__(self, other):
 		return not self.__eq__(self, other)

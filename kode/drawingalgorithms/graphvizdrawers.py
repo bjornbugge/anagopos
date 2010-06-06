@@ -1,9 +1,5 @@
 import random
-import time
 import pygraphviz as pgv
-import string
-import pdb
-import computegraph.reductiongraph as RG
 from drawingalgorithm import DrawingAlgorithm
 
 class GraphVizDrawer(DrawingAlgorithm):
@@ -51,7 +47,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 			for edge in graphnode.children:
 				Aedge = self.G.get_edge(graphnode.name, edge.get_far(graphnode).name)
 				newEdgePos = Aedge.attr["pos"].split(' ')
-				
+
 				if not hasattr(self, 'bezier') or not self.bezier:
 					continue
 				

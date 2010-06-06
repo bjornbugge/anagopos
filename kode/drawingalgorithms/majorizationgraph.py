@@ -165,22 +165,19 @@ class MajorizationGraph(DrawingAlgorithm):
 			print self.D
 			print "SINGULAR MATRIX!!!"
 		
-	
 	def _ata_dists(self, X):
 		'''
 		Computes the all-to-all distances in a N*2 matrix of (x,y)-coordinates.
 		Returns a N*N matrix with (Euclidean) distances.
 		'''
 		squared = lambda x:numpy.power(x, 2)
-		M1, M2 = numpy.meshgrid(X[:,0], X[:,0])
-		M3, M4 = numpy.meshgrid(X[:,1], X[:,1])
+		meshgrid = numpy.meshgrid
+		M1, M2 = meshgrid(X[:,0], X[:,0])
+		M3, M4 = meshgrid(X[:,1], X[:,1])
 		return numpy.sqrt(squared(M1 - M2) + squared(M3 - M4))
 	
 	def _stress(self, X):
 		dists = self._ata_dists(X)
-		if self.chol:
-			pass
-			
 		E = numpy.multiply(self.W, numpy.power(dists - self.D, 2))
 		return E.sum() / 2 # Because we only look at those elms. with i>j we divide by two
 	

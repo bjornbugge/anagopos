@@ -1,6 +1,9 @@
 import numpy as NP
 
 def adjacencymatrix(G):
+	'''
+	Compute and return the adjacency matrix for the graph G.
+	'''
 	n = len(G.nodes)
 	A = NP.zeros([n, n])
 	for (i, v) in enumerate(G.nodes):
@@ -53,6 +56,7 @@ def seidel(G):
 	 address = {New York, NY, USA},
 	 }
 	'''
+	I = NP.identity(len(G.nodes))
 	def _APD(A):
 		n = len(A)
 		Z = NP.dot(A, A)
@@ -63,10 +67,10 @@ def seidel(G):
 		B[Z > 0] = 1
 		
 		# Set diagonal to zeros
-		B = B - B.diagonal() * NP.identity(n)
+		B = B - B.diagonal() * I
 		
 		# If b_ij == 1, i different than j then return.
-		if (B + NP.identity(n)).all():
+		if (B + I).all():
 			return 2 * B - A
 		T = _APD(B)
 		X = NP.dot(T, A)
