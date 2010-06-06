@@ -2,15 +2,15 @@
 Graph abstraction to be used with the Kamada-Kawai force-directed algorithm.
 '''
 import sys
+import pdb
 import math
 import random
 import numpy
-import computegraph.reductiongraph as RG
 import computegraph.shortestpath as SP
 from drawingalgorithm import DrawingAlgorithm
 
 # TODO Den her skal gaas igennem!
-class KKGraph(DrawingAlgorithm, RG.Graph):
+class KKGraph(DrawingAlgorithm):
 	def __init__(self, graph, width = 200, height = 200):
 		for name, value in vars(graph).iteritems():
 			setattr(self, name, value)
@@ -179,8 +179,11 @@ class KKGraph(DrawingAlgorithm, RG.Graph):
 		return lmatrix
 
 	# FIXME HUGE bug here regarding priority list and dist matrix always being 0
-	def __get_idist_matrix ( self ):
+	def __get_idist_matrix (self):
+		
+		# pdb.set_trace()
 		(D, A) = SP.seidel(self)
+		# (D, A) = SP.floydwarshal(self)
 		return D
 		
 		#nnodes = len(self.nodes)

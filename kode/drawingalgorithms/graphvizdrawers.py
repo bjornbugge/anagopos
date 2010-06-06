@@ -6,46 +6,11 @@ import pdb
 import computegraph.reductiongraph as RG
 from drawingalgorithm import DrawingAlgorithm
 
-def graphvizdrawer(drawer):
+class GraphVizDrawer(DrawingAlgorithm):
 	'''
-	Decorator function for creating PygraphViz-algorithms that
-	satisfy the specifications in drawingalgorithm.DrawingAlgorithm.
+	Common ancestor for the drawing algorithms from GraphViz. 
 	'''
-	def _reset(self, f = 0):
-		for node in self.nodes:
-			node.x = random.randint(1, 100)
-			node.y = random.randint(1, 100)
-	
-	def _initwith(self, othergraph): self.reset()
-	
-	def _update_layout(self):
-		# Layout the graph.
-		self.G.layout(prog = self.algorithm)
-		
-		E = self.G.edges()
-		N = self.G.nodes()
-		
-		# Assigns new positions in the GraphViz graph to the "correct" graph
-		for Anode in N:
-			graphnode = self.nodenametable[Anode.name]
-			graphnode.x, graphnode.y = map(float, Anode.attr["pos"].split(','))
-			for edge in graphnode.children:
-				Aedge = self.G.get_edge(graphnode.name, edge.get_far(graphnode).name)
-				newEdgePos = Aedge.attr["pos"].split(' ')
-				
-				if not hasattr(self, 'bezier') or not self.bezier:
-					continue
-				
-				edge.ipoints = [[0, 0] for row in range(len(newEdgePos))]
-				# pdb.set_trace()
-				for i, pos in enumerate(newEdgePos):
-					edge.ipoints[i] = map(float, pos.split(','))
-	
-	def _update_layout_animated(self, f):
-		self.update_layout()
-		f(self)
-			
-	def _init(self, graph):
+	def __init__(self, graph):
 		for name, value in vars(graph).iteritems():
 			setattr(self, name, value)
 		
@@ -65,7 +30,42 @@ def graphvizdrawer(drawer):
 		
 		self.reset()
 	
-	def _scale(self, width, height):
+	def reset(self, f = 0):
+		for node in self.nodes:
+			node.x = random.randint(1, 100)
+			node.y = random.randint(1, 100)
+	
+	def initwith(self, othergraph): 
+		self.reset()
+	
+	def update_layout(self):
+		# Layout the graph.
+		self.G.layout(prog = self.algorithm)
+		
+		# E = self.G.edges()
+		N = self.G.nodes()
+		
+		# Assigns new positions in the GraphViz graph to the "correct" graph
+		for Anode in N:
+			graphnode = self.nodenametable[Anode.name]
+			graphnode.x, graphnode.y = map(float, Anode.attr["pos"].split(','))
+			for edge in graphnode.children:
+				Aedge = self.G.get_edge(graphnode.name, edge.get_far(graphnode).name)
+				newEdgePos = Aedge.attr["pos"].split(' ')
+				
+				if not hasattr(self, 'bezier') or not self.bezier:
+					continue
+				
+				edge.ipoints = [[0, 0] for row in range(len(newEdgePos))]
+				# pdb.set_trace()
+				for i, pos in enumerate(newEdgePos):
+					edge.ipoints[i] = map(float, pos.split(','))
+	
+	def update_layout_animated(self, f):
+		self.update_layout()
+		f(self)
+	
+	def scale(self, width, height):
 		Xs = [node.x for node in self.nodes]
 		Ys = [node.y for node in self.nodes]
 		scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
@@ -81,34 +81,20 @@ def graphvizdrawer(drawer):
 				for i, point in enumerate(edge.ipoints):
 					edge.ipoints[i] = map(lambda x:float(x[0]) / x[1], zip(point, scaling))
 	
-	methods = {	'__init__' 				: _init,
-				'reset'					: _reset,
-				'initwith'				: _initwith,
-				'update_layout' 		: _update_layout,
-				'update_layout_animated': _update_layout_animated,
-				'scale' 				: _scale}
-	
-	for name, method in methods.iteritems():
-		setattr(drawer, name, method)
-	return drawer
 
-@graphvizdrawer
-class CircoGraph():
+
+class CircoGraph(GraphVizDrawer):
 	algorithm = 'circo'
 
-@graphvizdrawer
-class DotGraph():
+class DotGraph(GraphVizDrawer):
 	algorithm = 'dot'
 	bezier = True
 
-@graphvizdrawer
-class NeatoGraph():
+class NeatoGraph(GraphVizDrawer):
 	algorithm = 'neato'
 
-@graphvizdrawer
-class FdpGraph():
+class FdpGraph(GraphVizDrawer):
 	algorithm = 'fdp'
 
-@graphvizdrawer
-class TwopiGraph():
+class TwopiGraph(GraphVizDrawer):
 	algorithm = 'twopi'

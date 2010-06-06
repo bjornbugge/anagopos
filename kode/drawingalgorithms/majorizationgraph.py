@@ -1,13 +1,12 @@
 import pdb
 import math
 import numpy
-import computegraph.reductiongraph as RG
 import computegraph.shortestpath as SP
 from copy import deepcopy
 import time
 from drawingalgorithm import DrawingAlgorithm
 
-class MajorizationGraph(DrawingAlgorithm, RG.Graph):
+class MajorizationGraph(DrawingAlgorithm):
 	'''
 	Implementation of Gansner2004-approach.
 	'''
@@ -206,23 +205,23 @@ class MajorizationGraph(DrawingAlgorithm, RG.Graph):
 		return W
 	
 	def _get_D_matrix(self):
-		t = time.time()
+		# t = time.time()
 		(D, A) = self._get_graph_distances()
-		print "D took: " + str(time.time() - t)
+		# print "D took: " + str(time.time() - t)
 		W = numpy.mat(numpy.zeros([self.n, self.n]))
 		if not self._compute_distances():
 			alpha = 1
 		else:
 			if True or self.n > 180:
 				alpha = 0.01
-				t = time.time()
+				# t = time.time()
 				for i in xrange(self.n):
 					for j in xrange(i + 1, self.n):
 						Ni = set(self.nodes[i].parents + self.nodes[i].children)
 						Nj = set(self.nodes[j].parents + self.nodes[j].children)
 						W[i,j] = W[j,i] = 1 + (len(Ni.union(Nj)) - len(Ni.intersection(Nj)))
 
-				print "W took: " + str(time.time() - t)
+				# print "W took: " + str(time.time() - t)
 			else:
 				alpha = 0.0
 		
