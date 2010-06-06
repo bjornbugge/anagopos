@@ -105,13 +105,18 @@ class GraphArea(gtk.DrawingArea):
 			self.__cr.fill()
         	
 			self.__cr.save()
-			self.__cr.set_source_rgb(0,0,0)
 
 			# Edges
-			if drawing.selected == "Dot":# hasattr(graph, 'bezier') and self.graph.bezier:
-				#print "Bezier lines"
-				self.__cr.set_line_width(1)
+			if hasattr(self.graph, 'bezier') and self.graph.bezier:
+
 				for node in self.graph.nodes:
+					if node is self.graph.newest:
+						self.__cr.set_line_width(3)
+						self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
+					else:
+						self.__cr.set_line_width(1)
+						self.__cr.set_source_rgb(130.0/255.0, 172.0/255.0, 245.0/255.0)
+						
 					for edge in node.children:
 						self.graph.ipoints = edge.ipoints
 						far_node = edge.get_far(node)
@@ -140,56 +145,14 @@ class GraphArea(gtk.DrawingArea):
 							self.__cr.stroke()
 							POld = P
 							t = t + 0.01
-				self.__cr.restore()
-				self.__cr.save()
-			else:
-				for node in self.graph.nodes:
-					for edge in node.children:
-						far_node = edge.get_far(node)
-						self.__cr.set_line_width(1)
-						self.__cr.move_to(node.x, node.y)
-						self.__cr.line_to(far_node.x, far_node.y)
-						self.__cr.stroke()
-						
-						'''
-						Draws an arrow head on the line segment between the coordinate pairs
-						(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
-						'''
-						noderadius = 2.5
-						arrowwidth = 15
-						Pi = math.pi
-						angle = 10
+							
 						x1 = node.x
 						y1 = node.y
 						x2 = edge.get_far(node).x
 						y2 = edge.get_far(node).y
-						if x1 - x2 == 0:
-							LineAngle = math.atan(0)
-						else:
-							LineAngle = math.atan((y2-y1)/(x2-x1))
-            	
-						EndAngle1 = LineAngle + angle * Pi/180
-						EndAngle2 = LineAngle - angle * Pi/180
-            	
-						xOffset = noderadius * math.cos(LineAngle)
-						yOffset = noderadius * math.sin(LineAngle)
-            			
-						if x1 < x2:
-							x2 -= xOffset
-							y2 -= yOffset
-            	
-							Y3 = y2 - arrowwidth * math.sin(EndAngle1)
-							Y4 = y2 - arrowwidth * math.sin(EndAngle2)
-							X3 = x2 - arrowwidth * math.cos(EndAngle1)
-							X4 = x2 - arrowwidth * math.cos(EndAngle2)
-						else:
-							x2 += xOffset
-							y2 += yOffset
-            	
-							Y3 = y2 + arrowwidth * math.sin(EndAngle1)
-							Y4 = y2 + arrowwidth * math.sin(EndAngle2)
-							X3 = x2 + arrowwidth * math.cos(EndAngle1)
-							X4 = x2 + arrowwidth * math.cos(EndAngle2)
+                        
+						[X3, Y3, X4, Y4] = arrowhead(x1, y1, x2, y2)
+                        
 						self.__cr.move_to(x2,y2)
 						self.__cr.line_to(X3,Y3)
 						self.__cr.stroke()
@@ -201,22 +164,109 @@ class GraphArea(gtk.DrawingArea):
 						self.__cr.stroke()
 				self.__cr.restore()
 				self.__cr.save()
+			else:
+				for node in self.graph.nodes:
+					
+					if node is self.graph.newest:
+						self.__cr.set_line_width(3)
+						self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
+					else:
+						self.__cr.set_line_width(1)
+						self.__cr.set_source_rgb(130.0/255.0, 172.0/255.0, 245.0/255.0)
+						
+					for edge in node.children:
+						far_node = edge.get_far(node)
+						self.__cr.move_to(node.x, node.y)
+						self.__cr.line_to(far_node.x, far_node.y)
+						self.__cr.stroke()
+						
+						'''
+						Draws an arrow head on the line segment between the coordinate pairs
+						(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
+						'''
+						x1 = node.x
+						y1 = node.y
+						x2 = edge.get_far(node).x
+						y2 = edge.get_far(node).y
+						
+						[X3, Y3, X4, Y4] = arrowhead(x1, y1, x2, y2)
+						
+						self.__cr.move_to(x2,y2)
+						self.__cr.line_to(X3,Y3)
+						self.__cr.stroke()
+						self.__cr.move_to(X3,Y3)
+						self.__cr.line_to(X4,Y4)
+						self.__cr.stroke()
+						self.__cr.move_to(X4,Y4)
+						self.__cr.line_to(x2,y2)
+						self.__cr.stroke()
+						
+						self.__cr.stroke()
+				self.__cr.restore()
+				self.__cr.save()
 			
-			# Nodes
+			# Nodes 34.0/255.0,139.0/255.0,34.0/255.0
 			for node in self.graph.nodes:
 				if len(node.term.redexpositions) == 0:
-					psize = 20
+					psize = 15
+					self.__cr.arc(node.x, node.y, psize, 0, math.pi*2)
+					self.__cr.set_source_rgb(0xcc/255.0, 0, 0)
+					self.__cr.fill_preserve()
+					self.__cr.set_source_rgb(0xa4/255.0, 0, 0)
+					self.__cr.stroke()
+				elif node is self.graph.newest:
+					psize = 10
+					self.__cr.arc(node.x, node.y, psize, 0, math.pi*2)
+					self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
+					self.__cr.fill_preserve()
+					self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
+					self.__cr.stroke()
 				else:
 					psize = 5
-				self.__cr.arc(node.x, node.y, psize, 0, math.pi*2)
-				self.__cr.set_source_rgb(0xcc/255.0, 0, 0)
-				self.__cr.fill_preserve()
-				self.__cr.set_source_rgb(0xa4/255.0, 0, 0)
-				self.__cr.stroke()
+					self.__cr.arc(node.x, node.y, psize, 0, math.pi*2)
+					self.__cr.set_source_rgb(0, 0, 0)
+					self.__cr.fill_preserve()
+					self.__cr.set_source_rgb(0, 0, 0)
+					self.__cr.stroke()
 			self.__cr.restore()
 		else:
 			print "Graph not defined!"
 			
+
+def arrowhead(x1, y1, x2, y2):
+	noderadius = 2.5
+	arrowwidth = 15
+	Pi = math.pi
+	angle = 10
+	
+	if x1 - x2 == 0:
+		LineAngle = math.atan(0)
+	else:
+		LineAngle = math.atan((y2-y1)/(x2-x1))
+
+	EndAngle1 = LineAngle + angle * Pi/180
+	EndAngle2 = LineAngle - angle * Pi/180
+
+	xOffset = noderadius * math.cos(LineAngle)
+	yOffset = noderadius * math.sin(LineAngle)
+	if x1 < x2:
+		x2 -= xOffset
+		y2 -= yOffset
+
+		Y3 = y2 - arrowwidth * math.sin(EndAngle1)
+		Y4 = y2 - arrowwidth * math.sin(EndAngle2)
+		X3 = x2 - arrowwidth * math.cos(EndAngle1)
+		X4 = x2 - arrowwidth * math.cos(EndAngle2)
+	else:
+		x2 += xOffset
+		y2 += yOffset
+
+		Y3 = y2 + arrowwidth * math.sin(EndAngle1)
+		Y4 = y2 + arrowwidth * math.sin(EndAngle2)
+		X3 = x2 + arrowwidth * math.cos(EndAngle1)
+		X4 = x2 + arrowwidth * math.cos(EndAngle2)
+	return [X3, Y3, X4, Y4]
+
 def binomial(n, i):
 	bin = math.factorial(n)/(math.factorial(i) * math.factorial(n - i))
 	return bin
@@ -277,10 +327,10 @@ def apply(widget):
 	drawing.queue_draw()
 
 def generateTerm(widget):
-	print "Now generating term"
-	randomterm = randomgraph.randomterm()
-	print "Random term: " + str(randomterm)
-	entry.set_text(str(randomterm))
+	drawing.term = randomgraph.randomterm()
+	print "Random term: " + str(drawing.term)
+	entry.set_text(str(drawing.term))
+	tooltips.set_tip(entry, str(drawing.term))
 
 def changed_cb(entry):
 	drawing.selected = entry.get_text()
@@ -303,8 +353,7 @@ def changed_cb(entry):
 	elif drawing.selected == "Matrix":
 		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
 			drawing.mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
-	drawing.mgs# = mgs
-	#drawing.initgraph(drawing.startnum)
+	drawing.mgs
 	drawing.graph = drawing.mgs[drawing.graphnumber]
 	drawing.queue_draw()
 
@@ -333,8 +382,13 @@ if __name__ == "__main__":
 	b5 = gtk.Button("Redraw Graph")
 	b6 = gtk.Button("Optimize Graph")
 	
+	drawing.term = t
+	
 	entry = gtk.Entry()
-	entry.set_text("#B1.(#B2.(#B3.(((#B4.((#B5.(#B6.(#B7.(B4))) #B8.(B3))) B3) (#B9.((#B10.(#B11.(B3)) B3)) (#B12.(#B13.(#B14.(#B15.(#B16.(B13))))) B1))))))")
+	entry.set_text(drawing.term)
+	
+	tooltips = gtk.Tooltips()
+	tooltips.set_tip(entry, str(drawing.term))
 	
 	start = gtk.Entry()
 	start.set_text("0")
