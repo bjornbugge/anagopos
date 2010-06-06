@@ -94,6 +94,7 @@ class GraphArea(gtk.DrawingArea):
 #		self.queue_draw()
 #		time.sleep(0.03)
 	
+	
 	def __render( self ):
 		if self.graph:
 			#print "rendering"
@@ -172,7 +173,7 @@ class GraphArea(gtk.DrawingArea):
             	
 						xOffset = noderadius * math.cos(LineAngle)
 						yOffset = noderadius * math.sin(LineAngle)
-            	
+            			
 						if x1 < x2:
 							x2 -= xOffset
 							y2 -= yOffset
@@ -189,15 +190,15 @@ class GraphArea(gtk.DrawingArea):
 							Y4 = y2 + arrowwidth * math.sin(EndAngle2)
 							X3 = x2 + arrowwidth * math.cos(EndAngle1)
 							X4 = x2 + arrowwidth * math.cos(EndAngle2)
-							self.__cr.move_to(x2,y2)
-							self.__cr.line_to(X3,Y3)
-							self.__cr.stroke()
-							self.__cr.move_to(X3,Y3)
-							self.__cr.line_to(X4,Y4)
-							self.__cr.stroke()
-							self.__cr.move_to(X4,Y4)
-							self.__cr.line_to(x2,y2)
-							self.__cr.stroke()
+						self.__cr.move_to(x2,y2)
+						self.__cr.line_to(X3,Y3)
+						self.__cr.stroke()
+						self.__cr.move_to(X3,Y3)
+						self.__cr.line_to(X4,Y4)
+						self.__cr.stroke()
+						self.__cr.move_to(X4,Y4)
+						self.__cr.line_to(x2,y2)
+						self.__cr.stroke()
 				self.__cr.restore()
 				self.__cr.save()
 			
