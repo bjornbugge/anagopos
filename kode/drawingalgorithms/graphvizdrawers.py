@@ -42,7 +42,6 @@ class GraphVizDrawer(DrawingAlgorithm):
 		# Layout the graph.
 		self.G.layout(prog = self.algorithm)
 		
-		# E = self.G.edges()
 		N = self.G.nodes()
 		
 		# Assigns new positions in the GraphViz graph to the "correct" graph

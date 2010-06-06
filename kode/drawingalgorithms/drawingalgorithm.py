@@ -1,8 +1,10 @@
 class DrawingAlgorithm(object):
 	'''
-	Class that all drawing algorithms must extend along with
-	the reductiongraph.Graph class.
+	Class that all drawing algorithms must extend.
 	'''
+	def __init__(self, graph):
+		raise NotImplementedError()
+	
 	def reset(self, control = 0):
 		'''
 		Reset the positions of the nodes in the graph, by e.g. assigning them
