@@ -3,7 +3,7 @@ import math
 import time
 import computegraph.operations as operations
 import graphicsutils
-from computegraph.kkgraph import KKGraph
+#from computegraph.kkgraph import KKGraph
 from computegraph.reductiongraph import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *

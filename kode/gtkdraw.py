@@ -52,19 +52,19 @@ class GraphArea(gtk.DrawingArea):
 		self.queue_draw()
 		
 	def do_expose_event ( self, event ):
-		print "exposing"
+		#print "exposing"
 		self.__cr = self.window.cairo_create()
 		self.__render()
 		
 	def initgraph (self, startnum):
-		print "Init Graph"
+		#print "Init Graph"
 		#print "Start Num: " + str(startnum)
 		#print "mgs len: " + str(len(self.mgs))
 		self.graphnumber = 0
 		self.graph = self.mgs[self.graphnumber]
 		
 	def forward ( self ):
-		print "next graph"
+		#print "next graph"
 		if self.graphnumber+2 <= len(self.mgs):
 			self.graphnumber = self.graphnumber + 1
 			self.graph = self.mgs[self.graphnumber]
@@ -76,7 +76,7 @@ class GraphArea(gtk.DrawingArea):
 			return update
 		
 	def back ( self ):
-		print "next graph"
+		#print "next graph"
 		if self.graphnumber != 0:
 			self.graphnumber = self.graphnumber - 1
 			self.graph = self.mgs[self.graphnumber]
@@ -96,7 +96,7 @@ class GraphArea(gtk.DrawingArea):
 	
 	def __render( self ):
 		if self.graph:
-			print "rendering"
+			#print "rendering"
 			self.graph.update_layout()
 			self.graph.scale(800, 700)
 			self.__cr.rectangle(0,0,self.__width, self.__height)
@@ -105,65 +105,101 @@ class GraphArea(gtk.DrawingArea):
         	
 			self.__cr.save()
 			self.__cr.set_source_rgb(0,0,0)
-			
+
 			# Edges
-			for node in self.graph.nodes:
-				for edge in node.children:
-					far_node = edge.get_far(node)
-					self.__cr.move_to(node.x, node.y)
-					self.__cr.line_to(far_node.x, far_node.y)
-					self.__cr.stroke()
-					
-					'''
-					Draws an arrow head on the line segment between the coordinate pairs
-					(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
-					'''
-					noderadius = 2.5
-					arrowwidth = 15
-					Pi = math.pi
-					angle = 10
-					x1 = node.x
-					y1 = node.y
-					x2 = edge.get_far(node).x
-					y2 = edge.get_far(node).y
-					if x1 - x2 == 0:
-						LineAngle = math.atan(0)
-					else:
-						LineAngle = math.atan((y2-y1)/(x2-x1))
-
-					EndAngle1 = LineAngle + angle * Pi/180
-					EndAngle2 = LineAngle - angle * Pi/180
-
-					xOffset = noderadius * math.cos(LineAngle)
-					yOffset = noderadius * math.sin(LineAngle)
-
-					if x1 < x2:
-						x2 -= xOffset
-						y2 -= yOffset
-
-						Y3 = y2 - arrowwidth * math.sin(EndAngle1)
-						Y4 = y2 - arrowwidth * math.sin(EndAngle2)
-						X3 = x2 - arrowwidth * math.cos(EndAngle1)
-						X4 = x2 - arrowwidth * math.cos(EndAngle2)
-					else:
-						x2 += xOffset
-						y2 += yOffset
-
-						Y3 = y2 + arrowwidth * math.sin(EndAngle1)
-						Y4 = y2 + arrowwidth * math.sin(EndAngle2)
-						X3 = x2 + arrowwidth * math.cos(EndAngle1)
-						X4 = x2 + arrowwidth * math.cos(EndAngle2)
-						self.__cr.move_to(x2,y2)
-						self.__cr.line_to(X3,Y3)
+			if drawing.selected == "Dot":# hasattr(graph, 'bezier') and self.graph.bezier:
+				#print "Bezier lines"
+				self.__cr.set_line_width(1)
+				for node in self.graph.nodes:
+					for edge in node.children:
+						self.graph.ipoints = edge.ipoints
+						far_node = edge.get_far(node)
+						
+						destX = edge.destination.x
+						destY = edge.destination.y
+						
+						lastX = edge.ipoints[len(edge.ipoints)-1][0]
+						lastY = edge.ipoints[len(edge.ipoints)-1][1]
+						if node.y != edge.ipoints[0][1] or node.x != edge.ipoints[0][0]:
+							self.__cr.move_to(node.x, node.y)
+							self.__cr.line_to(edge.ipoints[0][0], edge.ipoints[0][1])
+							self.__cr.stroke()
+						if destY != lastY or destX != lastX:
+							self.__cr.move_to(far_node.x, far_node.y)
+							self.__cr.line_to(lastX, lastY)
+							self.__cr.stroke()
+							
+						POld = [edge.ipoints[0][0], edge.ipoints[0][1]]
+						t = 0.00
+						l = len(edge.ipoints)
+						for g in range(101):
+							P = drawBezierGen(t, l, edge.ipoints)
+							self.__cr.move_to(POld[0], POld[1])
+							self.__cr.line_to(P[0], P[1])
+							self.__cr.stroke()
+							POld = P
+							t = t + 0.01
+				self.__cr.restore()
+				self.__cr.save()
+			else:
+				for node in self.graph.nodes:
+					for edge in node.children:
+						far_node = edge.get_far(node)
+						self.__cr.set_line_width(1)
+						self.__cr.move_to(node.x, node.y)
+						self.__cr.line_to(far_node.x, far_node.y)
 						self.__cr.stroke()
-						self.__cr.move_to(X3,Y3)
-						self.__cr.line_to(X4,Y4)
-						self.__cr.stroke()
-						self.__cr.move_to(X4,Y4)
-						self.__cr.line_to(x2,y2)
-						self.__cr.stroke()
-			self.__cr.restore()
-			self.__cr.save()
+						
+						'''
+						Draws an arrow head on the line segment between the coordinate pairs
+						(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
+						'''
+						noderadius = 2.5
+						arrowwidth = 15
+						Pi = math.pi
+						angle = 10
+						x1 = node.x
+						y1 = node.y
+						x2 = edge.get_far(node).x
+						y2 = edge.get_far(node).y
+						if x1 - x2 == 0:
+							LineAngle = math.atan(0)
+						else:
+							LineAngle = math.atan((y2-y1)/(x2-x1))
+            	
+						EndAngle1 = LineAngle + angle * Pi/180
+						EndAngle2 = LineAngle - angle * Pi/180
+            	
+						xOffset = noderadius * math.cos(LineAngle)
+						yOffset = noderadius * math.sin(LineAngle)
+            	
+						if x1 < x2:
+							x2 -= xOffset
+							y2 -= yOffset
+            	
+							Y3 = y2 - arrowwidth * math.sin(EndAngle1)
+							Y4 = y2 - arrowwidth * math.sin(EndAngle2)
+							X3 = x2 - arrowwidth * math.cos(EndAngle1)
+							X4 = x2 - arrowwidth * math.cos(EndAngle2)
+						else:
+							x2 += xOffset
+							y2 += yOffset
+            	
+							Y3 = y2 + arrowwidth * math.sin(EndAngle1)
+							Y4 = y2 + arrowwidth * math.sin(EndAngle2)
+							X3 = x2 + arrowwidth * math.cos(EndAngle1)
+							X4 = x2 + arrowwidth * math.cos(EndAngle2)
+							self.__cr.move_to(x2,y2)
+							self.__cr.line_to(X3,Y3)
+							self.__cr.stroke()
+							self.__cr.move_to(X3,Y3)
+							self.__cr.line_to(X4,Y4)
+							self.__cr.stroke()
+							self.__cr.move_to(X4,Y4)
+							self.__cr.line_to(x2,y2)
+							self.__cr.stroke()
+				self.__cr.restore()
+				self.__cr.save()
 			
 			# Nodes
 			for node in self.graph.nodes:
@@ -179,6 +215,18 @@ class GraphArea(gtk.DrawingArea):
 			self.__cr.restore()
 		else:
 			print "Graph not defined!"
+			
+def binomial(n, i):
+	bin = math.factorial(n)/(math.factorial(i) * math.factorial(n - i))
+	return bin
+
+def drawBezierGen(t, l, ipoints):
+	n = l-1
+	x = y = 0
+	for i in range(l):
+		x = x + binomial(n,i) * pow((1 - t),n-i) * pow(t,i) * ipoints[i][0]
+		y = y + binomial(n,i) * pow((1 - t),n-i) * pow(t,i) * ipoints[i][1]
+	return [x,y]
 	
 def redraw(widget):
 	print "You have clicked redraw!!!"
@@ -187,51 +235,44 @@ def optimize(widget):
 	print "You have clicked optimize!!!"
 
 def back(widget):
-	print "Graph Number: " + str(graphnumber)
+	#print "Graph Number: " + str(graphnumber)
 	update = drawing.back()
 	if update:
 		drawing.queue_draw()
 	
 def forward(widget):
-	print "Graph Number: " + str(graphnumber)
+	#print "Graph Number: " + str(graphnumber)
 	update = drawing.forward()
 	if update:
 		drawing.queue_draw()
 
 def apply(widget):
-	startnum = int(start.get_text())
-	endnum = int(end.get_text())
-	term = parser.parse(entry.get_text())
-	mgs = []
-	operations.assignvariables(term)
-	selected = str(algo.get_child().get_text())
-	if selected == "Neato":
-		print "Neato"
-		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
-			mgs.append(NeatoGraph(g))
-	elif selected == "Dot":
-		print "Dot"
-		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
-			mgs.append(DotGraph(g))
-	elif selected == "TwoPi":
-		print "TwoPi"
-		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
-			mgs.append(TwopiGraph(g))
-	elif selected == "Circo":
-		print "Circo"
-		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
-			mgs.append(CircoGraph(g))
-	elif selected == "Fdp":
-		print "Fdp"
-		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
-			mgs.append(FdpGraph(g))
-	elif selected == "Matrix":
-		print "Majorization"
-		for (i,g) in enumerate(operations.reductiongraphiter(term, startnum, endnum)):
-			mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
-	print "mgs len: " + str(len(mgs))
-	drawing.mgs = mgs
-	drawing.initgraph(startnum)
+	drawing.startnum = int(start.get_text())
+	drawing.endnum = int(end.get_text())
+	drawing.term = parser.parse(entry.get_text())
+	drawing.mgs = []
+	operations.assignvariables(drawing.term)
+	drawing.selected = str(algo.get_child().get_text())
+	if drawing.selected == "Neato":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(NeatoGraph(g))
+	elif drawing.selected == "Dot":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(DotGraph(g))
+	elif drawing.selected == "TwoPi":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(TwopiGraph(g))
+	elif drawing.selected == "Circo":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(CircoGraph(g))
+	elif drawing.selected == "Fdp":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(FdpGraph(g))
+	elif drawing.selected == "Matrix":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
+	drawing.mgs# = mgs
+	drawing.initgraph(drawing.startnum)
 	drawing.queue_draw()
 
 def generateTerm(widget):
@@ -240,7 +281,31 @@ def generateTerm(widget):
 	print "Random term: " + str(randomterm)
 	entry.set_text(str(randomterm))
 
-
+def changed_cb(entry):
+	drawing.selected = entry.get_text()
+	drawing.mgs = []
+	if drawing.selected == "Neato":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(NeatoGraph(g))
+	elif drawing.selected == "Dot":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(DotGraph(g))
+	elif drawing.selected == "TwoPi":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(TwopiGraph(g))
+	elif drawing.selected == "Circo":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(CircoGraph(g))
+	elif drawing.selected == "Fdp":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(FdpGraph(g))
+	elif drawing.selected == "Matrix":
+		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			drawing.mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
+	drawing.mgs# = mgs
+	#drawing.initgraph(drawing.startnum)
+	drawing.graph = drawing.mgs[drawing.graphnumber]
+	drawing.queue_draw()
 
 
 if __name__ == "__main__":
@@ -261,7 +326,7 @@ if __name__ == "__main__":
 	#update_button.connect("clicked", update_layout, testgraph)
 	
 	b1 = gtk.Button("Generate Random Term")
-	b2 = gtk.Button("Apply")
+	b2 = gtk.Button("Draw Term")
 	b3 = gtk.Button("Forward")
 	b4 = gtk.Button("Back")
 	b5 = gtk.Button("Redraw Graph")
@@ -287,6 +352,7 @@ if __name__ == "__main__":
 	liststore.append(["Matrix"])
 	algo.set_text_column(0)
 	algo.set_active(0)
+	algo.child.connect('changed', changed_cb)
 	
 	
 	
