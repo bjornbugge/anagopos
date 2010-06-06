@@ -20,7 +20,8 @@ from drawingalgorithms.graphvizdrawers import FdpGraph
 # t = '#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))'
 # t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
 # Den her har fire normalformer som faas ved at lave max. 125 (maaske faerre!) iterationer.
-t = '#B1.(#B2.(#B3.(((#B4.((#B5.(#B6.(#B7.(B4))) #B8.(B3))) B3) (#B9.((#B10.(#B11.(B3)) B3)) (#B12.(#B13.(#B14.(#B15.(#B16.(B13))))) B1))))))'
+t = '#B1.((((#B2.(#B3.(#B4.(B2))) (#B5.(#B6.(#B7.(#B8.(B1)))) #B9.((#B10.((#B11.(B9) #B12.(#B13.(#B14.(#B15.(B1)))))) #B16.(F1))))) #B17.(B1)) #B18.((#B19.(#B20.(B19)) (#B21.(B21) ((B1 #B22.(#B23.(B22))) #B24.(#B25.(#B26.((#B27.(B25) B25))))))))))'
+#t = '#B1.(#B2.(#B3.(((#B4.((#B5.(#B6.(#B7.(B4))) #B8.(B3))) B3) (#B9.((#B10.(#B11.(B3)) B3)) (#B12.(#B13.(#B14.(#B15.(#B16.(B13))))) B1))))))'
 # t = '(#B1.((#B2.((#B3.(F1) #B4.(#B5.((B2 B4))))) (#B6.(B6) #B7.(#B8.(#B9.(#B10.(B8))))))) ((((#B11.(#B12.(#B13.((#B14.(B13) B13)))) (#B15.(#B16.(#B17.(B17))) #B18.(#B19.(#B20.((B18 (B19 #B21.(#B22.((#B23.(B19) B19)))))))))) #B24.((#B25.(#B26.(#B27.(B26))) ((#B28.(B24) #B29.(#B30.(#B31.(#B32.(F2))))) B24)))) #B33.((B33 (#B34.(B33) (#B35.(((#B36.(#B37.(B36)) #B38.(B33)) #B39.(B33))) B33))))) (#B40.(#B41.(#B42.(#B43.(#B44.((#B45.(B41) #B46.(#B47.(B44)))))))) ((#B48.(((#B49.(#B50.(B48)) #B51.(B48)) #B52.(#B53.(B53)))) #B54.(#B55.((((#B56.(B56) #B57.(#B58.(B54))) #B59.(B54)) #B60.(#B61.(B61)))))) #B62.(#B63.(#B64.((#B65.(#B66.((B62 #B67.(#B68.((B66 B65)))))) (#B69.(#B70.(B69)) #B71.(B63))))))))))'
 # t = '(#B1.(B1) (#B2.((#B3.((#B4.((B3 B3)) #B5.((B2 (#B6.(#B7.(#B8.(B7))) (#B9.(B9) B5)))))) #B10.(B10))) #B11.(#B12.(#B13.(B12)))))'
 # t = '(#B1.(#B2.(#B3.(#B4.(B2)))) #B5.(#B6.((#B7.(#B8.((#B9.(B7) B7))) ((#B10.(#B11.(#B12.(B11))) B5) ((#B13.((#B14.(#B15.(#B16.(#B17.(B17)))) (B5 B5))) (#B18.(#B19.(#B20.(B18))) #B21.((#B22.(B6) B21)))) (#B23.(#B24.(B5)) B5)))))))'
@@ -45,6 +46,9 @@ class GraphArea(gtk.DrawingArea):
 		self.graphnumber = None
 		self.graph = None
 		self.currentgraph = None
+		self.small_psize = 5
+		self.medium_psize = 10
+		self.large_psize = 15
 
 
 	def do_configure_event ( self, event ):
@@ -98,7 +102,6 @@ class GraphArea(gtk.DrawingArea):
 	def __render( self ):
 		if self.graph:
 			#print "rendering"
-			self.graph.update_layout()
 			self.graph.scale(800, 700)
 			self.__cr.rectangle(0,0,self.__width, self.__height)
 			self.__cr.set_source_rgb(1,1,1)
@@ -110,14 +113,20 @@ class GraphArea(gtk.DrawingArea):
 			if hasattr(self.graph, 'bezier') and self.graph.bezier:
 
 				for node in self.graph.nodes:
-					if node is self.graph.newest:
-						self.__cr.set_line_width(3)
-						self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
-					else:
-						self.__cr.set_line_width(1)
-						self.__cr.set_source_rgb(130.0/255.0, 172.0/255.0, 245.0/255.0)
-						
 					for edge in node.children:
+						
+						if node is self.graph.newest:
+							self.__cr.set_line_width(3)
+							self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
+						else:
+							self.__cr.set_line_width(1)
+							self.__cr.set_source_rgb(130.0/255.0, 172.0/255.0, 245.0/255.0)
+							
+						if hasattr(edge, 'mouseover') and edge.mouseover:
+							#print "	now really drawing"
+							self.__cr.set_line_width(5)
+							#self.__cr.set_source_rgb(0.0,238.0/255.0,0.0)
+						
 						self.graph.ipoints = edge.ipoints
 						far_node = edge.get_far(node)
 						
@@ -138,21 +147,28 @@ class GraphArea(gtk.DrawingArea):
 						POld = [edge.ipoints[0][0], edge.ipoints[0][1]]
 						t = 0.00
 						l = len(edge.ipoints)
-						for g in range(101):
+						for g in range(21):
 							P = drawBezierGen(t, l, edge.ipoints)
 							self.__cr.move_to(POld[0], POld[1])
 							self.__cr.line_to(P[0], P[1])
 							self.__cr.stroke()
 							POld = P
-							t = t + 0.01
+							t = t + 0.05
 							
-						x1 = node.x
-						y1 = node.y
+						if len(node.term.redexpositions) == 0:
+							pdia = self.large_psize
+						elif node is self.graph.newest:
+							pdia = self.medium_psize
+						else:
+							pdia = self.small_psize
+							
+						x1 = edge.ipoints[len(edge.ipoints)-1][0]
+						y1 = edge.ipoints[len(edge.ipoints)-1][1]
 						x2 = edge.get_far(node).x
 						y2 = edge.get_far(node).y
                         
-						[X3, Y3, X4, Y4] = arrowhead(x1, y1, x2, y2)
-                        
+						[X3, Y3, X4, Y4] = arrowhead(x1, y1, x2, y2, pdia)
+						self.__cr.set_source_rgb(255.0/255.0,36.0/255.0,0.0/255.0)
 						self.__cr.move_to(x2,y2)
 						self.__cr.line_to(X3,Y3)
 						self.__cr.stroke()
@@ -162,19 +178,26 @@ class GraphArea(gtk.DrawingArea):
 						self.__cr.move_to(X4,Y4)
 						self.__cr.line_to(x2,y2)
 						self.__cr.stroke()
+						self.__cr.fill()
 				self.__cr.restore()
 				self.__cr.save()
 			else:
 				for node in self.graph.nodes:
-					
-					if node is self.graph.newest:
-						self.__cr.set_line_width(3)
-						self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
-					else:
-						self.__cr.set_line_width(1)
-						self.__cr.set_source_rgb(130.0/255.0, 172.0/255.0, 245.0/255.0)
 						
 					for edge in node.children:
+						
+						if node is self.graph.newest:
+							self.__cr.set_line_width(3)
+							self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
+						else:
+							self.__cr.set_line_width(1)
+							self.__cr.set_source_rgb(130.0/255.0, 172.0/255.0, 245.0/255.0)
+							
+						if hasattr(edge, 'mouseover') and edge.mouseover:
+							#print "	now really drawing"
+							self.__cr.set_line_width(5)
+							#self.__cr.set_source_rgb(0.0,238.0/255.0,0.0)
+						
 						far_node = edge.get_far(node)
 						self.__cr.move_to(node.x, node.y)
 						self.__cr.line_to(far_node.x, far_node.y)
@@ -189,8 +212,17 @@ class GraphArea(gtk.DrawingArea):
 						x2 = edge.get_far(node).x
 						y2 = edge.get_far(node).y
 						
-						[X3, Y3, X4, Y4] = arrowhead(x1, y1, x2, y2)
+						if len(edge.get_far(node).term.redexpositions) == 0:
+							pdia = self.large_psize
+						elif edge.get_far(node) is self.graph.newest:
+							pdia = self.medium_psize
+						else:
+							pdia = self.small_psize
+						#print "PDIA: " + str(pdia)
 						
+						[X3, Y3, X4, Y4] = arrowhead(x1, y1, x2, y2, pdia)
+						
+						self.__cr.set_source_rgb(255.0/255.0,36.0/255.0,0.0/255.0)
 						self.__cr.move_to(x2,y2)
 						self.__cr.line_to(X3,Y3)
 						self.__cr.stroke()
@@ -208,36 +240,33 @@ class GraphArea(gtk.DrawingArea):
 			# Nodes 34.0/255.0,139.0/255.0,34.0/255.0
 			for node in self.graph.nodes:
 				if len(node.term.redexpositions) == 0:
-					psize = 15
-					self.__cr.arc(node.x, node.y, psize, 0, math.pi*2)
-					self.__cr.set_source_rgb(0xcc/255.0, 0, 0)
-					self.__cr.fill_preserve()
+					self.__cr.arc(node.x, node.y, self.large_psize, 0, math.pi*2)
+					#self.__cr.set_source_rgb(0xcc/255.0, 0, 0)
 					self.__cr.set_source_rgb(0xa4/255.0, 0, 0)
+					self.__cr.fill_preserve()
+					self.__cr.set_source_rgb(0, 0, 0)
 					self.__cr.stroke()
 				elif node is self.graph.newest:
-					psize = 10
-					self.__cr.arc(node.x, node.y, psize, 0, math.pi*2)
+					self.__cr.arc(node.x, node.y, self.medium_psize, 0, math.pi*2)
+					#self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
 					self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
 					self.__cr.fill_preserve()
-					self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
+					self.__cr.set_source_rgb(0, 0, 0)
 					self.__cr.stroke()
 				else:
-					psize = 5
-					self.__cr.arc(node.x, node.y, psize, 0, math.pi*2)
+					self.__cr.arc(node.x, node.y, self.small_psize, 0, math.pi*2)
 					self.__cr.set_source_rgb(0, 0, 0)
 					self.__cr.fill_preserve()
 					self.__cr.set_source_rgb(0, 0, 0)
 					self.__cr.stroke()
 			self.__cr.restore()
-		else:
-			print "Graph not defined!"
-			
 
-def arrowhead(x1, y1, x2, y2):
-	noderadius = 2.5
-	arrowwidth = 15
+def arrowhead(x1, y1, x2, y2, nodedia):
+	noderadius = nodedia/2
+	arrowwidth = 10
 	Pi = math.pi
-	angle = 10
+	angle = 20
+	#print "Node Radius: " + str(noderadius)
 	
 	if x1 - x2 == 0:
 		LineAngle = math.atan(0)
@@ -257,6 +286,11 @@ def arrowhead(x1, y1, x2, y2):
 		Y4 = y2 - arrowwidth * math.sin(EndAngle2)
 		X3 = x2 - arrowwidth * math.cos(EndAngle1)
 		X4 = x2 - arrowwidth * math.cos(EndAngle2)
+		
+		Y3 -= yOffset
+		Y4 -= yOffset
+		X3 -= xOffset
+		X4 -= xOffset
 	else:
 		x2 += xOffset
 		y2 += yOffset
@@ -265,6 +299,11 @@ def arrowhead(x1, y1, x2, y2):
 		Y4 = y2 + arrowwidth * math.sin(EndAngle2)
 		X3 = x2 + arrowwidth * math.cos(EndAngle1)
 		X4 = x2 + arrowwidth * math.cos(EndAngle2)
+		
+		Y3 += yOffset
+		Y4 += yOffset
+		X3 += xOffset
+		X4 += xOffset
 	return [X3, Y3, X4, Y4]
 
 def binomial(n, i):
@@ -289,12 +328,14 @@ def back(widget):
 	#print "Graph Number: " + str(graphnumber)
 	update = drawing.back()
 	if update:
+		drawing.graph.update_layout()
 		drawing.queue_draw()
 	
 def forward(widget):
 	#print "Graph Number: " + str(graphnumber)
 	update = drawing.forward()
 	if update:
+		drawing.graph.update_layout()
 		drawing.queue_draw()
 
 def apply(widget):
@@ -324,7 +365,9 @@ def apply(widget):
 			drawing.mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
 	drawing.mgs# = mgs
 	drawing.initgraph(drawing.startnum)
+	drawing.graph.update_layout()
 	drawing.queue_draw()
+	drawing.ready = True
 
 def generateTerm(widget):
 	drawing.term = randomgraph.randomterm()
@@ -333,34 +376,97 @@ def generateTerm(widget):
 	tooltips.set_tip(entry, str(drawing.term))
 
 def changed_cb(entry):
-	drawing.selected = entry.get_text()
-	drawing.mgs = []
-	if drawing.selected == "Neato":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(NeatoGraph(g))
-	elif drawing.selected == "Dot":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(DotGraph(g))
-	elif drawing.selected == "TwoPi":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(TwopiGraph(g))
-	elif drawing.selected == "Circo":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(CircoGraph(g))
-	elif drawing.selected == "Fdp":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(FdpGraph(g))
-	elif drawing.selected == "Matrix":
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
-	drawing.mgs
-	drawing.graph = drawing.mgs[drawing.graphnumber]
-	drawing.queue_draw()
+	if hasattr(drawing, 'ready') and drawing.ready:
+		drawing.selected = entry.get_text()
+		drawing.mgs = []
+		if drawing.selected == "Neato":
+			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+				drawing.mgs.append(NeatoGraph(g))
+		elif drawing.selected == "Dot":
+			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+				drawing.mgs.append(DotGraph(g))
+		elif drawing.selected == "TwoPi":
+			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+				drawing.mgs.append(TwopiGraph(g))
+		elif drawing.selected == "Circo":
+			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+				drawing.mgs.append(CircoGraph(g))
+		elif drawing.selected == "Fdp":
+			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+				drawing.mgs.append(FdpGraph(g))
+		elif drawing.selected == "Matrix":
+			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+				drawing.mgs.append(MajorizationGraph(g, 800, 700, 10**-2))
+		drawing.mgs
+		drawing.graph = drawing.mgs[drawing.graphnumber]
+		drawing.graph.update_layout()
+		drawing.queue_draw()
 
-
+def key_press_event(widget, event):
+	if event.keyval == 102 or event.keyval == 110: 
+		forward(widget)
+	elif event.keyval == 98: 
+		back(widget)
+	elif event.keyval == 114:
+		redraw(widget)
+	elif event.keyval == 111:
+		optimize(widget)
+	else:
+		print "Key pressed is: " + str(event.keyval)
+		
+def button_press_event(widget, event):
+	#print "Mouse is moving"
+	#print "	Mouse - X: " + str(event.x)
+	#print "	Mouse - Y: " + str(event.y)
+	x = event.x - 210
+	y = event.y
+	r = 5
+	if drawing.ready:
+		for node in drawing.graph.nodes:
+			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
+				#print "Node name: " + str(node.name)
+				#print "	node  x: " + str(node.x) + " - node  y: " + str(node.y)
+				#print "	mouse x: " + str(x) + " - mouse y: " + str(y)
+				for edge in node.children:
+					if hasattr(edge, 'mouseover') and edge.mouseover:
+						edge.mouseover = False
+					else:
+						edge.mouseover = True
+				#print "Now drawing thick edges"
+				drawing.queue_draw()
+			else:
+				for edge in node.children:
+					edge.mouseover = False
+	
+def motion_notify_event(widget, event):
+	#print "Mouse is moving"
+	#print "	Mouse - X: " + str(event.x)
+	#print "	Mouse - Y: " + str(event.y)
+	x = event.x - 210
+	y = event.y
+	r = 5
+	if drawing.ready:
+		for node in drawing.graph.nodes:
+			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
+				print "Node name: " + str(node.name)
+				print "	node  x: " + str(node.x) + " - node  y: " + str(node.y)
+				print "	mouse x: " + str(x) + " - mouse y: " + str(y)
+				for edge in node.children:
+					edge.mouseover = True
+				print "Now drawing thick edges"
+				drawing.queue_draw()
+			else:
+				for edge in node.children:
+					edge.mouseover = False
+		
 if __name__ == "__main__":
 	window = gtk.Window()
 	window.connect("delete-event", gtk.main_quit)
+	window.connect("key_press_event", key_press_event)
+	window.connect("button_release_event", button_press_event)
+	#window.connect("motion_notify_event", motion_notify_event)
+	window.set_events(gtk.gdk.BUTTON_RELEASE_MASK)
+	#window.set_events(gtk.gdk.POINTER_MOTION_MASK)
 	width = 1024
 	height = 768
 	window.resize(width, height)
@@ -369,6 +475,8 @@ if __name__ == "__main__":
 	
 	drawing = GraphArea(graph)
 	
+	drawing.ready = False
+	
 	widgetboxH = gtk.HBox(False, 10)
 	widgetboxV = gtk.VBox(False, 10)
 
@@ -376,7 +484,7 @@ if __name__ == "__main__":
 	#update_button.connect("clicked", update_layout, testgraph)
 	
 	b1 = gtk.Button("Generate Random Term")
-	b2 = gtk.Button("Draw Term")
+	b2 = gtk.Button("Draw Graph")
 	b3 = gtk.Button("Forward")
 	b4 = gtk.Button("Back")
 	b5 = gtk.Button("Redraw Graph")
