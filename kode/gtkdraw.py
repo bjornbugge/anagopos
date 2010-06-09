@@ -1,9 +1,9 @@
 import gtk
 import math
-import cairo
 import computegraph.operations as operations
 import computegraph.randomgraph as randomgraph
-import lambdaparser as parser
+import lambdaparser.lambdaparser as parser
+from grapharea import GraphArea
 
 # Drawing algorithms
 from drawingalgorithms.majorizationgraph import MajorizationGraph
@@ -34,269 +34,6 @@ t = '#B1.((((#B2.(#B3.(#B4.(B2))) (#B5.(#B6.(#B7.(#B8.(B1)))) #B9.((#B10.((#B11.
 # t = '#f.(#x.(f (x x))) (#x.(f (x x))) #y.y'
 graphnumber = 0
 
-class GraphArea(gtk.DrawingArea):
-	__gsignals__ = {
-		"expose-event": "override",
-		"configure_event": "override",
-	}
-
-	def __init__ ( self, mgs ):
-		gtk.DrawingArea.__init__(self)
-		self.mgs = mgs
-		self.graphnumber = None
-		self.graph = None
-		self.currentgraph = None
-		self.small_psize = 5
-		self.medium_psize = 10
-		self.large_psize = 15
-		self.arrow_color = (1.0, 36.0 / 255.0, 0.0)
-
-
-	def do_configure_event ( self, event ):
-		print "do_configure_event"
-		self.__width, self.__height = self.window.get_size()
-		self.queue_draw()
-		
-	def do_expose_event ( self, event ):
-		#print "exposing"
-		self.__cr = self.window.cairo_create()
-		self.__render()
-		
-	def initgraph (self, startnum):
-		#print "Init Graph"
-		#print "Start Num: " + str(startnum)
-		#print "mgs len: " + str(len(self.mgs))
-		self.graphnumber = 0
-		self.graph = self.mgs[self.graphnumber]
-		
-	def forward ( self ):
-		#print "next graph"
-		if self.graphnumber+2 <= len(self.mgs):
-			self.graphnumber = self.graphnumber + 1
-			self.graph = self.mgs[self.graphnumber]
-			return True
-		else:
-			print "No more graphs"
-			return False
-		
-	def back ( self ):
-		#print "next graph"
-		if self.graphnumber != 0:
-			self.graphnumber = self.graphnumber - 1
-			self.graph = self.mgs[self.graphnumber]
-			return True
-		else:
-			print "No more graphs"
-			return False
-	
-	def __render( self ):
-		if self.graph:
-			#print "rendering"
-			self.graph.scale(800, 700)
-			self.__cr.rectangle(0,0,self.__width, self.__height)
-			self.__cr.set_source_rgb(1,1,1)
-			self.__cr.fill()
-        	
-			self.__cr.save()
-
-			# Edges
-			if hasattr(self.graph, 'bezier') and self.graph.bezier:
-				for node in self.graph.nodes:
-					for edge in node.children:
-						
-						if node is self.graph.newest:
-							self.__cr.set_line_width(3)
-							self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
-						else:
-							self.__cr.set_line_width(1)
-							self.__cr.set_source_rgb(130.0/255.0, 172.0/255.0, 245.0/255.0)
-							
-						if hasattr(edge, 'mouseover') and edge.mouseover:
-							#print "	now really drawing"
-							self.__cr.set_line_width(5)
-							#self.__cr.set_source_rgb(0.0,238.0/255.0,0.0)
-						
-						self.graph.ipoints = edge.ipoints
-						far_node = edge.get_far(node)
-						
-						destX = edge.destination.x
-						destY = edge.destination.y
-						
-						lastX = edge.ipoints[len(edge.ipoints)-1][0]
-						lastY = edge.ipoints[len(edge.ipoints)-1][1]
-						if node.y != edge.ipoints[0][1] or node.x != edge.ipoints[0][0]:
-							self.__cr.move_to(node.x, node.y)
-							self.__cr.line_to(edge.ipoints[0][0], edge.ipoints[0][1])
-							self.__cr.stroke()
-						if destY != lastY or destX != lastX:
-							self.__cr.move_to(far_node.x, far_node.y)
-							self.__cr.line_to(lastX, lastY)
-							self.__cr.stroke()
-							
-						POld = [edge.ipoints[0][0], edge.ipoints[0][1]]
-						t = 0.00
-						l = len(edge.ipoints)
-						for g in xrange(21):
-							P = drawBezierGen(t, l, edge.ipoints)
-							self.__cr.move_to(POld[0], POld[1])
-							self.__cr.line_to(P[0], P[1])
-							self.__cr.stroke()
-							POld = P
-							t = t + 0.05
-							
-						if len(node.term.redexpositions) == 0:
-							pdia = self.large_psize
-						elif node is self.graph.newest:
-							pdia = self.medium_psize
-						else:
-							pdia = self.small_psize
-							
-						x1 = edge.ipoints[len(edge.ipoints)-1][0]
-						y1 = edge.ipoints[len(edge.ipoints)-1][1]
-						x2 = edge.get_far(node).x
-						y2 = edge.get_far(node).y
-						
-						self.draw_arrowhead(x1, y1, x2, y2, pdia)
-				self.__cr.restore()
-				self.__cr.save()
-			else:
-				for node in self.graph.nodes:
-						
-					for edge in node.children:
-						
-						if node is self.graph.newest:
-							self.__cr.set_line_width(3)
-							self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
-						else:
-							self.__cr.set_line_width(1)
-							self.__cr.set_source_rgb(130.0/255.0, 172.0/255.0, 245.0/255.0)
-							
-						if hasattr(edge, 'mouseover') and edge.mouseover:
-							#print "	now really drawing"
-							self.__cr.set_line_width(5)
-							#self.__cr.set_source_rgb(0.0,238.0/255.0,0.0)
-						
-						far_node = edge.get_far(node)
-						self.__cr.move_to(node.x, node.y)
-						self.__cr.line_to(far_node.x, far_node.y)
-						self.__cr.stroke()
-						
-						x1 = node.x
-						y1 = node.y
-						x2 = edge.get_far(node).x
-						y2 = edge.get_far(node).y
-						
-						if len(edge.get_far(node).term.redexpositions) == 0:
-							pdia = self.large_psize
-						elif edge.get_far(node) is self.graph.newest:
-							pdia = self.medium_psize
-						else:
-							pdia = self.small_psize
-						#print "PDIA: " + str(pdia)
-						
-						self.draw_arrowhead(x1, y1, x2, y2, pdia)
-						
-				self.__cr.restore()
-				self.__cr.save()
-			
-			# Nodes 34.0/255.0,139.0/255.0,34.0/255.0
-			for node in self.graph.nodes:
-				if len(node.term.redexpositions) == 0:
-					self.__cr.arc(node.x, node.y, self.large_psize, 0, math.pi*2)
-					#self.__cr.set_source_rgb(0xcc/255.0, 0, 0)
-					self.__cr.set_source_rgb(0xa4/255.0, 0, 0)
-					self.__cr.fill_preserve()
-					self.__cr.set_source_rgb(0, 0, 0)
-					self.__cr.stroke()
-				elif node is self.graph.newest:
-					self.__cr.arc(node.x, node.y, self.medium_psize, 0, math.pi*2)
-					self.__cr.set_source_rgb(34.0/255.0,139.0/255.0,34.0/255.0)
-					self.__cr.fill_preserve()
-					self.__cr.set_source_rgb(0, 0, 0)
-					self.__cr.stroke()
-				else:
-					self.__cr.arc(node.x, node.y, self.small_psize, 0, math.pi*2)
-					self.__cr.set_source_rgb(0, 0, 0)
-					self.__cr.fill_preserve()
-					self.__cr.set_source_rgb(0, 0, 0)
-					self.__cr.stroke()
-				if hasattr(node, 'showterm') and node.showterm:
-					parsedtermlist = str(node.term).split('#')
-					parsedterm = ""
-					lambdaletter = u'\u03bb'
-					#for j in range(len(parsedtermlist)-1):
-					#	parsedterm = parsedterm + parsedtermlist[j] + str(lambdaletter)
-					#print "Term: " + str(parsedterm)
-					#self.__cr.select_font_face("Purisa", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-					#self.__cr.set_font_size(13)
-					#self.__cr.move_to(10, 750)
-					#self.__cr.show_text(unicode_to_glyph(parsedterm))
-					###self.__cr.show_text(u'\u03bb')
-			self.__cr.restore()
-			#20115,11
-			#3106
-			#3106141126
-			#9-31-8
-
-	def draw_arrowhead(self, x1, y1, x2, y2, nodedia):
-		'''
-		Draws an arrow head on the line segment between the coordinate pairs
-		(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
-		'''
-		noderadius = nodedia / 2
-		arrowwidth = 10
-		Pi = math.pi
-		angle = 20
-		
-		if x1 - x2 == 0:
-			LineAngle = Pi / 2
-		else:
-			LineAngle = math.atan((y2 - y1) / (x2 - x1))
-	
-		EndAngle1 = LineAngle + angle * Pi/180
-		EndAngle2 = LineAngle - angle * Pi/180
-	
-		xOffset = noderadius * math.cos(LineAngle)
-		yOffset = noderadius * math.sin(LineAngle)
-		if x1 < x2:
-			x2 -= xOffset
-			y2 -= yOffset
-	
-			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
-			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
-			X3 = x2 - arrowwidth * math.cos(EndAngle1)
-			X4 = x2 - arrowwidth * math.cos(EndAngle2)
-			
-			Y3 -= yOffset
-			Y4 -= yOffset
-			X3 -= xOffset
-			X4 -= xOffset
-		else:
-			x2 += xOffset
-			y2 += yOffset
-	
-			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
-			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
-			X3 = x2 + arrowwidth * math.cos(EndAngle1)
-			X4 = x2 + arrowwidth * math.cos(EndAngle2)
-			
-			Y3 += yOffset
-			Y4 += yOffset
-			X3 += xOffset
-			X4 += xOffset
-		
-		# Draw the (filled) triangle.
-		ac = self.arrow_color
-		self.__cr.set_line_width(1)
-		self.__cr.set_source_rgb(ac[0], ac[1], ac[2])
-		self.__cr.move_to(x2,y2)
-		self.__cr.line_to(X3,Y3)
-		self.__cr.stroke_preserve()
-		self.__cr.line_to(X4,Y4)
-		self.__cr.stroke_preserve()
-		self.__cr.line_to(x2,y2)
-		self.__cr.stroke_preserve()
-		self.__cr.fill()
 
 def binomial(n, i):
 	bin = math.factorial(n) / (math.factorial(i) * math.factorial(n - i))
@@ -359,7 +96,28 @@ def apply(widget):
 			drawing.mgs.append(Drawer(g))
 	except KeyError:
 		pass
-	drawing.initgraph(drawing.startnum)
+	drawing.initgraph()
+	drawing.graph.update_layout()
+	drawing.queue_draw()
+	drawing.ready = True
+
+def applyiterator(widget):
+	drawing.startnum = int(start.get_text())
+	drawing.endnum = int(end.get_text())
+	drawing.term = parser.parse(entry.get_text().replace(u'\u03bb',"#"))
+	drawing.mgs = []
+	operations.assignvariables(drawing.term)
+	drawing.selected = str(algo.get_child().get_text())
+	try:
+		def iterator():
+			Drawer = algorithms[drawing.selected]
+			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+				print "Yielding graph"
+				yield Drawer(g)
+		drawing.iterator = iterator()
+	except KeyError:
+		pass
+	drawing.initgraph()
 	drawing.graph.update_layout()
 	drawing.queue_draw()
 	drawing.ready = True
@@ -405,7 +163,7 @@ def button_press_event(widget, event):
 				print "Clicked on note"
 				drawing.dragnode = True
 				drawing.dragnodename = node
-				window.connect("motion_notify_event", motion_notify_event)
+				
 				#if hasattr(node, 'showterm') and node.showterm:
 				#	node.showterm = False
 				#else:
@@ -450,7 +208,7 @@ def motion_notify_event(widget, event):
 		#print "			Node: " + str(node.x)
 		x = event.x
 		y = event.y
-		print "Current position - (" + str(x) + "," + str(y) + ") - Node name: " + str(drawing.dragnodename.name)
+		# print "Current position - (" + str(x) + "," + str(y) + ") - Node name: " + str(drawing.dragnodename.name)
 		drawing.graph.nodenametable[drawing.dragnodename.name].x = x - 240
 		drawing.graph.nodenametable[drawing.dragnodename.name].y = y
 		drawing.queue_draw()
@@ -462,6 +220,7 @@ if __name__ == "__main__":
 	window.connect("key_press_event", key_press_event)
 	window.connect("button_release_event", button_release_event)
 	window.connect("button_press_event", button_press_event)
+	window.connect("motion_notify_event", motion_notify_event)
 	#window.connect("motion_notify_event", motion_notify_event)
 	window.set_events(gtk.gdk.BUTTON_RELEASE_MASK
 						| gtk.gdk.BUTTON_PRESS_MASK
@@ -521,7 +280,7 @@ if __name__ == "__main__":
 	
 	
 	b1.connect("clicked", generateTerm)
-	b2.connect("clicked", apply)
+	b2.connect("clicked", applyiterator)
 	b3.connect("clicked", forward)
 	b4.connect("clicked", back)
 	b5.connect("clicked", redraw)
