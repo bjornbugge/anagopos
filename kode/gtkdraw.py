@@ -32,18 +32,6 @@ t = '#B1.((((#B2.(#B3.(#B4.(B2))) (#B5.(#B6.(#B7.(#B8.(B1)))) #B9.((#B10.((#B11.
 # t = '(((((#B1.(#B2.(#B3.(#B4.(#B5.(B1))))) (#B6.((#B7.(B6) #B8.(B6))) F1))#B9.(B9)) (#B10.(#B11.(#B12.(#B13.(#B14.(B11))))) #B15.((#B16.(B16)#B17.(#B18.(#B19.((B17 #B20.(F2)))))))))(#B21.(((#B22.(#B23.(#B24.(B21))) (B21 #B25.(#B26.(B26))))#B27.(#B28.(#B29.((B27 B29)))))) #B30.(#B31.((((#B32.(#B33.(B32)) B30)#B34.(B34)) #B35.(#B36.(#B37.(#B38.(B30)))))))))(#B39.(#B40.(#B41.(#B42.(B39)))) (#B43.((B43 B43)) #B44.(B44))))'
 # The Y combinator
 # t = '#f.(#x.(f (x x))) (#x.(f (x x))) #y.y'
-graphnumber = 0
-
-
-def binomial(n, i):
-	bin = math.factorial(n) / (math.factorial(i) * math.factorial(n - i))
-	return bin
-
-def drawBezierGen(t, l, ipoints):
-	n = l - 1
-	x = reduce(lambda x, b:x+b, (binomial(n, i) * pow((1 - t), n - i) * pow(t, i) * ipoints[i][0] for i in xrange(l)))
-	y = reduce(lambda y, b:y+b, (binomial(n, i) * pow((1 - t), n - i) * pow(t, i) * ipoints[i][1] for i in xrange(l)))
-	return [x, y]
 	
 def redraw(widget):
 	if drawing.ready:
@@ -132,13 +120,19 @@ def changed_cb(entry):
 		drawing.selected = entry.get_text()
 		drawing.mgs = []
 		try:
-			Drawer = algorithms[drawing.selected]
-			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-				drawing.mgs.append(Drawer(g))
+			#Drawer = algorithms[drawing.selected]
+			#for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+			#	drawing.mgs.append(Drawer(g))
+			def iterator():
+				Drawer = algorithms[drawing.selected]
+				for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+					print "Yielding graph"
+					yield Drawer(g)
+			drawing.iterator = iterator()
 		except KeyError:
 			pass
 		
-		drawing.graph = drawing.mgs[drawing.graphnumber]
+		# drawing.graph = drawing.mgs[drawing.graphnumber]
 		drawing.graph.update_layout()
 		drawing.queue_draw()
 
@@ -161,18 +155,18 @@ def button_press_event(widget, event):
 		for node in drawing.graph.nodes:
 			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
 				print "Clicked on note"
-				drawing.dragnode = True
-				drawing.dragnodename = node
+				drawing.draggednode = True
+				drawing.draggednode = node
 				
 				#if hasattr(node, 'showterm') and node.showterm:
 				#	node.showterm = False
 				#else:
 				#	node.showterm = True
 				#for edge in node.children:
-				#	if hasattr(edge, 'mouseover') and edge.mouseover:
-				#		edge.mouseover = False
+				#	if hasattr(edge, 'selected') and edge.selected:
+				#		edge.selected = False
 				#	else:
-				#		edge.mouseover = True
+				#		edge.selected = True
 				#drawing.queue_draw()
 
 def button_release_event(widget, event):
@@ -188,32 +182,25 @@ def button_release_event(widget, event):
 				else:
 					node.showterm = True
 				for edge in node.children:
-					if hasattr(edge, 'mouseover') and edge.mouseover:
-						edge.mouseover = False
+					if hasattr(edge, 'selected') and edge.selected:
+						edge.selected = False
 					else:
-						edge.mouseover = True
-				drawing.dragnode = False
-				window.connect("motion_notify_event", motion_notify_event)
-				#drawing.graph.update_layout()
+						edge.selected = True
+				drawing.draggednode = False
 				drawing.queue_draw()
 			else:
-				drawing.dragnode = False
-				window.connect("motion_notify_event", motion_notify_event)
+				drawing.draggednode = False
 				node.showterm = False
 				for edge in node.children:
-					edge.mouseover = False
+					edge.selected = False
 	
 def motion_notify_event(widget, event):
-	if drawing.dragnode:
-		#print "			Node: " + str(node.x)
-		x = event.x
-		y = event.y
-		# print "Current position - (" + str(x) + "," + str(y) + ") - Node name: " + str(drawing.dragnodename.name)
-		drawing.graph.nodenametable[drawing.dragnodename.name].x = x - 240
-		drawing.graph.nodenametable[drawing.dragnodename.name].y = y
+	if drawing.draggednode:
+		drawing.draggednode.x = event.x - 240
+		drawing.draggednode.y = event.y
 		drawing.queue_draw()
-		
-		
+
+
 if __name__ == "__main__":
 	window = gtk.Window()
 	window.connect("delete-event", gtk.main_quit)
@@ -221,14 +208,12 @@ if __name__ == "__main__":
 	window.connect("button_release_event", button_release_event)
 	window.connect("button_press_event", button_press_event)
 	window.connect("motion_notify_event", motion_notify_event)
-	#window.connect("motion_notify_event", motion_notify_event)
 	window.set_events(gtk.gdk.BUTTON_RELEASE_MASK
 						| gtk.gdk.BUTTON_PRESS_MASK
 						| gtk.gdk.POINTER_MOTION_MASK)
 	width = 1024
 	height = 768
 	window.resize(width, height)
-	mgs = []
 	graph = None
 	
 	drawing = GraphArea(graph)

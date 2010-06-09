@@ -10,10 +10,9 @@ class GraphArea(gtk.DrawingArea):
 	
 	def __init__ ( self, mgs ):
 		gtk.DrawingArea.__init__(self)
-		self.mgs = mgs
-		self.graphnumber = None
+		self.graphlist = []
+		self.graphnumber = 0
 		self.graph = None
-		self.currentgraph = None
 		self.small_radius = 5
 		self.medium_radius = 10
 		self.large_radius = 15
@@ -22,10 +21,12 @@ class GraphArea(gtk.DrawingArea):
 		self.normal_edge_color = (130.0/255.0, 172.0/255.0, 245.0/255.0)
 		self.newest_edge_width = 3
 		self.normal_edge_width = 1
+		self.selected_edge_width = 5
 		self.normal_form_color = (0xa4/255.0, 0, 0)
 		self.newest_node_color = (34.0/255.0,139.0/255.0,34.0/255.0)
 		self.normal_node_color = (0, 0, 0)
 		self.dragnode = False
+		self.draggednode = None
 	
 	
 	def do_configure_event ( self, event ):
@@ -41,38 +42,38 @@ class GraphArea(gtk.DrawingArea):
 		self.graphnumber = 0
 		if hasattr(self, 'iterator') and self.iterator is not None:
 			self.graph = self.iterator.next()
-			self.mgs = [self.graph]
+			self.graphlist = [self.graph]
 		else:
-			self.graph = self.mgs[self.graphnumber]
+			self.graph = self.graphlist[self.graphnumber]
 	
 	def forward(self):
+		if self.graphnumber + 2 <= len(self.graphlist):
+			self.graphnumber += 1
+			self.graph = self.graphlist[self.graphnumber]
+			return True
+		
 		if hasattr(self, 'iterator') and self.iterator is not None:
 			try:
 				g = self.iterator.next()
-				self.mgs.append(g)
+				self.graphlist.append(g)
 				self.graphnumber += 1
-				self.graph = self.mgs[self.graphnumber]
+				self.graph = g
 				return True
 			except StopIteration:
-				print "StopIteration!"
+				print "I can't generate more graphs!"
 				self.iterator = None
 				return False
 		else:
-			if self.graphnumber + 2 <= len(self.mgs):
-				self.graphnumber += 1
-				self.graph = self.mgs[self.graphnumber]
-				return True
-			else:
-				print "No more graphs"
-				return False
+			print "There are no more graphs in the list."
+			return False
 	
 	def back(self):
 		if not self.graphnumber == 0:
 			self.graphnumber = self.graphnumber - 1
-			self.graph = self.mgs[self.graphnumber]
+			self.graph = self.graphlist[self.graphnumber]
 			return True
 		else:
-			print "No more graphs"
+			print "At the first graph."
 			return False
 	
 	def __render( self ):
@@ -83,7 +84,6 @@ class GraphArea(gtk.DrawingArea):
 		self.__cr.rectangle(0,0,self.__width, self.__height)
 		self.__cr.set_source_rgb(1,1,1)
 		self.__cr.fill()
-		self.__cr.save()
 		
 		# Edges
 		for node in self.graph.nodes:
@@ -97,8 +97,8 @@ class GraphArea(gtk.DrawingArea):
 				self.__cr.set_line_width(w)
 				self.__cr.set_source_rgb(c[0], c[1], c[2])
 				
-				if hasattr(edge, 'mouseover') and edge.mouseover:
-					self.__cr.set_line_width(5)
+				if hasattr(edge, 'selected') and edge.selected:
+					self.__cr.set_line_width(self.selected_edge_width)
 				
 				far_node = edge.get_far(node)
 				
@@ -185,7 +185,6 @@ class GraphArea(gtk.DrawingArea):
 				#self.__cr.move_to(10, 750)
 				#self.__cr.show_text(unicode_to_glyph(parsedterm))
 				###self.__cr.show_text(u'\u03bb')
-		# self.__cr.restore()
 		#20115,11
 		#3106
 		#3106141126
@@ -211,27 +210,24 @@ class GraphArea(gtk.DrawingArea):
 		xOffset = noderadius * math.cos(LineAngle)
 		yOffset = noderadius * math.sin(LineAngle)
 		if x1 < x2:
-			x2 -= xOffset
-			y2 -= yOffset
-	
 			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
 			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
 			X3 = x2 - arrowwidth * math.cos(EndAngle1)
 			X4 = x2 - arrowwidth * math.cos(EndAngle2)
 			
+			x2 -= xOffset
+			y2 -= yOffset
 			Y3 -= yOffset
 			Y4 -= yOffset
 			X3 -= xOffset
 			X4 -= xOffset
 		else:
-			x2 += xOffset
-			y2 += yOffset
-			
 			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
 			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
 			X3 = x2 + arrowwidth * math.cos(EndAngle1)
 			X4 = x2 + arrowwidth * math.cos(EndAngle2)
-			
+			x2 += xOffset
+			y2 += yOffset
 			Y3 += yOffset
 			Y4 += yOffset
 			X3 += xOffset
@@ -249,3 +245,14 @@ class GraphArea(gtk.DrawingArea):
 		self.__cr.line_to(x2,y2)
 		self.__cr.stroke_preserve()
 		self.__cr.fill()
+
+def binomial(n, i):
+	bin = math.factorial(n) / (math.factorial(i) * math.factorial(n - i))
+	return bin
+
+def drawBezierGen(t, l, ipoints):
+	n = l - 1
+	fun = lambda a, b:a + b
+	x = reduce(fun, (binomial(n, i) * pow((1 - t), n - i) * pow(t, i) * ipoints[i][0] for i in xrange(l)))
+	y = reduce(fun, (binomial(n, i) * pow((1 - t), n - i) * pow(t, i) * ipoints[i][1] for i in xrange(l)))
+	return [x, y]
