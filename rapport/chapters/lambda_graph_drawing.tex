@@ -1,9 +1,15 @@
 %!TEX root = ../rapport.tex
 
-\chapter{Relevant Properties of $\beta$-reduction Graphs}
+\chapter{Properties of $\beta$-reduction Graphs}
 
-There are four main properties that need to be adressed when drawing
-$\beta$-reduction graphs.
+The preceding discussion of graph drawing concerns the problem of drawing
+\emph{general} graphs. However, we focus not on general but on one specific
+kind of graph; the $\beta$-reduction graph. It is important to identify the
+most important characteristics of this graph type in order to be able to
+choose relevant and meaningful drawing methods. Also, identifying the
+properties that we actually want to highlight is relevant both for the
+implementation of the functions that generate the reduction graphs as well as
+for the functions that issues the actual drawing commands.
 
 \section{Size}
 
@@ -11,39 +17,61 @@ Reduction graphs vary greatly in size, from one node to an infinite amount of
 nodes and edges. For example, $G_\beta(\lam{x}{x})$ contains one node and zero
 edges since there are no reducts in the term. On the other hand, the graph
 $G_\beta((\lam{x}{xxx})(\lam{x}{xxx}))$ contains infinitely many nodes and
-edges. A drawing algorithm for such graphs must therefore be able to cope with
-small graphs as well as very large graphs. 
+edges. 
+
+In Figure \ref{fig:images_inf_reduction_graph} there are two different
+drawings of (a part of) the graph $G_\beta((\lam{a}{b}) (\lam{x}{(xxx)}
+\lam{y}{(yyy)}))$. This graph has infinitely many edges and nodes, so the
+structure seen in the Figure will continue to grow.
+
+\fact
+$\beta$-reduction graphs can have an infinite amount of nodes and edges.
+\begin{figure}[htpb]
+	\centering
+	\subfigure[Drawn using the Circo algorithm.]{
+		\includegraphics[height=2.2in]{../images/inf_reduction_graph.png}
+	}
+	\subfigure[Drawn using the Neato algorithm.]{
+		\includegraphics[height=2.2in]{../images/inf_reduction_graph_2.png}
+	}
+	\caption{$G_\beta((\lam{a}{b}) (\lam{x}{(xxx)} \lam{y}{(yyy)}))$. The normal form is drawn
+	as a larger node. This is one generation of the reduction graph, but it 
+	continues ad infinitum.}
+	\label{fig:images_inf_reduction_graph}
+\end{figure}
 
 
 % Flere eksempler?
 
-\section{Direction}
-
-The graphs are directed, so arrow heads need to be drawn. Since an edge can be
-drawn spanning a lot of screen area, the type of arrow has to be designed such
-that it is clear to see where an edge starts from the arrow head alone and
-vice versa. An alternative to arrows is drawing the edges with a colour
-gradient. In this approach, an edge would be couloured e.g. green at the start
-and red at the end, interpolating the colours on the edge line. The benefit of
-such an approach would be that it is easy to see tendencies if there is a
-visual clutter of edges having the same general direction.
-
-\section{Planarity}
+\section{Non-planarity}
 
 As a consequence of Lemma \ref{lem:complete} we know that in the general case,
 a reduction graph can contain as its subgraph $K_5$, whence the graph is
 non-planar according to Kuratowski's theorem. Thus, it is in general not
-possible to planarize a reduction graph.
+possible to planarize a reduction graph. In Figure \ref{fig:images_lambda_k5}
+a reduction graph whose underlying undirected graph \emph{is} $K_5$ is shown.
+
+\begin{figure}[htpb]
+	\centering
+	\subfigure[Drawn using the Neato algorithm.]{
+		\includegraphics[height=2.2in]{../images/lambda_k5.png}
+	}
+	\subfigure[Drawin using the Dot algorithm.]{
+		\includegraphics[height=2.2in]{../images/lambda_k5_2.png}
+	}
+	\caption{$G_\beta((\lam{x_1}{y}) ((\lam{x_2}{y}) ((\lam{x_3}{y} ((\lam{x_4}{y} ((\lam{x_5}{y}))))))))$}
+	\label{fig:images_lambda_k5}
+\end{figure}
+
 
 \begin{lemma}\label{lem:complete}
 	$\forall n\in\N:\ \exists M\in\Lambda$ such that the $\beta$-reduction graph of $M$
 	contains the complete (undirected) graph of $n$ nodes, $K_n$.
 \end{lemma}
-\begin{proof}[Sketch of proof]
-	Let $n>1\in\N$. (The case $n=1$ is trivial, as $K_1$ contains no edges.)
-	Let $M\in\Lambda$ be
+\begin{proof}[Proof (after a sketch by Jakob Grue Simonsen)]
+	Let $n\in\N$, and let $M\in\Lambda$ be
 	\begin{equation*}
-		(\lam{x_1}{y}) ((\lam{x_2}{y}) ((\lam{x_3}{y})\hdots(\lam{x_{n-1}}{y})))
+		(\lam{x_1}{y}) ((\lam{x_2}{y}) ((\lam{x_3}{y})\hdots(\lam{x_{n}}{y})))
 	\end{equation*}
 	$M$ has $n-1$ distinct reducts of the form
 	\begin{align*}
@@ -60,12 +88,63 @@ possible to planarize a reduction graph.
 
 \section{In- and out-degree of nodes}
 
-The in- and out-degree of nodes varies a lot; the amount of redexes in terms
-can be very different from term to term, resulting in varying out-degrees,
-while some nodes can have a potientially infinitely high in-degree. For
-example, in the reduction graph for the term $(\lam{a}{b}) (\lam{x}{(xxx)}
-\lam{y}{(yyy)})$, every node of the reduction graph has an out-degree equal to
-2 and an in-degree of 1, except the one node representing the normal form ---
-that node has an infinitely high in-degree and an out-degree of 0.
+The in- and out-degree of nodes varies a lot; the amount of redexes can be
+very different from term to term, resulting in varying out-degrees, while some
+nodes can have a potientially infinitely high in-degree.
 
+For example, in the reduction graph for the term $(\lam{a}{b}) (\lam{x}{(xxx)}
+\lam{y}{(yyy)})$, every node has an out-degree equal to 2 and an in-degree of
+1, except the nodes representing the normal form and the initial term. The
+former has an infinitely high in-degree and an out-degree of 0, the latter has
+an in-degree of 0. The graph is illustrated on Figure \ref{fig:omegainf}.
 
+Since a particular lambda term in a reduction graph is finite, it necessarily has
+a finite amount of redexes. The out-degree of the nodes representing the terms
+is therefore finite.
+
+% #a.(b) (#x.((x x) x) #y.((y y) y)) #a.(b) (#x.((x x) x) #y.((y y) y))
+% #a.(b) ((#x.((x x) x) #y.((y y) y)) (#x.((x x) x) #y.((y y) y)))
+% #a.(b) ((#a.(b) (#x.((x x) x) #y.((y y) y))) (#x.((x x) x) #y.((y y) y)))
+% (#x1.(y)) ((#x2.(y)) ((#x3.(y)) ((#x4.(y)) (#x5.(y)))))
+
+% Den her ser ret sej ud omkring nr. 100!
+% #f.(#x.(f (x x))) (#x.(f (x x))) #y.((y y) y)
+
+\fact Nodes can have an infinitely high in-degree.
+
+\fact Nodes have a finite out-degree.
+
+\fact The node representing the initial term can have an in-degree of 0.
+
+\fact As a consequence of the Church-Rosser property, the underlying
+undirected graph of a $\beta$-reduction graph is connected. Therefore,
+if there exists a node with an in-degree of 0, it is the initial node.
+
+% TODO Skriv om Church-Rosser egenskaben i teoriafsnittet.
+
+\begin{figure}[htpb]
+	\centering
+	\subfigure[Drawn with the Neato algorithm.]{
+		\includegraphics[height=2.2in]{../images/inf_reduction_graph_3.png}
+	}
+	\subfigure[Drawn with the Fdp algorithm.]{
+		\includegraphics[height=2.2in]{../images/inf_reduction_graph_4.png}
+	}
+	\caption{$G_\beta(\lam{x}{(xxx)} \lam{y}{(yyy)})$}
+	\label{fig:images_inf_reduction_graph_2}
+\end{figure}
+
+\section{Normal Forms}
+
+If the term whose reduction graph is visualized has a normal form, it is
+desirable to be able to easily see it, even when there are a lot of nodes in
+the graph. Therefore, a clear graphical hint must be added to the node that
+represent a normal form. This could for instance be implemented as giving the
+normal form node a certain colouring, a certain size or draw it with a
+different shape than the other nodes (e.g. square vs. circular).
+
+\fact Terms without normal forms have reduction graphs with infinitely many
+nodes and edges (e.g. the graph in Figure \ref{fig:images_inf_reduction_graph_2}). 
+
+\fact Terms with normal forms have possibly infinite reduction graphs (e.g.
+the graph in Figure \ref{fig:images_inf_reduction_graph}).

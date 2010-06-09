@@ -17,6 +17,8 @@
 \usepackage{url}
 \usepackage[labelfont=bf,up,textfont=it,up]{caption}
 
+
+
 % TODO Lav theoremstyle så den er ordentlig!
 \newtheoremstyle{mystyle}	% Name
 {5pt}		%	Space above
@@ -69,6 +71,8 @@
 % Bruges til Python-kode.
 \newcommand{\pycode}[1]{\textbf{\texttt{#1}}}
 
+\newcommand{\fact}{\paragraph{Fact:}}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -86,17 +90,19 @@
 %\listoffigures
 
 % Chapters
-\input{chapters/introduction.tex}
-\input{chapters/projectConstraints.tex}
-\input{chapters/lambda_theory.tex}
-\input{chapters/existing_visualizations.tex}
-\input{chapters/graph_drawing_litterature.tex}
+% \input{chapters/introduction.tex}
+% \input{chapters/projectConstraints.tex}
+% \input{chapters/lambda_theory.tex}
+% \input{chapters/existing_visualizations.tex}
+% \input{chapters/graph_drawing_litterature.tex}
 \input{chapters/lambda_graph_drawing.tex}
 \input{chapters/implementation.tex}
+\input{chapters/visual_discussion.tex}
+\input{chapters/program_todo.tex}
 
 % Bibliography
-\bibliographystyle{abbrv}
-\bibliography{bibliography,bibl_graph_drawing}
+% \bibliographystyle{abbrv}
+% \bibliography{bibliography,bibl_graph_drawing}
 
 
 
