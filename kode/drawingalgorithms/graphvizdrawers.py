@@ -10,26 +10,39 @@ class GraphVizDrawer(DrawingAlgorithm):
 		for name, value in vars(graph).iteritems():
 			setattr(self, name, value)
 		
+		self.newagraph()
+		
 		# Make a GraphViz graph and add all nodes.
+		#self.G = pgv.AGraph()
+		#for name in (n.name for n in self.nodes):
+		#	self.G.add_node(name, width = "0.00", heigth = "0.00", fixedsize = "0", 
+		#					margin = "0.00")#, label = " ", shape = "none"), fontsize = "8")
+		#
+		## Adds edges in the graph to the GraphViz graph
+		#for node in self.nodes:
+		#	for edge in node.children:
+		#		far_node = edge.get_far(node)
+		#		if node == far_node:
+		#			continue
+		#		self.G.add_edge(str(node.name), str(far_node.name))
+	
+	def reset(self, f = 0):
+		for node in self.nodes:
+			node.x = random.randint(1, 100)
+			node.y = random.randint(1, 100)
+		self.newagraph()
+	
+	def newagraph(self):
 		self.G = pgv.AGraph()
 		for name in (n.name for n in self.nodes):
 			self.G.add_node(name, width = "0.00", heigth = "0.00", fixedsize = "0", 
 							margin = "0.00")#, label = " ", shape = "none"), fontsize = "8")
-		
-		# Adds edges in the graph to the GraphViz graph
 		for node in self.nodes:
 			for edge in node.children:
 				far_node = edge.get_far(node)
 				if node == far_node:
 					continue
 				self.G.add_edge(str(node.name), str(far_node.name))
-		
-		self.reset()
-	
-	def reset(self, f = 0):
-		for node in self.nodes:
-			node.x = random.randint(1, 100)
-			node.y = random.randint(1, 100)
 	
 	def initwith(self, othergraph): 
 		self.reset()

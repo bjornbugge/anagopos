@@ -11,7 +11,7 @@ class LambdaScanner(Scanner):
         ('""', re.compile('')),
         ('"\\\\)"', re.compile('\\)')),
         ('"\\\\("', re.compile('\\(')),
-        ('LAM', re.compile('#')),
+        ('LAM', re.compile('[#\u03bb]')),
         ('DOT', re.compile('.')),
 		('VAR', re.compile('[a-zA-Z_]([0-9])*')),
         ('\\s', re.compile('\\s')),
@@ -85,5 +85,5 @@ def preprocess(term):
 
 def parse(text):
 	P = Lambda(LambdaScanner(preprocess(text)))
-	# P = Lambda(LambdaScanner(text))
+	#P = Lambda(LambdaScanner(text))
 	return wrap_error_reporter(P, 'Terms')

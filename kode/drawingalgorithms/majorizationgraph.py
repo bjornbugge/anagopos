@@ -63,9 +63,6 @@ class MajorizationGraph(DrawingAlgorithm):
 			r[:,0] = self.width * r[:,0]
 			r[:,1] = self.height * r[:,1]
 			self.Xt[f] = r
-		
-		#if self.chol:
-		#	self.Xt[0,:] = [0, 0]
 		self.hasBeenInitialized = True
 	
 	def initwith(self, othergraph):

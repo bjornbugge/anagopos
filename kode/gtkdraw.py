@@ -88,14 +88,6 @@ class GraphArea(gtk.DrawingArea):
 		else:
 			print "No more graphs"
 			return False
-
-#	def iter_done( self ):
-#		print "drawing" 
-#		while gtk.events_pending():
-#			gtk.main_iteration(False)		
-#		self.queue_draw()
-#		time.sleep(0.03)
-	
 	
 	def __render( self ):
 		if self.graph:
@@ -228,7 +220,23 @@ class GraphArea(gtk.DrawingArea):
 					self.__cr.fill_preserve()
 					self.__cr.set_source_rgb(0, 0, 0)
 					self.__cr.stroke()
+				if hasattr(node, 'showterm') and node.showterm:
+					parsedtermlist = str(node.term).split('#')
+					parsedterm = ""
+					lambdaletter = u'\u03bb'
+					#for j in range(len(parsedtermlist)-1):
+					#	parsedterm = parsedterm + parsedtermlist[j] + str(lambdaletter)
+					#print "Term: " + str(parsedterm)
+					#self.__cr.select_font_face("Purisa", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
+					#self.__cr.set_font_size(13)
+					#self.__cr.move_to(10, 750)
+					#self.__cr.show_text(unicode_to_glyph(parsedterm))
+					###self.__cr.show_text(u'\u03bb')
 			self.__cr.restore()
+			#20115,11
+			#3106
+			#3106141126
+			#9-31-8
 
 	def draw_arrowhead(self, x1, y1, x2, y2, nodedia):
 		'''
@@ -301,24 +309,35 @@ def drawBezierGen(t, l, ipoints):
 	return [x, y]
 	
 def redraw(widget):
-	print "You have clicked redraw!!!"
+	if drawing.ready:
+		drawing.graph.reset()
+		drawing.graph.update_layout()
+		drawing.queue_draw()
+	else:
+		print "No graph created yet!"
 	
 def optimize(widget):
-	print "You have clicked optimize!!!"
+	if drawing.ready:
+		drawing.graph.update_layout()
+		drawing.queue_draw()
+	else:
+		print "No graph created yet!"
 
 def back(widget):
-	#print "Graph Number: " + str(graphnumber)
-	update = drawing.back()
-	if update:
-		drawing.graph.update_layout()
-		drawing.queue_draw()
+	if drawing.ready:
+		if drawing.back():
+			drawing.graph.update_layout()
+			drawing.queue_draw()
+	else:
+		print "No graph created yet!"
 	
 def forward(widget):
-	#print "Graph Number: " + str(graphnumber)
-	update = drawing.forward()
-	if update:
-		drawing.graph.update_layout()
-		drawing.queue_draw()
+	if drawing.ready:
+		if drawing.forward():
+			drawing.graph.update_layout()
+			drawing.queue_draw()
+	else:
+		print "No graph created yet!"
 
 algorithms = {'Neato' : NeatoGraph,
 			'Dot' : DotGraph,
@@ -330,7 +349,7 @@ algorithms = {'Neato' : NeatoGraph,
 def apply(widget):
 	drawing.startnum = int(start.get_text())
 	drawing.endnum = int(end.get_text())
-	drawing.term = parser.parse(entry.get_text())
+	drawing.term = parser.parse(entry.get_text().replace(u'\u03bb',"#"))
 	drawing.mgs = []
 	operations.assignvariables(drawing.term)
 	drawing.selected = str(algo.get_child().get_text())
@@ -340,7 +359,6 @@ def apply(widget):
 			drawing.mgs.append(Drawer(g))
 	except KeyError:
 		pass
-	
 	drawing.initgraph(drawing.startnum)
 	drawing.graph.update_layout()
 	drawing.queue_draw()
@@ -348,10 +366,9 @@ def apply(widget):
 
 def generateTerm(widget):
 	drawing.term = randomgraph.randomterm()
-	print "Random term: " + str(drawing.term)
-	entry.set_text(str(drawing.term))
-	tooltips.set_tip(entry, str(drawing.term))
-
+	entry.set_text(str(drawing.term).replace("#",u'\u03bb'))
+	entry.set_tooltip_text(str(drawing.term).replace("#",u'\u03bb'))
+	
 def changed_cb(entry):
 	if hasattr(drawing, 'ready') and drawing.ready:
 		drawing.selected = entry.get_text()
@@ -376,62 +393,79 @@ def key_press_event(widget, event):
 		redraw(widget)
 	elif event.keyval == 111:
 		optimize(widget)
-	else:
-		print "Key pressed is: " + str(event.keyval)
 		
 def button_press_event(widget, event):
-	#print "Mouse is moving"
-	#print "	Mouse - X: " + str(event.x)
-	#print "	Mouse - Y: " + str(event.y)
-	x = event.x - 210
+	#print "			PRESS"
+	x = event.x - 240
 	y = event.y
 	r = 5
 	if drawing.ready:
 		for node in drawing.graph.nodes:
 			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
-				#print "Node name: " + str(node.name)
-				#print "	node  x: " + str(node.x) + " - node  y: " + str(node.y)
-				#print "	mouse x: " + str(x) + " - mouse y: " + str(y)
+				print "Clicked on note"
+				drawing.dragnode = True
+				drawing.dragnodename = node
+				window.connect("motion_notify_event", motion_notify_event)
+				#if hasattr(node, 'showterm') and node.showterm:
+				#	node.showterm = False
+				#else:
+				#	node.showterm = True
+				#for edge in node.children:
+				#	if hasattr(edge, 'mouseover') and edge.mouseover:
+				#		edge.mouseover = False
+				#	else:
+				#		edge.mouseover = True
+				#drawing.queue_draw()
+
+def button_release_event(widget, event):
+	#print "			RELEASE"
+	x = event.x - 240
+	y = event.y
+	r = 5
+	if drawing.ready:
+		for node in drawing.graph.nodes:
+			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
+				if hasattr(node, 'showterm') and node.showterm:
+					node.showterm = False
+				else:
+					node.showterm = True
 				for edge in node.children:
 					if hasattr(edge, 'mouseover') and edge.mouseover:
 						edge.mouseover = False
 					else:
 						edge.mouseover = True
-				#print "Now drawing thick edges"
+				drawing.dragnode = False
+				window.connect("motion_notify_event", motion_notify_event)
+				#drawing.graph.update_layout()
 				drawing.queue_draw()
 			else:
+				drawing.dragnode = False
+				window.connect("motion_notify_event", motion_notify_event)
+				node.showterm = False
 				for edge in node.children:
 					edge.mouseover = False
 	
 def motion_notify_event(widget, event):
-	#print "Mouse is moving"
-	#print "	Mouse - X: " + str(event.x)
-	#print "	Mouse - Y: " + str(event.y)
-	x = event.x - 210
-	y = event.y
-	r = 5
-	if drawing.ready:
-		for node in drawing.graph.nodes:
-			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
-				print "Node name: " + str(node.name)
-				print "	node  x: " + str(node.x) + " - node  y: " + str(node.y)
-				print "	mouse x: " + str(x) + " - mouse y: " + str(y)
-				for edge in node.children:
-					edge.mouseover = True
-				print "Now drawing thick edges"
-				drawing.queue_draw()
-			else:
-				for edge in node.children:
-					edge.mouseover = False
+	if drawing.dragnode:
+		#print "			Node: " + str(node.x)
+		x = event.x
+		y = event.y
+		print "Current position - (" + str(x) + "," + str(y) + ") - Node name: " + str(drawing.dragnodename.name)
+		drawing.graph.nodenametable[drawing.dragnodename.name].x = x - 240
+		drawing.graph.nodenametable[drawing.dragnodename.name].y = y
+		drawing.queue_draw()
+		
 		
 if __name__ == "__main__":
 	window = gtk.Window()
 	window.connect("delete-event", gtk.main_quit)
 	window.connect("key_press_event", key_press_event)
-	window.connect("button_release_event", button_press_event)
+	window.connect("button_release_event", button_release_event)
+	window.connect("button_press_event", button_press_event)
 	#window.connect("motion_notify_event", motion_notify_event)
-	window.set_events(gtk.gdk.BUTTON_RELEASE_MASK)
-	#window.set_events(gtk.gdk.POINTER_MOTION_MASK)
+	window.set_events(gtk.gdk.BUTTON_RELEASE_MASK
+						| gtk.gdk.BUTTON_PRESS_MASK
+						| gtk.gdk.POINTER_MOTION_MASK)
 	width = 1024
 	height = 768
 	window.resize(width, height)
@@ -448,6 +482,7 @@ if __name__ == "__main__":
 	#update_button = gtk.Button("Organise graph")
 	#update_button.connect("clicked", update_layout, testgraph)
 	
+	# GTK Buttons
 	b1 = gtk.Button("Generate Random Term")
 	b2 = gtk.Button("Draw Graph")
 	b3 = gtk.Button("Forward")
@@ -455,13 +490,19 @@ if __name__ == "__main__":
 	b5 = gtk.Button("Redraw Graph")
 	b6 = gtk.Button("Optimize Graph")
 	
+	# GTK Labels
+	l1 = gtk.Label("Start")
+	l1.set_text("Start:")
+	l2 = gtk.Label("End")
+	l2.set_text("End:   ")
+	l3 = gtk.Label("Alg")
+	l3.set_text("Alg:   ")
+	
 	drawing.term = t
 	
 	entry = gtk.Entry()
 	entry.set_text(drawing.term)
-	
-	tooltips = gtk.Tooltips()
-	tooltips.set_tip(entry, str(drawing.term))
+	entry.set_tooltip_text(str(drawing.term))
 	
 	start = gtk.Entry()
 	start.set_text("0")
@@ -486,16 +527,28 @@ if __name__ == "__main__":
 	b5.connect("clicked", redraw)
 	b6.connect("clicked", optimize)
 	
-	widgetboxV.pack_start(b1, False, False, 10)
-	widgetboxV.pack_start(entry, False, False, 10)
-	widgetboxV.pack_start(algo, False, False, 10)
-	widgetboxV.pack_start(start, False, False, 10)
-	widgetboxV.pack_start(end, False, False, 10)
-	widgetboxV.pack_start(b2, False, False, 10)
-	widgetboxV.pack_start(b3, False, False, 10)
-	widgetboxV.pack_start(b4, False, False, 10)
-	widgetboxV.pack_start(b5, False, False, 10)
-	widgetboxV.pack_start(b6, False, False, 10)
+	startbox = gtk.HBox(False, 10)
+	startbox.pack_start(l1, False, False, 1)
+	startbox.pack_start(start, False, False, 1)
+	
+	endbox = gtk.HBox(False, 10)
+	endbox.pack_start(l2, False, False, 1)
+	endbox.pack_start(end, False, False, 1)
+	
+	#algobox = gtk.HBox(False, 10)
+	#algobox.pack_start(l3, False, False, 1)
+	#algobox.pack_start(algo, False, False, 1)
+	
+	widgetboxV.pack_start(entry, False, False, 1)
+	widgetboxV.pack_start(b1, False, False, 1)
+	widgetboxV.pack_start(algo, False, False, 1)
+	widgetboxV.pack_start(startbox, False, False, 1)
+	widgetboxV.pack_start(endbox, False, False, 1)
+	widgetboxV.pack_start(b2, False, False, 1)
+	widgetboxV.pack_start(b3, False, False, 1)
+	widgetboxV.pack_start(b4, False, False, 1)
+	widgetboxV.pack_start(b5, False, False, 1)
+	widgetboxV.pack_start(b6, False, False, 1)
 	
 	widgetboxH.pack_start(widgetboxV, False, False, 5)
 	widgetboxH.pack_end(drawing, True, True, 5)
@@ -504,11 +557,17 @@ if __name__ == "__main__":
 	window.add(widgetboxH)
 
 	widgetboxV.show()
+	startbox.show()
+	endbox.show()
+	#algobox.show()
 	widgetboxH.show()
-	b1.show()
 	entry.show()
+	b1.show()
+	#l3.show()
 	algo.show()
+	l1.show()
 	start.show()
+	l2.show()
 	end.show()
 	b2.show()
 	b3.show()
