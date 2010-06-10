@@ -48,6 +48,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 		self.reset()
 	
 	def update_layout(self):
+		
 		# Layout the graph.
 		self.G.layout(prog = self.algorithm)
 		

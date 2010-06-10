@@ -86,8 +86,10 @@ class GraphArea(gtk.DrawingArea):
 		self.__cr.fill()
 		
 		# Edges
+		noEdges = 0
 		for node in self.graph.nodes:
 			for edge in node.children:
+				noEdges = noEdges + 1
 				if node is self.graph.newest:
 					w = self.newest_edge_width 
 					c = self.newest_edge_color
@@ -154,9 +156,11 @@ class GraphArea(gtk.DrawingArea):
 					radius = self.small_radius
 				
 				self.draw_arrowhead(x1, y1, x2, y2, radius)
-		
+		print "Number of edges: " + str(noEdges)
 		# Nodes
+		noNodes = 0
 		for node in self.graph.nodes:
+			noNodes = noNodes + 1
 			if len(node.term.redexpositions) == 0:
 				radius = self.large_radius
 				color = self.normal_form_color
@@ -185,6 +189,7 @@ class GraphArea(gtk.DrawingArea):
 				#self.__cr.move_to(10, 750)
 				#self.__cr.show_text(unicode_to_glyph(parsedterm))
 				###self.__cr.show_text(u'\u03bb')
+		print "Number of nodes: " + str(noNodes)
 		#20115,11
 		#3106
 		#3106141126
