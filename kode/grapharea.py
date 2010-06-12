@@ -18,7 +18,8 @@ class GraphArea(gtk.DrawingArea):
 		self.large_radius = 15
 		self.arrow_color = (1.0, 36.0 / 255.0, 0.0)
 		self.newest_edge_color = (34.0/255.0,139.0/255.0,34.0/255.0)
-		self.normal_edge_color = (130.0/255.0, 172.0/255.0, 245.0/255.0)
+		#self.normal_edge_color = (80.0/255.0, 172.0/255.0, 245.0/255.0)
+		self.normal_edge_color = (0/255.0, 100.0/255.0, 245.0/255.0)
 		self.newest_edge_width = 3
 		self.normal_edge_width = 1
 		self.selected_edge_width = 5
@@ -156,7 +157,7 @@ class GraphArea(gtk.DrawingArea):
 					radius = self.small_radius
 				
 				self.draw_arrowhead(x1, y1, x2, y2, radius)
-		print "Number of edges: " + str(noEdges)
+		#print "Number of edges: " + str(noEdges)
 		# Nodes
 		noNodes = 0
 		for node in self.graph.nodes:
@@ -189,7 +190,7 @@ class GraphArea(gtk.DrawingArea):
 				#self.__cr.move_to(10, 750)
 				#self.__cr.show_text(unicode_to_glyph(parsedterm))
 				###self.__cr.show_text(u'\u03bb')
-		print "Number of nodes: " + str(noNodes)
+		#print "Number of nodes: " + str(noNodes)
 		#20115,11
 		#3106
 		#3106141126

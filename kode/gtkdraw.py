@@ -93,7 +93,13 @@ def apply(widget):
 def applyiterator(widget):
 	drawing.startnum = int(start.get_text())
 	drawing.endnum = int(end.get_text())
-	drawing.term = parser.parse(entry.get_text().replace(u'\u03bb',"#"))
+	tempterm = termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter())
+	#try:
+	#	x = int(raw_input("Please enter a number: "))
+	#	break
+	#except ValueError:
+	#	print "Oops!  That was no valid number.  Try again..."
+	drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
 	drawing.mgs = []
 	operations.assignvariables(drawing.term)
 	drawing.selected = str(algo.get_child().get_text())
@@ -113,7 +119,7 @@ def applyiterator(widget):
 
 def generateTerm(widget):
 	drawing.term = randomgraph.randomterm()
-	entry.set_text(str(drawing.term).replace("#",u'\u03bb'))
+	termtext.set_text(str(drawing.term).replace("#",u'\u03bb'))
 	entry.set_tooltip_text(str(drawing.term).replace("#",u'\u03bb'))
 	
 def changed_cb(entry):
@@ -151,14 +157,18 @@ def button_press_event(widget, event):
 	#print "			PRESS"
 	x = event.x - 240
 	y = event.y
-	r = 5
+	r = 10
 	if drawing.ready:
 		for node in drawing.graph.nodes:
 			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
-				print "Clicked on note"
+				print "Clicked on node"
 				drawing.draggednode = True
 				drawing.draggednode = node
-				
+				#print "Clicked Term: " + str(node.term)
+				clickedtermtemp = str(node.term).replace("#",u'\u03bb')
+				clickedterm.set_text(clickedtermtemp)
+				entryclickedterm.set_buffer(clickedterm)
+				entryclickedterm.set_tooltip_text(clickedtermtemp)
 				#if hasattr(node, 'showterm') and node.showterm:
 				#	node.showterm = False
 				#else:
@@ -174,7 +184,7 @@ def button_release_event(widget, event):
 	#print "			RELEASE"
 	x = event.x - 240
 	y = event.y
-	r = 5
+	r = 10
 	if drawing.ready:
 		for node in drawing.graph.nodes:
 			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
@@ -242,12 +252,43 @@ if __name__ == "__main__":
 	l2.set_text("End:   ")
 	l3 = gtk.Label("Alg")
 	l3.set_text("Alg:   ")
+	l4 = gtk.Label("Term")
+	l4.set_text("Lambda Term:")
+	l4.set_alignment(xalign=0, yalign=1)
+	l5 = gtk.Label("ClickedTerm")
+	l5.set_text("Clicked Term:")
+	l5.set_alignment(xalign=0, yalign=1)
 	
-	drawing.term = t
+	drawing.term = str(t).replace("#",u'\u03bb')
+	#t = clickedtermtemp = str(t).replace("#",u'\u03bb')
+	termtext = gtk.TextBuffer()
+	termtext.set_text(drawing.term)
 	
-	entry = gtk.Entry()
-	entry.set_text(drawing.term)
+	entry = gtk.TextView()
+	entry.set_justification(False)
+	entry.set_left_margin(5)
+	entry.set_right_margin(5)
+	entry.set_size_request(200, 109)
+	entry.set_buffer(termtext)
 	entry.set_tooltip_text(str(drawing.term))
+	entry.set_wrap_mode(True)
+	entry.set_border_window_size(gtk.TEXT_WINDOW_LEFT,2)
+	entry.set_border_window_size(gtk.TEXT_WINDOW_RIGHT,2)
+	
+	clickedterm = gtk.TextBuffer()
+	clickedterm.set_text("Clicked term...")
+	
+	entryclickedterm = gtk.TextView()
+	entryclickedterm.set_justification(False)
+	entryclickedterm.set_left_margin(5)
+	entryclickedterm.set_right_margin(5)
+	entryclickedterm.set_size_request(200, 109)
+	entryclickedterm.set_buffer(clickedterm)
+	entryclickedterm.set_tooltip_text(str("Clicked term..."))
+	entryclickedterm.set_wrap_mode(True)
+	entryclickedterm.set_border_window_size(gtk.TEXT_WINDOW_LEFT,2)
+	entryclickedterm.set_border_window_size(gtk.TEXT_WINDOW_RIGHT,2)
+	entryclickedterm.set_editable(False)
 	
 	start = gtk.Entry()
 	start.set_text("0")
@@ -284,6 +325,7 @@ if __name__ == "__main__":
 	#algobox.pack_start(l3, False, False, 1)
 	#algobox.pack_start(algo, False, False, 1)
 	
+	widgetboxV.pack_start(l4, False, False, 1)
 	widgetboxV.pack_start(entry, False, False, 1)
 	widgetboxV.pack_start(b1, False, False, 1)
 	widgetboxV.pack_start(algo, False, False, 1)
@@ -294,11 +336,13 @@ if __name__ == "__main__":
 	widgetboxV.pack_start(b4, False, False, 1)
 	widgetboxV.pack_start(b5, False, False, 1)
 	widgetboxV.pack_start(b6, False, False, 1)
+	widgetboxV.pack_start(l5, False, False, 1)
+	widgetboxV.pack_start(entryclickedterm, False, False, 1)
 	
 	widgetboxH.pack_start(widgetboxV, False, False, 5)
 	widgetboxH.pack_end(drawing, True, True, 5)
 
-	window.add(widgetboxV)
+	#window.add(widgetboxV)
 	window.add(widgetboxH)
 
 	widgetboxV.show()
@@ -306,6 +350,7 @@ if __name__ == "__main__":
 	endbox.show()
 	#algobox.show()
 	widgetboxH.show()
+	l4.show()
 	entry.show()
 	b1.show()
 	#l3.show()
@@ -319,6 +364,8 @@ if __name__ == "__main__":
 	b4.show()
 	b5.show()
 	b6.show()
+	l5.show()
+	entryclickedterm.show()
 	drawing.show()
 	window.present()
 	gtk.main()
