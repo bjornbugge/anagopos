@@ -94,28 +94,33 @@ def applyiterator(widget):
 	drawing.startnum = int(start.get_text())
 	drawing.endnum = int(end.get_text())
 	tempterm = termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter())
-	#try:
-	#	x = int(raw_input("Please enter a number: "))
-	#	break
-	#except ValueError:
-	#	print "Oops!  That was no valid number.  Try again..."
-	drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
-	drawing.mgs = []
-	operations.assignvariables(drawing.term)
-	drawing.selected = str(algo.get_child().get_text())
 	try:
-		def iterator():
-			Drawer = algorithms[drawing.selected]
-			for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-				print "Yielding graph"
-				yield Drawer(g)
-		drawing.iterator = iterator()
-	except KeyError:
-		pass
-	drawing.initgraph()
-	drawing.graph.update_layout()
-	drawing.queue_draw()
-	drawing.ready = True
+		drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+		drawing.mgs = []
+		operations.assignvariables(drawing.term)
+		drawing.selected = str(algo.get_child().get_text())
+		tag = termtext.create_tag(background="White")
+		termtext.apply_tag(tag, termtext.get_start_iter(),termtext.get_end_iter())
+		try:
+			def iterator():
+				Drawer = algorithms[drawing.selected]
+				for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+					print "Yielding graph"
+					yield Drawer(g)
+			drawing.iterator = iterator()
+		except KeyError:
+			pass
+		drawing.initgraph()
+		drawing.graph.update_layout()
+		drawing.queue_draw()
+		drawing.ready = True
+	except:
+		tag = termtext.create_tag(background="Red")
+		termtext.apply_tag(tag, termtext.get_start_iter(),termtext.get_end_iter())
+		#states = [gtk.STATE_NORMAL, gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT, gtk.STATE_SELECTED, gtk.STATE_INSENSITIVE]
+		#for state in states:
+		#    entry.modify_bg(state, gtk.gdk.color_parse("Red"))
+		print "Could not parse term"
 
 def generateTerm(widget):
 	drawing.term = randomgraph.randomterm()
@@ -258,6 +263,9 @@ if __name__ == "__main__":
 	l5 = gtk.Label("ClickedTerm")
 	l5.set_text("Clicked Term:")
 	l5.set_alignment(xalign=0, yalign=1)
+	l6 = gtk.Label("Output")
+	l6.set_text("Output:")
+	l6.set_alignment(xalign=0, yalign=1)
 	
 	drawing.term = str(t).replace("#",u'\u03bb')
 	#t = clickedtermtemp = str(t).replace("#",u'\u03bb')
@@ -274,6 +282,22 @@ if __name__ == "__main__":
 	entry.set_wrap_mode(True)
 	entry.set_border_window_size(gtk.TEXT_WINDOW_LEFT,2)
 	entry.set_border_window_size(gtk.TEXT_WINDOW_RIGHT,2)
+	
+	#t = clickedtermtemp = str(t).replace("#",u'\u03bb')
+	outputtextbuffer = gtk.TextBuffer()
+	outputtextbuffer.set_text("Output text...")
+	
+	outputtextfield = gtk.TextView()
+	outputtextfield.set_justification(False)
+	outputtextfield.set_left_margin(5)
+	outputtextfield.set_right_margin(5)
+	outputtextfield.set_size_request(200, 59)
+	outputtextfield.set_buffer(outputtextbuffer)
+	outputtextfield.set_tooltip_text("Output text...")
+	outputtextfield.set_wrap_mode(True)
+	outputtextfield.set_border_window_size(gtk.TEXT_WINDOW_LEFT,2)
+	outputtextfield.set_border_window_size(gtk.TEXT_WINDOW_RIGHT,2)
+	outputtextfield.set_editable(False)
 	
 	clickedterm = gtk.TextBuffer()
 	clickedterm.set_text("Clicked term...")
@@ -338,6 +362,9 @@ if __name__ == "__main__":
 	widgetboxV.pack_start(b6, False, False, 1)
 	widgetboxV.pack_start(l5, False, False, 1)
 	widgetboxV.pack_start(entryclickedterm, False, False, 1)
+	widgetboxV.pack_start(l6, False, False, 1)
+	widgetboxV.pack_start(outputtextfield, False, False, 1)
+	
 	
 	widgetboxH.pack_start(widgetboxV, False, False, 5)
 	widgetboxH.pack_end(drawing, True, True, 5)
@@ -366,6 +393,8 @@ if __name__ == "__main__":
 	b6.show()
 	l5.show()
 	entryclickedterm.show()
+	l6.show()
+	outputtextfield.show()
 	drawing.show()
 	window.present()
 	gtk.main()
