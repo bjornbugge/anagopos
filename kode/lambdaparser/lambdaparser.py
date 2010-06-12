@@ -11,7 +11,7 @@ class LambdaScanner(Scanner):
         ('""', re.compile('')),
         ('"\\\\)"', re.compile('\\)')),
         ('"\\\\("', re.compile('\\(')),
-        ('LAM', re.compile('[#\u03bb]')),
+        ('LAM', re.compile('#')),
         ('DOT', re.compile('.')),
 		('VAR', re.compile('[a-zA-Z_]([0-9])*')),
         ('\\s', re.compile('\\s')),
