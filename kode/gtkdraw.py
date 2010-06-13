@@ -56,6 +56,8 @@ def back(widget):
 			drawing.queue_draw()
 	else:
 		print "No graph created yet!"
+	outputtext = "Previous graph\nGeneration: XX\nSomething more"
+	outputtextbuffer.set_text(outputtext)
 	
 def forward(widget):
 	if drawing.ready:
@@ -64,6 +66,8 @@ def forward(widget):
 			drawing.queue_draw()
 	else:
 		print "No graph created yet!"
+	outputtext = "Next graph\nGeneration: XX\nSomething more"
+	outputtextbuffer.set_text(outputtext)
 
 algorithms = {'Neato' : NeatoGraph,
 			'Dot' : DotGraph,
@@ -159,7 +163,6 @@ def key_press_event(widget, event):
 		optimize(widget)
 		
 def button_press_event(widget, event):
-	#print "			PRESS"
 	x = event.x - 240
 	y = event.y
 	r = 10
@@ -169,24 +172,12 @@ def button_press_event(widget, event):
 				print "Clicked on node"
 				drawing.draggednode = True
 				drawing.draggednode = node
-				#print "Clicked Term: " + str(node.term)
 				clickedtermtemp = str(node.term).replace("#",u'\u03bb')
 				clickedterm.set_text(clickedtermtemp)
 				entryclickedterm.set_buffer(clickedterm)
 				entryclickedterm.set_tooltip_text(clickedtermtemp)
-				#if hasattr(node, 'showterm') and node.showterm:
-				#	node.showterm = False
-				#else:
-				#	node.showterm = True
-				#for edge in node.children:
-				#	if hasattr(edge, 'selected') and edge.selected:
-				#		edge.selected = False
-				#	else:
-				#		edge.selected = True
-				#drawing.queue_draw()
 
 def button_release_event(widget, event):
-	#print "			RELEASE"
 	x = event.x - 240
 	y = event.y
 	r = 10
@@ -215,7 +206,6 @@ def motion_notify_event(widget, event):
 		drawing.draggednode.x = event.x - 240
 		drawing.draggednode.y = event.y
 		drawing.queue_draw()
-
 
 if __name__ == "__main__":
 	window = gtk.Window()
@@ -270,7 +260,7 @@ if __name__ == "__main__":
 	drawing.term = str(t).replace("#",u'\u03bb')
 	#t = clickedtermtemp = str(t).replace("#",u'\u03bb')
 	termtext = gtk.TextBuffer()
-	termtext.set_text(drawing.term)
+	#termtext.set_text(drawing.term)
 	
 	entry = gtk.TextView()
 	entry.set_justification(False)
@@ -278,7 +268,7 @@ if __name__ == "__main__":
 	entry.set_right_margin(5)
 	entry.set_size_request(200, 109)
 	entry.set_buffer(termtext)
-	entry.set_tooltip_text(str(drawing.term))
+	#entry.set_tooltip_text(str(drawing.term))
 	entry.set_wrap_mode(True)
 	entry.set_border_window_size(gtk.TEXT_WINDOW_LEFT,2)
 	entry.set_border_window_size(gtk.TEXT_WINDOW_RIGHT,2)

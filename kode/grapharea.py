@@ -20,6 +20,7 @@ class GraphArea(gtk.DrawingArea):
 		self.newest_edge_color = (34.0/255.0,139.0/255.0,34.0/255.0)
 		#self.normal_edge_color = (80.0/255.0, 172.0/255.0, 245.0/255.0)
 		self.normal_edge_color = (0/255.0, 100.0/255.0, 245.0/255.0)
+		self.first_node_color = (0, 100.0, 127.0/255.0)
 		self.newest_edge_width = 3
 		self.normal_edge_width = 1
 		self.selected_edge_width = 5
@@ -31,11 +32,12 @@ class GraphArea(gtk.DrawingArea):
 	
 	
 	def do_configure_event ( self, event ):
-		print "do_configure_event"
+		#print "do_configure_event"
 		self.__width, self.__height = self.window.get_size()
 		self.queue_draw()
 	
 	def do_expose_event ( self, event ):
+		#print "do_expose_event"
 		self.__cr = self.window.cairo_create()
 		self.__render()
 	
@@ -81,7 +83,7 @@ class GraphArea(gtk.DrawingArea):
 		if not self.graph:
 			return
 		
-		self.graph.scale(800, 700)
+		self.graph.scale(self.__width, self.__height)
 		self.__cr.rectangle(0,0,self.__width, self.__height)
 		self.__cr.set_source_rgb(1,1,1)
 		self.__cr.fill()
@@ -171,6 +173,10 @@ class GraphArea(gtk.DrawingArea):
 			else:
 				radius = self.small_radius
 				color = self.normal_node_color
+				
+			if node.name == "N0":
+				radius = self.medium_radius
+				color = self.first_node_color
 			
 			self.__cr.arc(node.x, node.y, radius, 0, math.pi*2)
 			self.__cr.set_source_rgb(color[0], color[1], color[2])
