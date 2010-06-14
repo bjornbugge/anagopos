@@ -217,7 +217,10 @@ class GraphArea(gtk.DrawingArea):
 		angle = 20
 		
 		if x1 - x2 == 0:
-			LineAngle = Pi / 2
+			if y2 <= y1:
+				LineAngle = Pi / 2
+			else:
+				LineAngle = 3 * Pi / 2
 		else:
 			LineAngle = math.atan((y2 - y1) / (x2 - x1))
 	
