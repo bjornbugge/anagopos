@@ -56,8 +56,12 @@ def back(widget):
 			drawing.queue_draw()
 	else:
 		print "No graph created yet!"
-	outputtext = "Previous graph\nGeneration: XX\nSomething more"
-	outputtextbuffer.set_text(outputtext)
+	outputtext = "Previous graph\nGeneration: " + str(drawing.graphnumber)
+	if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
+		outputtext = outputtext + "\nNo more graphs"
+		outputtextbuffer.set_text(outputtext)
+	else:
+		outputtextbuffer.set_text(outputtext)
 	
 def forward(widget):
 	if drawing.ready:
@@ -66,8 +70,12 @@ def forward(widget):
 			drawing.queue_draw()
 	else:
 		print "No graph created yet!"
-	outputtext = "Next graph\nGeneration: XX\nSomething more"
-	outputtextbuffer.set_text(outputtext)
+	outputtext = "Next graph\nGeneration: " + str(drawing.graphnumber)
+	if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
+		outputtext = outputtext + "\nNo more graphs"
+		outputtextbuffer.set_text(outputtext)
+	else:
+		outputtextbuffer.set_text(outputtext)
 
 algorithms = {'Neato' : NeatoGraph,
 			'Dot' : DotGraph,
@@ -93,6 +101,8 @@ def apply(widget):
 	drawing.graph.update_layout()
 	drawing.queue_draw()
 	drawing.ready = True
+	outputtext = "First graph\nGeneration: " + str(drawing.graphnumber)
+	outputtextbuffer.set_text(outputtext)
 
 def applyiterator(widget):
 	drawing.startnum = int(start.get_text())
@@ -103,8 +113,6 @@ def applyiterator(widget):
 		drawing.mgs = []
 		operations.assignvariables(drawing.term)
 		drawing.selected = str(algo.get_child().get_text())
-		tag = termtext.create_tag(background="White")
-		termtext.apply_tag(tag, termtext.get_start_iter(),termtext.get_end_iter())
 		try:
 			def iterator():
 				Drawer = algorithms[drawing.selected]
@@ -118,18 +126,25 @@ def applyiterator(widget):
 		drawing.graph.update_layout()
 		drawing.queue_draw()
 		drawing.ready = True
+		outputtext = "First graph\nGeneration: " + str(drawing.graphnumber)
+		outputtextbuffer.set_text(outputtext)
+		if hasattr(drawing, 'starttobig') and drawing.starttobig:
+			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
+		else:
+			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
+		entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	except:
-		tag = termtext.create_tag(background="Red")
-		termtext.apply_tag(tag, termtext.get_start_iter(),termtext.get_end_iter())
-		#states = [gtk.STATE_NORMAL, gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT, gtk.STATE_SELECTED, gtk.STATE_INSENSITIVE]
-		#for state in states:
-		#    entry.modify_bg(state, gtk.gdk.color_parse("Red"))
-		print "Could not parse term"
-
+		if hasattr(drawing, 'starttobig') and drawing.starttobig:
+			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
+		else:
+			entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
+			
 def generateTerm(widget):
 	drawing.term = randomgraph.randomterm()
 	termtext.set_text(str(drawing.term).replace("#",u'\u03bb'))
 	entry.set_tooltip_text(str(drawing.term).replace("#",u'\u03bb'))
+	start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
+	entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	
 def changed_cb(entry):
 	if hasattr(drawing, 'ready') and drawing.ready:
@@ -341,11 +356,11 @@ if __name__ == "__main__":
 	
 	widgetboxV.pack_start(l4, False, False, 1)
 	widgetboxV.pack_start(entry, False, False, 1)
-	widgetboxV.pack_start(b1, False, False, 1)
 	widgetboxV.pack_start(algo, False, False, 1)
 	widgetboxV.pack_start(startbox, False, False, 1)
 	widgetboxV.pack_start(endbox, False, False, 1)
 	widgetboxV.pack_start(b2, False, False, 1)
+	widgetboxV.pack_start(b1, False, False, 1)
 	widgetboxV.pack_start(b3, False, False, 1)
 	widgetboxV.pack_start(b4, False, False, 1)
 	widgetboxV.pack_start(b5, False, False, 1)

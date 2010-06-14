@@ -42,12 +42,16 @@ class GraphArea(gtk.DrawingArea):
 		self.__render()
 	
 	def initgraph(self):
-		self.graphnumber = 0
-		if hasattr(self, 'iterator') and self.iterator is not None:
-			self.graph = self.iterator.next()
-			self.graphlist = [self.graph]
-		else:
-			self.graph = self.graphlist[self.graphnumber]
+		try:
+			self.graphnumber = 0
+			if hasattr(self, 'iterator') and self.iterator is not None:
+				self.graph = self.iterator.next()
+				self.graphlist = [self.graph]
+			else:
+				self.graph = self.graphlist[self.graphnumber]
+			self.starttobig = False
+		except:
+			self.starttobig = True
 	
 	def forward(self):
 		if self.graphnumber + 2 <= len(self.graphlist):
@@ -68,6 +72,7 @@ class GraphArea(gtk.DrawingArea):
 				return False
 		else:
 			print "There are no more graphs in the list."
+			self.nomoregraphs = True
 			return False
 	
 	def back(self):
