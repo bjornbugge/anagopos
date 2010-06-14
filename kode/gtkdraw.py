@@ -56,12 +56,13 @@ def back(widget):
 			drawing.queue_draw()
 	else:
 		print "No graph created yet!"
-	outputtext = "Previous graph\nGeneration: " + str(drawing.graphnumber)
-	if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
-		outputtext = outputtext + "\nNo more graphs"
-		outputtextbuffer.set_text(outputtext)
-	else:
-		outputtextbuffer.set_text(outputtext)
+	outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
+	#if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
+	#	outputtext = outputtext + "\nNo more graphs"
+	if hasattr(drawing, 'atfirstgraph') and drawing.atfirstgraph:
+		outputtext = outputtext + "\nAt the first graph"
+	outputtextbuffer.set_text(outputtext)
+	drawing.nomoregraphs = False
 	
 def forward(widget):
 	if drawing.ready:
@@ -70,12 +71,12 @@ def forward(widget):
 			drawing.queue_draw()
 	else:
 		print "No graph created yet!"
-	outputtext = "Next graph\nGeneration: " + str(drawing.graphnumber)
+	outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
 	if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
 		outputtext = outputtext + "\nNo more graphs"
-		outputtextbuffer.set_text(outputtext)
-	else:
-		outputtextbuffer.set_text(outputtext)
+	#if hasattr(drawing, 'atfirstgraph') and drawing.atfirstgraph:
+	#	outputtext = outputtext + "\nAt the first graph"
+	outputtextbuffer.set_text(outputtext)
 
 algorithms = {'Neato' : NeatoGraph,
 			'Dot' : DotGraph,
@@ -101,14 +102,14 @@ def apply(widget):
 	drawing.graph.update_layout()
 	drawing.queue_draw()
 	drawing.ready = True
-	outputtext = "First graph\nGeneration: " + str(drawing.graphnumber)
+	outputtext = "Generation: " + str(drawing.graphnumber)
 	outputtextbuffer.set_text(outputtext)
 
 def applyiterator(widget):
-	drawing.startnum = int(start.get_text())
-	drawing.endnum = int(end.get_text())
-	tempterm = termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter())
 	try:
+		drawing.startnum = int(start.get_text())
+		drawing.endnum = int(end.get_text())
+		tempterm = termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter())
 		drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
 		drawing.mgs = []
 		operations.assignvariables(drawing.term)
@@ -126,7 +127,7 @@ def applyiterator(widget):
 		drawing.graph.update_layout()
 		drawing.queue_draw()
 		drawing.ready = True
-		outputtext = "First graph\nGeneration: " + str(drawing.graphnumber)
+		outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
 		outputtextbuffer.set_text(outputtext)
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
@@ -134,8 +135,16 @@ def applyiterator(widget):
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 		entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	except:
+		#if start.get_text() == "" or end.get_text() == "" or termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
+		elif start.get_text() == "" or end.get_text() == "" or termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
+			if start.get_text() == "":
+				start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
+			if end.get_text() == "":
+				end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
+			if termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
+				entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 		else:
 			entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 			
@@ -144,6 +153,7 @@ def generateTerm(widget):
 	termtext.set_text(str(drawing.term).replace("#",u'\u03bb'))
 	entry.set_tooltip_text(str(drawing.term).replace("#",u'\u03bb'))
 	start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
+	end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	
 def changed_cb(entry):
@@ -275,7 +285,7 @@ if __name__ == "__main__":
 	drawing.term = str(t).replace("#",u'\u03bb')
 	#t = clickedtermtemp = str(t).replace("#",u'\u03bb')
 	termtext = gtk.TextBuffer()
-	#termtext.set_text(drawing.term)
+	termtext.set_text("")
 	
 	entry = gtk.TextView()
 	entry.set_justification(False)
@@ -323,7 +333,7 @@ if __name__ == "__main__":
 	start.set_text("0")
 	
 	end = gtk.Entry()
-	end.set_text("10000")
+	end.set_text("10")
 	
 	algo = gtk.ComboBoxEntry()
 	liststore = gtk.ListStore(str)

@@ -77,10 +77,12 @@ class GraphArea(gtk.DrawingArea):
 	
 	def back(self):
 		if not self.graphnumber == 0:
+			self.atfirstgraph = False
 			self.graphnumber = self.graphnumber - 1
 			self.graph = self.graphlist[self.graphnumber]
 			return True
 		else:
+			self.atfirstgraph = True
 			print "At the first graph."
 			return False
 	
