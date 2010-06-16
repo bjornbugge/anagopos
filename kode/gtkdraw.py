@@ -79,11 +79,11 @@ def forward(widget):
 	outputtextbuffer.set_text(outputtext)
 
 algorithms = {'Neato' : NeatoGraph,
+			'Neato Animated' : MajorizationGraph,
 			'Dot' : DotGraph,
 			'TwoPi' : TwopiGraph,
 			'Circo' : CircoGraph,
-			'Fdp' : FdpGraph,
-			'Majorization' : MajorizationGraph}
+			'Fdp' : FdpGraph}
 
 def apply(widget):
 	drawing.startnum = int(start.get_text())
@@ -205,6 +205,8 @@ def button_press_event(widget, event):
 				print "Clicked on node"
 				drawing.draggednode = True
 				drawing.draggednode = node
+				drawing.graph.draggednodename = node.name
+				drawing.graph.draggednode = True
 				clickedtermtemp = str(node.term).replace("#",u'\u03bb')
 				clickedterm.set_text(clickedtermtemp)
 				entryclickedterm.set_buffer(clickedterm)
@@ -227,6 +229,11 @@ def button_release_event(widget, event):
 					else:
 						edge.selected = True
 				drawing.draggednode = False
+				drawing.graph.draggednodex = event.x
+				drawing.graph.draggednodey = event.y
+				drawing.draggednodex = event.x
+				drawing.draggednodey = event.y
+				drawing.graph.draggednode = False
 				drawing.queue_draw()
 			else:
 				drawing.draggednode = False
@@ -235,10 +242,19 @@ def button_release_event(widget, event):
 					edge.selected = False
 	
 def motion_notify_event(widget, event):
-	if drawing.draggednode:
-		drawing.draggednode.x = event.x - 240
-		drawing.draggednode.y = event.y
-		drawing.queue_draw()
+	if hasattr(drawing.graph, 'draggable') and drawing.graph.draggable:
+		if drawing.draggednode:
+			print "Old X: " + str(event.x-240)
+			print "Old Y: " + str(event.y)
+			[x,y] = drawing.graph.reversescale(event.x-240, event.y)
+			print "New X: " + str(x)
+			print "New Y: " + str(y)
+			drawing.graph.draggednodex = x
+			drawing.graph.draggednodey = y
+			drawing.draggednode.x = x
+			drawing.draggednode.y = y
+			drawing.queue_draw()
+			drawing.graph.update_layout()
 		
 def checkbox(widget, event):
 	if newestedges.get_active():

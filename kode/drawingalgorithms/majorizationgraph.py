@@ -10,6 +10,10 @@ class MajorizationGraph(DrawingAlgorithm):
 	'''
 	Implementation of Gansner2004-approach.
 	'''
+	
+	# Graph is draggable
+	draggable = True
+	
 	def __init__(self, graph, width = 200, height = 200, epsilon = 10**-3):
 		# Make sure we inherit all attributes from the graph.
 		for name, value in vars(graph).iteritems():

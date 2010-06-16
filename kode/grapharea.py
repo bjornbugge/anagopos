@@ -178,16 +178,15 @@ class GraphArea(gtk.DrawingArea):
 		for node in self.graph.nodes:
 			noNodes = noNodes + 1
 			
-			if node.name == "N0":
-				radius = self.medium_radius
-				color = self.first_node_color
-			
 			if len(node.term.redexpositions) == 0:
 				radius = self.large_radius
 				color = self.normal_form_color
 			elif (node is self.graph.newest) and self.shownewestedget:
 				radius = self.medium_radius
 				color = self.newest_node_color
+			elif node.name == "N0":
+				radius = self.medium_radius
+				color = self.first_node_color
 			else:
 				radius = self.small_radius
 				color = self.normal_node_color

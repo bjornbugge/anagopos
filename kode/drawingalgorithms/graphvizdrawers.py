@@ -49,6 +49,12 @@ class GraphVizDrawer(DrawingAlgorithm):
 	
 	def update_layout(self):
 		
+		if hasattr(self, 'draggednode') and self.draggednode:
+			#print "Dragged node: " + str(self.draggednodename)
+			dragnode = self.draggednodename
+			draggednodex = self.draggednodex
+			draggednodey = self.draggednodey
+		
 		# Layout the graph.
 		self.G.layout(prog = self.algorithm)
 		
@@ -58,6 +64,22 @@ class GraphVizDrawer(DrawingAlgorithm):
 		for Anode in N:
 			graphnode = self.nodenametable[Anode.name]
 			graphnode.x, graphnode.y = map(float, Anode.attr["pos"].split(','))
+			
+			if hasattr(self, 'draggednode') and self.draggednode:
+				#print "Dragged node: " + str(self.draggednodename)
+				dragnode = self.draggednodename
+			
+				if Anode.name == dragnode:
+					draggednode = self.nodenametable[dragnode]
+					print "Drag node"
+					print "A: " + str(Anode.name)
+					print "1: " + str(dragnode)
+					print "A: " + Anode.attr["pos"]
+					print "1: " + str(draggednodex) + "," + str(draggednodey)
+					#print draggednodex
+					#print draggednodey
+					#Anode.attr["pos"]= str(dragnode.x) + "," + str(dragnode.y)
+			
 			for edge in graphnode.children:
 				Aedge = self.G.get_edge(graphnode.name, edge.get_far(graphnode).name)
 				newEdgePos = Aedge.attr["pos"].split(' ')
@@ -78,6 +100,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 		Xs = [node.x for node in self.nodes]
 		Ys = [node.y for node in self.nodes]
 		scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
+		self.scaling = scaling
 		
 		for node in self.nodes:
 			node.x = float(node.x) / scaling[0]
@@ -89,6 +112,11 @@ class GraphVizDrawer(DrawingAlgorithm):
 			for edge in node.children:
 				for i, point in enumerate(edge.ipoints):
 					edge.ipoints[i] = map(lambda x:float(x[0]) / x[1], zip(point, scaling))
+					
+	def reversescale(self, x, y):
+		rsx = float(x) * self.scaling[0]
+		rsy = float(y) * self.scaling[1]
+		return [rsx, rsy]
 	
 
 
@@ -101,9 +129,11 @@ class DotGraph(GraphVizDrawer):
 
 class NeatoGraph(GraphVizDrawer):
 	algorithm = 'neato'
+	#draggable = True
 
 class FdpGraph(GraphVizDrawer):
 	algorithm = 'fdp'
+	#draggable = True
 
 class TwopiGraph(GraphVizDrawer):
 	algorithm = 'twopi'
