@@ -82,7 +82,20 @@ class MajorizationGraph(DrawingAlgorithm):
 		self.hasBeenInitialized = True
 	
 	def scale(self, width, height):
-		pass
+		Xs = [node.x for node in self.nodes]
+		Ys = [node.y for node in self.nodes]
+		scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
+		
+		for node in self.nodes:
+			node.x = (float(node.x) / scaling[0])
+			node.y = (float(node.y) / scaling[1])
+			
+			if not hasattr(self, 'bezier') or not self.bezier:
+				continue
+			
+			for edge in node.children:
+				for i, point in enumerate(edge.ipoints):
+					edge.ipoints[i] = map(lambda x:float(x[0]) / x[1], zip(point, scaling))
 	
 	def update_layout(self):
 		if not self.hasBeenInitialized:

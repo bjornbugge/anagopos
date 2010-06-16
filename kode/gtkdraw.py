@@ -108,7 +108,7 @@ def apply(widget):
 def applyiterator(widget):
 	try:
 		drawing.startnum = int(start.get_text())
-		drawing.endnum = int(end.get_text())
+		drawing.endnum = 1000000# Default value instead of this: int(end.get_text())
 		tempterm = termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter())
 		drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
 		drawing.mgs = []
@@ -134,6 +134,7 @@ def applyiterator(widget):
 		else:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 		entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
+		end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	except:
 		#if start.get_text() == "" or end.get_text() == "" or termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
@@ -141,11 +142,18 @@ def applyiterator(widget):
 		elif start.get_text() == "" or end.get_text() == "" or termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
 			if start.get_text() == "":
 				start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
+			else:
+				start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 			if end.get_text() == "":
 				end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
+			else:
+				end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 			if termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
 				entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
+			else:
+				entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 		else:
+			print "Syntax error"
 			entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 			
 def generateTerm(widget):
@@ -231,6 +239,14 @@ def motion_notify_event(widget, event):
 		drawing.draggednode.x = event.x - 240
 		drawing.draggednode.y = event.y
 		drawing.queue_draw()
+		
+def checkbox(widget, event):
+	if newestedges.get_active():
+		drawing.shownewestedget = True
+	else:
+		drawing.shownewestedget = False
+	drawing.queue_draw()
+
 
 if __name__ == "__main__":
 	window = gtk.Window()
@@ -250,6 +266,7 @@ if __name__ == "__main__":
 	drawing = GraphArea(graph)
 	
 	drawing.ready = False
+	drawing.shownewestedget = False
 	
 	widgetboxH = gtk.HBox(False, 10)
 	widgetboxV = gtk.VBox(False, 10)
@@ -332,6 +349,10 @@ if __name__ == "__main__":
 	start = gtk.Entry()
 	start.set_text("0")
 	
+	newestedges = gtk.CheckButton(label="Show newest: ")
+	newestedges.set_direction(gtk.TEXT_DIR_RTL)
+	newestedges.connect("toggled", checkbox, "showstages")
+	
 	end = gtk.Entry()
 	end.set_text("10")
 	
@@ -369,6 +390,7 @@ if __name__ == "__main__":
 	widgetboxV.pack_start(algo, False, False, 1)
 	widgetboxV.pack_start(startbox, False, False, 1)
 	widgetboxV.pack_start(endbox, False, False, 1)
+	widgetboxV.pack_start(newestedges, False, False, 1)
 	widgetboxV.pack_start(b2, False, False, 1)
 	widgetboxV.pack_start(b1, False, False, 1)
 	widgetboxV.pack_start(b3, False, False, 1)
@@ -399,8 +421,9 @@ if __name__ == "__main__":
 	algo.show()
 	l1.show()
 	start.show()
-	l2.show()
-	end.show()
+	newestedges.show()
+	#l2.show()
+	#end.show()
 	b2.show()
 	b3.show()
 	b4.show()

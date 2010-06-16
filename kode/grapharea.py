@@ -99,8 +99,12 @@ class GraphArea(gtk.DrawingArea):
 		noEdges = 0
 		for node in self.graph.nodes:
 			for edge in node.children:
+				
+				#print "Node 1: " + str(node)
+				#print "Node 2: " + str(edge.get_far(node))
+				
 				noEdges = noEdges + 1
-				if node is self.graph.newest:
+				if (node is self.graph.newest) and self.shownewestedget:
 					w = self.newest_edge_width 
 					c = self.newest_edge_color
 				else:
@@ -115,6 +119,7 @@ class GraphArea(gtk.DrawingArea):
 				far_node = edge.get_far(node)
 				
 				if hasattr(self.graph, 'bezier') and self.graph.bezier:
+					# Draw a bezier line
 					self.graph.ipoints = edge.ipoints
 					far_node = edge.get_far(node)
 					
@@ -165,25 +170,28 @@ class GraphArea(gtk.DrawingArea):
 				else:
 					radius = self.small_radius
 				
-				self.draw_arrowhead(x1, y1, x2, y2, radius)
-		#print "Number of edges: " + str(noEdges)
+				if node != edge.get_far(node):
+					self.draw_arrowhead(x1, y1, x2, y2, radius)
+				
 		# Nodes
 		noNodes = 0
 		for node in self.graph.nodes:
 			noNodes = noNodes + 1
+			
+			if node.name == "N0":
+				radius = self.medium_radius
+				color = self.first_node_color
+			
 			if len(node.term.redexpositions) == 0:
 				radius = self.large_radius
 				color = self.normal_form_color
-			elif node is self.graph.newest:
+			elif (node is self.graph.newest) and self.shownewestedget:
 				radius = self.medium_radius
 				color = self.newest_node_color
 			else:
 				radius = self.small_radius
 				color = self.normal_node_color
-				
-			if node.name == "N0":
-				radius = self.medium_radius
-				color = self.first_node_color
+			
 			
 			self.__cr.arc(node.x, node.y, radius, 0, math.pi*2)
 			self.__cr.set_source_rgb(color[0], color[1], color[2])
@@ -191,24 +199,21 @@ class GraphArea(gtk.DrawingArea):
 			self.__cr.set_source_rgb(0, 0, 0)
 			self.__cr.stroke()
 			
+			for edge in node.children:
+				if node == edge.get_far(node):
+					print "kant i samme knude"
+					ac = self.arrow_color
+					self.__cr.arc(node.x, node.y, 1, 0, math.pi*2)
+					self.__cr.set_source_rgb(ac[0], ac[1], ac[2])
+					self.__cr.fill_preserve()
+					self.__cr.set_source_rgb(ac[0], ac[1], ac[2])
+					self.__cr.stroke()
+			
 			if hasattr(node, 'showterm') and node.showterm:
 				parsedtermlist = str(node.term).split('#')
 				parsedterm = ""
 				lambdaletter = u'\u03bb'
-				#for j in range(len(parsedtermlist)-1):
-				#	parsedterm = parsedterm + parsedtermlist[j] + str(lambdaletter)
-				#print "Term: " + str(parsedterm)
-				#self.__cr.select_font_face("Purisa", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-				#self.__cr.set_font_size(13)
-				#self.__cr.move_to(10, 750)
-				#self.__cr.show_text(unicode_to_glyph(parsedterm))
-				###self.__cr.show_text(u'\u03bb')
-		#print "Number of nodes: " + str(noNodes)
-		#20115,11
-		#3106
-		#3106141126
-		#9-31-8
-	
+				
 	def draw_arrowhead(self, x1, y1, x2, y2, noderadius):
 		'''
 		Draws an arrow head on the line segment between the coordinate pairs
