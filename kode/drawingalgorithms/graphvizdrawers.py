@@ -10,7 +10,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 		for name, value in vars(graph).iteritems():
 			setattr(self, name, value)
 		
-		self.newagraph()
+		self._newagraph()
 		
 		# Make a GraphViz graph and add all nodes.
 		#self.G = pgv.AGraph()
@@ -30,9 +30,9 @@ class GraphVizDrawer(DrawingAlgorithm):
 		for node in self.nodes:
 			node.x = random.randint(1, 100)
 			node.y = random.randint(1, 100)
-		self.newagraph()
+		self._newagraph()
 	
-	def newagraph(self):
+	def _newagraph(self):
 		self.G = pgv.AGraph()
 		for name in (n.name for n in self.nodes):
 			self.G.add_node(name, width = "0.00", heigth = "0.00", fixedsize = "0", 
@@ -40,8 +40,8 @@ class GraphVizDrawer(DrawingAlgorithm):
 		for node in self.nodes:
 			for edge in node.children:
 				far_node = edge.get_far(node)
-				if node == far_node:
-					continue
+				# if node == far_node:
+				# 	continue
 				self.G.add_edge(str(node.name), str(far_node.name))
 	
 	def initwith(self, othergraph): 
