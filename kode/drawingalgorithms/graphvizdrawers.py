@@ -40,8 +40,6 @@ class GraphVizDrawer(DrawingAlgorithm):
 		for node in self.nodes:
 			for edge in node.children:
 				far_node = edge.get_far(node)
-				# if node == far_node:
-				# 	continue
 				self.G.add_edge(str(node.name), str(far_node.name))
 	
 	def initwith(self, othergraph): 
@@ -55,12 +53,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 				if hasattr(self, 'dragnodename') and Anode.name == self.dragnodename:
 					newx = self.dragnodex
 					newy = self.dragnodey
-					#print "Old GraphViz pos: " + str(Anode.attr["pos"])
-					#print "Node pos:         " + str(int(newx)) + "," + str(int(newy))
 					Anode.attr["pos"]= str(int(newx)) + "," + str(int(newy))
-					#Anode.attr["pin"]="True"
-					#print "Is node pinned:   " + str(Anode.attr["pin"])
-					#print "New GraphViz pos: " + str(Anode.attr["pos"])
 		
 		self.G.layout(prog = self.algorithm, args="-Gepsilon=5000")
 		
@@ -84,22 +77,6 @@ class GraphVizDrawer(DrawingAlgorithm):
 					edge.ipoints[i] = map(float, pos.split(','))
 	
 	def update_layout(self):
-		
-		#Npre = self.G.nodes()
-		#
-		#if hasattr(self, 'dragnode') and self.dragnode:
-		#	for Anode in Npre:
-		#		if hasattr(self, 'dragnodename') and Anode.name == self.dragnodename:
-		#			newx = self.dragnodex
-		#			newy = self.dragnodey
-		#			print "Old GraphViz pos: " + str(Anode.attr["pos"])
-		#			print "Node pos:         " + str(int(newx)) + "," + str(int(newy))
-		#			Anode.attr["pos"]= str(int(newx)) + "," + str(int(newy))
-		#			#Anode.attr["pin"]="True"
-		#			print "Is node pinned:   " + str(Anode.attr["pin"])
-		#			print "New GraphViz pos: " + str(Anode.attr["pos"])
-					
-		# Layout the graph.
 		self.G.layout(prog = self.algorithm)
 		
 		N = self.G.nodes()
@@ -143,23 +120,6 @@ class GraphVizDrawer(DrawingAlgorithm):
 					edge.ipoints[i] = map(lambda x:float(x[0]) / x[1], zip(point, scaling))
 		
 		return scaling
-					
-	def reversescale(self, width, height):
-		#Xs = [node.x for node in self.nodes]
-		#Ys = [node.y for node in self.nodes]
-		#scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
-		
-		for node in self.nodes:
-			node.x = float(node.x) * self.scaling[0]
-			node.y = float(node.y) * self.scaling[1]
-			
-			if not hasattr(self, 'bezier') or not self.bezier:
-				continue
-			
-			for edge in node.children:
-				for i, point in enumerate(edge.ipoints):
-					edge.ipoints[i] = map(lambda x:float(x[0]) / x[1], zip(point, scaling))
-	
 
 
 class CircoGraph(GraphVizDrawer):

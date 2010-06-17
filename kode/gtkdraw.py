@@ -136,7 +136,6 @@ def applyiterator(widget):
 		entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 		end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	except:
-		#if start.get_text() == "" or end.get_text() == "" or termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 		elif start.get_text() == "" or end.get_text() == "" or termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
@@ -186,14 +185,23 @@ def changed_cb(entry):
 		drawing.queue_draw()
 
 def key_press_event(widget, event):
-	if event.keyval == 102 or event.keyval == 110: 
-		forward(widget)
-	elif event.keyval == 98: 
-		back(widget)
-	elif event.keyval == 114:
-		redraw(widget)
-	elif event.keyval == 111:
-		optimize(widget)
+
+	if event.keyval == 65507:
+		drawing.ctrl = True
+	
+	if drawing.ctrl:
+		if hasattr(drawing, 'ctrl') and drawing.ctrl and (event.keyval == 102 or event.keyval == 110): 
+			forward(widget)
+		elif hasattr(drawing, 'ctrl') and drawing.ctrl and event.keyval == 98: 
+			back(widget)
+		elif hasattr(drawing, 'ctrl') and drawing.ctrl and event.keyval == 114:
+			redraw(widget)
+		elif hasattr(drawing, 'ctrl') and drawing.ctrl and event.keyval == 111:
+			optimize(widget)
+		
+def key_release_event(widget, event):
+	if event.keyval == 65507:
+		drawing.ctrl = False
 		
 def button_press_event(widget, event):
 	x = event.x - 240
@@ -212,7 +220,6 @@ def button_press_event(widget, event):
 		
 		for node in drawing.graph.nodes:
 			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
-				print "Clicked on node"
 				drawing.graph.dragnode = True
 				drawing.graph.dragnodename = node.name
 				drawing.graph.dragnodex = x
@@ -284,6 +291,7 @@ if __name__ == "__main__":
 	window = gtk.Window()
 	window.connect("delete-event", gtk.main_quit)
 	window.connect("key_press_event", key_press_event)
+	window.connect("key_release_event", key_release_event)
 	window.connect("button_release_event", button_release_event)
 	window.connect("button_press_event", button_press_event)
 	window.connect("motion_notify_event", motion_notify_event)
