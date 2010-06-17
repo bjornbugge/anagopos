@@ -12,16 +12,18 @@ an edge can be drawn spanning a lot of screen area, the type of arrow has to
 be designed such that it is clear to see where an edge starts from the arrow
 head alone and vice versa. An alternative to arrows is drawing the edges with
 a colour gradient. In this approach, an edge would be couloured e.g. green at
-the start and red at the end, interpolating the colours on the edge line. The
-benefit of such an approach would be that it is easy to see tendencies if
-there is a visual clutter of edges having the same general direction.
+the start and red at the end, interpolating the colours on the edge line. 
 
-We found that the easiest approach that also gave reasonable results
-aesthetically was ``normal'' arrow heads. Since they are confined to a
-geometrically rather small area, they do not result in cluttering when there
-are many of them. The method has the drawback that it is not straightforward
-to see where an edge begins from the arrow head alone, but in our opinion the
-benefit of less cluttering outweigh this drawback.
+A study of the usability of these and other methods is presented in
+\cite{Holten2009}. In this study, the representation that performed best was
+the so-called ``tapered'' representation, ``[...] in which the width of an
+edge is gradually varied along its length -- wide at the start and narrow at
+the end [...]'' \cite[p. 2307]{Holten2009}. The authors recommend avoiding the
+intuitive representation, where a ``normal'' arrowhead is drawn, altogether.
+Nonetheless, for our purposes, we found that the regular arrow heads gave
+reasonable results, and they have the benefit that they are easy to implement.
+In a future version of the software alternatives to this approach could be
+explored.
 
 \section{Edge Weighting}
 

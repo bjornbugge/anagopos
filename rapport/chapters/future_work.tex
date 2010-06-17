@@ -36,6 +36,11 @@ what remains to be done.
 	only use the graphics primitives served by Cairo, it would not be a big challenge
 	to switch the routines to use the primitives from e.g. OpenGL instead \cite{OpenGL}.
 	
+	Such a three-dimensional drawing could furthermore be extended to utilize stereoscopic
+	display techniques. A study indicates that stereoscopy can greatly enhance the ease of 
+	readability of three-dimensional drawings of graphs, especially when compared to two-dimensional
+	drawings \cite{Ware2008}.
+	
 	\item[Exporting facilities.] The ability to easily take screenshots through 
 	a push of button, for instance, would be quite useful to have. Furthermore,
 	if one were able to export the drawn graph to other formats than just image files,
@@ -73,6 +78,24 @@ what remains to be done.
 	corresponding redexes in the textual representation of the term are given
 	matching colours, where each edge/redex-pair is coloured with its own, distinct
 	colour.
+	
+	\item[Reduction strategies.] In the current implementation, it is not possible
+	to see the difference between different reduction strategies in the reduction graph.
+	We suggest that some kind of highlighting should be added, making it possible to
+	see in which order the different reduction strategies reaches the nodes/terms. 
+	This could for instance be visualized in such a way that the colour of the edges
+	is interpolated between a dark and a light tone, where the lighter tones are used for
+	the earlier reductions and vice versa. A GUI-component to switch reduction-strategy-view
+	should then also be added.
+	
+	\item[Arrowheads.] As mentioned earlier, alternatives to the intuitive way 
+	of drawing the arrowheads should be explored, by e.g. adding an option to
+	switch the representation to the properties window.
+	
+	\item[Extended syntax.] The currently implemented syntax for the lambda terms
+	is limited to only ``pure'' terms, not placeholder names for standard functions etc.
+	It would be beneficial to be able to write ``real'' programs in the lambda 
+	calculus with named functions that could be loaded from an external file.
 	
 \end{description}
 

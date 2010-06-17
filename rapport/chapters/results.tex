@@ -170,7 +170,116 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 	\label{fig:images_Ycomb_3_DOT}
 \end{figure}
 
+\begin{figure}[htbp]
+	% #x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y))) #f.(#x.(f (f x))) #f.(#x.(f (f (f x))))
+	% cons(2,3)
+	\centering
+		\includegraphics[height=\exampleheight]{../images/Cons23_NEATO.png}
+	\caption{$\lambda x.(\lambda y.(\lambda x.(\lambda y.(\lambda s.(s x y))) \lambda x.(\lambda y.y) (\lambda x.(\lambda y.(\lambda s.(s x y))) x y))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f (f x))))$}
+	\label{fig:images_Cons23_NEATO}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	% #n.(#f.(#x.(f (n f x)))) #f.(#x.(f (f (f (f (f x))))))
+	\subfigure[Successor to 5.]{
+		\includegraphics[height=\exampleheight]{../images/Succ5_NEATO.png}
+	}
+	% #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.(x)) (#u.(u))))) #f.(#x.(f (f (f (f (f x))))))
+	\subfigure[Predecessor to 5.]{
+		\includegraphics[height=\exampleheight]{../images/Pred5_NEATO.png}
+	}
+	
+	\caption{caption}
+	\label{fig:images_Succ5_NEATO}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	% #m.(#n.(#f.(#x.(m f (n f x))))) #f.(#x.(f (f x))) #f.(#x.(f (f x)))
+	\subfigure[$2+2$]{
+		\includegraphics[height=\exampleheight]{../images/Sum22_NEATO.png}
+	}
+	% #m.(#n.(#f.(#x.(m (n f) x)))) #f.(#x.(f (f x))) #f.(#x.(f (f x)))
+	\subfigure[$2\cdot 2$]{
+		\includegraphics[height=\exampleheight]{../images/Prod22_NEATO.png}
+	}
+	% #m.(#n.(#f.(#x.(m n f x)))) #f.(#x.(f (f x))) #f.(#x.(f (f x)))
+	\subfigure[$2^2$]{
+		\includegraphics[height=\exampleheight]{../images/Exp22_NEATO.png}
+	}
+	\caption{caption}
+	\label{fig:images_Exp22_NEATO}
+\end{figure}
+
+
 
 % #x.(x x) #x.((x x) (x x))
 % #x.(#y.(x y) #y.(x y)) #x.(x x) #x.(a)
 % #f.(#x.(f (x x))) (#x.(f (x x))) #x.#y.(y (x y))
+
+% ADD: #m.(#n.(#f.(#x.(m f (n f x)))))
+% MUL: #m.(#n.(#f.(#x.(m (n f) x))))
+% HD: #z.(#p.(p #x.(#y.x)) (#p.(p #x.(#y.y)) z))
+% TL: #z.(#p.(p #x.(#y.y)) (#p.(p #x.(#y.y)) z))
+% CONS: #x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y)))
+% EXP: #m.(#n.(#f.(#x.(m n f x))))
+
+% PAIR: #x.(#y.(#s.(s x y)))
+% FST: #p.(p #x.(#y.x))
+% SND: #p.(p #x.(#y.y))
+% TRU: #x.(#y.x)
+% FAL:  #x.(#y.y)
+
+% THREE: #f.(#x.(f (f (f x))))
+% TWO: #f.(#x.(f (f x)))
+% FIVE: #f.(#x.(f (f (f (f (f x))))))
+% ZERO: #f.(#x.x)
+
+% hd five: #z.(#p.(p #x.(#y.x)) (#p.(p #x.(#y.y)) z)) #f.(#x.(f (f (f (f (f x))))))
+% cons 2,3: #x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y))) #f.(#x.(f (f x))) #f.(#x.(f (f (f x))))
+% cons 3,2: #x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y))) #f.(#x.(f (f (f x)))) #f.(#x.(f (f x))) 
+% cons 3,3: #x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y))) #f.(#x.(f (f (f x)))) #f.(#x.(f (f (f x)))) 
+% cons 2,2: #x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y))) #f.(#x.(f (f x))) #f.(#x.(f (f x))) 
+% cons 5,2: #x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y))) #f.(#x.(f (f (f (f (f x)))))) #f.(#x.(f (f x))) 
+
+%lambda L. (hd L + hd tl L)::(F tl L)
+% !fib: #L.(#x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y))) 
+%				(#m.(#n.(#f.(#x.(m f (n f x))))) 
+%					(#z.(#p.(p #x.(#y.x)) (#p.(p #x.(#y.y)) z)) L) 
+%					(#z.(#p.(p #x.(#y.x)) (#p.(p #x.(#y.y)) z)) #z.(#p.(p #x.(#y.y)) (#p.(p #x.(#y.y)) z)) L))
+%				(#f.(#x.(f (f (f (f (f x))))))))
+
+% 2**2: #m.(#n.(#f.(#x.(m n f x)))) #f.(#x.(f (f x))) #f.(#x.(f (f x)))
+% 2*2: #m.(#n.(#f.(#x.(m (n f) x)))) #f.(#x.(f (f x))) #f.(#x.(f (f x)))
+% 2+2: #m.(#n.(#f.(#x.(m f (n f x))))) #f.(#x.(f (f x))) #f.(#x.(f (f x)))
+
+% 5*5: #m.(#n.(#f.(#x.(m (n f) x)))) #f.(#x.(f (f (f (f (f x)))))) #f.(#x.(f (f (f (f (f x)))))) 
+% 5*1: #m.(#n.(#f.(#x.(m (n f) x)))) #f.(#x.(f (f (f (f (f x)))))) #f.(#x.(f x))
+% 1*1: #m.(#n.(#f.(#x.(m (n f) x)))) #f.(#x.(f x)) #f.(#x.(f x))
+% 2*3: #m.(#n.(#f.(#x.(m (n f) x)))) #f.(#x.(f (f x))) #f.(#x.(f (f (f x))))
+% 2+3: #m.(#n.(#f.(#x.(m f (n f x))))) #f.(#x.(f (f x))) #f.(#x.(f (f (f x))))
+
+
+% IFTHENELSE := #p.(#a.(#b.(p a b)))
+% ISZERO :=  #n.(n (#a.(#x.(#y.y))) #x.(#y.x))
+% PRED := #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.x) (#u.u))))
+% SUB := #m.(#n.(n #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.x) (#u.u)))) m))
+% SUCC := #n.(#f.(#x.(f (n f x))))
+
+% succ(succ(5)): #n.(#f.(#x.(f (n f x)))) (#n.(#f.(#x.(f (n f x)))) #f.(#x.(f (f (f (f (f x)))))))
+
+% succ(5): #n.(#f.(#x.(f (n f x)))) #f.(#x.(f (f (f (f (f x))))))
+% pred(5): #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.(x)) (#u.(u))))) #f.(#x.(f (f (f (f (f x))))))
+
+% "if V == 0: TWO else THREE"
+% #V.(#p.(#a.(#b.(p a b))) (#n.(n (#a.(#x.(#y.y))) #x.(#y.x)) V) #f.(#x.(f (f x))) #f.(#x.(f (f (f x))))) #f.(#x.x)
+
+%g := λr. λn.(1, if n = 0; else n × (r r (n-1)))
+%f := g g
+% g: #r.(#n.(
+%	#p.(#a.(#b.(p a b))) (#n.(n (#a.(#x.(#y.y))) #x.(#y.x)) n)
+%	#f.(#x.(f x))
+%	(#m.(#n.(#f.(#x.(m (n f) x)))) (r r (#m.(#n.(n #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.x) (#u.u)))) m)) n #f.(#x.(f x)))))))
+
+% fac(2): (#r.(#n.(#p.(#a.(#b.(p a b))) (#n.(n (#a.(#x.(#y.y))) #x.(#y.x)) n) #f.(#x.(f x)) (#m.(#n.(#f.(#x.(m (n f) x)))) (r r (#m.(#n.(n #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.x) (#u.u)))) m)) n #f.(#x.(f x))))))) #r.(#n.(#p.(#a.(#b.(p a b))) (#n.(n (#a.(#x.(#y.y))) #x.(#y.x)) n) #f.(#x.(f x)) (#m.(#n.(#f.(#x.(m (n f) x)))) (r r (#m.(#n.(n #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.x) (#u.u)))) m)) n #f.(#x.(f x)))))))) #f.(#x.(f x))
