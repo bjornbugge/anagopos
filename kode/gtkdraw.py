@@ -106,6 +106,8 @@ def apply(widget):
 	outputtextbuffer.set_text(outputtext)
 
 def applyiterator(widget):
+	#tempterm = termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter())
+	#drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
 	try:
 		drawing.startnum = int(start.get_text())
 		drawing.endnum = 1000000# Default value instead of this: int(end.get_text())
@@ -189,7 +191,7 @@ def key_press_event(widget, event):
 	if event.keyval == 65507:
 		drawing.ctrl = True
 	
-	if drawing.ctrl:
+	if hasattr(drawing, 'ctrl') and drawing.ctrl:
 		if hasattr(drawing, 'ctrl') and drawing.ctrl and (event.keyval == 102 or event.keyval == 110): 
 			forward(widget)
 		elif hasattr(drawing, 'ctrl') and drawing.ctrl and event.keyval == 98: 
