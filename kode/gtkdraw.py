@@ -17,11 +17,11 @@ from drawingalgorithms.graphvizdrawers import FdpGraph
 # t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
 # t = '(#x.((x x) x) #y.((y y) y))'
 #t = '#a.(b) (#x.((x x) x) #y.((y y) y))'
-# t = '#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))'
-# t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
+t = '#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))'
+#t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
 # Den her har fire normalformer som faas ved at lave max. 125 (maaske faerre!) iterationer.
 #t = '#B1.((((#B2.(#B3.(#B4.(B2))) (#B5.(#B6.(#B7.(#B8.(B1)))) #B9.((#B10.((#B11.(B9) #B12.(#B13.(#B14.(#B15.(B1)))))) #B16.(F1))))) #B17.(B1)) #B18.((#B19.(#B20.(B19)) (#B21.(B21) ((B1 #B22.(#B23.(B22))) #B24.(#B25.(#B26.((#B27.(B25) B25))))))))))'
-t = '(#B1.((#B2.((#B3.(B2) B2)) (((#B4.(#B5.(#B6.(#B7.(#B8.(#B9.(B9)))))) #B10.(#B11.(B11))) (#B12.(#B13.(#B14.(B13))) ((#B15.(#B16.((#B17.(#B18.(B16)) #B19.(B19)))) #B20.((#B21.(#B22.(#B23.(#B24.(#B25.(B1))))) B1))) B1))) B1))) (((#B26.(#B27.(#B28.(#B29.(#B30.(B28))))) #B31.(#B32.(B32))) #B33.(#B34.(#B35.(#B36.(#B37.(#B38.((B36 B34)))))))) (#B39.((#B40.(#B41.(B40)) (((B39 #B42.(B42)) (#B43.(#B44.(#B45.(B39))) #B46.(B39))) (#B47.(#B48.((B47 B47))) #B49.(#B50.(#B51.(#B52.(B39)))))))) (#B53.(((#B54.(#B55.(#B56.(B55))) (#B57.(#B58.(B53)) B53)) (#B59.((#B60.(#B61.(#B62.(B59))) #B63.(#B64.(B64)))) #B65.((#B66.((B65 #B67.(#B68.(#B69.(#B70.(B53)))))) #B71.(B53)))))) (#B72.(((#B73.(#B74.(#B75.(B74))) #B76.(B72)) (#B77.(B72) #B78.(#B79.(B72))))) #B80.(((#B81.(#B82.(B81)) #B83.(#B84.(#B85.((B83 (B84 (B85 #B86.(B85)))))))) B80)))))))'
+#t = '(#B1.((#B2.((#B3.(B2) B2)) (((#B4.(#B5.(#B6.(#B7.(#B8.(#B9.(B9)))))) #B10.(#B11.(B11))) (#B12.(#B13.(#B14.(B13))) ((#B15.(#B16.((#B17.(#B18.(B16)) #B19.(B19)))) #B20.((#B21.(#B22.(#B23.(#B24.(#B25.(B1))))) B1))) B1))) B1))) (((#B26.(#B27.(#B28.(#B29.(#B30.(B28))))) #B31.(#B32.(B32))) #B33.(#B34.(#B35.(#B36.(#B37.(#B38.((B36 B34)))))))) (#B39.((#B40.(#B41.(B40)) (((B39 #B42.(B42)) (#B43.(#B44.(#B45.(B39))) #B46.(B39))) (#B47.(#B48.((B47 B47))) #B49.(#B50.(#B51.(#B52.(B39)))))))) (#B53.(((#B54.(#B55.(#B56.(B55))) (#B57.(#B58.(B53)) B53)) (#B59.((#B60.(#B61.(#B62.(B59))) #B63.(#B64.(B64)))) #B65.((#B66.((B65 #B67.(#B68.(#B69.(#B70.(B53)))))) #B71.(B53)))))) (#B72.(((#B73.(#B74.(#B75.(B74))) #B76.(B72)) (#B77.(B72) #B78.(#B79.(B72))))) #B80.(((#B81.(#B82.(B81)) #B83.(#B84.(#B85.((B83 (B84 (B85 #B86.(B85)))))))) B80)))))))'
 #t = '#B1.(#B2.(#B3.(((#B4.((#B5.(#B6.(#B7.(B4))) #B8.(B3))) B3) (#B9.((#B10.(#B11.(B3)) B3)) (#B12.(#B13.(#B14.(#B15.(#B16.(B13))))) B1))))))'
 # t = '(#B1.((#B2.((#B3.(F1) #B4.(#B5.((B2 B4))))) (#B6.(B6) #B7.(#B8.(#B9.(#B10.(B8))))))) ((((#B11.(#B12.(#B13.((#B14.(B13) B13)))) (#B15.(#B16.(#B17.(B17))) #B18.(#B19.(#B20.((B18 (B19 #B21.(#B22.((#B23.(B19) B19)))))))))) #B24.((#B25.(#B26.(#B27.(B26))) ((#B28.(B24) #B29.(#B30.(#B31.(#B32.(F2))))) B24)))) #B33.((B33 (#B34.(B33) (#B35.(((#B36.(#B37.(B36)) #B38.(B33)) #B39.(B33))) B33))))) (#B40.(#B41.(#B42.(#B43.(#B44.((#B45.(B41) #B46.(#B47.(B44)))))))) ((#B48.(((#B49.(#B50.(B48)) #B51.(B48)) #B52.(#B53.(B53)))) #B54.(#B55.((((#B56.(B56) #B57.(#B58.(B54))) #B59.(B54)) #B60.(#B61.(B61)))))) #B62.(#B63.(#B64.((#B65.(#B66.((B62 #B67.(#B68.((B66 B65)))))) (#B69.(#B70.(B69)) #B71.(B63))))))))))'
 # t = '(#B1.(B1) (#B2.((#B3.((#B4.((B3 B3)) #B5.((B2 (#B6.(#B7.(#B8.(B7))) (#B9.(B9) B5)))))) #B10.(B10))) #B11.(#B12.(#B13.(B12)))))'
@@ -199,24 +199,43 @@ def button_press_event(widget, event):
 	x = event.x - 240
 	y = event.y
 	r = 10
+	
+	drawing.setclickterm = True
+	
 	if drawing.ready:
+		
+		scalinecounter = 0
+		if drawing.scaling[0] != 1 and drawing.scaling[1] != 1:
+			drawing.scalingx = drawing.scaling[0]
+			drawing.scalingy = drawing.scaling[1]
+			scalinecounter = scalinecounter + 1
+		
 		for node in drawing.graph.nodes:
 			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
 				print "Clicked on node"
-				drawing.draggednode = True
-				drawing.draggednode = node
-				drawing.graph.draggednodename = node.name
-				drawing.graph.draggednode = True
-				clickedtermtemp = str(node.term).replace("#",u'\u03bb')
-				clickedterm.set_text(clickedtermtemp)
-				entryclickedterm.set_buffer(clickedterm)
-				entryclickedterm.set_tooltip_text(clickedtermtemp)
+				drawing.graph.dragnode = True
+				drawing.graph.dragnodename = node.name
+				drawing.graph.dragnodex = x
+				drawing.graph.dragnodey = y
 
 def button_release_event(widget, event):
 	x = event.x - 240
 	y = event.y
 	r = 10
-	if drawing.ready:
+	if hasattr(drawing.graph, 'dragnode') and drawing.graph.dragnode:
+		#print "dsadfasfdnfkadnsfk"
+		
+		drawing.graph.dragnodex = x * drawing.scalingx
+		drawing.graph.dragnodey = y * drawing.scalingy
+		
+		if hasattr(drawing, 'dragupdate') and drawing.dragupdate:
+			if hasattr(drawing.graph, 'draggableupdate') and drawing.graph.draggableupdate:
+				drawing.graph.dragnodes()
+				drawing.dragupdate = False
+		drawing.queue_draw()
+		drawing.graph.dragnode = False
+	
+	if drawing.ready and drawing.setclickterm:
 		for node in drawing.graph.nodes:
 			if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
 				if hasattr(node, 'showterm') and node.showterm:
@@ -228,33 +247,30 @@ def button_release_event(widget, event):
 						edge.selected = False
 					else:
 						edge.selected = True
-				drawing.draggednode = False
-				drawing.graph.draggednodex = event.x
-				drawing.graph.draggednodey = event.y
-				drawing.draggednodex = event.x
-				drawing.draggednodey = event.y
-				drawing.graph.draggednode = False
-				drawing.queue_draw()
+				clickedtermtemp = str(node.term).replace("#",u'\u03bb')
+				clickedterm.set_text(clickedtermtemp)
+				entryclickedterm.set_buffer(clickedterm)
+				entryclickedterm.set_tooltip_text(clickedtermtemp)
 			else:
-				drawing.draggednode = False
 				node.showterm = False
 				for edge in node.children:
 					edge.selected = False
 	
 def motion_notify_event(widget, event):
+	
 	if hasattr(drawing.graph, 'draggable') and drawing.graph.draggable:
-		if drawing.draggednode:
-			print "Old X: " + str(event.x-240)
-			print "Old Y: " + str(event.y)
-			[x,y] = drawing.graph.reversescale(event.x-240, event.y)
-			print "New X: " + str(x)
-			print "New Y: " + str(y)
-			drawing.graph.draggednodex = x
-			drawing.graph.draggednodey = y
-			drawing.draggednode.x = x
-			drawing.draggednode.y = y
+		if hasattr(drawing.graph, 'dragnode') and drawing.graph.dragnode:
+			
+			x = event.x - 240
+			y = event.y
+			drawing.graph.nodenametable[drawing.graph.dragnodename].x = x
+			drawing.graph.nodenametable[drawing.graph.dragnodename].y = y
+			
+			drawing.setclickterm = False
+			
+			drawing.dragupdate = True
 			drawing.queue_draw()
-			drawing.graph.update_layout()
+
 		
 def checkbox(widget, event):
 	if newestedges.get_active():
@@ -316,9 +332,9 @@ if __name__ == "__main__":
 	l6.set_alignment(xalign=0, yalign=1)
 	
 	drawing.term = str(t).replace("#",u'\u03bb')
-	#t = clickedtermtemp = str(t).replace("#",u'\u03bb')
+	t = clickedtermtemp = str(t).replace("#",u'\u03bb')
 	termtext = gtk.TextBuffer()
-	termtext.set_text("")
+	termtext.set_text(t)
 	
 	entry = gtk.TextView()
 	entry.set_justification(False)

@@ -27,8 +27,9 @@ class GraphArea(gtk.DrawingArea):
 		self.normal_form_color = (0xa4/255.0, 0, 0)
 		self.newest_node_color = (34.0/255.0,139.0/255.0,34.0/255.0)
 		self.normal_node_color = (0, 0, 0)
-		self.dragnode = False
-		self.draggednode = None
+		#self.dragnode = False
+		#self.draggednode = None
+		self.scaling = None
 	
 	
 	def do_configure_event ( self, event ):
@@ -90,7 +91,7 @@ class GraphArea(gtk.DrawingArea):
 		if not self.graph:
 			return
 		
-		self.graph.scale(self.__width, self.__height)
+		self.scaling = self.graph.scale(self.__width, self.__height)
 		self.__cr.rectangle(0,0,self.__width, self.__height)
 		self.__cr.set_source_rgb(1,1,1)
 		self.__cr.fill()

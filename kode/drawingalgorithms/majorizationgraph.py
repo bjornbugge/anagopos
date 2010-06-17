@@ -13,6 +13,7 @@ class MajorizationGraph(DrawingAlgorithm):
 	
 	# Graph is draggable
 	draggable = True
+	draggableupdate = False
 	
 	def __init__(self, graph, width = 200, height = 200, epsilon = 10**-3):
 		# Make sure we inherit all attributes from the graph.
@@ -89,6 +90,7 @@ class MajorizationGraph(DrawingAlgorithm):
 		Xs = [node.x for node in self.nodes]
 		Ys = [node.y for node in self.nodes]
 		scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
+		self.scaling = scaling
 		
 		for node in self.nodes:
 			node.x = (float(node.x) / scaling[0])
@@ -100,6 +102,8 @@ class MajorizationGraph(DrawingAlgorithm):
 			for edge in node.children:
 				for i, point in enumerate(edge.ipoints):
 					edge.ipoints[i] = map(lambda x:float(x[0]) / x[1], zip(point, scaling))
+					
+		return scaling
 	
 	def update_layout(self):
 		if not self.hasBeenInitialized:

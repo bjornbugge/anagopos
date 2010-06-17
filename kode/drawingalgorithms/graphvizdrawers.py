@@ -46,15 +46,59 @@ class GraphVizDrawer(DrawingAlgorithm):
 	
 	def initwith(self, othergraph): 
 		self.reset()
+		
+	def dragnodes(self):
+		Npre = self.G.nodes()
+		
+		if hasattr(self, 'dragnode') and self.dragnode:
+			for Anode in Npre:
+				if hasattr(self, 'dragnodename') and Anode.name == self.dragnodename:
+					newx = self.dragnodex
+					newy = self.dragnodey
+					#print "Old GraphViz pos: " + str(Anode.attr["pos"])
+					#print "Node pos:         " + str(int(newx)) + "," + str(int(newy))
+					Anode.attr["pos"]= str(int(newx)) + "," + str(int(newy))
+					#Anode.attr["pin"]="True"
+					#print "Is node pinned:   " + str(Anode.attr["pin"])
+					#print "New GraphViz pos: " + str(Anode.attr["pos"])
+		
+		self.G.layout(prog = self.algorithm, args="-Gepsilon=5000")
+		
+		N = self.G.nodes()
+		
+		# Assigns new positions in the GraphViz graph to the "correct" graph
+		for Anode in N:
+			graphnode = self.nodenametable[Anode.name]
+			graphnode.x, graphnode.y = map(float, Anode.attr["pos"].split(','))
+			
+			for edge in graphnode.children:
+				Aedge = self.G.get_edge(graphnode.name, edge.get_far(graphnode).name)
+				newEdgePos = Aedge.attr["pos"].split(' ')
+            
+				if not hasattr(self, 'bezier') or not self.bezier:
+					continue
+				
+				edge.ipoints = [[0, 0] for row in range(len(newEdgePos))]
+				# pdb.set_trace()
+				for i, pos in enumerate(newEdgePos):
+					edge.ipoints[i] = map(float, pos.split(','))
 	
 	def update_layout(self):
 		
-		if hasattr(self, 'draggednode') and self.draggednode:
-			#print "Dragged node: " + str(self.draggednodename)
-			dragnode = self.draggednodename
-			draggednodex = self.draggednodex
-			draggednodey = self.draggednodey
-		
+		#Npre = self.G.nodes()
+		#
+		#if hasattr(self, 'dragnode') and self.dragnode:
+		#	for Anode in Npre:
+		#		if hasattr(self, 'dragnodename') and Anode.name == self.dragnodename:
+		#			newx = self.dragnodex
+		#			newy = self.dragnodey
+		#			print "Old GraphViz pos: " + str(Anode.attr["pos"])
+		#			print "Node pos:         " + str(int(newx)) + "," + str(int(newy))
+		#			Anode.attr["pos"]= str(int(newx)) + "," + str(int(newy))
+		#			#Anode.attr["pin"]="True"
+		#			print "Is node pinned:   " + str(Anode.attr["pin"])
+		#			print "New GraphViz pos: " + str(Anode.attr["pos"])
+					
 		# Layout the graph.
 		self.G.layout(prog = self.algorithm)
 		
@@ -65,25 +109,10 @@ class GraphVizDrawer(DrawingAlgorithm):
 			graphnode = self.nodenametable[Anode.name]
 			graphnode.x, graphnode.y = map(float, Anode.attr["pos"].split(','))
 			
-			if hasattr(self, 'draggednode') and self.draggednode:
-				#print "Dragged node: " + str(self.draggednodename)
-				dragnode = self.draggednodename
-			
-				if Anode.name == dragnode:
-					draggednode = self.nodenametable[dragnode]
-					print "Drag node"
-					print "A: " + str(Anode.name)
-					print "1: " + str(dragnode)
-					print "A: " + Anode.attr["pos"]
-					print "1: " + str(draggednodex) + "," + str(draggednodey)
-					#print draggednodex
-					#print draggednodey
-					#Anode.attr["pos"]= str(dragnode.x) + "," + str(dragnode.y)
-			
 			for edge in graphnode.children:
 				Aedge = self.G.get_edge(graphnode.name, edge.get_far(graphnode).name)
 				newEdgePos = Aedge.attr["pos"].split(' ')
-
+            
 				if not hasattr(self, 'bezier') or not self.bezier:
 					continue
 				
@@ -112,28 +141,49 @@ class GraphVizDrawer(DrawingAlgorithm):
 			for edge in node.children:
 				for i, point in enumerate(edge.ipoints):
 					edge.ipoints[i] = map(lambda x:float(x[0]) / x[1], zip(point, scaling))
+		
+		return scaling
 					
-	def reversescale(self, x, y):
-		rsx = float(x) * self.scaling[0]
-		rsy = float(y) * self.scaling[1]
-		return [rsx, rsy]
+	def reversescale(self, width, height):
+		#Xs = [node.x for node in self.nodes]
+		#Ys = [node.y for node in self.nodes]
+		#scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
+		
+		for node in self.nodes:
+			node.x = float(node.x) * self.scaling[0]
+			node.y = float(node.y) * self.scaling[1]
+			
+			if not hasattr(self, 'bezier') or not self.bezier:
+				continue
+			
+			for edge in node.children:
+				for i, point in enumerate(edge.ipoints):
+					edge.ipoints[i] = map(lambda x:float(x[0]) / x[1], zip(point, scaling))
 	
 
 
 class CircoGraph(GraphVizDrawer):
 	algorithm = 'circo'
+	draggable = True
+	draggableupdate = False
 
 class DotGraph(GraphVizDrawer):
 	algorithm = 'dot'
 	bezier = True
+	draggable = True
+	draggableupdate = False
 
 class NeatoGraph(GraphVizDrawer):
 	algorithm = 'neato'
-	#draggable = True
+	draggable = True
+	draggableupdate = True
 
 class FdpGraph(GraphVizDrawer):
 	algorithm = 'fdp'
-	#draggable = True
+	draggable = True
+	draggableupdate = False
 
 class TwopiGraph(GraphVizDrawer):
 	algorithm = 'twopi'
+	draggable = True
+	draggableupdate = False
