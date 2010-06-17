@@ -1,0 +1,12 @@
+ - Trække knuder 						 												DONE
+ - Opdatere graf når der trækkes i knuder (for nogle algoritmer)						DONE
+ - Vælge ny algoritme uden at starte forfra												
+ - Navn på Majorization til Neato Animated												DONE
+ - Skilne mellem "Ikke flere grafer i listen" og "Ikke flere grafer"					DONE
+ - Mulighed for at køre next en ekstra gang for at få fjernet de tykke kanter			DONE
+ - Flytte random knap																	DONE
+ - Vise knuder som går ind i sig selv med en lille prik i midten						DONE
+ - Skalering af Majorization (Neato Animated)											DONE
+ - Fiks pilene																			DONE
+ - Shortcuts med ctrl																	DONE
+ - Bedre exception handling																
