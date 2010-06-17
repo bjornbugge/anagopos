@@ -1,5 +1,4 @@
-\documentclass[oneside]{report}
-
+\documentclass[a4paper]{report}
 
 % Packages to use
 \usepackage{graphicx}
@@ -10,14 +9,31 @@
 \usepackage{amsthm}
 \usepackage{palatino}
 \usepackage[dvips]{color}
-\usepackage[toc,page]{appendix}
 \usepackage{sectsty}
 \usepackage{subfigure}
 \usepackage{natbib}
 \usepackage{url}
 \usepackage[labelfont=bf,up,textfont=it,up]{caption}
+\usepackage{fullpage}
+\usepackage{float}
 
-
+% Alter some LaTeX defaults for better treatment of figures:
+% See p.105 of "TeX Unbound" for suggested values.
+% See pp. 199-200 of Lamport's "LaTeX" book for details.
+%   General parameters, for ALL pages:
+\renewcommand{\topfraction}{0.9}	% max fraction of floats at top
+\renewcommand{\bottomfraction}{0.8}	% max fraction of floats at bottom
+%   Parameters for TEXT pages (not float pages):
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}     % 2 may work better
+\setcounter{dbltopnumber}{2}    % for 2-column pages
+\renewcommand{\dbltopfraction}{0.9}	% fit big float above 2-col. text
+\renewcommand{\textfraction}{0.07}	% allow minimal text w. figs
+%   Parameters for FLOAT pages (not text pages):
+\renewcommand{\floatpagefraction}{0.7}	% require fuller float pages
+% N.B.: floatpagefraction MUST be less than topfraction !!
+\renewcommand{\dblfloatpagefraction}{0.7}	% require fuller float pages
 
 % TODO Lav theoremstyle så den er ordentlig!
 \newtheoremstyle{mystyle}	% Name
@@ -35,6 +51,7 @@
 \newtheorem{example}{Example}[section]
 \newtheorem{convention}{Convention}[section]
 \newtheorem{lemma}{Lemma}[section]
+\newtheorem{theorem}{Theorem}[section]
 
 
 
@@ -42,21 +59,13 @@
 \author{Niels Bjørn Bugge Grathwohl \and Jens Duelund Pallesen}
 \date{\large \today}
 
-
-%  New color
-\definecolor{sectionColor}{RGB}{65,117,78}
-
-
 % Color & size for sections
+\definecolor{sectionColor}{RGB}{65,117,78}
 \chapterfont{\Huge\color{sectionColor} }
 \sectionfont{\large\color{sectionColor} }
 \subsectionfont{\Small\color{sectionColor} }
 
 
-% Margins
-% \usepackage[a4paper]{geometry}
-% \geometry{top=2.0cm, bottom=2.0cm, left=2.0cm, right=2.0cm}
-\usepackage{fullpage}
 
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
@@ -70,7 +79,6 @@
 
 % Bruges til Python-kode.
 \newcommand{\pycode}[1]{\textbf{\texttt{#1}}}
-
 \newcommand{\fact}{\paragraph{Fact:}}
 
 
@@ -79,7 +87,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Title page
-%\input{chapters/title.tex}
+% \input{chapters/title.tex}
 
 % Abstract
 %\input{chapters/abstract.tex}
@@ -95,16 +103,15 @@
 % \input{chapters/lambda_theory.tex}
 % \input{chapters/existing_visualizations.tex}
 % \input{chapters/graph_drawing_litterature.tex}
-\input{chapters/lambda_graph_drawing.tex}
-\input{chapters/implementation.tex}
+% \input{chapters/lambda_graph_drawing.tex}
 \input{chapters/visual_discussion.tex}
-\input{chapters/program_todo.tex}
+% \input{chapters/implementation.tex}
+% \input{chapters/results.tex}
+% \input{chapters/future_work.tex}
 
 % Bibliography
 % \bibliographystyle{abbrv}
 % \bibliography{bibliography,bibl_graph_drawing}
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}

@@ -15,8 +15,8 @@
     tegnemodulet til en helt anden type grafer af anden oprindelse end reduktionsgraferne.
   o Nævn den hjemmestrikkede deepcopy og motivationen for denne.
 
-- Diskussion af evt. fejl/problemer i koden. Specielt MajorizationGraph-algoritmen
-  opfører sig lidt underligt til tider...
+- Diskussion af evt. fejl/problemer i koden. (Specielt MajorizationGraph-algoritmen
+  opfører sig lidt underligt til tider...)
 
 - Kort gennemgang af et "standardbibliotek" af lambdatermer med interessante
   reduktionsgrafer.
@@ -42,3 +42,8 @@
     clip board" og gem termen i pæn, formateret (indenteret) tilstand.
 
 - Opsummering af resultater; hvad kan man nu som man ikke kunne før?
+
+
+- Skriv "Project contraints and risks"-kapitlet om!
+- Skriv starten af "Existing visualizations.."-kapitlet om!
+- Gå alle "figure"-henvisninger igennem og sørg for at de er skrevet "Figure".

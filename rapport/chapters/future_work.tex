@@ -1,0 +1,94 @@
+%!TEX root = ../rapport.tex
+
+\chapter{Future Work}
+
+We have implemented but a small part of what one could imagine a program like
+this to do. Much more work can be done; for instance, the grapical user can
+surely be greatly enhanced interface, since our focus has not been on
+designing a user interface. Moreover, features relevant for the actual
+drawings can also be implemented, not to mention performance tweaks of
+different kinds. In this Chapter we give an (inherently incomplete) list of
+what remains to be done.
+
+\begin{description}
+	\item[Multithreading.] Except for the graphics widgets, with whose internal workings 
+	we have
+	nothing to do, the current implementation works in a single thread. That means
+	that the drawing routines have to wait for the graph generator to finish the
+	current graph, which is a waiting period that can be felt for big graphs, $V>100$ e.g.
+	In a future version, there is a worker thread that emits graphs to a list, making 
+	it ``look ahead'' such that when the user pushes the ``Forward''-button the graph
+	is already ready for the layout algorithm to work on. This would greatly increase
+	the overall smoothness of the program. 
+	
+	\item[Zooming.] An crucial feature for very large, cluttered graphs is the
+	ability to zoom in on selected areas and pan the viewing window. This could be combinated
+	with an ability to intelligently switch drawing algorithms for certain areas. 
+	If a slow, but good-looking, algorithm is at hand, for instance, it should be used
+	on the small subgraph that the user has zoomed in on. 
+	
+	\item[3D.] Some of the algorithms (Neato and Majorization) currently implemented generalizes to 
+	$n$ dimensions. Thus, it would be interesting to see how three dimensional 
+	graph embeddings look like, and whether they can be beneficial to use in some
+	circumstances. In the current implementation, the Cairo library for two-dimensional
+	vector drawing is used, so in a version with three-dimensional drawings another
+	graphics library that supports 3D must be used. Since the drawing routines 
+	only use the graphics primitives served by Cairo, it would not be a big challenge
+	to switch the routines to use the primitives from e.g. OpenGL instead \cite{OpenGL}.
+	
+	\item[Exporting facilities.] The ability to easily take screenshots through 
+	a push of button, for instance, would be quite useful to have. Furthermore,
+	if one were able to export the drawn graph to other formats than just image files,
+	an integration with existing graph software could be established. Several
+	attempts at standard graph description languages/formats have been suggested
+	\cite{GraphML,GXL,DOT,XGMML}, and since none of them have gained universal 
+	acceptance as ``the'' standard, export facilities for all or most of them 
+	should be implemented .
+	
+	\item[Drawing algorithms.] More drawing algorithms should be implemented. 
+	The algorithm by Civril et al., for instance, is claimed to be efficient for
+	large graphs (for $V>20000$ it uses approximately 100 seconds) \cite{Civril2005}.
+	
+	\item[Memory efficiency.] More work can be done to optimize memory usage. 
+	For instance, when stepping through several generations of graphs, all of
+	them are kept in memory until a new push of the ``Draw''-button. A possibility
+	to set a limit of the amount of graphs remembered in memory could help in reducing
+	the memory footprint, at the expense of a risk of recomputing some of the graphs
+	if the user steps backwards.
+	
+	\item[GUI.] Much more can be done to enhance the graphical user interface. 
+	As of now, the program does not contain a menu bar for instance. If new features
+	like a properties window and exporting facilities are added, they should be
+	placed in a menu entry, since they are not directly relevant for the actual
+	graph generation and -drawing. 
+	
+	In said properties window, options to control memory usage, graph colour codes,
+	parameters for the random lambda term generator etc. should be placed.
+	
+	\item[Better redex highlighting.] When a node representing a lambda term with 
+	many redexes is clicked, all of its outgoing edges are highlighted in the same
+	way. It would be helpful if there were some kind of differentiation in the way
+	these are highlighted, such that the user easily can see which edge represent
+	which redex. We imagine that this could be done in a way where the edges and their
+	corresponding redexes in the textual representation of the term are given
+	matching colours, where each edge/redex-pair is coloured with its own, distinct
+	colour.
+	
+\end{description}
+
+% \begin{itemize}
+	% \item Multithreaded
+	% % \item Dragging of nodes
+	% % \item Hovering/clicking actions
+	% \item Zooming/panning
+	% \item 3D-view
+	% \item Export of graph as image file, as dot file and as pickle Python object
+	% \item Calculation of the next generations of graphs in a background thread
+	% \item Implement more layout algorithms (e.g. confluent drawings).
+	% \item Clever handling of memory usage. If too much RAM is used, be able
+	% to free the ``oldest'' graphs in the list to make more room.
+	% \item Different colouring of highlighted edges with the same colouring of
+	% the redexes in the term.
+	% \item Menubar, preferences, screenshot etc.
+	% ???	
+% \end{itemize}

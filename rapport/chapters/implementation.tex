@@ -1,6 +1,7 @@
 %!TEX root = ../rapport.tex
 
 \chapter{Implementation}
+\label{chap:implementation}
 
 In this Chapter we will briefly discuss the implementation of the concepts
 presented in the preceding Chapters. The presentation here is only
@@ -50,6 +51,13 @@ class, \pycode{LambdaNode}, which has a subclass for each node type.
 	Therefore there is no need for a doubly linked connection between abstraction
 	nodes and variable nodes, and we can safely encode the relationship as a simple
 	list of bound nodes in each abstraction node.
+	
+	\item The comparison of lambda terms have to follow Convention \ref{con:alpha} regarding
+	$\alpha$-congruence. Two DAGs are compared by their \emph{normalized} string representations,
+	which simply is the lambda term with all
+	variables renamed in a systematic, well-defined way, such that if two terms
+	are equal modulo $\alpha$-congruence, then their normalized string representations will
+	be the same.
 \end{itemize}
 
 A term that is not in $\beta$-normal-form has at least one $\beta$-contractum,
@@ -94,8 +102,9 @@ as instances of the \pycode{Node}-class, in three different data structures:
 	accessed in a consistent ordering, since the Python function \pycode{dict.items()}
 	returns the elements of the dictionary in an arbitrary order.
 \end{enumerate}
-A \pycode{Graph}-object contains exactly one \pycode{Node} representing a
-lambda term; if one tries to add an existing node, nothing happens.
+A \pycode{Graph}-object contains exactly one \pycode{Node} for each lambda
+term in the reduction graph; if one tries to add a node for an existing term,
+nothing happens.
 
 A \pycode{Node}-object has a name and a reference to the lambda term that it
 represents. It furthermore has a list of its children and a list of its
@@ -126,7 +135,7 @@ depending on the chosen maximum value.
 
 Each time a reduction graph is returned by Pythons \pycode{yield}-statement, a
 deep copy operation is performed. This is done in order to ensure that later
-stages in the program indeed sees the different generations of graphs as
+stages in the program indeed see the different generations of graphs as
 distinct objects, instead of a collection of references to the same set of
 \pycode{Node}s. The built-in copy operation \pycode{copy.deepcopy()} proved to
 be too slow, so a custom deep copy operation was implemented.
@@ -162,17 +171,21 @@ The following drawing algorithms are implemented:
 	\item[Majorization] is an implementation of the algorithm by Gansner et al. 
 	described in \cite{Gansner2004} that makes heavy use of the NumPy library \cite{NumPy}. 
 	It is a force-based approach that uses stress majorization
-	to minimize an energy function. Since this implementation is written entirely by us, 
-	we have more control over its behaviour. We can therefore make the drawing look animated,
-	by calling screen updates after each iteration of the algorithm.
+	to minimize an energy function. This algorithm is also implemented in the GraphViz
+	package, but there are several reasons to why we chose to make our own implementation:
+	\begin{itemize}
+		\item we have complete control with the algorithm, allowing us to tweak it;
+		\item for the same reason we are able to call functions to update the screen
+		when we see fit, allowing us to create an animation-like look.
+	\end{itemize}
 	
 	This is the only non-GraphViz algorithm implemented.
 
 	\item[Neato] is GraphViz's implementation of the algorithm by Gansner et al. 
-	It differs from our implementation mainly on the fact that GraphViz is a 
-	``black box'' that assigns positions to nodes in a graph, whence we cannot make
-	an animation feature like the one in our own implementation.
-	
+	Since it behaves like a ``black box'', it uses its own settings for the
+	stress function which we cannot change. This function has been modified in our
+	own implementation.
+		
 	\item[Dot] is an algorithm that makes a hierachichal layout of a graph. As the only
 	algorithm implemented, it does not necessarily draw straight lines for edges; it computes
 	a (possibly straight) B\'ezier curve for the edges. Like the other algorithms except ``Majorization''
@@ -187,3 +200,11 @@ The following drawing algorithms are implemented:
 	\item[Fdp] is another force-based algorithm. It is an implementation of 
 	the algorithm described by Fruchterman et al. \cite{Fruchterman1991}.
 \end{description}
+
+\section{Graphical User Interface}
+
+The focus of this work has not been on the design of a graphical user
+interface. However, in order to make the program accessible, a draft user
+interface has been implemented. We have chosen to use the widget library GTK
+\cite{PyGTK}, since it runs on several platforms and is already widely used in
+e.g. the Gnome desktop environment.

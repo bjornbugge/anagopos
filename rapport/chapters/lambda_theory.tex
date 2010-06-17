@@ -1,6 +1,7 @@
 %!TEX root = ../rapport.tex
 
 \chapter{Preliminaries: Basic Lambda Calculus}
+\label{chap:theory}
 
 As a very informal example, here is a function that doubles an integer:
 \begin{equation*}
@@ -176,9 +177,13 @@ For instance, we have:
 \end{align*}
 \end{example}
 This last example illustrates the need for the requirement that $y$ cannot
-occur in $N$. In the following we will regard $\alpha$-congruent terms as
-being equivalent, so the notation $\equiv$ is used instead of
-$\equiv_\alpha$.
+occur in $N$. 
+\begin{convention}
+	\label{con:alpha}
+	In the following we will regard $\alpha$-congruent terms as
+	being equivalent, so the notation $\equiv$ is used instead of
+	$\equiv_\alpha$.
+\end{convention}
 
 \section{Contexts}
 
@@ -278,6 +283,47 @@ The following example from \cite{Barendregt} p. 52 illustrates the concept:
 \end{align*}
 \end{example}
 
+\section{The Church-Rosser Theorem}
+
+A very important property of the lambda calculus was shown by Church and
+Rosser \cite{Church1936}. The following formulations are from
+\cite{Barendregt} Chapter 3.
+
+\begin{definition}\mbox{}
+	\begin{enumerate}
+	\item A binary relation $\rightarrow\subseteq\Delta^2$ satisfies the \emph{diamond property}
+	($\rightarrow\models\diamondsuit$) if:
+	\begin{align*}
+		\forall M,M_1,M_2 : \big(M\rightarrow M_1\wedge M\rightarrow M_2
+		\Rightarrow \exists M_3 : \left(M_1\rightarrow M_3 \wedge M_2 \rightarrow M_3\right) \big)
+	\end{align*}
+	
+	\item A relation whose reflexive, transitive closure satisfies the diamond property
+	is \emph{Church-Rosser} (CR).
+	\end{enumerate}
+\end{definition}
+
+A look at Figure \ref{fig:images_diamond} explains why it is called the ``diamond property''.
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[height=1in]{../images/diamond.pdf}
+	\caption{The diamond property. The lines represent binary relations between the elements.}
+	\label{fig:images_diamond}
+\end{figure}
+
+\begin{theorem}[Church-Rosser Theorem]\mbox{}
+	\begin{enumerate}
+		\item The $\beta$-reduction, $\BETA\subseteq\Delta^2$ satisfies the
+		diamond property.
+		\item The reflexive, transitive closure of the $\beta$-reduction, $\Barrow$, satisfies
+		the diamond property. Hence, the $\beta$-reduction is Church-Rosser.
+	\end{enumerate}
+\end{theorem}
+
+The Church-Rosser theorem implies, informally, that a $\beta$-reduction cannot
+get ``stuck'', unless a normal form is being reduced.
+
 \section{Reduction Graphs}
 
 When a $\beta$-redex $M$ contains subterms $\Delta_{0\hdots n}$ that are themselves 
@@ -306,7 +352,7 @@ be considered as a directed graph, with each arc going out of a node representin
 a reduction on some subterm of that node, and each node representing a lambda term that
 is the contractum of the terms represented by the nodes parents.
 \begin{definition}
-	The \emph{$\beta$ reduction graph} of $M$, written $G_\beta(M)$, consists
+	The \emph{$\beta$-reduction graph} of $M$, written $G_\beta(M)$, consists
 	of the nodes in the set $V$ and the arcs in the multiset $A$. The set
 	of nodes and multiset of arcs in $G_\beta(M)$ are defined as:
 	\begin{align*}
@@ -317,6 +363,7 @@ is the contractum of the terms represented by the nodes parents.
 	different reduction step from $N_0$ to $N_1$, that many arcs will be included 
 	in $G_\beta(M)$.
 \end{definition}
+
 \begin{example}\mbox{}
 	\begin{enumerate}
 		\item The reduction graph illustrated in Figure \ref{fig:images_graphs_graf2}
@@ -343,6 +390,9 @@ is the contractum of the terms represented by the nodes parents.
 		graph captures qualities found in the two graphs $G_\beta(\Omega)$ and
 		$G_\beta(w_3w_3)$.
 	\end{enumerate}
+	Note that these examples only serve to illustrate the \emph{structure} of a 
+	$\beta$-reduction graph, not the actual graph visualization that we develop
+	in this paper.
 	\begin{figure}[htbp]
 		\centering
 		\begin{tabular}{ccc}
@@ -383,6 +433,3 @@ is the contractum of the terms represented by the nodes parents.
 		\label{fig:images_graphs_graf7_omega_w3}
 	\end{figure}
 \end{example}
-Note that these examples only serve to illustrate the \emph{structure} of a 
-$\beta$-reduction graph, not the actual graph visualization that we develop
-in this thesis.
