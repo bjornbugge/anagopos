@@ -59,10 +59,14 @@ def back(widget):
 	outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
 	if hasattr(drawing, 'atfirstgraph') and drawing.atfirstgraph:
 		outputtext = outputtext + "\nAt the first graph"
+	outputtext = outputtext + "\nNumber of nodes: " + str(drawing.numberofnodes)
 	outputtextbuffer.set_text(outputtext)
 	drawing.nomoregraphs = False
 	
 def forward(widget):
+	
+	Drawer = algorithms[drawing.selected]
+	
 	if drawing.ready:
 		if drawing.forward():
 			drawing.graph.update_layout()
@@ -72,6 +76,7 @@ def forward(widget):
 	outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
 	if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
 		outputtext = outputtext + "\nNo more graphs"
+	outputtext = outputtext + "\nNumber of nodes: " + str(drawing.numberofnodes)
 	outputtextbuffer.set_text(outputtext)
 
 # Dictionary with algorithmes
@@ -111,6 +116,7 @@ def applyiterator(widget):
 		drawing.mgs = []
 		operations.assignvariables(drawing.term)
 		drawing.selected = str(algo.get_child().get_text())
+		
 		try:
 			def iterator():
 				Drawer = algorithms[drawing.selected]
@@ -120,11 +126,25 @@ def applyiterator(widget):
 			drawing.iterator = iterator()
 		except KeyError:
 			pass
+		
+		#	
+		#try:
+		#	def iterator():
+		#		Drawer = algorithms[drawing.selected]
+		#		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+		#			print "Yielding graph"
+		#			yield Drawer(g)
+		#	drawing.iterator = iterator()
+		#except KeyError:
+		#	pass
+		#
 		drawing.initgraph()
 		drawing.graph.update_layout()
 		drawing.queue_draw()
 		drawing.ready = True
 		outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
+		if hasattr(drawing, 'numberofnodes'):
+			outputtext = outputtext + "\nNumber of nodes: " + str(drawing.numberofnodes)
 		outputtextbuffer.set_text(outputtext)
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))

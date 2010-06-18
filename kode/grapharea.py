@@ -60,6 +60,8 @@ class GraphArea(gtk.DrawingArea):
 			self.graph = self.graphlist[self.graphnumber]
 			return True
 		
+		#Drawer = self.algorithms[drawing.selected]
+		
 		if hasattr(self, 'iterator') and self.iterator is not None:
 			try:
 				g = self.iterator.next()
@@ -202,18 +204,36 @@ class GraphArea(gtk.DrawingArea):
 			for edge in node.children:
 				if node == edge.get_far(node):
 					print "kant i samme knude"
+					
+					size = 5
 					ac = self.arrow_color
-					self.__cr.arc(node.x, node.y, 1, 0, math.pi*2)
+					self.__cr.set_line_width(1)
 					self.__cr.set_source_rgb(ac[0], ac[1], ac[2])
-					self.__cr.fill_preserve()
-					self.__cr.set_source_rgb(ac[0], ac[1], ac[2])
-					self.__cr.stroke()
+					self.__cr.move_to(node.x-size,node.y-size)
+					self.__cr.line_to(node.x+size,node.y-size)
+					self.__cr.stroke_preserve()
+					self.__cr.line_to(node.x+size,node.y+size)
+					self.__cr.stroke_preserve()
+					self.__cr.line_to(node.x-size,node.y+size)
+					self.__cr.stroke_preserve()
+					self.__cr.line_to(node.x-size,node.y-size)
+					self.__cr.stroke_preserve()
+					self.__cr.fill()
+					
+					
+					#self.__cr.arc(node.x, node.y, 1, 0, math.pi*2)
+					#self.__cr.set_source_rgb(ac[0], ac[1], ac[2])
+					#self.__cr.fill_preserve()
+					#self.__cr.set_source_rgb(ac[0], ac[1], ac[2])
+					#self.__cr.stroke()		#x.(x x x)(#x.(x x x)#x.(x x))
 			
 			if hasattr(node, 'showterm') and node.showterm:
 				parsedtermlist = str(node.term).split('#')
 				parsedterm = ""
 				lambdaletter = u'\u03bb'
-				
+		
+		self.numberofnodes = noNodes
+		print "Number of nodes: " + str(noNodes)
 	def draw_arrowhead(self, x1, y1, x2, y2, noderadius):
 		'''
 		Draws an arrow head on the line segment between the coordinate pairs
