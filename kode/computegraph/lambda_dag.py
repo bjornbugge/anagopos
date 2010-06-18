@@ -19,7 +19,7 @@ class LambdaNode(object):
 		
 		# The positions of redexes in this term. The format of the positions
 		# is as specified in operations.findredexes().
-		self.redexepositions = []
+		self.redexpositions = []
 	
 	def __eq__(self, other):
 		'''
@@ -108,7 +108,7 @@ class Abstraction(LambdaNode):
 		a.add(c)
 		a.dirty = self.dirty
 		a.strrepr = self.strrepr
-		a.redexepositions.extend(self.redexepositions)
+		a.redexpositions.extend(self.redexpositions)
 		return a
 	
 	def assignvar(self, variablenode):
@@ -139,7 +139,7 @@ class Application(LambdaNode):
 		a.add(c2)
 		a.dirty = self.dirty
 		a.strrepr = self.strrepr
-		a.redexepositions.extend(self.redexepositions)
+		a.redexpositions.extend(self.redexpositions)
 		return a
 	
 	def makestr(self):
@@ -164,7 +164,7 @@ class Variable(LambdaNode):
 		v = Variable(self.name)
 		v.dirty = self.dirty
 		v.strrepr = self.strrepr
-		v.redexepositions.extend(self.redexepositions)
+		v.redexpositions.extend(self.redexpositions)
 		return v
 		
 	def makestr(self):

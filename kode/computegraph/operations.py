@@ -48,26 +48,40 @@ def findredexes(root):
 	_find(root, bitstrings, 1)
 	return bitstrings
 
+# def getnode(root, position):
+# 	'''
+# 	Returns the node at the given position. The position must be positive.
+# 	'''
+# 	def _getnode(node, p):
+# 		ex = int(math.floor(math.log(position, 2))) - p
+# 		if ex < 0:
+# 			return node
+# 		if position & (2 ** ex) == 0: # Bit was 0; go left
+# 			if ex == 0:
+# 				return node.leftchild # Stop recursion
+# 			
+# 			return _getnode(node.leftchild, p + 1)
+# 		else: # Bit was 1; go right
+# 			if ex == 0:
+# 				return node.rightchild # Stop recursion
+# 			
+# 			return _getnode(node.rightchild, p + 1)
+# 	
+# 	return _getnode(root, 1)
+
 def getnode(root, position):
 	'''
 	Returns the node at the given position. The position must be positive.
 	'''
-	def _getnode(node, p):
-		ex = int(math.floor(math.log(position, 2))) - p
-		if ex < 0:
-			return node
-		if position & (2 ** ex) == 0: # Bit was 0; go left
-			if ex == 0:
-				return node.leftchild # Stop recursion
-			
-			return _getnode(node.leftchild, p + 1)
-		else: # Bit was 1; go right
-			if ex == 0:
-				return node.rightchild # Stop recursion
-			
-			return _getnode(node.rightchild, p + 1)
-	
-	return _getnode(root, 1)
+	p = bin(position)[3:]
+	cur_node = root
+	while len(p) > 0:
+		if p[0] == '1':
+			cur_node = cur_node.rightchild
+		else:
+			cur_node = cur_node.leftchild
+		p = p[1:]
+	return cur_node
 
 def betareduce(term, redexpos):
 	'''
@@ -80,6 +94,7 @@ def betareduce(term, redexpos):
 	# pdb.set_trace()
 	appl = getnode(contractum, redexpos)
 	
+	pdb.set_trace()
 	# The active subterm that we'll reduce.
 	c = appl.leftchild
 	
