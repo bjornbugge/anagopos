@@ -11,27 +11,15 @@ class GraphVizDrawer(DrawingAlgorithm):
 			setattr(self, name, value)
 		
 		self._newagraph()
-		
-		# Make a GraphViz graph and add all nodes.
-		#self.G = pgv.AGraph()
-		#for name in (n.name for n in self.nodes):
-		#	self.G.add_node(name, width = "0.00", heigth = "0.00", fixedsize = "0", 
-		#					margin = "0.00")#, label = " ", shape = "none"), fontsize = "8")
-		#
-		## Adds edges in the graph to the GraphViz graph
-		#for node in self.nodes:
-		#	for edge in node.children:
-		#		far_node = edge.get_far(node)
-		#		if node == far_node:
-		#			continue
-		#		self.G.add_edge(str(node.name), str(far_node.name))
 	
+	# Reset node positions
 	def reset(self, f = 0):
 		for node in self.nodes:
 			node.x = random.randint(1, 100)
 			node.y = random.randint(1, 100)
 		self._newagraph()
 	
+	# Generates new graph
 	def _newagraph(self):
 		self.G = pgv.AGraph()
 		for name in (n.name for n in self.nodes):
@@ -42,12 +30,15 @@ class GraphVizDrawer(DrawingAlgorithm):
 				far_node = edge.get_far(node)
 				self.G.add_edge(str(node.name), str(far_node.name))
 	
+	# Initial width of graph
 	def initwith(self, othergraph): 
 		self.reset()
-		
+	
+	# Dragging nodes
 	def dragnodes(self):
 		Npre = self.G.nodes()
 		
+		# If node is dragged new position will be put into GraphViz graph
 		if hasattr(self, 'dragnode') and self.dragnode:
 			for Anode in Npre:
 				if hasattr(self, 'dragnodename') and Anode.name == self.dragnodename:
@@ -55,6 +46,8 @@ class GraphVizDrawer(DrawingAlgorithm):
 					newy = self.dragnodey
 					Anode.attr["pos"]= str(int(newx)) + "," + str(int(newy))
 		
+		# Updates layout of GraphViz graph with new node position.
+		# High epsilon so graph wont change that much
 		self.G.layout(prog = self.algorithm, args="-Gepsilon=5000")
 		
 		N = self.G.nodes()
@@ -72,10 +65,10 @@ class GraphVizDrawer(DrawingAlgorithm):
 					continue
 				
 				edge.ipoints = [[0, 0] for row in range(len(newEdgePos))]
-				# pdb.set_trace()
 				for i, pos in enumerate(newEdgePos):
 					edge.ipoints[i] = map(float, pos.split(','))
 	
+	# Updates layout on GraphViz graph
 	def update_layout(self):
 		self.G.layout(prog = self.algorithm)
 		
@@ -98,10 +91,13 @@ class GraphVizDrawer(DrawingAlgorithm):
 				for i, pos in enumerate(newEdgePos):
 					edge.ipoints[i] = map(float, pos.split(','))
 	
+	# Updates layout animated
+	# Wont work on the GraphViz graphs
 	def update_layout_animated(self, f):
 		self.update_layout()
 		f(self)
 	
+	# Scales node positions to fit into the GTK DrawingArea
 	def scale(self, width, height):
 		Xs = [node.x for node in self.nodes]
 		Ys = [node.y for node in self.nodes]

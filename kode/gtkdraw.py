@@ -57,8 +57,6 @@ def back(widget):
 	else:
 		print "No graph created yet!"
 	outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
-	#if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
-	#	outputtext = outputtext + "\nNo more graphs"
 	if hasattr(drawing, 'atfirstgraph') and drawing.atfirstgraph:
 		outputtext = outputtext + "\nAt the first graph"
 	outputtextbuffer.set_text(outputtext)
@@ -74,10 +72,9 @@ def forward(widget):
 	outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
 	if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
 		outputtext = outputtext + "\nNo more graphs"
-	#if hasattr(drawing, 'atfirstgraph') and drawing.atfirstgraph:
-	#	outputtext = outputtext + "\nAt the first graph"
 	outputtextbuffer.set_text(outputtext)
 
+# Dictionary with algorithmes
 algorithms = {'Neato' : NeatoGraph,
 			'Neato Animated' : MajorizationGraph,
 			'Dot' : DotGraph,
@@ -106,8 +103,6 @@ def apply(widget):
 	outputtextbuffer.set_text(outputtext)
 
 def applyiterator(widget):
-	#tempterm = termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter())
-	#drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
 	try:
 		drawing.startnum = int(start.get_text())
 		drawing.endnum = 1000000# Default value instead of this: int(end.get_text())
@@ -137,7 +132,7 @@ def applyiterator(widget):
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 		entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 		end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
-	except:
+	except NameError as e:
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 		elif start.get_text() == "" or end.get_text() == "" or termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
@@ -154,7 +149,7 @@ def applyiterator(widget):
 			else:
 				entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 		else:
-			print "Syntax error"
+			print "Syntax error: " + str(e)
 			entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 			
 def generateTerm(widget):
@@ -181,6 +176,8 @@ def changed_cb(entry):
 			drawing.iterator = iterator()
 		except KeyError:
 			pass
+		outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
+		outputtextbuffer.set_text(outputtext)
 		
 		# drawing.graph = drawing.mgs[drawing.graphnumber]
 		drawing.graph.update_layout()
@@ -210,6 +207,9 @@ def button_press_event(widget, event):
 	y = event.y
 	r = 10
 	
+	drawing.dragareax = event.x - 240
+	drawing.dragareay = event.y
+	
 	drawing.setclickterm = True
 	
 	if drawing.ready:
@@ -232,7 +232,6 @@ def button_release_event(widget, event):
 	y = event.y
 	r = 10
 	if hasattr(drawing.graph, 'dragnode') and drawing.graph.dragnode:
-		#print "dsadfasfdnfkadnsfk"
 		
 		drawing.graph.dragnodex = x * drawing.scalingx
 		drawing.graph.dragnodey = y * drawing.scalingy
@@ -279,6 +278,7 @@ def motion_notify_event(widget, event):
 			
 			drawing.dragupdate = True
 			drawing.queue_draw()
+			
 
 		
 def checkbox(widget, event):

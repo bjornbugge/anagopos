@@ -87,3 +87,4 @@ def parse(text):
 	P = Lambda(LambdaScanner(preprocess(text)))
 	#P = Lambda(LambdaScanner(text))
 	return wrap_error_reporter(P, 'Terms')
+	#return P.Terms

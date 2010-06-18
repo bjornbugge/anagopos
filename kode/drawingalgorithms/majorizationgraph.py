@@ -11,7 +11,7 @@ class MajorizationGraph(DrawingAlgorithm):
 	Implementation of Gansner2004-approach.
 	'''
 	
-	# Graph is draggable
+	# Nodes are draggable, but will not update layout
 	draggable = True
 	draggableupdate = False
 	
