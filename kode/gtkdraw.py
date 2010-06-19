@@ -139,6 +139,7 @@ def applyiterator(widget):
 			drawing.iterator = iterator()
 		except KeyError:
 			pass
+		drawing.graphnumber = 0
 		initgraph()
 		drawing.graph.update_layout()
 		drawing.queue_draw()
