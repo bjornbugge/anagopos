@@ -2,7 +2,7 @@ import lambda_dag
 import reductiongraph as graphrepr # nameclash!
 import math
 import collections
-import pdb
+# import pdb
 import copy
 
 def assignvariables(root):
@@ -91,10 +91,9 @@ def betareduce(term, redexpos):
 	'''
 	# The copy that is transformed into a contractum.
 	contractum = _copyterm(term)
-	# pdb.set_trace()
+	
 	appl = getnode(contractum, redexpos)
 	
-	pdb.set_trace()
 	# The active subterm that we'll reduce.
 	c = appl.leftchild
 	
