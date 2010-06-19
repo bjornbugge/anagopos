@@ -59,9 +59,7 @@ class GraphArea(gtk.DrawingArea):
 			self.graphnumber += 1
 			self.graph = self.graphlist[self.graphnumber]
 			return True
-		
-		#Drawer = self.algorithms[drawing.selected]
-		
+				
 		if hasattr(self, 'iterator') and self.iterator is not None:
 			try:
 				g = self.iterator.next()

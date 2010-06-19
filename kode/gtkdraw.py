@@ -49,35 +49,68 @@ def optimize(widget):
 	else:
 		print "No graph created yet!"
 
+def initgraph():
+	try:
+		if hasattr(drawing, 'iterator') and drawing.iterator is not None:
+			Drawer = algorithms[drawing.selected]
+			rg = drawing.iterator.next()
+			g = Drawer(rg)
+			drawing.reductiongraphlist = [rg]
+			drawing.graph = g
+			drawing.graphlist = [g]
+			drawing.starttobig = False
+	except:
+		drawing.starttobig = True
+
 def back(widget):
-	if drawing.ready:
-		if drawing.back():
-			drawing.graph.update_layout()
-			drawing.queue_draw()
-	else:
-		print "No graph created yet!"
-	outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
-	if hasattr(drawing, 'atfirstgraph') and drawing.atfirstgraph:
-		outputtext = outputtext + "\nAt the first graph"
-	outputtext = outputtext + "\nNumber of nodes: " + str(drawing.numberofnodes)
-	outputtextbuffer.set_text(outputtext)
-	drawing.nomoregraphs = False
-	
-def forward(widget):
-	
 	Drawer = algorithms[drawing.selected]
-	
-	if drawing.ready:
-		if drawing.forward():
+	if drawing.graphnumber == 0:
+		print "You are at the first graph"
+	else:
+		if hasattr(drawing, 'selectedhaschanged') and drawing.selectedhaschanged:
+			drawing.graphnumber -= 1
+			rg = drawing.reductiongraphlist[drawing.graphnumber]
+			g = Drawer(rg)
+			drawing.graphlist[drawing.graphnumber] = g
+			drawing.graph = g
+			drawing.graph.update_layout()
+			drawing.queue_draw()
+		else:
+			drawing.graphnumber -= 1
+			drawing.graph = drawing.graphlist[drawing.graphnumber]
+			drawing.graph.update_layout()
+			drawing.queue_draw()
+
+def forward(widget):
+	print drawing.graphnumber		# = 0
+	print len(drawing.graphlist)	# = 1
+	Drawer = algorithms[drawing.selected]
+	if drawing.graphnumber + 2 <= len(drawing.graphlist):
+		if hasattr(drawing, 'selectedhaschanged') and drawing.selectedhaschanged:
+			drawing.graphnumber += 1
+			rg = drawing.reductiongraphlist[drawing.graphnumber]
+			g = Drawer(rg)
+			drawing.graphlist[drawing.graphnumber] = g
+			drawing.graph = g
+			drawing.graph.update_layout()
+			drawing.queue_draw()
+		else:
+			drawing.graphnumber += 1
+			drawing.graph = drawing.graphlist[drawing.graphnumber]
 			drawing.graph.update_layout()
 			drawing.queue_draw()
 	else:
-		print "No graph created yet!"
-	outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
-	if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
-		outputtext = outputtext + "\nNo more graphs"
-	outputtext = outputtext + "\nNumber of nodes: " + str(drawing.numberofnodes)
-	outputtextbuffer.set_text(outputtext)
+		try:
+			rg = drawing.iterator.next()
+			g = Drawer(rg)
+			drawing.reductiongraphlist.append(rg)
+			drawing.graphlist.append(g)
+			drawing.graphnumber += 1
+			drawing.graph = drawing.graphlist[drawing.graphnumber]
+			drawing.graph.update_layout()
+			drawing.queue_draw()
+		except StopIteration:
+			print "There are no more graphs"
 
 # Dictionary with algorithmes
 algorithms = {'Neato' : NeatoGraph,
@@ -86,26 +119,6 @@ algorithms = {'Neato' : NeatoGraph,
 			'TwoPi' : TwopiGraph,
 			'Circo' : CircoGraph,
 			'Fdp' : FdpGraph}
-
-def apply(widget):
-	drawing.startnum = int(start.get_text())
-	drawing.endnum = int(end.get_text())
-	drawing.term = parser.parse(entry.get_text().replace(u'\u03bb',"#"))
-	drawing.mgs = []
-	operations.assignvariables(drawing.term)
-	drawing.selected = str(algo.get_child().get_text())
-	try:
-		Drawer = algorithms[drawing.selected]
-		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			drawing.mgs.append(Drawer(g))
-	except KeyError:
-		pass
-	drawing.initgraph()
-	drawing.graph.update_layout()
-	drawing.queue_draw()
-	drawing.ready = True
-	outputtext = "Generation: " + str(drawing.graphnumber)
-	outputtextbuffer.set_text(outputtext)
 
 def applyiterator(widget):
 	try:
@@ -122,23 +135,11 @@ def applyiterator(widget):
 				Drawer = algorithms[drawing.selected]
 				for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
 					print "Yielding graph"
-					yield Drawer(g)
+					yield g
 			drawing.iterator = iterator()
 		except KeyError:
 			pass
-		
-		#	
-		#try:
-		#	def iterator():
-		#		Drawer = algorithms[drawing.selected]
-		#		for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-		#			print "Yielding graph"
-		#			yield Drawer(g)
-		#	drawing.iterator = iterator()
-		#except KeyError:
-		#	pass
-		#
-		drawing.initgraph()
+		initgraph()
 		drawing.graph.update_layout()
 		drawing.queue_draw()
 		drawing.ready = True
@@ -182,26 +183,31 @@ def generateTerm(widget):
 	
 def changed_cb(entry):
 	if hasattr(drawing, 'ready') and drawing.ready:
-		drawing.selected = entry.get_text()
-		drawing.mgs = []
-		try:
-			#Drawer = algorithms[drawing.selected]
-			#for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-			#	drawing.mgs.append(Drawer(g))
-			def iterator():
+		if drawing.selected == entry.get_text():
+			print "Nothing will happen"
+			drawing.selectedhaschanged = False
+		else:
+			try:
+				drawing.selectedhaschanged = True
+				print "New drawing algorithm: " + str(entry.get_text())
+				drawing.selected = entry.get_text()
 				Drawer = algorithms[drawing.selected]
-				for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-					print "Yielding graph"
-					yield Drawer(g)
-			drawing.iterator = iterator()
-		except KeyError:
-			pass
-		outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
-		outputtextbuffer.set_text(outputtext)
-		
-		# drawing.graph = drawing.mgs[drawing.graphnumber]
-		drawing.graph.update_layout()
-		drawing.queue_draw()
+				
+				rg = drawing.reductiongraphlist[drawing.graphnumber]
+				g = Drawer(rg)
+				drawing.graphlist[drawing.graphnumber] = g
+				drawing.graph = drawing.graphlist[drawing.graphnumber]
+				drawing.graph.update_layout()
+				drawing.queue_draw()
+			except:
+				pass
+			
+			outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
+			outputtextbuffer.set_text(outputtext)
+			
+			# drawing.graph = drawing.mgs[drawing.graphnumber]
+			drawing.graph.update_layout()
+			drawing.queue_draw()
 
 def key_press_event(widget, event):
 
