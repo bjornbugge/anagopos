@@ -1,5 +1,6 @@
 import gtk
 import math
+import time
 import computegraph.operations as operations
 import computegraph.randomgraph as randomgraph
 import lambdaparser.lambdaparser as parser
@@ -64,9 +65,13 @@ def initgraph():
 
 def back(widget):
 	Drawer = algorithms[drawing.selected]
+	drawing.nomoregraphs = False
 	if drawing.graphnumber == 0:
-		print "You are at the first graph"
+		#print "You are at the first graph"
+		outputtext()
+		drawing.firstgraph = True
 	else:
+		drawing.firstgraph = False
 		if hasattr(drawing, 'selectedhaschanged') and drawing.selectedhaschanged:
 			drawing.graphnumber -= 1
 			rg = drawing.reductiongraphlist[drawing.graphnumber]
@@ -80,11 +85,11 @@ def back(widget):
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
 			drawing.graph.update_layout()
 			drawing.queue_draw()
+	outputtext()
 
 def forward(widget):
-	print drawing.graphnumber		# = 0
-	print len(drawing.graphlist)	# = 1
 	Drawer = algorithms[drawing.selected]
+	drawing.firstgraph = False
 	if drawing.graphnumber + 2 <= len(drawing.graphlist):
 		if hasattr(drawing, 'selectedhaschanged') and drawing.selectedhaschanged:
 			drawing.graphnumber += 1
@@ -110,7 +115,10 @@ def forward(widget):
 			drawing.graph.update_layout()
 			drawing.queue_draw()
 		except StopIteration:
-			print "There are no more graphs"
+			#print "There are no more graphs"
+			outputtext()
+			drawing.nomoregraphs = True
+	outputtext()
 
 # Dictionary with algorithmes
 algorithms = {'Neato' : NeatoGraph,
@@ -134,20 +142,23 @@ def applyiterator(widget):
 			def iterator():
 				Drawer = algorithms[drawing.selected]
 				for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-					print "Yielding graph"
+					#print "Yielding graph"
 					yield g
 			drawing.iterator = iterator()
 		except KeyError:
 			pass
 		drawing.graphnumber = 0
 		initgraph()
+		#drawing.graph.update_layout_animated(drawing.queue_draw())
 		drawing.graph.update_layout()
 		drawing.queue_draw()
 		drawing.ready = True
-		outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
-		if hasattr(drawing, 'numberofnodes'):
-			outputtext = outputtext + "\nNumber of nodes: " + str(drawing.numberofnodes)
-		outputtextbuffer.set_text(outputtext)
+		drawing.startnumber = int(start.get_text())
+		outputtext()
+		#outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
+		#if hasattr(drawing, 'numberofnodes'):
+		#	outputtext = outputtext + "\nNumber of nodes: " + str(drawing.numberofnodes)
+		#outputtextbuffer.set_text(outputtext)
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 		else:
@@ -174,6 +185,18 @@ def applyiterator(widget):
 			print "Syntax error: " + str(e)
 			entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 			
+def outputtext():
+	drawing.outputtextstring = ""
+	#drawing.outputtextstring = drawing.outputtextstring + "Output:\n"
+	drawing.outputtextstring = drawing.outputtextstring + "Number of nodes: " + str(len(drawing.graph.nodes)) + "\n"
+	drawing.outputtextstring = drawing.outputtextstring + "Generation: " + str(drawing.startnumber + drawing.graphnumber) + "\n"
+	if hasattr(drawing, 'firstgraph') and drawing.firstgraph:
+		drawing.outputtextstring = drawing.outputtextstring + "You are at the first graph" + "\n"
+	if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
+		drawing.outputtextstring = drawing.outputtextstring + "No more graphs" + "\n"
+	#print drawing.outputtextstring
+	outputtextbuffer.set_text(drawing.outputtextstring)
+			
 def generateTerm(widget):
 	drawing.term = randomgraph.randomterm()
 	termtext.set_text(str(drawing.term).replace("#",u'\u03bb'))
@@ -185,12 +208,12 @@ def generateTerm(widget):
 def changed_cb(entry):
 	if hasattr(drawing, 'ready') and drawing.ready:
 		if drawing.selected == entry.get_text():
-			print "Nothing will happen"
+			#print "Nothing will happen"
 			drawing.selectedhaschanged = False
 		else:
 			try:
 				drawing.selectedhaschanged = True
-				print "New drawing algorithm: " + str(entry.get_text())
+				#print "New drawing algorithm: " + str(entry.get_text())
 				drawing.selected = entry.get_text()
 				Drawer = algorithms[drawing.selected]
 				
@@ -253,6 +276,7 @@ def button_press_event(widget, event):
 				drawing.graph.dragnodename = node.name
 				drawing.graph.dragnodex = x
 				drawing.graph.dragnodey = y
+				drawing.graph.dragnodenode = node
 
 def button_release_event(widget, event):
 	x = event.x - 240
@@ -305,8 +329,6 @@ def motion_notify_event(widget, event):
 			
 			drawing.dragupdate = True
 			drawing.queue_draw()
-			
-
 		
 def checkbox(widget, event):
 	if newestedges.get_active():

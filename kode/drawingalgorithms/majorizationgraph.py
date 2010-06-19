@@ -13,12 +13,14 @@ class MajorizationGraph(DrawingAlgorithm):
 	
 	# Nodes are draggable, but will not update layout
 	draggable = True
-	draggableupdate = False
+	draggableupdate = True
 	
 	def __init__(self, graph, width = 200, height = 200, epsilon = 10**-3):
 		# Make sure we inherit all attributes from the graph.
 		for name, value in vars(graph).iteritems():
 			setattr(self, name, value)
+		
+		self.calc_epsilon_interval = 10
 		
 		numpy.random.seed()
 		
@@ -58,6 +60,21 @@ class MajorizationGraph(DrawingAlgorithm):
 		self.Xt = numpy.mat(numpy.zeros([self.n, 2]))
 		
 		print "Size is " + str(self.n)
+	
+	def dragnodes(self):		
+		# If node is dragged new position will be put into GraphViz graph
+		self.calc_epsilon_interval = 1
+		self.epsilon = 1
+		if hasattr(self, 'dragnode') and self.dragnode:
+			normX = self.norm.getA()[0][0]
+			normY = self.norm.getA()[0][1]
+			
+			nodepos = self.nodes.index(self.dragnodenode)
+			
+			self.Xt[nodepos, 0] = self.dragnodex - normX
+			self.Xt[nodepos, 1] = self.dragnodey - normY
+		
+		self.update_layout()
 		
 	def reset(self, f = 0):
 		if f == 0:
@@ -116,7 +133,7 @@ class MajorizationGraph(DrawingAlgorithm):
 			self._iter()
 			self._iter_done()
 			numits += 1
-			if numits % 10 == 0:
+			if numits % self.calc_epsilon_interval == 0:
 				e = self._calc_epsilon()
 				if math.isnan(e):
 					print "OHHH SHIIIITTT!"
@@ -149,11 +166,12 @@ class MajorizationGraph(DrawingAlgorithm):
 	
 	def _normalize(self):
 		# Translate
-		X = deepcopy(self.Xt + abs(self.Xt.min(0)))
+		self.norm = abs(self.Xt.min(0))
+		X = deepcopy(self.Xt + self.norm)
 		# Scale
-		norm = X / X.max(0)
-		X[:, 0] = norm[:, 0] * self.width
-		X[:, 1] = norm[:, 1] * self.height
+		#norm = X / X.max(0)
+		#X[:, 0] = norm[:, 0] * self.width
+		#X[:, 1] = norm[:, 1] * self.height
 		return X
 	
 	def _iter(self):

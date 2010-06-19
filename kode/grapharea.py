@@ -1,6 +1,7 @@
 import gtk
 import cairo
 import math
+import time
 
 class GraphArea(gtk.DrawingArea):
 	__gsignals__ = {
@@ -41,6 +42,13 @@ class GraphArea(gtk.DrawingArea):
 		#print "do_expose_event"
 		self.__cr = self.window.cairo_create()
 		self.__render()
+		
+	def iter_done( self ):
+		print "drawing" 
+		while gtk.events_pending():
+			gtk.main_iteration(False)		
+		self.queue_draw()
+		time.sleep(0.03)
 	
 	def initgraph(self):
 		try:
@@ -229,9 +237,10 @@ class GraphArea(gtk.DrawingArea):
 				parsedtermlist = str(node.term).split('#')
 				parsedterm = ""
 				lambdaletter = u'\u03bb'
-		
+		#self.iter_done()
+		self.nomoregraphs = False
 		self.numberofnodes = noNodes
-		print "Number of nodes: " + str(noNodes)
+		#self.outputtext()
 	def draw_arrowhead(self, x1, y1, x2, y2, noderadius):
 		'''
 		Draws an arrow head on the line segment between the coordinate pairs
@@ -290,6 +299,17 @@ class GraphArea(gtk.DrawingArea):
 		self.__cr.line_to(x2,y2)
 		self.__cr.stroke_preserve()
 		self.__cr.fill()
+
+	#def outputtext(self):
+	#	self.outputtextstring = ""
+	#	self.outputtextstring = self.outputtextstring + "Output:\n"
+	#	self.outputtextstring = self.outputtextstring + "	Number of nodes: " + str(len(self.graph.nodes)) + "\n"
+	#	self.outputtextstring = self.outputtextstring + "	Generation: " + str(self.startnumber + self.graphnumber) + "\n"
+	#	if hasattr(self, 'firstgraph') and self.firstgraph:
+	#		self.outputtextstring = self.outputtextstring + "	You are at the first graph" + "\n"
+	#	if hasattr(self, 'nomoregraphs') and self.nomoregraphs:
+	#		self.outputtextstring = self.outputtextstring + "	No more graphs" + "\n"
+	#	print self.outputtextstring
 
 def binomial(n, i):
 	bin = math.factorial(n) / (math.factorial(i) * math.factorial(n - i))
