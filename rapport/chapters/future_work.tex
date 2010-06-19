@@ -38,8 +38,8 @@ what remains to be done.
 	
 	Such a three-dimensional drawing could furthermore be extended to utilize stereoscopic
 	display techniques. A study indicates that stereoscopy can greatly enhance the ease of 
-	readability of three-dimensional drawings of graphs, especially when compared to two-dimensional
-	drawings \cite{Ware2008}.
+	readability of three-dimensional drawings of graphs, especially when compared 
+	to two-dimensional drawings \cite{Ware2008}.
 	
 	\item[Exporting facilities.] The ability to easily take screenshots through 
 	a push of button, for instance, would be quite useful to have. Furthermore,
@@ -96,22 +96,18 @@ what remains to be done.
 	is limited to only ``pure'' terms, not placeholder names for standard functions etc.
 	It would be beneficial to be able to write ``real'' programs in the lambda 
 	calculus with named functions that could be loaded from an external file.
+	To use the successor function one could for instance write something like:
+	\begin{align*}
+		three &:= \lambda f.(\lambda x.(f (f (f x)))) \\
+		four &:= \lambda f.(\lambda x.(f (f (f (f x))))) \\
+		succ(n) &:= \lambda n.(\lambda f.(\lambda x.(f (n f x)))) \\
+		four &=_\beta succ(three)
+	\end{align*}
+	
+	\item[Graph comparison.] The ability to make a split-view of two different graphs
+	would make it easier to make comparisons. This could be coupled with a function
+	that tests for topological equivalence of the graphs.
+	
+	\item[Graph tools.] description
 	
 \end{description}
-
-% \begin{itemize}
-	% \item Multithreaded
-	% % \item Dragging of nodes
-	% % \item Hovering/clicking actions
-	% \item Zooming/panning
-	% \item 3D-view
-	% \item Export of graph as image file, as dot file and as pickle Python object
-	% \item Calculation of the next generations of graphs in a background thread
-	% \item Implement more layout algorithms (e.g. confluent drawings).
-	% \item Clever handling of memory usage. If too much RAM is used, be able
-	% to free the ``oldest'' graphs in the list to make more room.
-	% \item Different colouring of highlighted edges with the same colouring of
-	% the redexes in the term.
-	% \item Menubar, preferences, screenshot etc.
-	% ???	
-% \end{itemize}

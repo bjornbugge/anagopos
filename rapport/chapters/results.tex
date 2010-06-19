@@ -12,29 +12,32 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 \begin{figure}[htbp]
 	% #a.(b) (#x.((x x) x) #y.((y y) y))
 	\centering
-	\subfigure[]{
+	\subfigure[Drawn with Dot.]{
 		\includegraphics[height=\exampleheight]{../images/inf_reduction_graph_DOT.png}
 	}
-	\subfigure[]{
+	\subfigure[Also drawn with Dot, but several generations later.]{
 		\includegraphics[height=\exampleheight]{../images/inf_reduction_graph_DOT2.png}
 	}
-	\caption{$G_\beta((\lam{a}{b}) (\lam{x}{(xxx)} \lam{y}{(yyy)}))$.}
+	\caption{When Dot draws the graph $G_\beta\big((\lam{a}{b}) (\lam{x}{(xxx)} \lam{y}{(yyy)})\big)$
+	for later generations, a peculiar phenomenon occurs: one of the nodes on the ``ladder''
+	has one of its edges pointing in another way than the equivalent edges of the other
+	nodes. This is an artefact of the internal workings of the Dot algorithm.}
 	\label{fig:images_inf_reduction_graph_DOT}
 \end{figure}
 
 \begin{figure}[htbp]
 	% #f.(#x.(f (x x))) (#x.(f (x x))) #y.((y y) y)
 	\centering
-	\subfigure[]{
+	\subfigure[Neato.]{
 		\includegraphics[height=\exampleheight]{../images/Ycomb_1_NEATO.png}
 	}
-	\subfigure[]{
+	\subfigure[Twopi.]{
 		\includegraphics[height=\exampleheight]{../images/Ycomb_1_TWOPI.png}
 	}
-	\subfigure[]{
+	\subfigure[Dot.]{
 		\includegraphics[height=\exampleheight]{../images/Ycomb_1_DOT.png}
 	}
-	\caption{$G_\beta((\lam{f}{(\lam{x}{f (x x)}) (\lam{x}{f (x x)})}) \lam{y}{(y y) y})$}
+	\caption{The Y-combinator applied to $\omega_3$: $G_\beta\big((\lam{f}{(\lam{x}{f (x x)}) (\lam{x}{f (x x)})}) \lam{y}{(y y) y}\big)$.}
 	\label{fig:images_inf_reduction_graph_DOT}
 \end{figure}
 
@@ -175,7 +178,9 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 	% cons(2,3)
 	\centering
 		\includegraphics[height=\exampleheight]{../images/Cons23_NEATO.png}
-	\caption{$\lambda x.(\lambda y.(\lambda x.(\lambda y.(\lambda s.(s x y))) \lambda x.(\lambda y.y) (\lambda x.(\lambda y.(\lambda s.(s x y))) x y))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f (f x))))$}
+	\caption{The ``cons'' function applied to the Church numerals for 
+	2 and 3: $G_\beta\big(\lambda x.(\lambda y.(\lambda x.(\lambda y.(\lambda s.(s x y))) \lambda x.(\lambda y.y) (\lambda x.(\lambda y.(\lambda s.(s x y))) x y))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f (f x))))\big)$.
+	Drawn with Neato.}
 	\label{fig:images_Cons23_NEATO}
 \end{figure}
 
@@ -190,9 +195,19 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 		\includegraphics[height=\exampleheight]{../images/Pred5_NEATO.png}
 	}
 	
-	\caption{caption}
+	\caption{Neato drawings of the successor and predecessor functions applied
+	to the Church numeral for five. The predecessor function produces a reduction graph
+	remarkably more complicated than the successor function.}
 	\label{fig:images_Succ5_NEATO}
 \end{figure}
+
+In Figure \ref{fig:images_22_NEATO} there are three examples of reduction graphs
+of functions that compute the Church numeral for 4, $\lambda f.(\lambda x.(f (f (f (f x)))))$:
+\begin{itemize}
+	\item a function computing $2+2$: $\lambda m.(\lambda n.(\lambda f.(\lambda x.(m f (n f x))))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f x)))$;
+	\item a function computing $2\cdot 2$: $\lambda m.(\lambda n.(\lambda f.(\lambda x.(m (n f) x)))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f x)))$;
+	\item a function computing $2^2$: $\lambda m.(\lambda n.(\lambda f.(\lambda x.(m n f x)))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f x)))$.
+\end{itemize}
 
 \begin{figure}[htbp]
 	\centering
@@ -208,8 +223,186 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 	\subfigure[$2^2$]{
 		\includegraphics[height=\exampleheight]{../images/Exp22_NEATO.png}
 	}
-	\caption{caption}
-	\label{fig:images_Exp22_NEATO}
+	\caption{Different ways to produce the Church numeral for 4. The reduction
+	graphs convey the impression that exponentiation is ``greater than'' multiplication
+	which is again ``greater than'' addition. The graphs are drawn with the Neato
+	algorithm.}
+	\label{fig:images_22_NEATO}
+\end{figure}
+
+\begin{figure}[htbp]
+	%  #x.(x x (x x)) #x.(x x f)
+	\centering
+		\includegraphics[height=\exampleheight]{../images/grid_1_DOT.png}
+	\caption{$G_\beta\big(\lambda x.(x x (x x)) \lambda x.(x x f)\big)$}
+	\label{fig:images_grid_1_DOT}
+\end{figure}
+
+\begin{figure}[htbp]
+	% #x.(x x) #x.(x x) (#x.(x x c) #x.(x x d))
+	\centering
+		\includegraphics[height=\exampleheight]{../images/Snake_1_NEATO.png}
+	\caption{$G_\beta\big(\lambda x.(x x) \lambda x.(x x) (\lambda x.(x x c) \lambda x.(x x d))\big)$}
+	\label{fig:images_Snake_1_NEATO}
+\end{figure}
+
+\begin{figure}[htbp]
+	% #x.(x a) (#x.(x x b) #x.(x x c))
+	\centering
+	\subfigure[Circo.]{
+		\includegraphics[height=\exampleheight]{../images/DoubleSnake_1_CIRCO.png}
+	}
+	\subfigure[Dot.]{
+		\includegraphics[height=\exampleheight]{../images/DoubleSnake_1_DOT.png}
+	}
+	\subfigure[Neato.]{
+		\includegraphics[height=\exampleheight]{../images/DoubleSnake_1_NEATO.png}
+	}
+	\subfigure[Twopi.]{
+		\includegraphics[height=\exampleheight]{../images/DoubleSnake_1_TWOPI.png}
+	}
+
+	\caption{The graph $G_\beta\big(\lambda x.(x a) (\lambda x.(x x b) \lambda x.(x x c))\big)$
+	gives nice, regular drawings.}
+	\label{fig:images_DoubleSnake_1_CIRCO}
+\end{figure}
+
+\begin{figure}[htbp]
+	% #x.(x x x a) (#x.(x x x) #x.(x x))
+	\centering
+		\includegraphics[height=\exampleheight]{../images/SelfRef_1_MAJOR.png}
+	\caption{The graph $G_\beta\big(\lambda x.(x x x a) (\lambda x.(x x x) \lambda x.(x x))\big)$
+	has eight nodes in which the reduction can ``stay''. Drawn with the Majorization algorithm.}
+	\label{fig:images_SelfRef_1_MAJOR}
+\end{figure}
+
+\begin{figure}[htbp]
+	% #x.(#y.(y y y y x x y)) #x.(#y.(y y y y x x y)) #x.(x)
+	\centering
+	\subfigure[Neato produces the graph that one would intuitively draw.]{
+		\includegraphics[height=\exampleheight]{../images/Circle_1_NEATO.png}
+	}
+	\subfigure[The two rightmost nodes are connected, but the Dot algorithm has 
+	computed the curve connecting them such that it exceeds the drawing area.]{
+		\includegraphics[height=\exampleheight]{../images/Circle_1_DOT.png}
+	}
+	\subfigure[\mbox{The Twopi algorithm places all the nodes on a line.}]{
+		\includegraphics[height=\exampleheight]{../images/Circle_1_TWOPI.png}
+	}
+	\caption{Some of the algorithms perform poorly on this purely cyclic graph. The
+	example term is taken from \cite{VenturiniZilli1984251}. For
+	$M\equiv\lambda x.(\lambda y.(y y y y x x y))$ and $\I\equiv\lam{x}{x}$:
+	$G_\beta\big(M M \I\big)$.}
+	\label{fig:images_Circle_1}
+\end{figure}
+
+\begin{figure}[htbp]
+	% #x.(#y.(x y y y x x y)) #x.(#y.(y y y y x x y)) #x.(x)
+	\centering
+	\subfigure[Dot.]{
+		\includegraphics[height=\exampleheight]{../images/Circle_2_DOT.png}
+	}
+	\subfigure[Circo.]{
+		\includegraphics[height=\exampleheight]{../images/Circle_2_CIRCO.png}
+	}
+	\subfigure[Neato.]{
+		\includegraphics[height=\exampleheight]{../images/Circle_2_NEATO.png}
+	}
+	\subfigure[The Twopi algorithm produces the error from Figure \ref{fig:images_Circle_1}
+	on this graph as well. The highlighted edge makes the cycle noticeable.]{
+		\includegraphics[height=\exampleheight]{../images/Circle_2_TWOPI.png}
+	}
+	\caption{A slightly modified version of the lambda term from Figure \ref{fig:images_Circle_1}
+	produces a graph with a that turns cyclic after a few reductions. 
+	$G_\beta\big(\lambda x.(\lambda y.(x y y y x x y)) M \I\big)$}
+	\label{fig:images_Circle_2}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\subfigure[$G_\beta\big(MM\I(MM\I)\big)$]{
+		\includegraphics[height=\exampleheight]{../images/Circle_3_NEATO.png}
+	}
+	\subfigure[$G_\beta\big(MM\I(MM\I)(MM\I)\big)$]{
+		\includegraphics[height=\exampleheight]{../images/Circle_4_NEATO.png}
+	}
+	\subfigure[$G_\beta\big(MM\I(MM\I)(MM\I)(MM\I)\big)$]{
+		\includegraphics[height=\exampleheight]{../images/Circle_5_NEATO.png}
+	}
+	\caption{If the term from Figure \ref{fig:images_Circle_1} is extended, 
+	more complex circular structures occur.}
+	\label{fig:images_Circle_35}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[htbp]
+	\centering
+	% #x.(x x x ) #x.(x x x) #x.(x x x ) #x.(x x x)
+	\subfigure[$G_\beta\big(\omega_3 \omega_3 \omega_3 \omega_3\big)$]{
+		\includegraphics[height=\exampleheight]{../images/Snake_2_NEATO.png}
+	}
+	% #x.(x x x ) #x.(x x x) (#x.(x x x ) #x.(x x x))
+	\subfigure[$G_\beta\big(\omega_3 \omega_3 (\omega_3 \omega_3)\big)$]{
+		\includegraphics[height=\exampleheight]{../images/Snake_3_NEATO.png}
+	}
+	% #x.(x x x ) (#x.(x x x) (#x.(x x x ) #x.(x x x)))
+	\subfigure[$G_\beta\big(\omega_3 (\omega_3 (\omega_3 \omega_3))\big)$]{
+		\includegraphics[height=\exampleheight]{../images/Snake_4_NEATO.png}
+	}
+
+	\caption{Making terms explicitly right-associative with parentheses
+	can drastically affect their reduction graphs. These graphs are
+	drawn with the Neato algorithm.}
+	\label{fig:images_Snake_2_NEATO}
+\end{figure}
+
+\begin{figure}[htbp]
+	% #x.(x x) (#x.(x x x) (#x.(x x x) #x.( x x)))
+	\centering
+	\subfigure[Fdp.]{
+		\includegraphics[height=\exampleheight]{../images/SelfRef_1_FDP.png}
+	}
+	\subfigure[Majorization.]{
+		\includegraphics[height=\exampleheight]{../images/SelfRef_1_MAJOR.png}
+	}
+	\subfigure[Neato.]{
+		\includegraphics[height=\exampleheight]{../images/SelfRef_1_NEATO.png}
+	}
+	\caption{This reduction graph has many nodes in which the reduction can ``stay''.
+	The images give an impression of the difference between the three force-directed
+	algorithms. $G_\beta\big(\omega (\omega_3 (\omega_3 \omega))\big)$}
+	\label{fig:images_SelfRef_1_FDP}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\subfigure[$n=1$]{
+		\includegraphics[height=1in]{../images/Cube1d_NEATO.png}
+	}
+	\subfigure[$n=2$]{
+		\includegraphics[height=\exampleheight]{../images/Cube2d_NEATO.png}
+	}
+	\subfigure[$n=3$]{
+		\includegraphics[height=\exampleheight]{../images/Cube3d_NEATO.png}
+	}
+	\subfigure[$n=4$]{
+		\includegraphics[height=\exampleheight]{../images/Cube4d_NEATO.png}
+	}
+	\subfigure[$n=5$]{
+		\includegraphics[height=\exampleheight]{../images/Cube5d_NEATO.png}
+	}
+	\subfigure[$n=3$, $i2=3$, $i3=2$]{
+		\includegraphics[height=\exampleheight]{../images/Cube3d_2_NEATO.png}
+	}
+	\caption{The reduction graph of the term $((\lam{x_1}{x_1}) f)\hdots((\lam{x_n}{x_n}) f)$,
+	$n>0$, where $x_1\hdots x_n$ represent distinct bound variables,
+	is an $n$-dimensional cube. The graphs are drawn with the Neato algorithm. If
+	the term is altered to the more generalized form 
+	$((\lam{x_1}{x_1}) f)((\lam{x_2}{x_{2_1} \hdots x_{2_{i2}}}) \lam{y}{y})((\lam{x_3}{x_{3_1} \hdots x_{3_{i3}}}) \lam{y}{y})\hdots((\lam{x_n}{x_{n_1} \hdots x_{n_{in}}}) \lam{y}{y})$,
+	the graph produces an $n$-dimensional rectangle with the side lengths
+	$i2, i3, \hdots in$.}
+	\label{fig:images_Cube1d_NEATO}
 \end{figure}
 
 
@@ -235,6 +428,8 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 % TWO: #f.(#x.(f (f x)))
 % FIVE: #f.(#x.(f (f (f (f (f x))))))
 % ZERO: #f.(#x.x)
+
+% succ(succ(succ(ZERO))): #n.(#f.(#x.(f (n f x)))) (#n.(#f.(#x.(f (n f x)))) (#n.(#f.(#x.(f (n f x)))) #f.(#x.x)))
 
 % hd five: #z.(#p.(p #x.(#y.x)) (#p.(p #x.(#y.y)) z)) #f.(#x.(f (f (f (f (f x))))))
 % cons 2,3: #x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y))) #f.(#x.(f (f x))) #f.(#x.(f (f (f x))))
@@ -283,3 +478,11 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 %	(#m.(#n.(#f.(#x.(m (n f) x)))) (r r (#m.(#n.(n #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.x) (#u.u)))) m)) n #f.(#x.(f x)))))))
 
 % fac(2): (#r.(#n.(#p.(#a.(#b.(p a b))) (#n.(n (#a.(#x.(#y.y))) #x.(#y.x)) n) #f.(#x.(f x)) (#m.(#n.(#f.(#x.(m (n f) x)))) (r r (#m.(#n.(n #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.x) (#u.u)))) m)) n #f.(#x.(f x))))))) #r.(#n.(#p.(#a.(#b.(p a b))) (#n.(n (#a.(#x.(#y.y))) #x.(#y.x)) n) #f.(#x.(f x)) (#m.(#n.(#f.(#x.(m (n f) x)))) (r r (#m.(#n.(n #n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.x) (#u.u)))) m)) n #f.(#x.(f x)))))))) #f.(#x.(f x))
+
+% PAIR := #x.(#y.(#f.(f x y)))
+% FIRST := #p.(p #x.(#y.x))
+% SECOND := #p.(p #x.(#y.y))
+% NIL := #a.(#x.(#y.x))
+% NULL := #p.(p (#x.(#y.(#x.(#y.y)))))
+% Φ := #x.(#x.(#y.(#f.(f x y))) (#p.(p #x.(#y.y)) x) (#n.(#f.(#x.(f (n f x)))) (#p.(p #x.(#y.y)) x)))
+% PRED := #n.(#p.(p #x.(#y.x)) (n #x.(#x.(#y.(#f.(f x y))) (#p.(p #x.(#y.y)) x) (#n.(#f.(#x.(f (n f x)))) (#p.(p #x.(#y.y)) x))) (#x.(#y.(#f.(f x y))) #f.(#x.x) #f.(#x.x)))) #f.(#x.(f (f x)))
