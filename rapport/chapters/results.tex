@@ -4,10 +4,19 @@
 \newcommand{\exampleheight}{2.2in}
 
 The program implemented is able to draw illustrations of reduction graphs with
-several different drawing algorithms. The algorithms output differs a lot, so
-it can be beneficial to draw a graph multiple times with different algorithms.
+several different drawing algorithms. This Chapter contains examples of reduction graphs
+drawn by the software. 
 
-% Screenshots!
+The graphs were produced ``randomly'', by experimenting with lambda terms and
+adjusting them to exhibit (sometimes) interesting behaviour in their reduction
+graphs. We found that the best all-round drawing algorithm to use when
+experimenting with terms is the Neato algorithm, since it gives nice graphs
+most of the time; the others can give very beautiful graphs sometimes, but
+often their output is worse than that of Neato.
+
+For each example graph, the caption text contains an explanation of what is
+going on. Thus, the contents of this Chapter is solely to be found in the
+images and their captions.
 
 \begin{figure}[htbp]
 	% #a.(b) (#x.((x x) x) #y.((y y) y))
@@ -38,7 +47,7 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 		\includegraphics[height=\exampleheight]{../images/Ycomb_1_DOT.png}
 	}
 	\caption{The Y-combinator applied to $\omega_3$: $G_\beta\big((\lam{f}{(\lam{x}{f (x x)}) (\lam{x}{f (x x)})}) \lam{y}{(y y) y}\big)$.}
-	\label{fig:images_inf_reduction_graph_DOT}
+	\label{fig:images_YComb_1}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -118,7 +127,9 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 		\includegraphics[height=\exampleheight]{../images/Ycomb_2_MAJOR.png}
 	}
 	
-	\caption{caption}
+	\caption{The Y-combinator applied to $\omega$: $\lambda f.(\lambda x.(f (x x))) (\lambda x.(f (x x))) \lambda y.(y y)$.
+	No normal form exists, but there is a node from which the reduction operation
+	cannot ``escape'' when it is first met.}
 	\label{fig:images_Ycomb_2_CIRCO}
 \end{figure}
 \begin{figure}[htbp]
@@ -143,8 +154,12 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 		\includegraphics[height=\exampleheight]{../images/Ycomb_3_CIRCO2.png}
 	}
 	
-	\caption{$G_\beta\big(\lambda f.\lambda x.(f (x x)) (\lambda x.f (x x)) \lambda x.\lambda y.(y y x)\big)$}
-	\label{fig:images_Ycomb_3_DOT}
+	\caption{The Y-combinator applied to $\lambda x.\lambda y.(y y x)$: $\lambda f.\lambda x.(f (x x)) (\lambda x.f (x x)) \lambda x.\lambda y.(y y x)$.
+	This graph has an interesting property in that it appears to have two ``modes'';
+	one where the ``path'' is thick, or broad, and one where we see a simple line
+	of nodes next to each other. In some of the graph embeddings the first part
+	looks almost like a helix.}
+	\label{fig:images_Ycomb_3_1}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -169,19 +184,32 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 		\includegraphics[height=\exampleheight]{../images/Ycomb_3_TWOPI2.png}
 	}
 	
-	\caption{$G_\beta\big(\lambda f.\lambda x.(f (x x)) (\lambda x.f (x x)) \lambda x.\lambda y.(y y x)\big)$}
-	\label{fig:images_Ycomb_3_DOT}
+	\caption{The same lambda term as in Figure \ref{fig:images_Ycomb_3_1}.}
+	\label{fig:images_Ycomb_3_2}
 \end{figure}
+
 
 \begin{figure}[htbp]
 	% #x.(#y.(#x.(#y.(#s.(s x y))) #x.(#y.y) (#x.(#y.(#s.(s x y))) x y))) #f.(#x.(f (f x))) #f.(#x.(f (f (f x))))
 	% cons(2,3)
 	\centering
+	\subfigure[$cons(2,3)$: ]{
 		\includegraphics[height=\exampleheight]{../images/Cons23_NEATO.png}
-	\caption{The ``cons'' function applied to the Church numerals for 
-	2 and 3: $G_\beta\big(\lambda x.(\lambda y.(\lambda x.(\lambda y.(\lambda s.(s x y))) \lambda x.(\lambda y.y) (\lambda x.(\lambda y.(\lambda s.(s x y))) x y))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f (f x))))\big)$.
-	Drawn with Neato.}
-	\label{fig:images_Cons23_NEATO}
+	}
+	\subfigure[$cons(5,0)$: ]{
+		\includegraphics[height=\exampleheight]{../images/Cons50_NEATO.png}
+	}
+	\subfigure[$cons(4,4)$: ]{
+		\includegraphics[height=\exampleheight]{../images/Cons44_NEATO.png}
+	}
+	\begin{tabular}{ll}
+		$cons(2,3)$	& $\lambda x.(\lambda y.(\lambda x.(\lambda y.(\lambda s.(s x y))) \lambda x.(\lambda y.y) (\lambda x.(\lambda y.(\lambda s.(s x y))) x y))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f (f x))))$ \\
+		$cons(5,0)$ & $\lambda x.(\lambda y.(\lambda x.(\lambda y.(\lambda s.(s x y))) \lambda x.(\lambda y.y) (\lambda x.(\lambda y.(\lambda s.(s x y))) x y))) \lambda f.(\lambda x.(f (f (f (f x))))) \lambda f.(\lambda x.(x))$ \\
+		$cons(4,4)$ & $\lambda x.(\lambda y.(\lambda x.(\lambda y.(\lambda s.(s x y))) \lambda x.(\lambda y.y) (\lambda x.(\lambda y.(\lambda s.(s x y))) x y))) \lambda f.(\lambda x.(f (f (f x)))) \lambda f.(\lambda x.(f (f (f x))))$
+	\end{tabular}
+	\caption{The ``cons'' function applied to different Church numerals appears to have
+	the same reduction graph. Drawn with Neato.}
+	\label{fig:images_Cons_NEATO}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -194,23 +222,22 @@ it can be beneficial to draw a graph multiple times with different algorithms.
 	\subfigure[Predecessor to 5.]{
 		\includegraphics[height=\exampleheight]{../images/Pred5_NEATO.png}
 	}
+	\begin{tabular}{ll}
+		$succ(5)$ & $\lambda n.(\lambda f.(\lambda x.(f (n f x)))) \lambda f.(\lambda x.(f (f (f (f (f x))))))$ \\
+		$pred(5)$ & $\lambda n.(\lambda f.(\lambda x.(n (\lambda g.(\lambda h.(h (g f)))) (\lambda u.(x)) (\lambda u.(u))))) \lambda f.(\lambda x.(f (f (f (f (f x))))))$
+	\end{tabular}
 	
 	\caption{Neato drawings of the successor and predecessor functions applied
-	to the Church numeral for five. The predecessor function produces a reduction graph
-	remarkably more complicated than the successor function.}
+	to the Church numeral for five. The story goes that the predecessor function 
+	was though up by Kleene while at the dentist, where he was anaesthesized by laughing gas. 
+	The reduction graph of the function somehow confirms this story.}
 	\label{fig:images_Succ5_NEATO}
 \end{figure}
 
-In Figure \ref{fig:images_22_NEATO} there are three examples of reduction graphs
-of functions that compute the Church numeral for 4, $\lambda f.(\lambda x.(f (f (f (f x)))))$:
-\begin{itemize}
-	\item a function computing $2+2$: $\lambda m.(\lambda n.(\lambda f.(\lambda x.(m f (n f x))))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f x)))$;
-	\item a function computing $2\cdot 2$: $\lambda m.(\lambda n.(\lambda f.(\lambda x.(m (n f) x)))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f x)))$;
-	\item a function computing $2^2$: $\lambda m.(\lambda n.(\lambda f.(\lambda x.(m n f x)))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f x)))$.
-\end{itemize}
 
 \begin{figure}[htbp]
 	\centering
+
 	% #m.(#n.(#f.(#x.(m f (n f x))))) #f.(#x.(f (f x))) #f.(#x.(f (f x)))
 	\subfigure[$2+2$]{
 		\includegraphics[height=\exampleheight]{../images/Sum22_NEATO.png}
@@ -223,9 +250,15 @@ of functions that compute the Church numeral for 4, $\lambda f.(\lambda x.(f (f 
 	\subfigure[$2^2$]{
 		\includegraphics[height=\exampleheight]{../images/Exp22_NEATO.png}
 	}
+	\begin{tabular}{ll}
+		$2+2$ & $\lambda m.(\lambda n.(\lambda f.(\lambda x.(m f (n f x))))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f x)))$ \\
+		$2\cdot 2$ & $\lambda m.(\lambda n.(\lambda f.(\lambda x.(m (n f) x)))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f x)))$ \\
+		$2^2$ & $\lambda m.(\lambda n.(\lambda f.(\lambda x.(m n f x)))) \lambda f.(\lambda x.(f (f x))) \lambda f.(\lambda x.(f (f x)))$
+	\end{tabular}
 	\caption{Different ways to produce the Church numeral for 4. The reduction
 	graphs convey the impression that exponentiation is ``greater than'' multiplication
-	which is again ``greater than'' addition. The graphs are drawn with the Neato
+	which is again ``greater than'' addition, in the sense that exponentiation is repetated multiplication
+	and multiplication is repeated addition. The graphs are drawn with the Neato
 	algorithm.}
 	\label{fig:images_22_NEATO}
 \end{figure}
@@ -270,9 +303,11 @@ of functions that compute the Church numeral for 4, $\lambda f.(\lambda x.(f (f 
 \begin{figure}[htbp]
 	% #x.(x x x a) (#x.(x x x) #x.(x x))
 	\centering
-		\includegraphics[height=\exampleheight]{../images/SelfRef_1_MAJOR.png}
+		\includegraphics[height=\exampleheight]{../images/SelfRef_2_MAJOR.png}
 	\caption{The graph $G_\beta\big(\lambda x.(x x x a) (\lambda x.(x x x) \lambda x.(x x))\big)$
-	has eight nodes in which the reduction can ``stay''. Drawn with the Majorization algorithm.}
+	has eight nodes in which the reduction can ``stay'' -- in the same sense where a 
+	DFA can ``stay'' in a certain state through self-referencing. 
+	Drawn with the Majorization algorithm.}
 	\label{fig:images_SelfRef_1_MAJOR}
 \end{figure}
 
@@ -286,8 +321,10 @@ of functions that compute the Church numeral for 4, $\lambda f.(\lambda x.(f (f 
 	computed the curve connecting them such that it exceeds the drawing area.]{
 		\includegraphics[height=\exampleheight]{../images/Circle_1_DOT.png}
 	}
-	\subfigure[\mbox{The Twopi algorithm places all the nodes on a line.}]{
+	\subfigure[The Twopi algorithm places all the nodes on a line.]{
+		\hspace{2em}
 		\includegraphics[height=\exampleheight]{../images/Circle_1_TWOPI.png}
+		\hspace{3em}
 	}
 	\caption{Some of the algorithms perform poorly on this purely cyclic graph. The
 	example term is taken from \cite{VenturiniZilli1984251}. For
@@ -397,7 +434,7 @@ of functions that compute the Church numeral for 4, $\lambda f.(\lambda x.(f (f 
 	}
 	\caption{The reduction graph of the term $((\lam{x_1}{x_1}) f)\hdots((\lam{x_n}{x_n}) f)$,
 	$n>0$, where $x_1\hdots x_n$ represent distinct bound variables,
-	is an $n$-dimensional cube. The graphs are drawn with the Neato algorithm. If
+	is an $n$-dimensional hypercube. The graphs are drawn with the Neato algorithm. If
 	the term is altered to the more generalized form 
 	$((\lam{x_1}{x_1}) f)((\lam{x_2}{x_{2_1} \hdots x_{2_{i2}}}) \lam{y}{y})((\lam{x_3}{x_{3_1} \hdots x_{3_{i3}}}) \lam{y}{y})\hdots((\lam{x_n}{x_{n_1} \hdots x_{n_{in}}}) \lam{y}{y})$,
 	the graph produces an $n$-dimensional rectangle with the side lengths
@@ -405,6 +442,103 @@ of functions that compute the Church numeral for 4, $\lambda f.(\lambda x.(f (f 
 	\label{fig:images_Cube1d_NEATO}
 \end{figure}
 
+\begin{figure}[htbp]
+	\centering
+	\subfigure[$n=1$]{
+	% #x.(#y.(y x x y)) #x.(#y.(y x x y)) #x.(x)
+		\includegraphics[height=\exampleheight]{../images/Polygon3_NEATO.png}
+	}
+	\subfigure[$n=2$]{
+	% #x.(#y.(y y x x y)) #x.(#y.(y y x x y)) #x.(x)
+		\includegraphics[height=\exampleheight]{../images/Polygon4_NEATO.png}
+	}
+	\subfigure[$n=3$]{
+	% #x.(#y.(y y y x x y)) #x.(#y.(y y y x x y)) #x.(x)
+		\includegraphics[height=\exampleheight]{../images/Polygon5_NEATO.png}
+	}
+	\subfigure[$n=18$]{
+	% #x.(#y.(y y y y y y y y y y y y y y y y y y x x y)) #x.(#y.(y y y y y y y y y y y y y y y y y y x x y)) #x.(x)
+		\includegraphics[height=\exampleheight]{../images/Polygon20_NEATO.png}
+	}
+	\caption{The graph for the term $\lambda x.(\lambda y.(y_1 \hdots y_n x x y)) \lambda x.(\lambda y.(y_1 \hdots y_n x x y)) \lambda x.(x)$,
+	where $n\geq 1$ and $y_1\hdots y_n$ represent repetitions of the variable $y$, 
+	produces regular convex polygons with $n+2$ vertices. The term
+	$MM\I$ above is a special case of this term. Drawn with Neato.}
+	\label{fig:images_Polygon_NEATO}
+\end{figure}
+
+\begin{figure}[htbp]
+	% #x.(#y.(y y y y y y y x x y)) #x.(#y.(y y y y y y x x y)) #x.(x)
+	\centering
+	\subfigure[$n=4$, $m=7$]{
+		\includegraphics[height=\exampleheight]{../images/Ketcher74_CIRCO.png}
+	}
+	\subfigure[$n=4$, $m=9$]{
+		\includegraphics[height=\exampleheight]{../images/Ketcher94_CIRCO.png}
+	}
+	\subfigure[$n=6$, $m=9$]{
+		\includegraphics[height=\exampleheight]{../images/Ketcher96_CIRCO.png}
+	}
+	\subfigure[$n=6$, $m=15$]{
+		\includegraphics[height=\exampleheight]{../images/Ketcher156_CIRCO.png}
+	}
+	
+	\caption{If we generalize the term family from Figure \ref{fig:images_Polygon_NEATO} to 
+	$\lambda x.(\lambda y.(y_1\hdots y_m x x y)) \lambda x.(\lambda y.(y_1\hdots y_n x x y)) \lambda x.(x)$,
+	where $m>n\geq 1$ and $y_1\hdots y_i$ represent repeated usage of the $y$-variable, 
+	produces a regular polygon with a ``starting path''. The polygon has $n+2$ vertices
+	and the length of the path is $n-m+2$ nodes. The graphs are drawn with Circo.}
+	\label{fig:images_Ketcher_CIRCO}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\subfigure[$n=3$, $m=2$]{
+	% #x.(#y.( y y y x x y)) #x.(#y.( y y y x x y)) #x.(x) (#x.(#y.( y  y)) #x.(#y.( y  y)) #x.(x))
+		\includegraphics[height=\exampleheight]{../images/Tube31_NEATO.png}
+	}
+	\subfigure[$n=6$, $m=5$]{
+		\includegraphics[height=\exampleheight]{../images/Tube65_NEATO.png}
+	}
+	\caption{Let $M_n\equiv\lambda x.(\lambda y.(y_1\hdots y_n x x y))$ and $N_n\equiv\lambda x.(\lambda y.(y_1\hdots y_m))$
+	for $n,m\geq 1$, where $y_1\hdots y_i$ denotes the repeating of the variable $y$. 
+	The term family $M_n M_n \I (N_m N_m \I)$, where $n,m\geq 1$, produces
+	``tubes'' consisting of $m+2$ regular, $n+2$-sided polygons.}
+	\label{fig:images_Tube31_NEATO}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\renewcommand{\exampleheight}{2.1in}
+	\subfigure[$n=3$]{
+		\includegraphics[height=\exampleheight]{../images/Regular3_NEATO.png}
+	}
+	\subfigure[$n=6$]{
+	% #x.(#y.(y y y y y y x x y))  #x.(#y.(y y y y y y x x y)) #x.(x) (#x.(#y.(y y y y y y x x y)) #x.(#y.(y y y y y y  x x y)) #x.(x))
+		\includegraphics[height=\exampleheight]{../images/Regular6_NEATO.png}
+	}
+	\subfigure[$n=8$]{
+		\includegraphics[height=\exampleheight]{../images/Regular8_NEATO.png}
+	}
+	\subfigure[$n=12$]{
+		\includegraphics[height=\exampleheight]{../images/Regular12_NEATO.png}
+	}
+	
+	\caption{Let $M_n\equiv\lambda x.(\lambda y.(y_1\hdots y_n x x y))$ for $n>1$ and
+	let $y_1\hdots y_n$ represent the same $y$. The term
+	$M_n M_n\I(M_n M_n\I)$, seems to produce a ball-like structure.
+	}
+	\label{fig:images_Regular6_NEATO}
+\end{figure}
+
+
+% NÆSTEN en fulleren! Bare med valens fire i stedet for valens 3 :(
+% #x.(#y.(y y y y y y x x y)) 
+% #x.(#y.(y y y y y y x x y)) #x.(x)
+% 
+% (#x.(#y.(y y y y y y x x y)) 
+% #x.(#y.(y y y y y y x x y)) #x.(x)
+% )
 
 
 % #x.(x x) #x.((x x) (x x))

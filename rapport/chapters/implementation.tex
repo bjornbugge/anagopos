@@ -61,7 +61,7 @@ class, \pycode{LambdaNode}, which has a subclass for each node type.
 \end{itemize}
 
 A term that is not in $\beta$-normal-form has at least one $\beta$-contractum,
-and therefore the DAG-representation of that term contains at least one
+and therefore the DAG-re\-pre\-sen\-ta\-tion of that term contains at least one
 application node and one abstraction node. More specifically, for each
 possible one-step $\beta$-reduction in a term $M$, its DAG will contain one
 application node. The first descendant of this node will be an abstraction
@@ -106,7 +106,7 @@ A \pycode{Graph}-object contains exactly one \pycode{Node} for each lambda
 term in the reduction graph; if one tries to add a node for an existing term,
 nothing happens.
 
-A \pycode{Node}-object has a name and a reference to the lambda term that it
+A \pycode{Node}-object has a name and a reference to the lambda term which it
 represents. It furthermore has a list of its children and a list of its
 parents. These lists contain instances of the \pycode{Edge}-class, which
 basically just implements a coupling between two \pycode{Node}-objects.
@@ -125,8 +125,11 @@ complete a reduction graph is returned.
 The function takes three arguments: the lambda term in whose reduction graph
 we are interested, a start parameter controlling when the iterator should
 start emitting graphs (making it possible to return e.g. only the ten last
-generations) and an end parameter that controls for how long the computation
-shall continue, i.e. how many terms should be reduced.
+generations) and an end parameter that controls how long the computation shall
+continue, i.e. how many terms should be reduced. Note that, in general, a
+``large'' end value is preferred, since it allows the user to continue to step
+forwards. Therefore, the value used in practice in the implementation is fixed
+to $10^6$.
 
 In the case of reduction graphs of infinite size, the computation only halts
 when the given maximum is reached. For finite graphs, the computation halts
@@ -138,7 +141,7 @@ deep copy operation is performed. This is done in order to ensure that later
 stages in the program indeed see the different generations of graphs as
 distinct objects, instead of a collection of references to the same set of
 \pycode{Node}s. The built-in copy operation \pycode{copy.deepcopy()} proved to
-be too slow, so a custom deep copy operation was implemented.
+be too slow, therefore a custom deep copy operation was implemented.
 
 \section{Drawing Algorithms}
 

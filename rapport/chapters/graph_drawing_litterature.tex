@@ -97,14 +97,14 @@ Heuristics for planarization by splitting are discussed in \cite{Eades1993}.
 A \emph{planar representation} is a data structure that represents possible
 planar embeddings of graph, i.e. which combinations of node positions give
 rise to a planar graph. Many drawing algorithms construct a drawing from a
-planar representation by first testing for planarity, then contructing a
+planar representation -- first by testing for planarity, then contructing a
 planar representation and then use a drawing algorithm to draw this
 representation.
 
 A \emph{path addition} approach to planarity testing was presented by Hopcroft
 \cite{Hopcroft1974,Deo1976}. Another approach called the \emph{vertex
 addition} approach is presented in \cite{Booth1976}. Both of these methods for
-planarity testing runs in linear time. Chiba et al. modified the methods of
+planarity testing run in linear time. Chiba et al. modified the methods of
 \cite{Booth1976} to construct planar representations \cite{Chiba1985}.
 
 \section{Straight-line Drawing}
@@ -170,7 +170,7 @@ have a direct impact on the quality of the circuit that is produced.
 In \cite{Batini1984,Tamassia1988} the authors present a general method for the
 construction of orthogonal grid drawings. It can be subdivided into three
 steps: first the graph is planarized, then an orthogonal shape is computed
-based on the planarized graph, and lastly this shape is made as compact as
+based on the planarized graph, and finally this shape is made as compact as
 possible to produce the final drawing. This general approch allows orthogonal
 grid drawings of many different types of graphs.
 
@@ -198,7 +198,7 @@ An overview of different classes of visibility representations and linear time
 drawing algorithms is given by Tamassia et al. \cite{Tamassia1986}. Often the
 first step in creating a visibility representation of an undirected graph is
 to create a \emph{bipolar orientation} of it. A bipolar orientation of an
-undirected graph is an orientations of the edges of the graph such that the
+undirected graph is an orientation of the edges of the graph such that the
 resulting \emph{directed} graph is acyclic and has excatly one source -- a
 vertex having only outgoing edges -- and exactly one sink -- a vertex with
 only incoming edges. Properties of bipolar orientations are investigated in

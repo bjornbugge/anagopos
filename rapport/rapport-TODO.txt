@@ -44,6 +44,3 @@
 - Opsummering af resultater; hvad kan man nu som man ikke kunne før?
 
 
-- Skriv "Project contraints and risks"-kapitlet om!
-- Skriv starten af "Existing visualizations.."-kapitlet om!
-- Gå alle "figure"-henvisninger igennem og sørg for at de er skrevet "Figure".
