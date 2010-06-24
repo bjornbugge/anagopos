@@ -40,6 +40,10 @@ class MajorizationGraph(DrawingAlgorithm):
 		self.n = len(self.nodes)
 		self.drawingfunction = None
 		
+		# The ratio between weight types used when calculating the D-matrix.
+		# Must be between 0 and 1.
+		self.alpha = 0.2
+		
 		# Make the identity once and for all for efficiency.
 		self.I = numpy.identity(self.n)
 		
@@ -59,7 +63,7 @@ class MajorizationGraph(DrawingAlgorithm):
 		self.Xt_old = numpy.mat(numpy.zeros([self.n, 2]))
 		self.Xt = numpy.mat(numpy.zeros([self.n, 2]))
 		
-		print "Size is " + str(self.n)
+		# print "Size is " + str(self.n)
 	
 	def dragnodes(self):		
 		# If node is dragged new position will be put into GraphViz graph
@@ -137,7 +141,10 @@ class MajorizationGraph(DrawingAlgorithm):
 			if numits % self.calc_epsilon_interval == 0:
 				e = self._calc_epsilon()
 				if math.isnan(e):
-					print "OHHH SHIIIITTT!"
+					# When the graph is small, with one node, the cholesky 
+					# decomposition cannot be performed. In this case we run 
+					# the risk of seeing singular matrices. If that happens,
+					# we just lay the nodes randomly out.
 					self.reset()
 		self._assignnodepositions()
 		
@@ -149,6 +156,9 @@ class MajorizationGraph(DrawingAlgorithm):
 		'''
 		Compute the node positions using a Cholesky decomposition.
 		'''
+		if self.n == 1:
+			self.chol = False
+			return
 		self.Lw = self.Lw[1:, 1:]
 		self.Lw = numpy.linalg.cholesky(self.Lw)
 		self.chol = True
@@ -235,26 +245,21 @@ class MajorizationGraph(DrawingAlgorithm):
 		return W
 	
 	def _get_D_matrix(self):
-		# t = time.time()
 		(D, A) = self._get_graph_distances()
-		# print "D took: " + str(time.time() - t)
 		W = numpy.mat(numpy.zeros([self.n, self.n]))
+		print self.n
 		if not self._compute_distances():
-			alpha = 1
+			self.alpha = 1
 		else:
-			if True or self.n > 180:
-				alpha = 0.01
-				# t = time.time()
+			if self.alpha > 0.0:
 				for i in xrange(self.n):
 					for j in xrange(i + 1, self.n):
 						Ni = set(self.nodes[i].parents + self.nodes[i].children)
 						Nj = set(self.nodes[j].parents + self.nodes[j].children)
 						W[i,j] = W[j,i] = 1 + (len(Ni.union(Nj)) - len(Ni.intersection(Nj)))
-
-				# print "W took: " + str(time.time() - t)
 			else:
-				alpha = 0.0
-		return ((1 - alpha) * D) + (alpha * W)
+				self.alpha = 0.0
+		return ((1 - self.alpha) * D) + (self.alpha * W)
 	
 	def _get_graph_distances(self):
 		if not self._compute_distances():
