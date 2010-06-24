@@ -2,6 +2,16 @@ class DrawingAlgorithm(object):
 	'''
 	Class that all drawing algorithms must extend.
 	'''
+	
+	'''
+	The below attributes must be set if an algorithm should be added to the
+	application
+	'''
+	
+	bezier = None
+	draggable = True
+	draggableupdate = False
+	
 	def __init__(self, graph):
 		raise NotImplementedError()
 	

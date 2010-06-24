@@ -103,6 +103,7 @@ class MajorizationGraph(DrawingAlgorithm):
 		self._assignnodepositions()
 		self.hasBeenInitialized = True
 	
+	# Scales the node positions to fit the GTK GraphArea
 	def scale(self, width, height):
 		Xs = [node.x for node in self.nodes]
 		Ys = [node.y for node in self.nodes]
@@ -168,10 +169,6 @@ class MajorizationGraph(DrawingAlgorithm):
 		# Translate
 		self.norm = abs(self.Xt.min(0))
 		X = deepcopy(self.Xt + self.norm)
-		# Scale
-		#norm = X / X.max(0)
-		#X[:, 0] = norm[:, 0] * self.width
-		#X[:, 1] = norm[:, 1] * self.height
 		return X
 	
 	def _iter(self):
@@ -257,13 +254,7 @@ class MajorizationGraph(DrawingAlgorithm):
 				# print "W took: " + str(time.time() - t)
 			else:
 				alpha = 0.0
-		
-		# return numpy.multiply(D, W)
-		# return D
-		# D = numpy.power(D, 2)
 		return ((1 - alpha) * D) + (alpha * W)
-		# return D
-		# return 1 / D.max() * D
 	
 	def _get_graph_distances(self):
 		if not self._compute_distances():

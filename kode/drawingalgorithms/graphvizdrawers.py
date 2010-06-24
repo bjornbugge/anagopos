@@ -97,7 +97,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 		self.update_layout()
 		f(self)
 	
-	# Scales node positions to fit into the GTK DrawingArea
+	# Scales the node positions to fit the GTK GraphArea
 	def scale(self, width, height):
 		Xs = [node.x for node in self.nodes]
 		Ys = [node.y for node in self.nodes]

@@ -263,8 +263,8 @@ def button_release_event(widget, event):
 	r = 10
 	if hasattr(drawing.graph, 'dragnode') and drawing.graph.dragnode:
 		
-		drawing.graph.dragnodex = x * drawing.scalingx
-		drawing.graph.dragnodey = y * drawing.scalingy
+		drawing.graph.dragnodex = x * drawing.scaling[0]
+		drawing.graph.dragnodey = y * drawing.scaling[1]
 		
 		if hasattr(drawing, 'dragupdate') and drawing.dragupdate:
 			if hasattr(drawing.graph, 'draggableupdate') and drawing.graph.draggableupdate:
