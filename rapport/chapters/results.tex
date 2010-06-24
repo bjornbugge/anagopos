@@ -63,7 +63,9 @@ images and their captions.
 		\includegraphics[height=\exampleheight]{../images/finite_ex_1_FDP.png}
 	}
 
-	\caption{$G_\beta\big(((\lam{x}{x}) \lam{y}{((\lam{z}{y}) \lam{z}{((\lam{a}{y}) z)})}) \lam{x}{((\lam{y}{x}) \lam{y}{(\lam{z}{(\lam{a}{\lam{b}{b}})})})}\big)$}
+	\caption{This randomly generated lambda term has a prism-like embedding of 
+	its reduction graph: $G_\beta\big(((\lam{x}{x}) \lam{y}{((\lam{z}{y}) \lam{z}{((\lam{a}{y}) z)})}) \lam{x}{((\lam{y}{x}) \lam{y}{(\lam{z}{(\lam{a}{\lam{b}{b}})})})}\big)$.
+	}
 	\label{fig:images_finite_ex_1_NEATO}
 \end{figure}
 
@@ -90,18 +92,14 @@ images and their captions.
 		\includegraphics[height=\exampleheight]{../images/finite_ex_2_MAJOR.png}
 	}
 	
-	\caption{$G_\beta\big(
+	\caption{Another randomly generated lambda term. In its reduction graph we
+	get a clear impression of the differences between the provided drawing algorithms.
+	$G_\beta\big(
 	\lambda x.(\lambda y.((\lambda z.(\lambda a.(\lambda b.(\lambda c.x))) \lambda z.(\lambda a.z)) (\lambda y.x \lambda z.(\lambda a.x))
 	)) (\lambda x.(\lambda y.y) \lambda x.(\lambda y.(\lambda z.(\lambda a.(a) z))))
-	\big)$}
+	\big)$.}
 	\label{fig:images_finite_ex_2_CIRCO}
 \end{figure}
-
-% λB1.(((B1 λB2.(B1)) λB3.((λB4.((λB5.(λB6.(λB7.(B6))) ((B3 (λB8.(B3) λB9.(λB10.(B10)))) λB11.(B1)))) ((B3 B3) (B3 λB12.((B1 ((B3 λB13.(λB14.(B3))) ((λB15.(B3) λB16.(λB17.(λB18.(B17)))) λB19.(λB20.(B20))))))))))))
-
-% λB1.((λB2.(λB3.((B2 F1))) λB4.(λB5.(((λB6.((B1 λB7.(B7))) λB8.((B4 λB9.(B4)))) λB10.(B10))))))
-
-
 
 \begin{figure}[htbp]
 	% λB1.((λB2.(λB3.((λB4.((B4 (λB5.(B1) λB6.(λB7.(B7))))) λB8.(B8)))) B1))
@@ -113,7 +111,8 @@ images and their captions.
 		\includegraphics[height=\exampleheight]{../images/finite_ex_3_NEATO.png}
 	}
 	
-	\caption{$G_\beta\big(\lambda x.(\lambda y.(\lambda z.(\lambda a.(a ((\lambda b.x) (\lambda c.\lambda d.d))) \lambda e.e)) x)\big)$}
+	\caption{The two force-directed algorithms, Neato and Majorization, differ
+	only on subtleties. $G_\beta\big(\lambda x.(\lambda y.(\lambda z.(\lambda a.(a ((\lambda b.x) (\lambda c.\lambda d.d))) \lambda e.e)) x)\big)$.}
 	\label{fig:images_finite_ex_3_MAJOR}
 \end{figure}
 
@@ -266,8 +265,17 @@ images and their captions.
 \begin{figure}[htbp]
 	%  #x.(x x (x x)) #x.(x x f)
 	\centering
+	\subfigure[Drawn with Dot.]{
 		\includegraphics[height=\exampleheight]{../images/grid_1_DOT.png}
-	\caption{$G_\beta\big(\lambda x.(x x (x x)) \lambda x.(x x f)\big)$}
+	}
+	\subfigure[Drawn with Neato.]{
+		\includegraphics[height=\exampleheight]{../images/grid_1_NEATO.png}
+	}
+	
+	\caption{These drawings of $G_\beta\big(\lambda x.(x x (x x)) \lambda x.(x x f)\big)$ 
+	gives rise to comparisons to the Cantor set. Because of the Church-Rosser property,
+	no trees can be reduction graphs, so the closest we get to something \emph{resembling}
+	the Cantor set is probably something that looks like this.}
 	\label{fig:images_grid_1_DOT}
 \end{figure}
 
@@ -275,7 +283,11 @@ images and their captions.
 	% #x.(x x) #x.(x x) (#x.(x x c) #x.(x x d))
 	\centering
 		\includegraphics[height=\exampleheight]{../images/Snake_1_NEATO.png}
-	\caption{$G_\beta\big(\lambda x.(x x) \lambda x.(x x) (\lambda x.(x x c) \lambda x.(x x d))\big)$}
+	\caption{This alternative version of the ``snake'' has a self-referencing edge
+	in every node. The black node at the tip is there because its redexes have not been
+	reduced yet, whence the self-referencing edge does not yet exist. The graph is drawn
+	with Neato.
+	$G_\beta\big(\lambda x.(x x) \lambda x.(x x) (\lambda x.(x x c) \lambda x.(x x d))\big)$.}
 	\label{fig:images_Snake_1_NEATO}
 \end{figure}
 
@@ -295,8 +307,8 @@ images and their captions.
 		\includegraphics[height=\exampleheight]{../images/DoubleSnake_1_TWOPI.png}
 	}
 
-	\caption{The graph $G_\beta\big(\lambda x.(x a) (\lambda x.(x x b) \lambda x.(x x c))\big)$
-	gives nice, regular drawings.}
+	\caption{The graph $G_\beta\big(\I(\omega_n \omega_n)\big)$ for $n\geq 3$ gives
+	nice, regular drawings.}
 	\label{fig:images_DoubleSnake_1_CIRCO}
 \end{figure}
 
@@ -317,10 +329,12 @@ images and their captions.
 	\subfigure[Neato produces the graph that one would intuitively draw.]{
 		\includegraphics[height=\exampleheight]{../images/Circle_1_NEATO.png}
 	}
+	\hspace{0.5em}
 	\subfigure[The two rightmost nodes are connected, but the Dot algorithm has 
 	computed the curve connecting them such that it exceeds the drawing area.]{
 		\includegraphics[height=\exampleheight]{../images/Circle_1_DOT.png}
 	}
+	\hspace{0.5em}
 	\subfigure[The Twopi algorithm places all the nodes on a line.]{
 		\hspace{2em}
 		\includegraphics[height=\exampleheight]{../images/Circle_1_TWOPI.png}
@@ -422,6 +436,7 @@ images and their captions.
 	}
 	\subfigure[$n=3$]{
 		\includegraphics[height=\exampleheight]{../images/Cube3d_NEATO.png}
+		\label{fig:cube3d}
 	}
 	\subfigure[$n=4$]{
 		\includegraphics[height=\exampleheight]{../images/Cube4d_NEATO.png}
@@ -444,6 +459,18 @@ images and their captions.
 
 \begin{figure}[htbp]
 	\centering
+		\includegraphics[height=\exampleheight]{../images/Tetraeder_TWOPI.png}
+	\caption{This Twopi drawing of the complete graph with four vertices, $K_4$,
+	clearly exhibits the fact that it is isomorphic with a tetrahedron. It is
+	thus possible to create a lambda term whose reduction graph is the tetrahedron
+	as well as a term with the hexahedron as its reduction graph (Figure \ref{fig:cube3d}).
+	The term with $K_4$ as its reduction graph is $M_{K_4}\equiv(\lam{x_1}{y}) ((\lam{x_2}{y}) ((\lam{x_3}{y}) (\lam{x_4}{y})))$}
+	\label{fig:images_Tetraeder_TWOPI}
+\end{figure}
+
+
+\begin{figure}[htbp]
+	\centering
 	\subfigure[$n=1$]{
 	% #x.(#y.(y x x y)) #x.(#y.(y x x y)) #x.(x)
 		\includegraphics[height=\exampleheight]{../images/Polygon3_NEATO.png}
@@ -462,8 +489,8 @@ images and their captions.
 	}
 	\caption{The graph for the term $\lambda x.(\lambda y.(y_1 \hdots y_n x x y)) \lambda x.(\lambda y.(y_1 \hdots y_n x x y)) \lambda x.(x)$,
 	where $n\geq 1$ and $y_1\hdots y_n$ represent repetitions of the variable $y$, 
-	produces regular convex polygons with $n+2$ vertices. The term
-	$MM\I$ above is a special case of this term. Drawn with Neato.}
+	produces regular convex polygons with $n+2$ vertices when drawn with Neato. 
+	The term $MM\I$ above is a special case of this term. }
 	\label{fig:images_Polygon_NEATO}
 \end{figure}
 
@@ -500,6 +527,11 @@ images and their captions.
 	\subfigure[$n=6$, $m=5$]{
 		\includegraphics[height=\exampleheight]{../images/Tube65_NEATO.png}
 	}
+	\subfigure[Altering the term to $M_n M_n \I (T T \I)$ where $T\equiv\lam{x}{\lam{y}{x x y}}$ gives
+	a tube that seems to continue forever. The tube still consists of $n+2$-sided polygons.]{
+	% #x.(#y.(y y y y y y x x y)) #x.(#y.(y y y y y y x x y)) #x.(x) (#x.(#y.(x x y)) #x.(#y.( x x y)) #x.(x))
+		\includegraphics[height=\exampleheight]{../images/Tube_long_NEATO.png}
+	}
 	\caption{Let $M_n\equiv\lambda x.(\lambda y.(y_1\hdots y_n x x y))$ and $N_n\equiv\lambda x.(\lambda y.(y_1\hdots y_m))$
 	for $n,m\geq 1$, where $y_1\hdots y_i$ denotes the repeating of the variable $y$. 
 	The term family $M_n M_n \I (N_m N_m \I)$, where $n,m\geq 1$, produces
@@ -526,8 +558,8 @@ images and their captions.
 	
 	\caption{Let $M_n\equiv\lambda x.(\lambda y.(y_1\hdots y_n x x y))$ for $n>1$ and
 	let $y_1\hdots y_n$ represent the same $y$. The term
-	$M_n M_n\I(M_n M_n\I)$, seems to produce a ball-like structure.
-	}
+	$M_n M_n\I(M_n M_n\I)$, seems to produce a ball-like structure when drawn 
+	with Neato.}
 	\label{fig:images_Regular6_NEATO}
 \end{figure}
 
@@ -620,3 +652,6 @@ images and their captions.
 % NULL := #p.(p (#x.(#y.(#x.(#y.y)))))
 % Φ := #x.(#x.(#y.(#f.(f x y))) (#p.(p #x.(#y.y)) x) (#n.(#f.(#x.(f (n f x)))) (#p.(p #x.(#y.y)) x)))
 % PRED := #n.(#p.(p #x.(#y.x)) (n #x.(#x.(#y.(#f.(f x y))) (#p.(p #x.(#y.y)) x) (#n.(#f.(#x.(f (n f x)))) (#p.(p #x.(#y.y)) x))) (#x.(#y.(#f.(f x y))) #f.(#x.x) #f.(#x.x)))) #f.(#x.(f (f x)))
+
+% K := λxy.x
+% S := λxyz.(x z (y z))	

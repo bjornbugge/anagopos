@@ -184,7 +184,7 @@ The following drawing algorithms are implemented:
 	
 	This is the only non-GraphViz algorithm implemented.
 	
-	In the program it is called ``Neato Animated''
+	In the program it is called ``Neato Animated''.
 
 	\item[Neato] is GraphViz's implementation of the algorithm by Gansner et al. 
 	Since it behaves like a ``black box'', it uses its own settings for the
@@ -213,3 +213,11 @@ interface. However, in order to make the program accessible, a draft user
 interface has been implemented. We have chosen to use the widget library GTK
 \cite{PyGTK}, since it runs on several platforms and is already widely used in
 e.g. the Gnome desktop environment.
+
+Sometimes the layout algorithms place the nodes in a suboptimal way compared
+to the users perception of the graph. Because of this, it is possible to drag
+and manually reorder the nodes in the graph. Some algorithms tries to optimize
+the graph layout after the node has been dragged, while others simply let the
+user move the nodes around. This difference exists because the algorithms are
+very different in nature, and on some of the algorithms an optimization of a
+reordered graph would completely render the manual reordering obsolete.

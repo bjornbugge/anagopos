@@ -433,3 +433,24 @@ is the contractum of the terms represented by the nodes parents.
 		\label{fig:images_graphs_graf7_omega_w3}
 	\end{figure}
 \end{example}
+
+Not all directed graphs are reduction graphs. Because of the Church-Rosser
+property, reduction graphs like the ones pictured in Figure
+\ref{fig:images_graphs_impossible} cannot exist for any lambda term. Any graph
+with more than two nodes with an in-degree of 1 cannot be a reduction graph in
+the lambda calculus because of this property. In \cite{VenturiniZilli1984251}
+are more thorough discussion of what cannot be a reduction graph is presentd.
+
+\begin{figure}[htbp]
+	\centering
+	\subfigure[The diamond property is obviously violated in this graph.]{
+		\includegraphics{../images/graphs/impossible1.pdf}
+	}
+	\subfigure[It is too in this graph; no less than three normal forms
+	should be produced in order to make this graph.]{
+		\includegraphics{../images/graphs/impossible2.pdf}
+	}
+	
+	\caption{Examples of directed graphs that cannot be reduction graphs.}
+	\label{fig:images_graphs_impossible}
+\end{figure}

@@ -106,8 +106,21 @@ what remains to be done.
 	
 	\item[Graph comparison.] The ability to make a split-view of two different graphs
 	would make it easier to make comparisons. This could be coupled with a function
-	that tests for topological equivalence of the graphs.
+	that tests for topological equivalence of the graphs, for a proper choice of topology.
 	
-	\item[Graph tools.] description
+	
+	\item[Other reduction systems.] The visualizer can be extended to other types
+	of reduction systems. The module currently responsible for performing the $\beta$-reductions
+	could be factored out behind a general interface, to ease the switch between different
+	reduction systems that all produce a reduction graph of the same format.
+	
+	\item[More exploration.] More can certainly be done to explore lamda
+	terms with interesting reduction graphs. This is exactly what the software is meant
+	to do, so this is just another way of saying that the software should be used.
+	As seen in the preceding Chapter, we have terms whose reduction graphs are
+	the tetrahedron and the hexahedron when drawn with the proper algorithm. An obvious 
+	path to explore would then be to see whether it is possible to construct terms,
+	whose reduction graphs corresponds to the rest of the five platonic solids: 
+	the octahedron, dodecahedron and icosahedron.
 	
 \end{description}
