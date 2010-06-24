@@ -72,14 +72,17 @@ class GraphArea(gtk.DrawingArea):
 				
 				if hasattr(self.graph, 'bezier') and self.graph.bezier:
 					# Draw a bezier line
-					self.graph.ipoints = edge.ipoints
-					far_node = edge.get_far(node)
+					
+					# Don't draw a bezier curve if it's going to the same node as it came from.
+					if edge.destination == node:
+						continue
 					
 					destX = edge.destination.x
 					destY = edge.destination.y
 					
-					lastX = edge.ipoints[len(edge.ipoints)-1][0]
-					lastY = edge.ipoints[len(edge.ipoints)-1][1]
+					lastX = edge.ipoints[len(edge.ipoints) - 1][0]
+					lastY = edge.ipoints[len(edge.ipoints) - 1][1]
+					
 					if node.y != edge.ipoints[0][1] or node.x != edge.ipoints[0][0]:
 						self.__cr.move_to(node.x, node.y)
 						self.__cr.line_to(edge.ipoints[0][0], edge.ipoints[0][1])
@@ -128,10 +131,7 @@ class GraphArea(gtk.DrawingArea):
 					self.draw_arrowhead(x1, y1, x2, y2, radius)
 				
 		# drawing nodes
-		noNodes = 0
 		for node in self.graph.nodes:
-			noNodes = noNodes + 1
-			
 			if len(node.term.redexpositions) == 0:
 				radius = self.large_radius
 				color = self.normal_form_color
@@ -154,7 +154,6 @@ class GraphArea(gtk.DrawingArea):
 			
 			for edge in node.children:
 				if node == edge.get_far(node):
-					print "kant i samme knude"
 					
 					size = 5
 					ac = self.arrow_color
@@ -176,7 +175,6 @@ class GraphArea(gtk.DrawingArea):
 				parsedterm = ""
 				lambdaletter = u'\u03bb'
 		self.nomoregraphs = False
-		self.numberofnodes = noNodes
 	
 	# arrowhead drawing function
 	def draw_arrowhead(self, x1, y1, x2, y2, noderadius):
@@ -243,7 +241,7 @@ def binomial(n, i):
 	bin = math.factorial(n) / (math.factorial(i) * math.factorial(n - i))
 	return bin
 
-# calculated the becier lines
+# calculated the bezier lines
 def drawBezierGen(t, l, ipoints):
 	n = l - 1
 	fun = lambda a, b:a + b

@@ -11,7 +11,7 @@ class MajorizationGraph(DrawingAlgorithm):
 	Implementation of Gansner2004-approach.
 	'''
 	
-	# Nodes are draggable, but will not update layout
+	# Nodes are draggable, and will update layout
 	draggable = True
 	draggableupdate = True
 	
@@ -277,4 +277,4 @@ class MajorizationGraph(DrawingAlgorithm):
 		'''
 		if not self.drawingfunction is None:
 			self._assignnodepositions()
-			self.drawingfunction(self)
+			self.drawingfunction()

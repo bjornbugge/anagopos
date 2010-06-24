@@ -55,18 +55,21 @@ def back(widget):
 	else:
 		drawing.firstgraph = False
 		if hasattr(drawing, 'selectedhaschanged') and drawing.selectedhaschanged:
+			print "selectedhaschanged"
 			drawing.graphnumber -= 1
 			rg = drawing.reductiongraphlist[drawing.graphnumber]
 			g = Drawer(rg)
 			drawing.graphlist[drawing.graphnumber] = g
 			drawing.graph = g
+			drawing.graph.initwith(drawing.graphlist[drawing.graphnumber + 1])
 			drawing.graph.update_layout_animated(iter_animated)
 			drawing.queue_draw()
+			# drawing.selectedhaschanged = False
 		else:
 			drawing.graphnumber -= 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
 			drawing.graph.update_layout_animated(iter_animated)
-			drawing.queue_draw()
+			# drawing.queue_draw()
 	outputtext()
 
 # Going forward to the next graph
@@ -75,15 +78,19 @@ def forward(widget):
 	drawing.firstgraph = False
 	if drawing.graphnumber + 2 <= len(drawing.graphlist):
 		if hasattr(drawing, 'selectedhaschanged') and drawing.selectedhaschanged:
+			print "selectedhaschanged"
 			drawing.graphnumber += 1
 			rg = drawing.reductiongraphlist[drawing.graphnumber]
 			g = Drawer(rg)
 			drawing.graphlist[drawing.graphnumber] = g
 			drawing.graph = g
+			drawing.graph.initwith(drawing.graphlist[drawing.graphnumber - 1])
 			drawing.graph.update_layout_animated(iter_animated)
+			# drawing.selectedhaschanged = False
 		else:
 			drawing.graphnumber += 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
+			drawing.graph.initwith(drawing.graphlist[drawing.graphnumber - 1])
 			drawing.graph.update_layout_animated(iter_animated)
 	else:
 		try:
@@ -93,13 +100,15 @@ def forward(widget):
 			drawing.graphlist.append(g)
 			drawing.graphnumber += 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
+			if type(drawing.graph) is type(drawing.graphlist[drawing.graphnumber - 1]):
+				drawing.graph.initwith(drawing.graphlist[drawing.graphnumber - 1])
 			drawing.graph.update_layout_animated(iter_animated)
 		except StopIteration:
 			outputtext()
 			drawing.nomoregraphs = True
 	outputtext()
 
-# Dictionary with algorithmes
+# Dictionary with algorithms
 algorithms = {'Neato' : NeatoGraph,
 			'Neato Animated' : MajorizationGraph,
 			'Dot' : DotGraph,
@@ -107,8 +116,8 @@ algorithms = {'Neato' : NeatoGraph,
 			'Circo' : CircoGraph,
 			'Fdp' : FdpGraph}
 
-# Iteration over gtk events making sure the drawing is doing animated
-def iter_animated(widget):
+# Iteration over gtk events making sure the drawing is done animated
+def iter_animated():
 	sleeptime = 0.00
 	if hasattr(drawing, 'selected') and drawing.selected == "Neato Animated":
 		while gtk.events_pending():
@@ -182,7 +191,7 @@ def generateTerm(widget):
 	start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 
-# Listner for drop-down menu when changing drawing algorithm
+# Listener for drop-down menu when changing drawing algorithm
 def changed_cb(entry):
 	if hasattr(drawing, 'ready') and drawing.ready:
 		try:

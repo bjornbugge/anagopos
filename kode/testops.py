@@ -1,14 +1,22 @@
 from computegraph.operations import *
 from computegraph.lambda_dag import *
-import lambdaparser as par
+import lambdaparser.lambdaparser as par
 from copy import deepcopy
+import pdb
 
-problemterm = '(#v0.((#v1.(#v2.(#v3.(v0))) #v4.(v4))) #v5.(#v6.((v6 v6))))'
+# problemterm = '(#v0.((#v1.(#v2.(#v3.(v0))) #v4.(v4))) #v5.(#v6.((v6 v6))))'
+# problemterm = '#a.(#x.(x x) a) (#b.(b))'
+problemterm = '(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((#v0.(((((v0 v0) v0) a) a)) #v1.(((((v1 v1) v1) a) a))) #v2.(((((v2 v2) v2) a) a))) a) a) #v3.(((((v3 v3) v3) a) a))) a) a) #v4.(((((v4 v4) v4) a) a))) a) a) #v5.(((((v5 v5) v5) a) a))) a) a) #v6.(((((v6 v6) v6) a) a))) a) a) #v7.(((((v7 v7) v7) a) a))) a) a) #v8.(((((v8 v8) v8) a) a))) a) a) #v9.(((((v9 v9) v9) a) a))) a) a) #v10.(((((v10 v10) v10) a) a))) a) a) #v11.(((((v11 v11) v11) a) a))) a) a) #v12.(((((v12 v12) v12) a) a))) a) a) #v13.(((((v13 v13) v13) a) a))) a) a) #v14.(((((v14 v14) v14) a) a))) a) a) #v15.(((((v15 v15) v15) a) a))) a) a) #v16.(((((v16 v16) v16) a) a))) a) a) #v17.(((((v17 v17) v17) a) a))) a) a) #v18.(((((v18 v18) v18) a) a))) a) a) #v19.(((((v19 v19) v19) a) a))) a) a) #v20.(((((v20 v20) v20) a) a))) a) a) #v21.(((((v21 v21) v21) a) a))) a) a) #v22.(((((v22 v22) v22) a) a))) a) a) #v23.(((((v23 v23) v23) a) a))) a) a) #v24.(((((v24 v24) v24) a) a))) a) a) #v25.(((((v25 v25) v25) a) a))) a) a) #v26.(((((v26 v26) v26) a) a))) a) a) #v27.(((((v27 v27) v27) a) a))) a) a) #v28.(((((v28 v28) v28) a) a))) a) a) #v29.(((((v29 v29) v29) a) a))) a) a) #v30.(((((v30 v30) v30) a) a))) a) a) #v31.(((((v31 v31) v31) a) a))) a) a) #v32.(((((v32 v32) v32) a) a))) a) a) #v33.(((((v33 v33) v33) a) a))) a) a) #v34.(((((v34 v34) v34) a) a))) a) a) #v35.(((((v35 v35) v35) a) a))) a) #v36.((((v36 v36) v36) a)))'
+# problemterm = '((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((#v0.(((((v0 v0) v0) a) a)) #v1.(((((v1 v1) v1) a) a))) #v2.(((((v2 v2) v2) a) a))) a) a) #v3.(((((v3 v3) v3) a) a))) a) a) #v4.(((((v4 v4) v4) a) a))) a) a) #v5.(((((v5 v5) v5) a) a))) a) a) #v6.(((((v6 v6) v6) a) a))) a) a) #v7.(((((v7 v7) v7) a) a))) a) a) #v8.(((((v8 v8) v8) a) a))) a) a) #v9.(((((v9 v9) v9) a) a))) a) a) #v10.(((((v10 v10) v10) a) a))) a) a) #v11.(((((v11 v11) v11) a) a))) a) a) #v12.(((((v12 v12) v12) a) a))) a) a) #v13.(((((v13 v13) v13) a) a))) a) a) #v14.(((((v14 v14) v14) a) a))) a) a) #v15.(((((v15 v15) v15) a) a))) a) a) #v16.(((((v16 v16) v16) a) a))) a) a) #v17.(((((v17 v17) v17) a) a))) a) a) #v18.(((((v18 v18) v18) a) a))) a) a) #v19.(((((v19 v19) v19) a) a))) a) a) #v20.(((((v20 v20) v20) a) a))) a) a) #v21.(((((v21 v21) v21) a) a))) a) a) #v22.(((((v22 v22) v22) a) a))) a) a) #v23.(((((v23 v23) v23) a) a))) a) a) #v24.(((((v24 v24) v24) a) a))) a) a) #v25.(((((v25 v25) v25) a) a))) a) a) #v26.(((((v26 v26) v26) a) a))) a) a) #v27.(((((v27 v27) v27) a) a))) a) a) #v28.(((((v28 v28) v28) a) a))) a) a) #v29.(((((v29 v29) v29) a) a))) a) a) #v30.(((((v30 v30) v30) a) a))) a) a) #v31.(((((v31 v31) v31) a) a))) a) a) #v32.(((((v32 v32) v32) a) a))) a) a) #v33.(((((v33 v33) v33) a) a))) a) a) #v34.(((((v34 v34) v34) a) a))) a) #v35.((((v35 v35) v35) a)))'
+
+# '#x.#y.(x y x) #x.(x x x a) #x.(x x x a a)'
+
 def test(t = problemterm):
 	term = par.parse(t)
-	operations.assignvariables(term)
+	assignvariables(term)
 	mgs = []
-	gs = [g for g in operations.reductiongraphiter(term, 0, 1)]
+	pdb.set_trace()
+	gs = [g for g in reductiongraphiter(term, 0, 10)]
 	for g in gs:
 		print g.tostring()
 	return gs

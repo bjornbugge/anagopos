@@ -3,14 +3,21 @@ class DrawingAlgorithm(object):
 	Class that all drawing algorithms must extend.
 	'''
 	
+	# The attributes below must be set if an algorithm should be added to the
+	# application
 	'''
-	The below attributes must be set if an algorithm should be added to the
-	application
+	Set to true if the algorithm uses bezier curves.
 	'''
-	
 	bezier = None
+	'''
+	True if the nodes can be dragged with the mouse.
+	'''
 	draggable = None
+	'''
+	True if the graph should optmize its layout after a node has been dragged.
+	'''
 	draggableupdate = None
+
 	
 	def __init__(self, graph):
 		raise NotImplementedError()

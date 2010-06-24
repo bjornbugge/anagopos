@@ -95,7 +95,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 	# Wont work on the GraphViz graphs
 	def update_layout_animated(self, f):
 		self.update_layout()
-		f(self)
+		f()
 	
 	# Scales the node positions to fit the GTK GraphArea
 	def scale(self, width, height):
