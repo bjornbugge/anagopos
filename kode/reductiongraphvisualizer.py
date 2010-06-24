@@ -127,7 +127,7 @@ def applyiterator(widget):
 		drawing.mgs = []
 		operations.assignvariables(drawing.term)
 		drawing.selected = str(algo.get_child().get_text())
-		
+		drawing.startnumber = int(start.get_text())
 		try:
 			def iterator():
 				Drawer = algorithms[drawing.selected]
@@ -140,7 +140,7 @@ def applyiterator(widget):
 		initgraph()
 		drawing.graph.update_layout_animated(iter_animated)
 		drawing.ready = True
-		drawing.startnumber = int(start.get_text())
+		
 		outputtext()
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
