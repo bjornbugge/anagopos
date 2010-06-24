@@ -16,27 +16,6 @@ from drawingalgorithms.graphvizdrawers import DotGraph
 from drawingalgorithms.graphvizdrawers import NeatoGraph
 from drawingalgorithms.graphvizdrawers import TwopiGraph
 from drawingalgorithms.graphvizdrawers import FdpGraph
-
-
-# t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
-# t = '(#x.((x x) x) #y.((y y) y))'
-#t = '#a.(b) (#x.((x x) x) #y.((y y) y))'
-t = '#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))'
-#t = '#x.(#y.((x y) y)) #x.(#y.((x y) y)) #x.(#y.((x y) y))'
-# Den her har fire normalformer som faas ved at lave max. 125 (maaske faerre!) iterationer.
-#t = '#B1.((((#B2.(#B3.(#B4.(B2))) (#B5.(#B6.(#B7.(#B8.(B1)))) #B9.((#B10.((#B11.(B9) #B12.(#B13.(#B14.(#B15.(B1)))))) #B16.(F1))))) #B17.(B1)) #B18.((#B19.(#B20.(B19)) (#B21.(B21) ((B1 #B22.(#B23.(B22))) #B24.(#B25.(#B26.((#B27.(B25) B25))))))))))'
-#t = '(#B1.((#B2.((#B3.(B2) B2)) (((#B4.(#B5.(#B6.(#B7.(#B8.(#B9.(B9)))))) #B10.(#B11.(B11))) (#B12.(#B13.(#B14.(B13))) ((#B15.(#B16.((#B17.(#B18.(B16)) #B19.(B19)))) #B20.((#B21.(#B22.(#B23.(#B24.(#B25.(B1))))) B1))) B1))) B1))) (((#B26.(#B27.(#B28.(#B29.(#B30.(B28))))) #B31.(#B32.(B32))) #B33.(#B34.(#B35.(#B36.(#B37.(#B38.((B36 B34)))))))) (#B39.((#B40.(#B41.(B40)) (((B39 #B42.(B42)) (#B43.(#B44.(#B45.(B39))) #B46.(B39))) (#B47.(#B48.((B47 B47))) #B49.(#B50.(#B51.(#B52.(B39)))))))) (#B53.(((#B54.(#B55.(#B56.(B55))) (#B57.(#B58.(B53)) B53)) (#B59.((#B60.(#B61.(#B62.(B59))) #B63.(#B64.(B64)))) #B65.((#B66.((B65 #B67.(#B68.(#B69.(#B70.(B53)))))) #B71.(B53)))))) (#B72.(((#B73.(#B74.(#B75.(B74))) #B76.(B72)) (#B77.(B72) #B78.(#B79.(B72))))) #B80.(((#B81.(#B82.(B81)) #B83.(#B84.(#B85.((B83 (B84 (B85 #B86.(B85)))))))) B80)))))))'
-#t = '#B1.(#B2.(#B3.(((#B4.((#B5.(#B6.(#B7.(B4))) #B8.(B3))) B3) (#B9.((#B10.(#B11.(B3)) B3)) (#B12.(#B13.(#B14.(#B15.(#B16.(B13))))) B1))))))'
-# t = '(#B1.((#B2.((#B3.(F1) #B4.(#B5.((B2 B4))))) (#B6.(B6) #B7.(#B8.(#B9.(#B10.(B8))))))) ((((#B11.(#B12.(#B13.((#B14.(B13) B13)))) (#B15.(#B16.(#B17.(B17))) #B18.(#B19.(#B20.((B18 (B19 #B21.(#B22.((#B23.(B19) B19)))))))))) #B24.((#B25.(#B26.(#B27.(B26))) ((#B28.(B24) #B29.(#B30.(#B31.(#B32.(F2))))) B24)))) #B33.((B33 (#B34.(B33) (#B35.(((#B36.(#B37.(B36)) #B38.(B33)) #B39.(B33))) B33))))) (#B40.(#B41.(#B42.(#B43.(#B44.((#B45.(B41) #B46.(#B47.(B44)))))))) ((#B48.(((#B49.(#B50.(B48)) #B51.(B48)) #B52.(#B53.(B53)))) #B54.(#B55.((((#B56.(B56) #B57.(#B58.(B54))) #B59.(B54)) #B60.(#B61.(B61)))))) #B62.(#B63.(#B64.((#B65.(#B66.((B62 #B67.(#B68.((B66 B65)))))) (#B69.(#B70.(B69)) #B71.(B63))))))))))'
-# t = '(#B1.(B1) (#B2.((#B3.((#B4.((B3 B3)) #B5.((B2 (#B6.(#B7.(#B8.(B7))) (#B9.(B9) B5)))))) #B10.(B10))) #B11.(#B12.(#B13.(B12)))))'
-# t = '(#B1.(#B2.(#B3.(#B4.(B2)))) #B5.(#B6.((#B7.(#B8.((#B9.(B7) B7))) ((#B10.(#B11.(#B12.(B11))) B5) ((#B13.((#B14.(#B15.(#B16.(#B17.(B17)))) (B5 B5))) (#B18.(#B19.(#B20.(B18))) #B21.((#B22.(B6) B21)))) (#B23.(#B24.(B5)) B5)))))))'
-# t = '((#B1.(B1) (#B2.(#B3.(#B4.(#B5.(#B6.(B5))))) #B7.(((#B8.(#B9.((#B10.(#B11.(#B12.(#B13.(B11)))) B9))) #B14.(#B15.(B7))) #B16.(#B17.(#B18.(#B19.(#B20.(#B21.(B21)))))))))) (#B22.((#B23.(#B24.(B24)) #B25.((#B26.(B26) #B27.(B27))))) #B28.(#B29.((B29 #B30.((F1 (B30 #B31.(#B32.(B29))))))))))'
-# t = '(((((#B1.(#B2.(#B3.(#B4.(#B5.(B1))))) (#B6.((#B7.(B6) #B8.(B6))) F1)) #B9.(B9)) (#B10.(#B11.(#B12.(#B13.(#B14.(B11))))) #B15.((#B16.(B16) #B17.(#B18.(#B19.((B17 #B20.(F2))))))))) (#B21.(((#B22.(#B23.(#B24.(B21))) (B21 #B25.(#B26.(B26)))) #B27.(#B28.(#B29.((B27 B29)))))) #B30.(#B31.((((#B32.(#B33.(B32)) B30) #B34.(B34)) #B35.(#B36.(#B37.(#B38.(B30))))))))) (#B39.(#B40.(#B41.(#B42.(B39)))) (#B43.((B43 B43)) #B44.(B44))))'
-# t = '#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (#B11.(#B12.(B11)) #B13.((F1 #B14.(#B15.(B14)))))))'
-# nedenstaaende har 600 knuder (med 200)
-# t = '(((((#B1.(#B2.(#B3.(#B4.(#B5.(B1))))) (#B6.((#B7.(B6) #B8.(B6))) F1))#B9.(B9)) (#B10.(#B11.(#B12.(#B13.(#B14.(B11))))) #B15.((#B16.(B16)#B17.(#B18.(#B19.((B17 #B20.(F2)))))))))(#B21.(((#B22.(#B23.(#B24.(B21))) (B21 #B25.(#B26.(B26))))#B27.(#B28.(#B29.((B27 B29)))))) #B30.(#B31.((((#B32.(#B33.(B32)) B30)#B34.(B34)) #B35.(#B36.(#B37.(#B38.(B30)))))))))(#B39.(#B40.(#B41.(#B42.(B39)))) (#B43.((B43 B43)) #B44.(B44))))'
-# The Y combinator
-# t = '#f.(#x.(f (x x))) (#x.(f (x x))) #y.y'
 	
 def redraw(widget):
 	if drawing.ready:
@@ -66,11 +45,11 @@ def initgraph():
 	except:
 		drawing.starttobig = True
 
+# Going back to the previous graph
 def back(widget):
 	Drawer = algorithms[drawing.selected]
 	drawing.nomoregraphs = False
 	if drawing.graphnumber == 0:
-		#print "You are at the first graph"
 		outputtext()
 		drawing.firstgraph = True
 	else:
@@ -90,6 +69,7 @@ def back(widget):
 			drawing.queue_draw()
 	outputtext()
 
+# Going forward to the next graph
 def forward(widget):
 	Drawer = algorithms[drawing.selected]
 	drawing.firstgraph = False
@@ -101,12 +81,10 @@ def forward(widget):
 			drawing.graphlist[drawing.graphnumber] = g
 			drawing.graph = g
 			drawing.graph.update_layout_animated(iter_animated)
-			#drawing.queue_draw()
 		else:
 			drawing.graphnumber += 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
 			drawing.graph.update_layout_animated(iter_animated)
-			#drawing.queue_draw()
 	else:
 		try:
 			rg = drawing.iterator.next()
@@ -116,9 +94,7 @@ def forward(widget):
 			drawing.graphnumber += 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
 			drawing.graph.update_layout_animated(iter_animated)
-			#drawing.queue_draw()
 		except StopIteration:
-			#print "There are no more graphs"
 			outputtext()
 			drawing.nomoregraphs = True
 	outputtext()
@@ -130,15 +106,18 @@ algorithms = {'Neato' : NeatoGraph,
 			'TwoPi' : TwopiGraph,
 			'Circo' : CircoGraph,
 			'Fdp' : FdpGraph}
-			
+
+# Iteration over gtk events making sure the drawing is doing animated
 def iter_animated(widget):
 	sleeptime = 0.00
-	if hasattr(drawing, 'doiter') and drawing.doiter:
+	if hasattr(drawing, 'selected') and drawing.selected == "Neato Animated":
 		while gtk.events_pending():
 			gtk.main_iteration(True)
 	drawing.queue_draw()
 	time.sleep(sleeptime)
 
+# Draw graph function
+# Yield function with graphs
 def applyiterator(widget):
 	try:
 		drawing.startnum = int(start.get_text())
@@ -153,7 +132,6 @@ def applyiterator(widget):
 			def iterator():
 				Drawer = algorithms[drawing.selected]
 				for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
-					#print "Yielding graph"
 					yield g
 			drawing.iterator = iterator()
 		except KeyError:
@@ -161,33 +139,22 @@ def applyiterator(widget):
 		drawing.graphnumber = 0
 		initgraph()
 		drawing.graph.update_layout_animated(iter_animated)
-		#drawing.graph.update_layout()
-		#drawing.queue_draw()
 		drawing.ready = True
 		drawing.startnumber = int(start.get_text())
 		outputtext()
-		#outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
-		#if hasattr(drawing, 'numberofnodes'):
-		#	outputtext = outputtext + "\nNumber of nodes: " + str(drawing.numberofnodes)
-		#outputtextbuffer.set_text(outputtext)
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 		else:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 		entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
-		end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	except NameError as e:
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
-		elif start.get_text() == "" or end.get_text() == "" or termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
+		elif start.get_text() == "" or termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
 			if start.get_text() == "":
 				start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 			else:
 				start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
-			if end.get_text() == "":
-				end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
-			else:
-				end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 			if termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter()) == "":
 				entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 			else:
@@ -195,84 +162,74 @@ def applyiterator(widget):
 		else:
 			print "Syntax error: " + str(e)
 			entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
-			
+
+# Output text for text field in GUI
 def outputtext():
 	drawing.outputtextstring = ""
-	#drawing.outputtextstring = drawing.outputtextstring + "Output:\n"
 	drawing.outputtextstring = drawing.outputtextstring + "Number of nodes: " + str(len(drawing.graph.nodes)) + "\n"
 	drawing.outputtextstring = drawing.outputtextstring + "Generation: " + str(drawing.startnumber + drawing.graphnumber) + "\n"
 	if hasattr(drawing, 'firstgraph') and drawing.firstgraph:
 		drawing.outputtextstring = drawing.outputtextstring + "You are at the first graph" + "\n"
 	if hasattr(drawing, 'nomoregraphs') and drawing.nomoregraphs:
 		drawing.outputtextstring = drawing.outputtextstring + "No more graphs" + "\n"
-	#print drawing.outputtextstring
 	outputtextbuffer.set_text(drawing.outputtextstring)
-			
+
+# Generates pseudo random lambda term
 def generateTerm(widget):
 	drawing.term = randomgraph.randomterm()
 	termtext.set_text(str(drawing.term).replace("#",u'\u03bb'))
 	entry.set_tooltip_text(str(drawing.term).replace("#",u'\u03bb'))
 	start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
-	end.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
 	entry.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FFFFFF"))
-	
+
+# Listner for drop-down menu when changing drawing algorithm
 def changed_cb(entry):
 	if hasattr(drawing, 'ready') and drawing.ready:
-		if drawing.selected == entry.get_text():
-			#print "Nothing will happen"
-			drawing.selectedhaschanged = False
-		else:
-			try:
-				#drawing.destroy()
-				#drawing = GraphArea(graph)
-				#gtk.main_iteration(True)
-				#drawing.queue_clear()
-				drawing.selectedhaschanged = True
-				if entry.get_text() == "Neato Animated":
-					drawing.doiter = True
-				else:
-					drawing.doiter = False
-				#print "New drawing algorithm: " + str(entry.get_text())
-				drawing.selected = entry.get_text()
-				Drawer = algorithms[drawing.selected]
-				
-				rg = drawing.reductiongraphlist[drawing.graphnumber]
-				g = Drawer(rg)
-				drawing.graphlist[drawing.graphnumber] = g
-				drawing.graph = drawing.graphlist[drawing.graphnumber]
-				drawing.graph.update_layout_animated(iter_animated)
-				drawing.queue_draw()
-			except:
-				pass
-			
-			outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
-			outputtextbuffer.set_text(outputtext)
-			
-			# drawing.graph = drawing.mgs[drawing.graphnumber]
+		try:
+			drawing.selectedhaschanged = True
+			drawing.selected = entry.get_text()
+			Drawer = algorithms[drawing.selected]
+			rg = drawing.reductiongraphlist[drawing.graphnumber]
+			g = Drawer(rg)
+			drawing.graphlist[drawing.graphnumber] = g
+			drawing.graph = drawing.graphlist[drawing.graphnumber]
 			drawing.graph.update_layout_animated(iter_animated)
 			drawing.queue_draw()
+		except:
+			pass
+		
+		outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
+		outputtextbuffer.set_text(outputtext)
+		drawing.graph.update_layout_animated(iter_animated)
+		drawing.queue_draw()
 
+# Keyboard listner when pressing down on key
+# Keyboard shortcuts
 def key_press_event(widget, event):
-
+	
 	if event.keyval == 65507:
 		drawing.ctrl = True
 	
 	if hasattr(drawing, 'ctrl') and drawing.ctrl:
 		if hasattr(drawing, 'ctrl') and drawing.ctrl and (event.keyval == 102 or event.keyval == 110): 
 			forward(widget)
-		elif hasattr(drawing, 'ctrl') and drawing.ctrl and event.keyval == 98: 
+		elif hasattr(drawing, 'ctrl') and drawing.ctrl and event.keyval == 98 or event.keyval == 112: 
 			back(widget)
 		elif hasattr(drawing, 'ctrl') and drawing.ctrl and event.keyval == 114:
 			redraw(widget)
 		elif hasattr(drawing, 'ctrl') and drawing.ctrl and event.keyval == 111:
 			optimize(widget)
-		
+
+# Keyboard listner when releasing press on a key
+# Keyboard shortcuts
 def key_release_event(widget, event):
 	if event.keyval == 65507:
 		drawing.ctrl = False
-		
+
+# Mouse listner when pressing button
+# Listnens if a node is clicked on
 def button_press_event(widget, event):
-	x = event.x# - 240
+	x = event.x
 	y = event.y
 	r = 10
 	
@@ -297,8 +254,11 @@ def button_press_event(widget, event):
 				drawing.graph.dragnodey = y
 				drawing.graph.dragnodenode = node
 
+# Mouse listner when releasing button
+# Listnens if a node the same or a different place than where it was clicked
+# If the same place: Show node information. Else nothing (means node has been dragged)
 def button_release_event(widget, event):
-	x = event.x# - 240
+	x = event.x
 	y = event.y
 	r = 10
 	if hasattr(drawing.graph, 'dragnode') and drawing.graph.dragnode:
@@ -333,13 +293,16 @@ def button_release_event(widget, event):
 				node.showterm = False
 				for edge in node.children:
 					edge.selected = False
-	
+
+# Mouse listner for moving mouse around
+# If node has been clicked in "button_press_event(widget, event)"
+# then update node position and redraw on every motion
 def motion_notify_event(widget, event):
 	
 	if hasattr(drawing.graph, 'draggable') and drawing.graph.draggable:
 		if hasattr(drawing.graph, 'dragnode') and drawing.graph.dragnode:
 			
-			x = event.x# - 240
+			x = event.x
 			y = event.y
 			drawing.graph.nodenametable[drawing.graph.dragnodename].x = x
 			drawing.graph.nodenametable[drawing.graph.dragnodename].y = y
@@ -348,7 +311,8 @@ def motion_notify_event(widget, event):
 			
 			drawing.dragupdate = True
 			drawing.queue_draw()
-		
+
+# Checkbox for highlighting the newest edges in graph
 def checkbox(widget, event):
 	if newestedges.get_active():
 		drawing.shownewestedget = True
@@ -356,29 +320,22 @@ def checkbox(widget, event):
 		drawing.shownewestedget = False
 	drawing.queue_draw()
 
-
+# Main function
 if __name__ == "__main__":
 	window = gtk.Window()
 	window.connect("delete-event", gtk.main_quit)
 	window.connect("key_press_event", key_press_event)
 	window.connect("key_release_event", key_release_event)
-	#window.connect("button_release_event", button_release_event)
-	#window.connect("button_press_event", button_press_event)
-	#window.connect("motion_notify_event", motion_notify_event)
-	#window.set_events(gtk.gdk.BUTTON_RELEASE_MASK
-	#					| gtk.gdk.BUTTON_PRESS_MASK
-	#					| gtk.gdk.POINTER_MOTION_MASK)
+	window.resize(1024, 768)
 	
-	width = 1024
-	height = 768
-	window.resize(width, height)
+	# Graph
 	graph = None
 	
+	# GraphArea
 	drawing = GraphArea(graph)
-	
 	drawing.ready = False
 	drawing.shownewestedget = False
-	
+	# Listners for the GraphArea
 	drawing.connect("button_release_event", button_release_event)
 	drawing.connect("button_press_event", button_press_event)
 	drawing.connect("motion_notify_event", motion_notify_event)
@@ -386,11 +343,9 @@ if __name__ == "__main__":
 						| gtk.gdk.BUTTON_PRESS_MASK
 						| gtk.gdk.POINTER_MOTION_MASK)
 	
+	# Widget boxes
 	widgetboxH = gtk.HBox(False, 10)
 	widgetboxV = gtk.VBox(False, 10)
-
-	#update_button = gtk.Button("Organise graph")
-	#update_button.connect("clicked", update_layout, testgraph)
 	
 	# GTK Buttons
 	b1 = gtk.Button("Generate Random Term")
@@ -417,26 +372,23 @@ if __name__ == "__main__":
 	l6.set_text("Output:")
 	l6.set_alignment(xalign=0, yalign=1)
 	
-	drawing.term = str(t).replace("#",u'\u03bb')
-	t = clickedtermtemp = str(t).replace("#",u'\u03bb')
+	# Text buffer for text view field (for the lambda term)
 	termtext = gtk.TextBuffer()
-	termtext.set_text(t)
-	
+	# Text view field (for the lambda term)
 	entry = gtk.TextView()
 	entry.set_justification(False)
 	entry.set_left_margin(5)
 	entry.set_right_margin(5)
 	entry.set_size_request(200, 109)
 	entry.set_buffer(termtext)
-	#entry.set_tooltip_text(str(drawing.term))
 	entry.set_wrap_mode(True)
 	entry.set_border_window_size(gtk.TEXT_WINDOW_LEFT,2)
 	entry.set_border_window_size(gtk.TEXT_WINDOW_RIGHT,2)
 	
-	#t = clickedtermtemp = str(t).replace("#",u'\u03bb')
+	# Text buffer for text view field (output text field)
 	outputtextbuffer = gtk.TextBuffer()
 	outputtextbuffer.set_text("Output text...")
-	
+	# Text view field (output text field)
 	outputtextfield = gtk.TextView()
 	outputtextfield.set_justification(False)
 	outputtextfield.set_left_margin(5)
@@ -449,9 +401,10 @@ if __name__ == "__main__":
 	outputtextfield.set_border_window_size(gtk.TEXT_WINDOW_RIGHT,2)
 	outputtextfield.set_editable(False)
 	
+	# Text buffer for text view field (clicked term field)
 	clickedterm = gtk.TextBuffer()
 	clickedterm.set_text("Clicked term...")
-	
+	# Text view field (clicked term field)
 	entryclickedterm = gtk.TextView()
 	entryclickedterm.set_justification(False)
 	entryclickedterm.set_left_margin(5)
@@ -464,16 +417,16 @@ if __name__ == "__main__":
 	entryclickedterm.set_border_window_size(gtk.TEXT_WINDOW_RIGHT,2)
 	entryclickedterm.set_editable(False)
 	
+	# Text fiels for start generation
 	start = gtk.Entry()
 	start.set_text("0")
 	
+	# Checkbox for showing newest edges
 	newestedges = gtk.CheckButton(label="Show newest: ")
 	newestedges.set_direction(gtk.TEXT_DIR_RTL)
 	newestedges.connect("toggled", checkbox, "showstages")
 	
-	end = gtk.Entry()
-	end.set_text("10")
-	
+	# Drop down for selecting drawing algorithm
 	algo = gtk.ComboBoxEntry()
 	liststore = gtk.ListStore(str)
 	algo.set_model(liststore)
@@ -482,8 +435,7 @@ if __name__ == "__main__":
 	algo.set_active(0)
 	algo.child.connect('changed', changed_cb)
 	
-	
-	
+	# Buttons
 	b1.connect("clicked", generateTerm)
 	b2.connect("clicked", applyiterator)
 	b3.connect("clicked", forward)
@@ -491,23 +443,16 @@ if __name__ == "__main__":
 	b5.connect("clicked", redraw)
 	b6.connect("clicked", optimize)
 	
+	# Widget box
 	startbox = gtk.HBox(False, 10)
 	startbox.pack_start(l1, False, False, 1)
 	startbox.pack_start(start, False, False, 1)
 	
-	endbox = gtk.HBox(False, 10)
-	endbox.pack_start(l2, False, False, 1)
-	endbox.pack_start(end, False, False, 1)
-	
-	#algobox = gtk.HBox(False, 10)
-	#algobox.pack_start(l3, False, False, 1)
-	#algobox.pack_start(algo, False, False, 1)
-	
+	# Widget box
 	widgetboxV.pack_start(l4, False, False, 1)
 	widgetboxV.pack_start(entry, False, False, 1)
 	widgetboxV.pack_start(algo, False, False, 1)
 	widgetboxV.pack_start(startbox, False, False, 1)
-	widgetboxV.pack_start(endbox, False, False, 1)
 	widgetboxV.pack_start(newestedges, False, False, 1)
 	widgetboxV.pack_start(b2, False, False, 1)
 	widgetboxV.pack_start(b1, False, False, 1)
@@ -520,28 +465,24 @@ if __name__ == "__main__":
 	widgetboxV.pack_start(l6, False, False, 1)
 	widgetboxV.pack_start(outputtextfield, False, False, 1)
 	
-	
+	# Widget box
 	widgetboxH.pack_start(widgetboxV, False, False, 5)
 	widgetboxH.pack_end(drawing, True, True, 5)
-
-	#window.add(widgetboxV)
+	
+	# Adds widgetboxes to window
 	window.add(widgetboxH)
-
+	
+	# Shows widgets
 	widgetboxV.show()
 	startbox.show()
-	endbox.show()
-	#algobox.show()
 	widgetboxH.show()
 	l4.show()
 	entry.show()
 	b1.show()
-	#l3.show()
 	algo.show()
 	l1.show()
 	start.show()
 	newestedges.show()
-	#l2.show()
-	#end.show()
 	b2.show()
 	b3.show()
 	b4.show()
