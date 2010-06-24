@@ -1,4 +1,4 @@
-\documentclass[a4paper]{report}
+\documentclass[a4paper,draft]{report}
 
 % Packages to use
 \usepackage{graphicx}
@@ -16,6 +16,7 @@
 \usepackage[labelfont=bf,up,textfont=it,up]{caption}
 \usepackage{fullpage}
 \usepackage{float}
+\usepackage{verbatim}
 
 % Alter some LaTeX defaults for better treatment of figures:
 % See p.105 of "TeX Unbound" for suggested values.
@@ -87,30 +88,32 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Title page
-% \input{chapters/title.tex}
+\input{chapters/title.tex}
 
 % Abstract
-%\input{chapters/abstract.tex}
+\input{chapters/abstract.tex}
 
 % Table of content
-%\tableofcontents
-%\listoftables
-%\listoffigures
+\tableofcontents
+\listoffigures
 
 % Chapters
-% \input{chapters/introduction.tex}
-% \input{chapters/lambda_theory.tex}
-% \input{chapters/existing_visualizations.tex}
-% \input{chapters/graph_drawing_litterature.tex}
-% \input{chapters/lambda_graph_drawing.tex}
-% \input{chapters/visual_discussion.tex}
-% \input{chapters/implementation.tex}
+\input{chapters/introduction.tex}
+\input{chapters/lambda_theory.tex}
+\input{chapters/existing_visualizations.tex}
+\input{chapters/graph_drawing_litterature.tex}
+\input{chapters/lambda_graph_drawing.tex}
+\input{chapters/visual_discussion.tex}
+\input{chapters/implementation.tex}
 \input{chapters/results.tex}
 \input{chapters/future_work.tex}
 
+\appendix
+\input{chapters/readme.tex}
+
 % Bibliography
-% \bibliographystyle{abbrv}
-% \bibliography{bibliography,bibl_graph_drawing}
+\bibliographystyle{abbrv}
+\bibliography{bibliography,bibl_graph_drawing}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
