@@ -41,7 +41,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 		# If node is dragged new position will be put into GraphViz graph
 		if hasattr(self, 'dragnode') and self.dragnode:
 			for Anode in Npre:
-				if hasattr(self, 'dragnodename') and Anode.name == self.dragnodename:
+				if hasattr(self, 'dragnodename') and Anode.title() == self.dragnodename:
 					newx = self.dragnodex
 					newy = self.dragnodey
 					Anode.attr["pos"]= str(int(newx)) + "," + str(int(newy))
@@ -54,7 +54,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 		
 		# Assigns new positions in the GraphViz graph to the "correct" graph
 		for Anode in N:
-			graphnode = self.nodenametable[Anode.name]
+			graphnode = self.nodenametable[Anode.title()]
 			graphnode.x, graphnode.y = map(float, Anode.attr["pos"].split(','))
 			
 			for edge in graphnode.children:
