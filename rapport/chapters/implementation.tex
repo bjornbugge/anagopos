@@ -131,6 +131,7 @@ continue, i.e. how many terms should be reduced. Note that, in general, a
 forwards. Therefore, the value used in practice in the implementation is fixed
 to $10^6$.
 
+{\textcolor{black}
 In the case of reduction graphs of infinite size, the computation only halts
 when the given maximum is reached. For finite graphs, the computation halts
 either when the maximum is reached or when the graph is fully computed,
@@ -142,7 +143,7 @@ stages in the program indeed see the different generations of graphs as
 distinct objects, instead of a collection of references to the same set of
 \pycode{Node}s. The built-in copy operation \pycode{copy.deepcopy()} proved to
 be too slow, therefore a custom deep copy operation was implemented.
-
+}
 \section{Drawing Algorithms}
 
 All drawing algorithms are implemented as classes extending the
