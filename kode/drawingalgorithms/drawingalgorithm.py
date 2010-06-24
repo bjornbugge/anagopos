@@ -9,8 +9,8 @@ class DrawingAlgorithm(object):
 	'''
 	
 	bezier = None
-	draggable = True
-	draggableupdate = False
+	draggable = None
+	draggableupdate = None
 	
 	def __init__(self, graph):
 		raise NotImplementedError()
