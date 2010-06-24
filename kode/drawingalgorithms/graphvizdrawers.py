@@ -76,7 +76,7 @@ class GraphVizDrawer(DrawingAlgorithm):
 		
 		# Assigns new positions in the GraphViz graph to the "correct" graph
 		for Anode in N:
-			graphnode = self.nodenametable[Anode.get_name()]
+			graphnode = self.nodenametable[Anode.title()]
 			graphnode.x, graphnode.y = map(float, Anode.attr["pos"].split(','))
 			
 			for edge in graphnode.children:
