@@ -1,5 +1,8 @@
+#! /usr/bin/env python
+import os
 import gtk
 import math
+import random
 import time
 import computegraph.operations as operations
 import computegraph.randomgraph as randomgraph
@@ -38,14 +41,14 @@ t = '#B1.(((#B2.(#B3.(B3)) #B4.(#B5.(#B6.((#B7.(B6) #B8.(#B9.(#B10.(B5)))))))) (
 def redraw(widget):
 	if drawing.ready:
 		drawing.graph.reset()
-		drawing.graph.update_layout()
+		drawing.graph.update_layout_animated(iter_animated)
 		drawing.queue_draw()
 	else:
 		print "No graph created yet!"
 	
 def optimize(widget):
 	if drawing.ready:
-		drawing.graph.update_layout()
+		drawing.graph.update_layout_animated(iter_animated)
 		drawing.queue_draw()
 	else:
 		print "No graph created yet!"
@@ -78,12 +81,12 @@ def back(widget):
 			g = Drawer(rg)
 			drawing.graphlist[drawing.graphnumber] = g
 			drawing.graph = g
-			drawing.graph.update_layout()
+			drawing.graph.update_layout_animated(iter_animated)
 			drawing.queue_draw()
 		else:
 			drawing.graphnumber -= 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
-			drawing.graph.update_layout()
+			drawing.graph.update_layout_animated(iter_animated)
 			drawing.queue_draw()
 	outputtext()
 
@@ -97,13 +100,13 @@ def forward(widget):
 			g = Drawer(rg)
 			drawing.graphlist[drawing.graphnumber] = g
 			drawing.graph = g
-			drawing.graph.update_layout()
-			drawing.queue_draw()
+			drawing.graph.update_layout_animated(iter_animated)
+			#drawing.queue_draw()
 		else:
 			drawing.graphnumber += 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
-			drawing.graph.update_layout()
-			drawing.queue_draw()
+			drawing.graph.update_layout_animated(iter_animated)
+			#drawing.queue_draw()
 	else:
 		try:
 			rg = drawing.iterator.next()
@@ -112,8 +115,8 @@ def forward(widget):
 			drawing.graphlist.append(g)
 			drawing.graphnumber += 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
-			drawing.graph.update_layout()
-			drawing.queue_draw()
+			drawing.graph.update_layout_animated(iter_animated)
+			#drawing.queue_draw()
 		except StopIteration:
 			#print "There are no more graphs"
 			outputtext()
@@ -127,11 +130,19 @@ algorithms = {'Neato' : NeatoGraph,
 			'TwoPi' : TwopiGraph,
 			'Circo' : CircoGraph,
 			'Fdp' : FdpGraph}
+			
+def iter_animated(widget):
+	sleeptime = 0.00
+	if hasattr(drawing, 'doiter') and drawing.doiter:
+		while gtk.events_pending():
+			gtk.main_iteration(True)
+	drawing.queue_draw()
+	time.sleep(sleeptime)
 
 def applyiterator(widget):
 	try:
 		drawing.startnum = int(start.get_text())
-		drawing.endnum = 1000000# Default value instead of this: int(end.get_text())
+		drawing.endnum = 1000000
 		tempterm = termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter())
 		drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
 		drawing.mgs = []
@@ -149,9 +160,9 @@ def applyiterator(widget):
 			pass
 		drawing.graphnumber = 0
 		initgraph()
-		#drawing.graph.update_layout_animated(drawing.queue_draw())
-		drawing.graph.update_layout()
-		drawing.queue_draw()
+		drawing.graph.update_layout_animated(iter_animated)
+		#drawing.graph.update_layout()
+		#drawing.queue_draw()
 		drawing.ready = True
 		drawing.startnumber = int(start.get_text())
 		outputtext()
@@ -212,7 +223,15 @@ def changed_cb(entry):
 			drawing.selectedhaschanged = False
 		else:
 			try:
+				#drawing.destroy()
+				#drawing = GraphArea(graph)
+				#gtk.main_iteration(True)
+				#drawing.queue_clear()
 				drawing.selectedhaschanged = True
+				if entry.get_text() == "Neato Animated":
+					drawing.doiter = True
+				else:
+					drawing.doiter = False
 				#print "New drawing algorithm: " + str(entry.get_text())
 				drawing.selected = entry.get_text()
 				Drawer = algorithms[drawing.selected]
@@ -221,7 +240,7 @@ def changed_cb(entry):
 				g = Drawer(rg)
 				drawing.graphlist[drawing.graphnumber] = g
 				drawing.graph = drawing.graphlist[drawing.graphnumber]
-				drawing.graph.update_layout()
+				drawing.graph.update_layout_animated(iter_animated)
 				drawing.queue_draw()
 			except:
 				pass
@@ -230,7 +249,7 @@ def changed_cb(entry):
 			outputtextbuffer.set_text(outputtext)
 			
 			# drawing.graph = drawing.mgs[drawing.graphnumber]
-			drawing.graph.update_layout()
+			drawing.graph.update_layout_animated(iter_animated)
 			drawing.queue_draw()
 
 def key_press_event(widget, event):
@@ -253,7 +272,7 @@ def key_release_event(widget, event):
 		drawing.ctrl = False
 		
 def button_press_event(widget, event):
-	x = event.x - 240
+	x = event.x# - 240
 	y = event.y
 	r = 10
 	
@@ -279,7 +298,7 @@ def button_press_event(widget, event):
 				drawing.graph.dragnodenode = node
 
 def button_release_event(widget, event):
-	x = event.x - 240
+	x = event.x# - 240
 	y = event.y
 	r = 10
 	if hasattr(drawing.graph, 'dragnode') and drawing.graph.dragnode:
@@ -320,7 +339,7 @@ def motion_notify_event(widget, event):
 	if hasattr(drawing.graph, 'draggable') and drawing.graph.draggable:
 		if hasattr(drawing.graph, 'dragnode') and drawing.graph.dragnode:
 			
-			x = event.x - 240
+			x = event.x# - 240
 			y = event.y
 			drawing.graph.nodenametable[drawing.graph.dragnodename].x = x
 			drawing.graph.nodenametable[drawing.graph.dragnodename].y = y
@@ -343,12 +362,13 @@ if __name__ == "__main__":
 	window.connect("delete-event", gtk.main_quit)
 	window.connect("key_press_event", key_press_event)
 	window.connect("key_release_event", key_release_event)
-	window.connect("button_release_event", button_release_event)
-	window.connect("button_press_event", button_press_event)
-	window.connect("motion_notify_event", motion_notify_event)
-	window.set_events(gtk.gdk.BUTTON_RELEASE_MASK
-						| gtk.gdk.BUTTON_PRESS_MASK
-						| gtk.gdk.POINTER_MOTION_MASK)
+	#window.connect("button_release_event", button_release_event)
+	#window.connect("button_press_event", button_press_event)
+	#window.connect("motion_notify_event", motion_notify_event)
+	#window.set_events(gtk.gdk.BUTTON_RELEASE_MASK
+	#					| gtk.gdk.BUTTON_PRESS_MASK
+	#					| gtk.gdk.POINTER_MOTION_MASK)
+	
 	width = 1024
 	height = 768
 	window.resize(width, height)
@@ -358,6 +378,13 @@ if __name__ == "__main__":
 	
 	drawing.ready = False
 	drawing.shownewestedget = False
+	
+	drawing.connect("button_release_event", button_release_event)
+	drawing.connect("button_press_event", button_press_event)
+	drawing.connect("motion_notify_event", motion_notify_event)
+	drawing.set_events(gtk.gdk.BUTTON_RELEASE_MASK
+						| gtk.gdk.BUTTON_PRESS_MASK
+						| gtk.gdk.POINTER_MOTION_MASK)
 	
 	widgetboxH = gtk.HBox(False, 10)
 	widgetboxV = gtk.VBox(False, 10)

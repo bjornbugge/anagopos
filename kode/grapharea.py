@@ -42,13 +42,6 @@ class GraphArea(gtk.DrawingArea):
 		#print "do_expose_event"
 		self.__cr = self.window.cairo_create()
 		self.__render()
-		
-	def iter_done( self ):
-		print "drawing" 
-		while gtk.events_pending():
-			gtk.main_iteration(False)		
-		self.queue_draw()
-		time.sleep(0.03)
 	
 	def initgraph(self):
 		try:
