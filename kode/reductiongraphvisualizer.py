@@ -55,19 +55,20 @@ def back(widget):
 	else:
 		drawing.firstgraph = False
 		if hasattr(drawing, 'selectedhaschanged') and drawing.selectedhaschanged:
-			print "selectedhaschanged"
 			drawing.graphnumber -= 1
 			rg = drawing.reductiongraphlist[drawing.graphnumber]
 			g = Drawer(rg)
 			drawing.graphlist[drawing.graphnumber] = g
 			drawing.graph = g
 			drawing.graph.initwith(drawing.graphlist[drawing.graphnumber + 1])
+			outputtext()
 			drawing.graph.update_layout_animated(iter_animated)
 			drawing.queue_draw()
 			# drawing.selectedhaschanged = False
 		else:
 			drawing.graphnumber -= 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
+			outputtext()
 			drawing.graph.update_layout_animated(iter_animated)
 			# drawing.queue_draw()
 	outputtext()
@@ -78,19 +79,20 @@ def forward(widget):
 	drawing.firstgraph = False
 	if drawing.graphnumber + 2 <= len(drawing.graphlist):
 		if hasattr(drawing, 'selectedhaschanged') and drawing.selectedhaschanged:
-			print "selectedhaschanged"
 			drawing.graphnumber += 1
 			rg = drawing.reductiongraphlist[drawing.graphnumber]
 			g = Drawer(rg)
 			drawing.graphlist[drawing.graphnumber] = g
 			drawing.graph = g
 			drawing.graph.initwith(drawing.graphlist[drawing.graphnumber - 1])
+			outputtext()
 			drawing.graph.update_layout_animated(iter_animated)
 			# drawing.selectedhaschanged = False
 		else:
 			drawing.graphnumber += 1
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
 			drawing.graph.initwith(drawing.graphlist[drawing.graphnumber - 1])
+			outputtext()
 			drawing.graph.update_layout_animated(iter_animated)
 	else:
 		try:
@@ -102,11 +104,11 @@ def forward(widget):
 			drawing.graph = drawing.graphlist[drawing.graphnumber]
 			if type(drawing.graph) is type(drawing.graphlist[drawing.graphnumber - 1]):
 				drawing.graph.initwith(drawing.graphlist[drawing.graphnumber - 1])
+			outputtext()
 			drawing.graph.update_layout_animated(iter_animated)
 		except StopIteration:
-			outputtext()
 			drawing.nomoregraphs = True
-	outputtext()
+			outputtext()
 
 # Dictionary with algorithms
 algorithms = {'Neato' : NeatoGraph,
@@ -147,10 +149,9 @@ def applyiterator(widget):
 			pass
 		drawing.graphnumber = 0
 		initgraph()
+		outputtext()
 		drawing.graph.update_layout_animated(iter_animated)
 		drawing.ready = True
-		
-		outputtext()
 		if hasattr(drawing, 'starttobig') and drawing.starttobig:
 			start.modify_base(gtk.STATE_NORMAL, gtk.gdk.color_parse("#FF0000"))
 		else:
@@ -206,9 +207,6 @@ def changed_cb(entry):
 			drawing.queue_draw()
 		except:
 			pass
-		
-		outputtext = "Generation: " + str(drawing.graphnumber + int(start.get_text()))
-		outputtextbuffer.set_text(outputtext)
 		drawing.graph.update_layout_animated(iter_animated)
 		drawing.queue_draw()
 

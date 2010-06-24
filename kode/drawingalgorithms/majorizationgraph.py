@@ -247,7 +247,7 @@ class MajorizationGraph(DrawingAlgorithm):
 	def _get_D_matrix(self):
 		(D, A) = self._get_graph_distances()
 		W = numpy.mat(numpy.zeros([self.n, self.n]))
-		print self.n
+		#print self.n
 		if not self._compute_distances():
 			self.alpha = 1
 		else:

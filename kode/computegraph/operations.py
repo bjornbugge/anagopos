@@ -198,7 +198,7 @@ def reductiongraphiter(root, start, end):
 		
 		guard = guard + 1
 	
-	print "Performed " + str(reductions) + " reductions."
+	#print "Performed " + str(reductions) + " reductions."
 	if len(work) > 0:
 		print "Incomplete reduction graph!"
 
