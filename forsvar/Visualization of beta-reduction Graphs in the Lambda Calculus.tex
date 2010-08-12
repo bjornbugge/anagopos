@@ -29,11 +29,11 @@
 \begin{document}
 \title{Visualization of $\beta$-reduction Graphs in the Lambda Calculus}   
 \author{Niels Bjørn Bugge Grathwohl og Jens Duelund Pallesen} 
-\date{\today} 
+\date{13. august 2010} 
 
 \frame{\titlepage}
 
-\frame{\frametitle{Table of contents}\tableofcontents} 
+\frame{\frametitle{Indhold}\tableofcontents} 
 
 
 \section{Introduktion}
@@ -76,8 +76,8 @@
 \frame{\frametitle{Design: Graftegner} 
 \begin{itemize}
 	\item GraphViz -- Tilbyder en række tegnealgoritmer.
-	\item Majorization -- Vores egen implementation af en tegnealgoritme, som tilbyder.
-	ekstra fleksibilitet i forhold til GraphViz' tegnealgoritmer (animering, tweaks).
+	\item Majorization -- Vores egen implementation af en tegnealgoritme, som tilbyder
+	ekstra fleksibilitet i forhold til GraphViz's tegnealgoritmer (animering, tweaks).
 	\item PyGTK -- Brugt til GUI pga. god understøttelse samt at det er enkelt at benytte.
 	\item Python Widgets -- Brugt til at binde de forskellige GUI elementer sammen.
 \end{itemize} 
@@ -93,7 +93,6 @@
 \begin{figure}[htbp!]
 	\centering
 		\includegraphics[height=2in]{screen.png}
-	\caption{caption}
 	\label{fig:screen}
 \end{figure}
 }
@@ -101,11 +100,11 @@
 \section{Eksempler}
 \frame{\frametitle{Eksempler} 
 \begin{itemize}
-	\item Predecessor og Successor
-	\item Addition, multiplikation og potens
-	\item Hypercube
-	\item Assosiation
-	\item Cons
+	\item Predecessor og Successor.
+	\item Addition, multiplikation og potens.
+	\item Hypercube.
+	\item Association.
+	\item Cons.
 \end{itemize} 
 }
 
@@ -130,8 +129,8 @@
 \includegraphics[height=1.5in]{Cube5d_NEATO.png}
 }
 
-\subsection{Assosiation}
-\frame{\frametitle{Assosiation}
+\subsection{Association}
+\frame{\frametitle{Association}
 \begin{figure}[htbp!]
 	\subfigure[$\omega_3 \omega_3 \omega_3 \omega_3$]{
 		\includegraphics[height=1.2in]{Snake_2_NEATO.png}
@@ -158,15 +157,14 @@
 	\subfigure[(5,0)]{
 		\includegraphics[height=1.2in]{Cons50_NEATO.png}
 	}
-	\caption{Cons funktionen}
 \end{figure}
 }
 
 \section{Performance}
 \frame{\frametitle{Performance}
 \begin{itemize}
-	\item Neato giver bedste all-round resultater 
-	\item Benchmarks
+	\item Neato giver bedste all-round resultater mht. brugbarhed.
+	\item Benchmarks (kørsler af layoutalgoritmerne uden GUI og uden at tegne grafen):
 \end{itemize} 
 \begin{center}
 	\begin{tabular}{| c | c | c | c | c | c |}
@@ -174,7 +172,7 @@
 		\multicolumn{6}{|c|}{Lambda Term: Predecessor til 4} \\
 		\multicolumn{6}{|c|}{Generationsnummer: 300} \\
 		\hline Neato Animated & Circo & Dot & Neato & TwoPi & Fdp \\
-		\hline 4.36 & 310.44 & 0.91 & 1.11 & 0.23 & 10.90 \\
+		\hline 4.36 s & 310.44 s & 0.91 s & 1.11 s & 0.23 s & 10.90 s \\
 		\hline
 	\end{tabular}
 \end{center}
@@ -184,7 +182,7 @@
 		\multicolumn{6}{|c|}{Lambda Term: $2^2$} \\
 		\multicolumn{6}{|c|}{Generationsnummer: 35} \\
 		\hline Neato Animated & Circo & Dot & Neato & TwoPi & Fdp \\
-		\hline 0.05 & 0.12 & 0.04 & 0.05 & 0.04 & 0.09 \\
+		\hline 0.05 s & 0.12 s & 0.04 s & 0.05 s & 0.04 s & 0.09 s \\
 		\hline
 	\end{tabular}
 \end{center}
@@ -193,20 +191,22 @@
 \section{Fremtidigt arbejde}
 \frame{\frametitle{Fremtidigt arbejde}
 \begin{itemize}
-	\item Udbygge med flere graftegnealgoritmer  
+	\item Udbygge med flere graftegnealgoritmer.
+	\item Udbygge med flere reduktionssystemer end lambda kalkyle.  
 	\item OpenGL omskrivning (3D, zooming, etc.)
-	\item Reduktionsstrategier
-	\item Multitrådet
-	\item Eksportering / Importering
-	\item Reel brugertest
+	\item Highlighting af forskellige reduktionsstrategiers ``stier'' gennem reduktionsgrafen.
+	\item Multitrådet.
+	\item Eksport/import af grafer.
+	\item Reel brugertest.
 \end{itemize} 
 }
 
 \section{Konklusion}
 \frame{\frametitle{Konklusion} 
 \begin{itemize}
-	\item En velfungerende 1. version  
-	\item Gode udbyggelsesmuligheder
+	\item En 1. version der gør det muligt hurtigt at se komplekse reduktionsgrafer,
+	der ville tage lang tid at udregne og tegne i hånden.
+	\item Gode udbyggelsesmuligheder.
 \end{itemize} 
 }
 
