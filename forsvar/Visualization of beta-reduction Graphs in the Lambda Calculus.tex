@@ -10,6 +10,7 @@
 \usepackage{hyperref}
 \hypersetup{colorlinks=false}
 \usepackage{url}
+\usepackage[utf8]{inputenc} 
 
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\R}{\mathbb{R}}
@@ -38,9 +39,8 @@
 \section{Introduktion}
 \frame{\frametitle{Introduktion} 
 \begin{itemize}
-	\item Der findes visulaiseringer af lambda kalkyler
-	\item Der findes ingen visualiseringer af reduktionsgrafer
-	\item Forskere og undervisere
+	\item Der findes visulaiseringer af lambda kalkyler, men ingen visualiseringer af reduktionsgrafer
+	\item Produktet er udviklet med hensyn til forskere og undervisere inden for området
 \end{itemize}
 }
 
@@ -48,8 +48,8 @@
 \section{Design}
 \frame{\frametitle{Design} 
 \begin{itemize}
-	\item Todelt design 
-	\item Let at udvide
+	\item Opdelt design, gør det muligt at udskifte individuelle dele uaflhængigt af hinanden
+	\item Et design, som er let at udvide med f.eks. nye tegnealgoritmer
 	\item Multiplatform (Python og GTK)
 \end{itemize} 
 }
@@ -65,17 +65,17 @@
 \subsection{Graftegner}
 \frame{\frametitle{Graftegner} 
 \begin{itemize}
-	\item GraphViz
-	\item Majoriazation
-	\item PyGTK
-	\item Python Widgets
+	\item GraphViz - Tilbyder en række tegnealgoritmer
+	\item Majoriazation - Vores egenimplementerede tegnealgoritme, som tilbyder ekstra fleksibilitet i forhold til GraphViz' tegnealgoritmer
+	\item PyGTK - Brugt til GUI pga. god understøttelse samt at det er enkelt at benytte
+	\item Python Widgets - Brugt til at binde de forskellige GUI elementer sammen
 \end{itemize} 
 }
 
 \subsection{GUI}
 \frame{\frametitle{GUI} 
 \begin{itemize}
-	\item Det er ikke en GUI opgave
+	\item Det er ikke en GUI opgave - Fokus har været på 
 	\item Enkel GUI
 \end{itemize} 
 }
