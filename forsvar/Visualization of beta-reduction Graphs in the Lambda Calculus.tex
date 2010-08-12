@@ -68,6 +68,8 @@
 	\item Hvert uset kontraktum tilføjes reduktionsgrafen.
 	\item Forbindelser mellem termen der reduceres samt dets kontrakta indkodes i reduktionsgrafen, 
 	og næste term i grafen tages under behandling.
+	\item For at imødekomme problemet med uendeligt store grafer, fungerer grafgeneratoren
+	som en iterator, der returnerer en stadigt mere ``komplet'' reduktionsgraf.
 	% \item Generering af tilfældige grafer
 \end{itemize} 
 }
@@ -81,6 +83,18 @@
 	\item PyGTK -- Brugt til GUI pga. god understøttelse samt at det er enkelt at benytte.
 	\item Python Widgets -- Brugt til at binde de forskellige GUI elementer sammen.
 \end{itemize} 
+}
+
+\subsection{Graftegner 2}
+\frame{\frametitle{Design: Grafiske elementer}
+\begin{itemize}
+	\item ``Menige'' knuder tegnes som sorte cirkler.
+	\item Normalformer er tegnet som store røde cirkler.
+	\item Starttermen er fremhævet som en mellemstor, grøn cirkel.
+	\item Hvis brugeren har valgt det fremhæves den ``aktive'' knude som en
+	mellemstor, mørkegrøn cirkel.
+	\item Selvrefererende knuder tegnes som røde firkanter.
+\end{itemize}
 }
 
 \subsection{GUI}
