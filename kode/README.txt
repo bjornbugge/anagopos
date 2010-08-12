@@ -1,8 +1,12 @@
 To run the application you run:
 python reductiongraphvisualizer.py
 
-Dependencies for this are:
-gtk, pygraphviz, cairo, numpy, scipy
+We have used the following:
+ - gtk 2.16.0
+ - pygraphviz 0.99.1
+ - cairo 1.8.8
+ - numpy 1.4.1
+ - scipy 0.7.2
 
 These are available in most Linux package management systems. If you are on a
 GNOME system you already have "gtk" and "cairo" installed.
@@ -12,6 +16,7 @@ following commands:
  - sudo apt-get install python-numpy
  - sudo apt-get install python-scipy
  - sudo apt-get install python-pygraphviz
+
 
 Shortcuts in the application:
 Forward:            Ctrl+f or Ctrl+n

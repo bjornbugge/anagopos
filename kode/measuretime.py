@@ -13,8 +13,8 @@ import lambdaparser.lambdaparser as parser
 from timeit import Timer
 
 # termStr = "((((#B1.(B1) #B2.(#B3.(B3))) #B4.((#B5.(B5) #B6.(#B7.(B6))))) #B8.(#B9.(#B10.(#B11.(B11))))) #B12.((#B13.(B13) #B14.(#B15.(#B16.((B14 #B17.(B15))))))))"
-termStr = "#n.(#f.(#x.(n (#g.(#h.(h (g f)))) (#u.(x)) (#u.(u))))) #f.(#x.(f (f (f (f (f x))))))"
-numGenerations = 412
+termStr = "#m.(#n.(#f.(#x.(m n f x)))) #f.(#x.(f (f x))) #f.(#x.(f (f x)))"
+numGenerations = 35
 
 term = parser.parse(termStr.replace(u'\u03bb',"#"))
 operations.assignvariables(term)
