@@ -85,7 +85,6 @@ Ball-like, n=6:             #x.(#y.(y y y y y y x x y))  #x.(#y.(y y y y y y x x
 The graph from Exercise 3.5.5(i) in [Barendregt]:
                             (#x.#y.x (#z.y z y) x) #x.(x) (#x.#y.x (#z.y z y) x)
 
-
 The following examples are not as concrete as the ones above, but give 
 interesting graphs nonetheless:
 1.      #a.(b) (#x.((x x) x) #y.((y y) y))
