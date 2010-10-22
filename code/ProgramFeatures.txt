@@ -1,0 +1,41 @@
+----- Must have features -----
+ - Draw New term [button] (pop-up box with settings)
+	 - Enter term / Generate semi-random term
+	 - Set term settings (e.g. number of reductions)
+	 - Select drawing algorithm
+	 - select between color schemes
+	 
+ - Redraw Current Graph Completely [button] (redraw graph with new random node positions) (Shortcut: Shift-R)
+
+ - Optimize Graph Drawing of Current term [button] (redraw graph with the already calculated node positions) (Shortcut: Shift+O)
+ 
+ - Step Forward in Current Term [button] (Shortcut: Shift+F)
+
+ - Step Backward in Current Term [button] (Shortcut: Shift+B)
+
+ - Settings [button] (pop-up box with settings) (Shortcut: Shift+S)
+	 -- Hvilke settings menes der her? Farver og den slags? Er det ikke de
+		samme settings som i "Draw new term[...]"?
+
+ - Click on node to get term displayed (left-click)
+
+ - Click on node to get all outgoing edges highlighted (Shift+left-click)
+
+ - Design a proper interface that can abstract away the type of algorithm, and
+	whether it is a GrahViz- or a home-cooked one. Must be easily extendable.
+
+ - Compare lambda terms better. Using the string comparison method is slow.
+
+ - When generating reduction graph with the "generator"-function, initialize
+   OpenGL stuff in the beginning and set it to listen to "graph ready"-events.
+   This way, the visualization begins immediately, reducing the perceived overhead.
+
+----- Nice to have features -----
+ - Zoom in to node
+
+ - Dragging a node to re-organize graph
+
+- Highlight different reduction strategies?
+
+- Home-cooked pickling. Pickle and cPickle cannot handle large reductiongraphs.
+
