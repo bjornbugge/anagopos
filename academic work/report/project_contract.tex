@@ -1,0 +1,117 @@
+\documentclass[11pt,oneside,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{mathpazo}
+\usepackage[pdftex,colorlinks]{hyperref}
+\hypersetup{colorlinks=false}
+
+\title{Project Contract - Draft}
+\author{Jens Duelund Pallesen \and
+Niels Bjørn Bugge Grathwohl}
+\date{2010-02-16}
+
+\begin{document}
+\maketitle
+
+% Contents of the project
+
+\section{Working Title}
+
+English$:$ Visualization of $\beta$-reduction-graphs in the lambda calculus.\\
+Danish$: $ Visualisering af $\beta$-reduktionsgrafer i lambda kalkyler.
+
+\section{Introduction}
+
+The aim of the project is to develop a method to visualize reduction graphs in
+the lambda calculus, so that they are ``beautiful'' and informative for
+theoretical computer scientists. This includes: developing a parser for some
+notation of the lambda calculus, developing a program that can compute the
+reduction graphs, and developing a program that, given a reduction graph, can
+visualize it in an intuitive way, at least for theoretical computer
+scientists.
+
+% Expected result 
+
+The expected result is a program that takes a lambda term, as input, and draws
+the $\beta$-reduction-graph as it develops after each iteration of reductions.
+These reduction graphs can thus be regarded as a ``film'', with each frame
+depicting the look of the reduction graph after reduction $n$.
+
+% Why is the project useful? 
+
+Our program is supposed to be used by researchers to infer knowledge about
+pros and cons of a reduction strategy or of a certain lambda term. It will
+provide inspiration for further investigations into previously unknown
+peculiarities or problems with a certain reduction strategy.
+
+Thus far there doesn't exist a proper, automatic way of visualizing these
+graphs. Researchers are limited to what they themselves can draw or imagine,
+and as reduction graphs becomes huge, this becomes a difficult task.
+
+% What is particularly difficult/of high risk?
+
+Because reduction graphs very often tend to become huge, there arises the
+problem of deciding whether they can be drawn on a plane at all. We will
+perhaps have to develop a routine for deciding this, along with routines for
+reordering the graph. Alternatively, a set of ``best practices'' for drawing
+the nodes could be developed that would minimize the amount of crossing edges
+as the film progresses forward. Yet more alternatively, methods for 3D-drawing
+could be considered. However, this will demand great care when determining the
+look of the images, as a 3-dimensional rendering of a large graph very easily
+could inhibit understanding and confuse the beholder, which is the opposite of
+what we are working towards.
+
+Furthermore, there is a design choice to be made whether each frame of the
+film should be drawn immediately after the reduction step has been completed,
+making the film rendering and the term reductions synchronized, or whether the
+rendering should begin only after all desired (or possible) reductions have
+been computed.
+
+\section{Specific Project Objectives}
+The specific objective in this project is to create a visualization of $\beta$-reduction-graphs in the lambda calculus. This will include tasks in the 3 following main areas:
+\begin{itemize}
+	\item The lambda calculus theory
+	\item Visualization and graph theory
+	\item Python development of the visualization software
+\end{itemize}
+
+\subsection{The lambda calculus theory}
+This part is not particular large, but still remains as an essential part of the project. Without a reasonably good understanding of lambda calculus and $\beta$-reduction-graphs it will not be possible to complete the project with a satisfactory outcome. A review on lambda calculus and $\beta$-reduction-graphs will furthermore create a better overall experience for the reader of the project report.
+
+\subsection{Visualization and graph theory}
+A very important part of this project is that the graphs must be beautiful and informative. When looking at the movie created from the $\beta$-reductions it should be possible to get an idea of the lambda term and how the $\beta$-reductions evolve. To accomplish this task, knowledge about visualization and graphs is necessary.
+
+\subsection{Python development of the visualization software}	
+The software itself is planned to be developed in Python. The software will basically consist of three elements; an interpreter of lambda expressions, a backend computing reduction graphs and last a program that, given a reduction graph, will draw the graphs and render the movie. A design like this will make it possible to independently exchange the three elements.
+
+\section{Learning Goals}
+The learning goals are developed from the project objectives described above. The list below describes our specific learning goals:
+\begin{itemize}
+	\item Establish an overall knowledge regarding Lambda Calculus and $\beta$-reduction-graphs.
+	\item Get an insight into application development in python.
+	\item Study visualization and graph theory, with the focus on making the reduction graphs both beautiful and informative
+	\item Develop software that will enable the user to easily acquire understanding of the $\beta$-reductions for a given lambda expression.
+	\item Design the software so that each of the three programs can work independently of the other two.
+\end{itemize}
+
+
+\section{Project Schedule}
+In the project we will have some main areas (or phases) to cover. When working iteratively on a project many of these phases will overlap, since we will be working on several areas in the same time period. The project will stretch over a period of 5 month.
+\begin{itemize}
+	\item Write report - 5 month
+	\item Focus on the lambda calculus theory - 1 month
+	\item Designing the look of the visualization - 3 month
+	\item Implementation of the software - 4 month
+	\begin{itemize}
+		\item[-] Lambda expression parser - 2 weeks
+		\item[-] Reduction graphs generator - 2 month
+		\item[-] Graphs generator - 3 month
+	\end{itemize}
+	\item Testing the software - 3 month
+\end{itemize}
+
+
+\end{document}

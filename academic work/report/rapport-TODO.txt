@@ -1,0 +1,46 @@
+# - Egenskaber ved reduktionsgrafer relevante for visualiseringen af dem.
+#   o Sammenhængende.
+#   o (Kan være) Store!
+#   o Med retning => pile.
+#   o Høj spredning af knudevalens (måske?).
+# 
+# - Overvejelser mht. det visuelle udtryk; farvevalg, størrelse på pilehoveder 
+#   og den slags.
+
+- Beskrivelse af opbygningen af koden.
+  o Overvejelser mht. effektivitet.
+  o Gennemgang af algoritmerne anvendt, samt forklaring af GraphViz-biblioteket.
+  o (Kort) Beskrivelse af GUIen.
+  o Pointering af at det er "let" at tilføje nye tegnealgoritmer, samt at anvende
+    tegnemodulet til en helt anden type grafer af anden oprindelse end reduktionsgraferne.
+  o Nævn den hjemmestrikkede deepcopy og motivationen for denne.
+
+- Diskussion af evt. fejl/problemer i koden. (Specielt MajorizationGraph-algoritmen
+  opfører sig lidt underligt til tider...)
+
+- Kort gennemgang af et "standardbibliotek" af lambdatermer med interessante
+  reduktionsgrafer.
+
+- Sammenligning af de forskellige visualiseringsalgoritmer på performance og æstetik.
+  o Diskussion af styrker og svagheder ved de forskellige algoritmer samt 
+    muligheder for at kombinere dem.
+  o Tegninger af de grafer der også vises eksempler på i Lambda Caluculus-kapitlet
+    m. forskellige tegnealgoritmer.
+
+- Præsentation af resultater med _mange_ screenshots og forklaringer af, hvorfor
+  netop denne graf er interessant!
+
+- Diskussion af ekstra (ej implementerede) features.
+  o Farvning af "reduktionsrækkefølgen" vha. et farvenuancespænd på kanterne: 
+    De ældste kanter farves lysere end de nyeste kanter.
+  o Navigation, zoom/pan, fish eye, fastlåsning af visse knuder mens resten 
+    genpositioneres.
+  o CLI-interface m. simpelt scripting-sprog?
+  o STORE grafer => ressourceproblemer mht. RAM som der ikke tages hånd om nu.
+    (Lav )
+  o Pretty-print af lambdatermer. Højreklik på en knude og vælg "Send to 
+    clip board" og gem termen i pæn, formateret (indenteret) tilstand.
+
+- Opsummering af resultater; hvad kan man nu som man ikke kunne før?
+
+
