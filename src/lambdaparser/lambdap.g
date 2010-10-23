@@ -1,5 +1,5 @@
 # Reduction Visualizer. A tool for visualization of reduction graphs.
-# Copyright (C) 2010 Niels Bjørn Bugge Grathwohl & Jens Duelund Pallesen
+# Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
