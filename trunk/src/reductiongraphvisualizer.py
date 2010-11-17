@@ -17,6 +17,8 @@
 #! /usr/bin/env python
 import os
 import gtk
+import wx
+from wx import glcanvas
 import math
 import random
 import time
