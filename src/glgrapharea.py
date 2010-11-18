@@ -16,15 +16,29 @@
 
 import gtk
 import cairo
+import sys
 import math
+import random
 import time
+import os
+import wx
+from wx import glcanvas
 from OpenGL.GL import *	 
 from OpenGL.GLU import *	 
 from OpenGL.GLUT import *
-from wx import glcanvas
-import wx
+import computegraph.operations as operations
+import computegraph.randomgraph as randomgraph
+import lambdaparser.lambdaparser as parser
 
-class CanvasBase(glcanvas.GLCanvas):
+# Drawing algorithms
+from drawingalgorithms.majorizationgraph import MajorizationGraph
+from drawingalgorithms.graphvizdrawers import CircoGraph
+from drawingalgorithms.graphvizdrawers import DotGraph
+from drawingalgorithms.graphvizdrawers import NeatoGraph
+from drawingalgorithms.graphvizdrawers import TwopiGraph
+from drawingalgorithms.graphvizdrawers import FdpGraph
+
+class MyCanvasBase(glcanvas.GLCanvas):
 	def __init__(self, parent, width = 1024, height = 768, iterable = None):
 		glcanvas.GLCanvas.__init__(self, parent, -1)
 		self.init = False
@@ -54,35 +68,8 @@ class CanvasBase(glcanvas.GLCanvas):
 		# self.InitGL(width, height)
 		self.ipoints = None
 		self.cr = None
-		self.graphlist = []
-		self.graphnumber = 0
-		self.graph = None
-		self.small_radius = 5
-		self.medium_radius = 10
-		self.large_radius = 15
-		self.arrow_color = (1.0, 36.0 / 255.0, 0.0)
-		self.newest_edge_color = (34.0/255.0,139.0/255.0,34.0/255.0)
-		self.normal_edge_color = (0/255.0, 100.0/255.0, 245.0/255.0)
-		self.first_node_color = (0, 100.0, 127.0/255.0)
-		self.newest_edge_width = 3
-		self.normal_edge_width = 1
-		self.selected_edge_width = 5
-		self.normal_form_color = (0xa4/255.0, 0, 0)
-		self.newest_node_color = (34.0/255.0,139.0/255.0,34.0/255.0)
-		self.normal_node_color = (0, 0, 0)
-		self.scaling = None
 
-	def InitGL(self, Width, Height):
-		# Anti-aliasing/prettyness stuff
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-		glEnable(GL_BLEND)
-		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-		glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
-		glEnable(GL_LINE_SMOOTH)
-		glEnable(GL_POINT_SMOOTH)
-		glEnable(GL_POLYGON_SMOOTH)
-		
+
 	def OnEraseBackground(self, event):
 		pass # Do nothing, to avoid flashing on MSW.
 
@@ -121,6 +108,132 @@ class CanvasBase(glcanvas.GLCanvas):
 			self.lastx, self.lasty = self.x, self.y
 			self.x, self.y = evt.GetPosition()
 			self.Refresh(False)
+
+
+class MyCubeCanvas(MyCanvasBase):
+	
+	def InitGL(self, Width, Height):
+
+		# Anti-aliasing/prettyness stuff
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		glEnable(GL_BLEND)
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+		glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+		glEnable(GL_LINE_SMOOTH)
+		glEnable(GL_POINT_SMOOTH)
+		glEnable(GL_POLYGON_SMOOTH)
+
+
+
+	def OnDraw(self):
+		# clear color and depth buffers
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+		
+		graph = None
+		drawing = GraphArea(graph)
+		# drawing1 = CanvasBase(graph)
+		drawing.ready = False
+		drawing.shownewestedget = False
+		
+		# DRAW GRAPH FUNCTION
+		if True:
+			drawing.startnum = 50
+			drawing.endnum = 1000000
+			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
+			drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+			drawing.mgs = []
+			operations.assignvariables(drawing.term)
+			drawing.selected = TwopiGraph
+			drawing.startnumber = 1
+			try:
+				def iterator():
+					Drawer = drawing.selected
+					for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+						yield g
+				drawing.iterator = iterator()
+			except KeyError:
+				pass
+			drawing.graphnumber = 0
+			
+			# INIT FUNCTION
+			if True:
+				Drawer = drawing.selected
+				rg = drawing.iterator.next()
+				g = Drawer(rg)
+				drawing.reductiongraphlist = [rg]
+				drawing.graph = g
+				drawing.graphlist = [g]
+				drawing.starttobig = False
+			
+			drawing.graph.update_layout()
+			
+			Xs = [node.x for node in drawing.graph.nodes]
+			Ys = [node.y for node in drawing.graph.nodes]
+			print min(Xs)
+			print max(Xs)
+			print min(Ys)
+			print max(Ys)
+			# scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
+			
+			# for node in drawing.graph.nodes:
+			# 	print node.x
+		
+			glMatrixMode(GL_PROJECTION)
+			glLoadIdentity()
+			gluOrtho2D(0.0, (max(Xs)+10), 0.0, (max(Ys)+10))
+			glMatrixMode(GL_MODELVIEW)
+			
+			# draw six faces of a cube
+			# glColor3f(0.3, 0.6, 1.0)
+			# glPointSize(10)
+			
+			for node in drawing.graph.nodes:
+				for edge in node.children:
+					glLineWidth(4.0)
+					glColor4f(0.3, 0.9, 0.2, 0.3)
+					far_node = edge.get_far(node)
+					glBegin(GL_LINES)
+					glVertex2f(far_node.x, far_node.y)
+					glVertex2f(node.x, node.y)
+					glEnd()
+					
+					glLineWidth(2.0)
+					glColor4f(0.3, 0.9, 0.2, 0.4)
+					far_node = edge.get_far(node)
+					glBegin(GL_LINES)
+					glVertex2f(far_node.x, far_node.y)
+					glVertex2f(node.x, node.y)
+					glEnd()
+					
+					glLineWidth(0.5)
+					glColor4f(0.3, 0.9, 0.2, 1.0)
+					far_node = edge.get_far(node)
+					glBegin(GL_LINES)
+					glVertex2f(far_node.x, far_node.y)
+					glVertex2f(node.x, node.y)
+					glEnd()
+
+			for node in drawing.graph.nodes:
+				glPointSize(25)
+				glColor4f(0.3, 0.6, 1.0, 0.3)
+				glBegin(GL_POINTS)
+				glVertex2f(node.x, node.y)
+				glEnd()
+				
+				glPointSize(20)
+				glColor4f(0.3, 0.6, 1.0, 0.6)
+				glBegin(GL_POINTS)
+				glVertex2f(node.x, node.y)
+				glEnd()
+				
+				glPointSize(15)
+				glColor4f(0.3, 0.6, 1.0, 1.0)
+				glBegin(GL_POINTS)
+				glVertex2f(node.x, node.y)
+				glEnd()
+
+		self.SwapBuffers()
 
 class GraphArea(gtk.DrawingArea):
 	__gsignals__ = {
