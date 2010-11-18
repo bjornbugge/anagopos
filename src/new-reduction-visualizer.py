@@ -1,14 +1,35 @@
 #!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 import sys
+import math
+import random
+import time
+import os
 import wx
 from wx import glcanvas
 from OpenGL.GL import *	 
+from OpenGL.GLU import *	 
 from OpenGL.GLUT import *
+import computegraph.operations as operations
+import computegraph.randomgraph as randomgraph
+import lambdaparser.lambdaparser as parser
+from glgrapharea import GraphArea
+from glgrapharea import CanvasBase
+
+# Drawing algorithms
+from drawingalgorithms.majorizationgraph import MajorizationGraph
+from drawingalgorithms.graphvizdrawers import CircoGraph
+from drawingalgorithms.graphvizdrawers import DotGraph
+from drawingalgorithms.graphvizdrawers import NeatoGraph
+from drawingalgorithms.graphvizdrawers import TwopiGraph
+from drawingalgorithms.graphvizdrawers import FdpGraph
+
+# TEMP
+import pygraphviz as pgv
 
 
 class MyCanvasBase(glcanvas.GLCanvas):
-	def __init__(self, parent):
+	def __init__(self, parent, width = 1024, height = 768, iterable = None):
 		glcanvas.GLCanvas.__init__(self, parent, -1)
 		self.init = False
 		self.context = glcanvas.GLContext(self)
@@ -23,6 +44,20 @@ class MyCanvasBase(glcanvas.GLCanvas):
 		self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
 		self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
 		self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
+		self.term = None
+		self.graph = None
+		self.node = None
+		self.fullscreen = 0
+		self.window_height = height
+		self.window_width = width
+		self.resizeWindow = 0
+		self.pointSize = 5
+		self.pointArray = None
+		self.graphiterable = iterable
+		self.graphlist = []
+		# self.InitGL(width, height)
+		self.ipoints = None
+		self.cr = None
 
 
 	def OnEraseBackground(self, event):
@@ -44,7 +79,7 @@ class MyCanvasBase(glcanvas.GLCanvas):
 		dc = wx.PaintDC(self)
 		self.SetCurrent(self.context)
 		if not self.init:
-			self.InitGL()
+			self.InitGL(self.window_height, self.window_width)
 			self.init = True
 		self.OnDraw()
 
@@ -59,7 +94,7 @@ class MyCanvasBase(glcanvas.GLCanvas):
 
 
 	def OnMouseMotion(self, evt):
-		if evt.Dragging() and evt.LeftIsDown():
+		if evt.Dragging() and evt.LeftIsDown() and False:
 			self.lastx, self.lasty = self.x, self.y
 			self.x, self.y = evt.GetPosition()
 			self.Refresh(False)
@@ -68,137 +103,141 @@ class MyCanvasBase(glcanvas.GLCanvas):
 
 
 class CubeCanvas(MyCanvasBase):
-	def InitGL(self):
-		# set viewing projection
-		glMatrixMode(GL_PROJECTION)
-		glFrustum(-0.5, 0.5, -0.5, 0.5, 1.0, 3.0)
+	
+	def InitGL(self, Width, Height):
 
-		# position viewer
-		glMatrixMode(GL_MODELVIEW)
-		glTranslatef(0.0, 0.0, -2.0)
+		# Anti-aliasing/prettyness stuff
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		glEnable(GL_BLEND)
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+		glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+		glEnable(GL_LINE_SMOOTH)
+		glEnable(GL_POINT_SMOOTH)
+		glEnable(GL_POLYGON_SMOOTH)
 
-		# position object
-		glRotatef(self.y, 1.0, 0.0, 0.0)
-		glRotatef(self.x, 0.0, 1.0, 0.0)
-
-		glEnable(GL_DEPTH_TEST)
-		glEnable(GL_LIGHTING)
-		glEnable(GL_LIGHT0)
 
 
 	def OnDraw(self):
 		# clear color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+		
+		graph = None
+		drawing = GraphArea(graph)
+		drawing.ready = False
+		drawing.shownewestedget = False
+		
+		# DRAW GRAPH FUNCTION
+		if True:
+			drawing.startnum = 5
+			drawing.endnum = 1000000
+			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
+			drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+			drawing.mgs = []
+			operations.assignvariables(drawing.term)
+			drawing.selected = NeatoGraph
+			drawing.startnumber = 1
+			try:
+				def iterator():
+					Drawer = drawing.selected
+					for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+						yield g
+				drawing.iterator = iterator()
+			except KeyError:
+				pass
+			drawing.graphnumber = 0
+			
+			# INIT FUNCTION
+			if True:
+				Drawer = drawing.selected
+				rg = drawing.iterator.next()
+				g = Drawer(rg)
+				drawing.reductiongraphlist = [rg]
+				drawing.graph = g
+				drawing.graphlist = [g]
+				drawing.starttobig = False
+			
+			drawing.graph.update_layout()
+			
+			Xs = [node.x for node in drawing.graph.nodes]
+			Ys = [node.y for node in drawing.graph.nodes]
+			print min(Xs)
+			print max(Xs)
+			print min(Ys)
+			print max(Ys)
+			# scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
+			
+			# for node in drawing.graph.nodes:
+			# 	print node.x
+		
+			glMatrixMode(GL_PROJECTION)
+			glLoadIdentity()
+			gluOrtho2D(0.0, (max(Xs)+10), 0.0, (max(Ys)+10))
+			glMatrixMode(GL_MODELVIEW)
+			
+			# draw six faces of a cube
+			# glColor3f(0.3, 0.6, 1.0)
+			# glPointSize(10)
+			
+			for node in drawing.graph.nodes:
+				for edge in node.children:
+					glLineWidth(4.0)
+					glColor4f(0.3, 0.9, 0.2, 0.3)
+					far_node = edge.get_far(node)
+					glBegin(GL_LINES)
+					glVertex2f(far_node.x, far_node.y)
+					glVertex2f(node.x, node.y)
+					glEnd()
+					
+					glLineWidth(2.0)
+					glColor4f(0.3, 0.9, 0.2, 0.4)
+					far_node = edge.get_far(node)
+					glBegin(GL_LINES)
+					glVertex2f(far_node.x, far_node.y)
+					glVertex2f(node.x, node.y)
+					glEnd()
+					
+					glLineWidth(0.5)
+					glColor4f(0.3, 0.9, 0.2, 1.0)
+					far_node = edge.get_far(node)
+					glBegin(GL_LINES)
+					glVertex2f(far_node.x, far_node.y)
+					glVertex2f(node.x, node.y)
+					glEnd()
+        	
+				glPointSize(15)
+				glColor4f(0.3, 0.6, 1.0, 0.3)
+				glBegin(GL_POINTS)
+				glVertex2f(node.x, node.y)
+				glEnd()
+				
+				glPointSize(10)
+				glColor4f(0.3, 0.6, 1.0, 0.6)
+				glBegin(GL_POINTS)
+				glVertex2f(node.x, node.y)
+				glEnd()
+				
+				glPointSize(5)
+				glColor4f(0.3, 0.6, 1.0, 1.0)
+				glBegin(GL_POINTS)
+				glVertex2f(node.x, node.y)
+				glEnd()
 
-		# draw six faces of a cube
-		glBegin(GL_QUADS)
-		glNormal3f( 0.0, 0.0, 1.0)
-		glVertex3f( 0.5, 0.5, 0.5)
-		glVertex3f(-0.5, 0.5, 0.5)
-		glVertex3f(-0.5,-0.5, 0.5)
-		glVertex3f( 0.5,-0.5, 0.5)
-
-		glNormal3f( 0.0, 0.0,-1.0)
-		glVertex3f(-0.5,-0.5,-0.5)
-		glVertex3f(-0.5, 0.5,-0.5)
-		glVertex3f( 0.5, 0.5,-0.5)
-		glVertex3f( 0.5,-0.5,-0.5)
-
-		glNormal3f( 0.0, 1.0, 0.0)
-		glVertex3f( 0.5, 0.5, 0.5)
-		glVertex3f( 0.5, 0.5,-0.5)
-		glVertex3f(-0.5, 0.5,-0.5)
-		glVertex3f(-0.5, 0.5, 0.5)
-
-		glNormal3f( 0.0,-1.0, 0.0)
-		glVertex3f(-0.5,-0.5,-0.5)
-		glVertex3f( 0.5,-0.5,-0.5)
-		glVertex3f( 0.5,-0.5, 0.5)
-		glVertex3f(-0.5,-0.5, 0.5)
-
-		glNormal3f( 1.0, 0.0, 0.0)
-		glVertex3f( 0.5, 0.5, 0.5)
-		glVertex3f( 0.5,-0.5, 0.5)
-		glVertex3f( 0.5,-0.5,-0.5)
-		glVertex3f( 0.5, 0.5,-0.5)
-
-		glNormal3f(-1.0, 0.0, 0.0)
-		glVertex3f(-0.5,-0.5,-0.5)
-		glVertex3f(-0.5,-0.5, 0.5)
-		glVertex3f(-0.5, 0.5, 0.5)
-		glVertex3f(-0.5, 0.5,-0.5)
-		glEnd()
-
-		if self.size is None:
-			self.size = self.GetClientSize()
-		w, h = self.size
-		w = max(w, 1.0)
-		h = max(h, 1.0)
-		xScale = 180.0 / w
-		yScale = 180.0 / h
-		glRotatef((self.y - self.lasty) * yScale, 1.0, 0.0, 0.0);
-		glRotatef((self.x - self.lastx) * xScale, 0.0, 1.0, 0.0);
-
-		self.SwapBuffers()
-
-
-
-
-
-class ConeCanvas(MyCanvasBase):
-	def InitGL( self ):
-		glMatrixMode(GL_PROJECTION)
-		# camera frustrum setup
-		glFrustum(-0.5, 0.5, -0.5, 0.5, 1.0, 3.0)
-		glMaterial(GL_FRONT, GL_AMBIENT, [0.2, 0.2, 0.2, 1.0])
-		glMaterial(GL_FRONT, GL_DIFFUSE, [0.8, 0.8, 0.8, 1.0])
-		glMaterial(GL_FRONT, GL_SPECULAR, [1.0, 0.0, 1.0, 1.0])
-		glMaterial(GL_FRONT, GL_SHININESS, 50.0)
-		glLight(GL_LIGHT0, GL_AMBIENT, [0.0, 1.0, 0.0, 1.0])
-		glLight(GL_LIGHT0, GL_DIFFUSE, [1.0, 1.0, 1.0, 1.0])
-		glLight(GL_LIGHT0, GL_SPECULAR, [1.0, 1.0, 1.0, 1.0])
-		glLight(GL_LIGHT0, GL_POSITION, [1.0, 1.0, 1.0, 0.0])
-		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, [0.2, 0.2, 0.2, 1.0])
-		glEnable(GL_LIGHTING)
-		glEnable(GL_LIGHT0)
-		glDepthFunc(GL_LESS)
-		glEnable(GL_DEPTH_TEST)
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-		# position viewer
-		glMatrixMode(GL_MODELVIEW)
-		# position viewer
-		glTranslatef(0.0, 0.0, -2.0);
-		#
-		glutInit(sys.argv)
-
-
-	def OnDraw(self):
-		# clear color and depth buffers
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-		# use a fresh transformation matrix
-		glPushMatrix()
-		# position object
-		#glTranslate(0.0, 0.0, -2.0)
-		glRotate(30.0, 1.0, 0.0, 0.0)
-		glRotate(30.0, 0.0, 1.0, 0.0)
-
-		glTranslate(0, -1, 0)
-		glRotate(250, 1, 0, 0)
-		glutSolidCone(0.5, 1, 30, 5)
-		glPopMatrix()
-		glRotatef((self.y - self.lasty), 0.0, 0.0, 1.0);
-		glRotatef((self.x - self.lastx), 1.0, 0.0, 0.0);
-		# push into visible buffer
 		self.SwapBuffers()
 
 class MainWindow(wx.Frame):
 
-	def __init__(self, parent = None, id = -1, title = "Small Editor"):
+	def __init__(self, parent = None, id = -1, title = "Reduction Visualizer"):
 		# Init
 		wx.Frame.__init__(
 				self, parent, id, title, size = (1366,768),
 				style = wx.DEFAULT_FRAME_STYLE | wx.NO_FULL_REPAINT_ON_RESIZE
 		)
+		
+		graph = None
+		drawing = GraphArea(graph)
+		drawing.ready = False
+		drawing.shownewestedget = False
 
 		# Buttons
 		tf1 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE)
