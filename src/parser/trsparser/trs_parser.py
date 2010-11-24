@@ -156,10 +156,11 @@ def parse(string):
     return _p.parseTerm(string)
 
 def defaultRuleSet():
-    fileName = "trsparser/trs_example.trs"
+    fileName = "parser/trsparser/trs_example.trs"
     with open(fileName, 'r') as f:
         string = f.read()
     _p = TRSParser()
+    
     return _p.parseRuleSets(string)[0]
 
 
@@ -170,7 +171,7 @@ if __name__ == "__main__":
             string = f.read()
         print p.parseRuleSets(string)
     
-    print testFile("trsparser/trs_example.trs")
+    print testFile("parser/trsparser/trs_example.trs")
 
     s = p.ruleSets[0]
 

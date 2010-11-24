@@ -17,14 +17,21 @@
 #! /usr/bin/env python
 import os
 import gtk
-import wx
-from wx import glcanvas
+# import wx
+# from wx import glcanvas
 import math
 import random
 import time
+# import computegraph.operations as operations
+# import computegraph.randomgraph as randomgraph
+# import lambdaparser.lambdaparser as parser
+# import computegraph.trs_operations as operations
+# import trsparser.trs_parser as parser
+
 import computegraph.operations as operations
-import computegraph.randomgraph as randomgraph
-import lambdaparser.lambdaparser as parser
+
+# import pdb
+
 from grapharea import GraphArea
 
 # Drawing algorithms
@@ -152,7 +159,7 @@ def applyiterator(widget):
 		drawing.startnum = int(start.get_text())
 		drawing.endnum = 1000000
 		tempterm = termtext.get_text(termtext.get_start_iter(),termtext.get_end_iter())
-		drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+		drawing.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
 		drawing.mgs = []
 		operations.assignvariables(drawing.term)
 		drawing.selected = str(algo.get_child().get_text())
@@ -160,7 +167,8 @@ def applyiterator(widget):
 		try:
 			def iterator():
 				Drawer = algorithms[drawing.selected]
-				for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+				ruleSet = operations.defaultRuleSet()
+				for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum, ruleSet)):
 					yield g
 			drawing.iterator = iterator()
 		except KeyError:
@@ -347,6 +355,8 @@ def checkbox(widget, event):
 
 # Main function
 if __name__ == "__main__":
+	operations.setmode('trs')
+	
 	window = gtk.Window()
 	window.connect("delete-event", gtk.main_quit)
 	window.connect("key_press_event", key_press_event)
