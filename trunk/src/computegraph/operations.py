@@ -28,7 +28,6 @@ if '__mode__' not in locals():
     __mode__ = ''
 
 def setmode(mode):
-    pdb.set_trace()
     global OPS, PARSER, __mode__
     if mode == 'lambda':
         import computegraph.lambda_operations as OPS
@@ -43,13 +42,18 @@ def setmode(mode):
 
 
 def parse(string):
-    pdb.set_trace()   
     return PARSER.parse(string)
 
 def assignvariables(root):
     if __mode__ == '':
         return
     OPS.assignvariables(root)
+
+
+def sanitize(term):
+	if __mode__ == '':
+		return
+	OPS.sanitize(term)
 
 def defaultRuleSet():
     '''Temporary dummy method, needed for testing.'''
