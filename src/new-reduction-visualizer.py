@@ -1,9 +1,45 @@
+# -*- coding: iso-8859-1 -*-
+# Reduction Visualizer. A tool for visualization of reduction graphs.
+# Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import wx
 from wx import glcanvas
 from glgrapharea import MyCubeCanvas
-from glgrapharea import MyCanvasBase
 
 
+import computegraph.operations as operations
+import computegraph.randomgraph as randomgraph
+import lambdaparser.lambdaparser as parser
+
+# Drawing algorithms
+from drawingalgorithms.majorizationgraph import MajorizationGraph
+from drawingalgorithms.graphvizdrawers import CircoGraph
+from drawingalgorithms.graphvizdrawers import DotGraph
+from drawingalgorithms.graphvizdrawers import NeatoGraph
+from drawingalgorithms.graphvizdrawers import TwopiGraph
+from drawingalgorithms.graphvizdrawers import FdpGraph
+
+import gtk
+import cairo
+import sys
+import math
+import random
+import time
+import os
+import wx
 
 class MainWindow(wx.Frame):
 
@@ -37,9 +73,9 @@ class MainWindow(wx.Frame):
 		tf3 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE|wx.TE_READONLY)
 		
 		# Button actions
-		bt1.Bind(wx.EVT_BUTTON, self.DrawGraph)
+		bt1.Bind(wx.EVT_BUTTON, drawing.InitDraw)
 		bt2.Bind(wx.EVT_BUTTON, self.Generate)
-		bt3.Bind(wx.EVT_BUTTON, self.Forward)
+		bt3.Bind(wx.EVT_BUTTON, drawing.Forward)
 		bt4.Bind(wx.EVT_BUTTON, self.Back)
 		bt5.Bind(wx.EVT_BUTTON, self.Redraw)
 		bt6.Bind(wx.EVT_BUTTON, self.Optimize)
@@ -101,8 +137,40 @@ class MainWindow(wx.Frame):
 	def OnExit(self,event):
 		self.Close(True)
 	
-	def DrawGraph(self,event):
-		print "DrawGraph"
+	def DrawGraph(self, drawing):
+		if True:
+			drawing.startnum = 20
+			drawing.endnum = 1000000
+			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
+			drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+			drawing.mgs = []
+			operations.assignvariables(drawing.term)
+			drawing.selected = NeatoGraph
+			drawing.startnumber = 1
+			try:
+				def iterator():
+					Drawer = drawing.selected
+					for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+						yield g
+				drawing.iterator = iterator()
+			except KeyError:
+				pass
+			drawing.graphnumber = 0
+
+			if True:
+				Drawer = drawing.selected
+				rg = drawing.iterator.next()
+				g = Drawer(rg)
+				drawing.reductiongraphlist = [rg]
+				drawing.graph = g
+				drawing.graphlist = [g]
+				drawing.starttobig = False
+			drawing.graph.update_layout()
+		drawing.Draw(drawing)
+		# if event.ready:
+		# 	print "DrawGraph 1"
+		# else:
+		# 	print "DrawGraph 2"
 	
 	def Generate(self,event):
 		print "Generate"
