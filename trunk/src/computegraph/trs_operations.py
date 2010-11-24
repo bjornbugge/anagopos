@@ -143,7 +143,7 @@ def performreduction(redex, posRule):
     
     return (redex, contractum)
 
-def reductiongraphiter(root, ruleset, start, end):
+def reductiongraphiter(root, start, end, ruleset):
     work = [root]
     root.redexpositions = findredexes(root, ruleset)
     graph = redgraph.Graph()
@@ -187,9 +187,9 @@ def reductiongraphiter(root, ruleset, start, end):
         print "Incomplete reduction graph!"
 
 
-def reductiongraph(root, ruleset, start, end):
+def reductiongraph(root, start, end, ruleset):
     last = None
-    for g in reductiongraphiter(root, ruleset, start, end):
+    for g in reductiongraphiter(root, start, end, ruleset):
         # print "GOT: " + str(g)
         last = g
     return last

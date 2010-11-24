@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import operations as OP
-from copy import deepcopy 
 
 class Graph(object):
 	def __init__(self):
@@ -47,8 +46,8 @@ class Graph(object):
 	def addnode(self, term, name = None):
 		'''
 		Adds a node made from the given term to the graph and returns it.
-		If the node is already present in the graph, the method just returns it.
-		Nodes are compared modulo alpha-equivalence.
+		If we use beta-reduction for the lambda calculus, addnode() ensures
+		that nodes are compared modulo alpha-equivalence.
 		'''
 		OP.sanitize(term)
 		try:
