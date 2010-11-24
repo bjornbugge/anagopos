@@ -1,0 +1,16 @@
+/*
+Variable names start with a lowercase letter. 
+Function names start with an uppercase letter or a digit.
+*/
+
+#  Different kinds of 
+// comments are supported.
+
+addition {
+    A(x, 0)      -> x
+    A(x, S(y))   -> S(A(x, y))
+    M(x, 0)      -> 0
+    M(x, S(y))   -> A(M(x,y), x)
+}
+
+noRules {}
