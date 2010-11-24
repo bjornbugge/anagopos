@@ -21,8 +21,8 @@ from glgrapharea import MyCubeCanvas
 
 
 import computegraph.operations as operations
-import computegraph.randomgraph as randomgraph
-import lambdaparser.lambdaparser as parser
+# import computegraph.lambda_randomgraph as randomgraph
+# import lambdaparser.lambdaparser as parser
 
 # Drawing algorithms
 from drawingalgorithms.majorizationgraph import MajorizationGraph
@@ -130,7 +130,7 @@ class MainWindow(wx.Frame):
 
 
 	def OnAbout(self,event):
-		message = "Reduction Visualizer\n\nURL:\nhttp://code.google.com/p/reduction-visualizer/\n\nBy:\n Niels Bjørn Bugge Grathwohl\n Jens Duelund Pallesen"
+		message = "Reduction Visualizer\n\nURL:\nhttp://code.google.com/p/reduction-visualizer/\n\nBy:\n Niels Bjoern Bugge Grathwohl\n Jens Duelund Pallesen"
 		caption = "Reduction Visualizer"
 		wx.MessageBox(message, caption, wx.OK)
 	
@@ -142,7 +142,8 @@ class MainWindow(wx.Frame):
 			drawing.startnum = 20
 			drawing.endnum = 1000000
 			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
-			drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+			# drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+			drawing.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
 			drawing.mgs = []
 			operations.assignvariables(drawing.term)
 			drawing.selected = NeatoGraph
@@ -186,6 +187,8 @@ class MainWindow(wx.Frame):
 	
 	def Redraw(self,event):
 		print "Redraw"
+
+operations.setmode('lambda')
 
 
 app = wx.PySimpleApp()
