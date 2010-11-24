@@ -40,15 +40,25 @@ class TRSParser:
     C++-style comments are supported, as well as "#"-comments.
     """
     def __init__(self):
-        self._parser = None
+        self._ruleSetParser = None
+        self._termParser = None
         self._functionTable = {}
         self._functionStack = []
         self._stack = []
         self.ruleSets = []
         self._makeGrammar()
     
-    def parse(self, string):
-        self._parser.parseString(string)
+    def parseRuleSets(self, string):
+        self.clear()
+        self._ruleSetParser.parseString(string)
+        return self.ruleSets
+    
+    def parseTerm(self, string):
+        self.clear()
+        self._termParser.parseString(string)
+        if len(self._functionStack) == 0:
+            return self._stack[0]
+        return self._functionStack[0]
 
     def clear(self):
         self._functionTable = {}
@@ -59,7 +69,6 @@ class TRSParser:
     def _addRule(self, tokens):
         termB = self._stack.pop()
         termA = self._stack.pop()
-        # if type(termA) is Variable:
         if isinstance(termA, Variable):
             raise Exception("LHS of a rule cannot be a variable!")
         
@@ -101,6 +110,7 @@ class TRSParser:
         self.ruleSets.append(r)
         self._functionTable.clear()
     
+    
     def _makeGrammar(self):
         lowerCaseAlphas = srange("[a-z]")
         upperCaseAlphas = lowerCaseAlphas.upper()
@@ -134,69 +144,26 @@ class TRSParser:
         
         program             = term # ?
         
-        self._parser         = OneOrMore(rulesDefinition) + Optional(program)
-        self._parser.ignore(cppStyleComment)
-        self._parser.ignore(pythonStyleComment)
+        self._ruleSetParser = OneOrMore(rulesDefinition) + Optional(program)
+        self._ruleSetParser.ignore(cppStyleComment)
+        self._ruleSetParser.ignore(pythonStyleComment)
+        
+        self._termParser = functionCall | variable
     
 
 # Parse a term, quick, for testing.
-def term(functionstring):
-    functionStack = []
-    functions = []
-    var = []
     
-    def push(tokens):
-        f = FunctionSymbol(tokens[0], -1)
-        if len(functionStack) > 0:
-            functionStack[-1].add(f)
-        
-        functionStack.append(f)
-        functions.append(f)
-    
-    def addVar(tokens):
-        v = Variable(tokens[0])
-        if len(functionStack) > 0:
-            functionStack[-1].add(v)
-        else:
-            var.append(v)
-    
-    def pop():
-        functionStack[-1].arity = len(functionStack[-1].children)
-        functionStack.pop()
-    
-    lowerCaseAlphas = srange("[a-z]")
-    upperCaseAlphas = lowerCaseAlphas.upper()
-    lpar                = Literal("(").suppress()
-    rpar                = Literal(")").suppress()
-    term1               = Forward()
-    variable            = Word(lowerCaseAlphas, alphas + nums + "_")
-    functionName        = Word(upperCaseAlphas + nums, alphas + nums + "_")
-    functionCall        = functionName + Optional(lpar + term1 + rpar)
-    ruleName            = Word(alphas + nums + "_")
-    term                = variable | functionCall
-    term1               << delimitedList(term, ",")
-    
-    functionName.setParseAction(push)
-    variable.setParseAction(addVar)
-    functionCall.setParseAction(pop)
-    
-    term.parseString(functionstring)
-    
-    if len(functions) == 0:
-        return var[0]
-    return functions[0]
-    
+_p = TRSParser()
 
-
-p = TRSParser()
-def testFile(fileName):
-    with open(fileName, 'r') as f:
-        string = f.read()
-    p.parse(string)
-    print p.ruleSets
 
 if __name__ == "__main__":
-    print testFile("trsparser/TRS1.trs")
+    p = TRSParser()
+    def testFile(fileName):
+        with open(fileName, 'r') as f:
+            string = f.read()
+        print p.parseRuleSets(string)
+    
+    print testFile("trsparser/trs_example.trs")
 
     s = p.ruleSets[0]
 
@@ -207,9 +174,9 @@ if __name__ == "__main__":
     # t5 = s.rules[5][0]
     
     # t6 = term("A(S(0), S(0))")
-    t6 = term("M(any_variable, any_other_variable)")
-    t7 = term("x")
-    t8 = term("A(S(0), S(S(A(M(S(0), S(S(0))), 0))))")
+    t6 = p.parseTerm("M(any_variable, any_other_variable)")
+    t7 = p.parseTerm("x")
+    t8 = p.parseTerm("A(S(0), S(S(A(M(S(0), S(S(0))), 0))))")
     
     t6.redexpositions = findredexes(t6, s)
     t7.redexpositions = findredexes(t7, s)
