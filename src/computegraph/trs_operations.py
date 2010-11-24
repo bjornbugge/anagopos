@@ -26,6 +26,9 @@ reduction system (TRS). The general format is, that a function takes some
 term and a set of reduction rules, reduces the term and outputs the result.
 '''
 
+def assignvariables(root):
+    pass # dummy function!
+
 def termsmatch(term1, term2):
     '''
     True if the two terms "match" in a rule oriented sense, i.e. does the 
