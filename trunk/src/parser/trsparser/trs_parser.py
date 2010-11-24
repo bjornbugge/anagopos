@@ -151,9 +151,16 @@ class TRSParser:
         self._termParser = functionCall | variable
     
 
-# Parse a term, quick, for testing.
-    
-_p = TRSParser()
+def parse(string):
+    _p = TRSParser()
+    return _p.parseTerm(string)
+
+def defaultRuleSet():
+    fileName = "trsparser/trs_example.trs"
+    with open(fileName, 'r') as f:
+        string = f.read()
+    _p = TRSParser()
+    return _p.parseRuleSets(string)[0]
 
 
 if __name__ == "__main__":
