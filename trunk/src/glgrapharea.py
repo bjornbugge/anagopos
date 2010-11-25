@@ -101,34 +101,62 @@ class MyCanvasBase(glcanvas.GLCanvas):
 	def OnMouseDown(self, evt):
 		self.CaptureMouse()
 		self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
+		# print self.GetSize()[0]
+		# print self.GetSize()[1]
+		
+		propX = float(self.x)/float(self.GetSize()[0])
+		propY = float(self.y)/float(self.GetSize()[1])
+		
+		scX = self.orthoRight - self.orthoLeft
+		scY = self.orthoBottom - self.orthoTop
+		
+		X = propX * scX
+		Y = propY * scY
+		
+		# print "X = " + str(self.x) + "/" + str(self.GetSize()[0]) + "(" + str(self.orthoRight) + "-" + str(self.orthoLeft) + ")"
+		# print "Y = " + str(self.y) + "/" + str(self.GetSize()[1]) + "(" + str(self.orthoBottom) + "-" + str(self.orthoTop) + ")"
+		
 		# print self.x
 		# print self.y
 		# print self.orthoLeft
 		# print self.orthoRight
 		# print self.orthoBottom
 		# print self.orthoTop
-		x = self.x/self.orthoRight
-		y = self.y/self.orthoBottom
-		print x
-		print y
-		r = 10
+		x = self.x#/self.orthoRight
+		y = self.y#/self.orthoBottom
+		# print "X:         " + str(x)
+		# print "Y:         " + str(y)
+		rX = 20/float(self.GetSize()[0])*scX
+		rY = 20/float(self.GetSize()[1])*scY
+		# print rX
+		# print rY
 		if self.ready:
 			for node in self.graph.nodes:
-				print node.name
-				print node.x
-				print node.y
-				if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
-					self.graph.dragnode = True
-					self.graph.dragnodename = node.name
-					self.graph.dragnodex = x
-					self.graph.dragnodey = y
-					self.graph.dragnodenode = node
-					print "you have clicked a node"
+				
+				nX = node.x - self.orthoLeft
+				nY = node.y - self.orthoTop
+				
+				# print "node name:           " + node.name
+				# print "     X node coord:   " + str(nX)
+				# print "     Y node coord:   " + str(nY)
+				# print "     X node clicked: " + str(X)
+				# print "     Y node clicked: " + str(Y)
+				
+				if (X > (nX-rX)) and (X < (nX + rX)) and (Y > (nY - rY)) and (Y < (nY + rY)):
+					# self.graph.dragnode = True
+					# self.graph.dragnodename = node.name
+					# self.graph.dragnodex = x
+					# self.graph.dragnodey = y
+					# self.graph.dragnodenode = node
+					print "you have clicked node " + node.name
+					print node
+				# else:
+				# 	print "you have NOT clicked a node"
 
 	def OnMouseUp(self, evt):
 		self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-		print self.x
-		print self.y
+		# print self.x
+		# print self.y
 		self.ReleaseMouse()
 
 
@@ -152,63 +180,6 @@ class MyCubeCanvas(MyCanvasBase):
 		glEnable(GL_LINE_SMOOTH)
 		glEnable(GL_POINT_SMOOTH)
 		glEnable(GL_POLYGON_SMOOTH)
-	
-# <<<<<<< .mine
-	# def InitDraw(self):
-	# 	if True:
-	# 		self.ready = True
-	# 		self.startnum = 1
-	# 		self.endnum = 1000000
-	# 		tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
-	# 		self.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
-	# 		self.mgs = []
-	# 		operations.assignvariables(self.term)
-	# 		# self.selected = NeatoGraph
-	# 		self.startnumber = 1
-	# 		try:
-	# 			def iterator():
-	# 				Drawer = self.selected
-	# 				for (i,g) in enumerate(operations.reductiongraphiter(self.term, self.startnum, self.endnum)):
-	# 					yield g
-	# 			self.iterator = iterator()
-	# 		except KeyError:
-	# 			pass
-	# 		self.graphnumber = 0
-	# 		
-	# 		# INIT FUNCTION
-	# 		if True:
-	# 			Drawer = self.selected
-	# 			rg = self.iterator.next()
-	# 			g = Drawer(rg)
-	# 			self.reductiongraphlist = [rg]
-	# 			self.graph = g
-	# 			self.graphlist = [g]
-	# 			self.starttobig = False
-	# 		
-	# 		self.graph.update_layout()
-	# 		self.Draw()
-# =======
-# 	def InitDraw(self, event):
-# 		if True:
-# 			self.startnum = 1
-# 			self.endnum = 1000000
-# 			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
-# 			# self.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
-# 			self.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
-# 			self.mgs = []
-# 			operations.assignvariables(self.term)
-# 			self.selected = NeatoGraph
-# 			self.startnumber = 1
-# 			try:
-# 				def iterator():
-# 					Drawer = self.selected
-# 					for (i,g) in enumerate(operations.reductiongraphiter(self.term, self.startnum, self.endnum)):
-# 						yield g
-# 				self.iterator = iterator()
-# 			except KeyError:
-# 				pass
-# 			self.graphnumber = 0
-# >>>>>>> .r313
 			
 	def Draw(self):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -218,10 +189,23 @@ class MyCubeCanvas(MyCanvasBase):
 		
 			glMatrixMode(GL_PROJECTION)
 			glLoadIdentity()
-			self.orthoLeft = 0.0
-			self.orthoRight = (max(Xs)+10)
-			self.orthoBottom = (max(Ys)+10)
-			self.orthoTop = 0.0
+			self.orthoLeft = min(Xs) - max(Xs)*0.02
+			self.orthoRight = ( max(Xs) + max(Xs)*0.02)
+			self.orthoBottom = ( max(Ys) + max(Ys)*0.02)
+			self.orthoTop = min(Ys) - max(Ys)*0.02
+			self.orthoDiagonal = self.orthoRight + self.orthoBottom
+			
+			# print "Min Xs" + str(min(Xs))
+			# print "Max Xs" + str(max(Xs))
+			# print "Min Ys" + str(min(Ys))
+			# print "Max Ys" + str(max(Ys))
+			# 
+			# print "Ortho Left:   " + str(self.orthoLeft)
+			# print "Ortho Right:  " + str(self.orthoRight)
+			# print "Ortho Bottom: " + str(self.orthoBottom)
+			# print "Ortho Top:    " + str(self.orthoTop)
+			
+			
 			gluOrtho2D(self.orthoLeft, self.orthoRight, self.orthoBottom, self.orthoTop)
 			glMatrixMode(GL_MODELVIEW)
 			
@@ -271,16 +255,25 @@ class MyCubeCanvas(MyCanvasBase):
 						y2 = node.y
 						self.DrawLine(x1, y1, x2, y2)
 					
-					radius = 5
-					if node != edge.get_far(node):
-						self.draw_arrowhead(x1, y1, x2, y2, radius)
-						
-						# if node != edge.get_far(node):
-						# 	self.draw_arrowhead(x1, y1, x2, y2, radius)
+						radius = self.orthoDiagonal
+						if node != edge.get_far(node):
+							#    draw_arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, transparency, angle):
+							self.draw_arrowhead(x1, y1, x2, y2, radius/150, self.orthoDiagonal/230, 1.0, 15)
+							# self.draw_arrowhead(x1, y1, x2, y2, radius/160, self.orthoDiagonal/220, 0.9, 16)
+							self.draw_arrowhead(x1, y1, x2, y2, radius/170, self.orthoDiagonal/210, 0.8, 17)
+							# self.draw_arrowhead(x1, y1, x2, y2, radius/180, self.orthoDiagonal/200, 0.7, 18)
+							self.draw_arrowhead(x1, y1, x2, y2, radius/190, self.orthoDiagonal/190, 0.6, 19)
+							# self.draw_arrowhead(x1, y1, x2, y2, radius/200, self.orthoDiagonal/180, 0.5, 20)
+							self.draw_arrowhead(x1, y1, x2, y2, radius/210, self.orthoDiagonal/170, 0.4, 21)
+							# self.draw_arrowhead(x1, y1, x2, y2, radius/220, self.orthoDiagonal/160, 0.3, 22)
+							self.draw_arrowhead(x1, y1, x2, y2, radius/230, self.orthoDiagonal/150, 0.1, 23)
+							
+							# if node != edge.get_far(node):
+							# 	self.draw_arrowhead(x1, y1, x2, y2, radius)
 
 			for node in self.graph.nodes:
-				print node.x
-				print node.y
+				# print node.x
+				# print node.y
 				glPointSize(20)
 				glColor4f(0.3, 0.6, 1.0, 0.1)
 				glBegin(GL_POINTS)
@@ -362,14 +355,14 @@ class MyCubeCanvas(MyCanvasBase):
 		glEnd()
 		
 	
-	def draw_arrowhead(self, x1, y1, x2, y2, noderadius):
+	def draw_arrowhead(self, x1, y1, x2, y2, noderadius, awidth, transparency, angle):
 		'''
 		Draws an arrow head on the line segment between the coordinate pairs
 		(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
 		'''
-		arrowwidth = 10
+		arrowwidth = awidth
 		Pi = math.pi
-		angle = 20
+		# angle = 30
 		
 		if x1 - x2 == 0:
 			if y2 <= y1:
@@ -408,14 +401,24 @@ class MyCubeCanvas(MyCanvasBase):
 			X3 += xOffset
 			X4 += xOffset
 		
+		# Anti-aliasing/prettyness stuff
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		glEnable(GL_BLEND)
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+		glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+		glEnable(GL_LINE_SMOOTH)
+		glEnable(GL_POINT_SMOOTH)
+		glEnable(GL_POLYGON_SMOOTH)
+		
 		glLineWidth(1.0)
-		glColor4f(1.0, 0.2, 0.9, 0.6)
+		glColor4f(1.0, 0.2, 0.9, transparency)
 		glBegin(GL_TRIANGLES)
 		glVertex2f(x2, y2)
 		glVertex2f(X3, Y3)
 		glVertex2f(X4, Y4)
 		glEnd()
-		
+
 	
 	def Forward(self, event):
 		# clear color and depth buffers
@@ -455,7 +458,7 @@ class MyCubeCanvas(MyCanvasBase):
 			except StopIteration:
 				self.nomoregraphs = True
 				# outputtext()
-				print "gg"
+				print "No more graphs"
 		# self.SwapBuffers()
 		self.Draw()
 	

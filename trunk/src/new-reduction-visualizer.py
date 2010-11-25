@@ -178,21 +178,12 @@ class MainWindow(wx.Frame):
 			self.drawing.endnum = 1000000
 			tempterm = self.tf1.GetValue()
 			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
-# <<<<<<< .mine
 			#tempterm = "#B1.(#B2.(#B3.(B1)))"
 			self.drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
 			self.drawing.mgs = []
 			operations.assignvariables(self.drawing.term)
 			# self.drawing.selected = NeatoGraph
 			self.drawing.startnumber = 1
-# =======
-# 			# drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
-# 			drawing.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
-# 			drawing.mgs = []
-# 			operations.assignvariables(drawing.term)
-# 			drawing.selected = NeatoGraph
-# 			drawing.startnumber = 1
-# >>>>>>> .r313
 			try:
 				def iterator():
 					Drawer = self.drawing.selected
