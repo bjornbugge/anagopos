@@ -18,11 +18,11 @@
 import wx
 from wx import glcanvas
 from glgrapharea import MyCubeCanvas
-
-
+# 
+# 
 import computegraph.operations as operations
 # import computegraph.lambda_randomgraph as randomgraph
-# import lambdaparser.lambdaparser as parser
+import lambdaparser.lambdaparser as parser
 
 # Drawing algorithms
 from drawingalgorithms.majorizationgraph import MajorizationGraph
@@ -41,8 +41,15 @@ import time
 import os
 import wx
 
-class MainWindow(wx.Frame):
+algorithms = {'Neato' : NeatoGraph,
+			'Neato Animated' : MajorizationGraph,
+			'Dot' : DotGraph,
+			'TwoPi' : TwopiGraph,
+			'Circo' : CircoGraph,
+			'Fdp' : FdpGraph}
 
+class MainWindow(wx.Frame):
+	
 	def __init__(self, parent = None, id = -1, title = "Reduction Visualizer"):
 		# Init
 		wx.Frame.__init__(
@@ -50,55 +57,60 @@ class MainWindow(wx.Frame):
 				style = wx.DEFAULT_FRAME_STYLE | wx.NO_FULL_REPAINT_ON_RESIZE
 		)
 		
-		graph = None
-		drawing = MyCubeCanvas(self)
+		#graph = None
+		self.drawing = MyCubeCanvas(self)
 		# drawing = GraphArea(graph)
-		drawing.ready = False
-		drawing.shownewestedget = False
+		self.drawing.ready = False
+		self.drawing.shownewestedget = False
 
 		# Buttons
-		tf1 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE)
-		bt1 = wx.Button(self, 0, "Draw Graph")
-		bt2 = wx.Button(self, 0, "Generate Random Lambda term")
-		bt3 = wx.Button(self, 0, "Forward")
-		bt4 = wx.Button(self, 0, "Back")
-		bt5 = wx.Button(self, 0, "Redraw Graph")
-		bt6 = wx.Button(self, 0, "Optimize Graph")
-		st1 = wx.StaticText(self, -1, 'Select Drawing Alg: ', (5, 5))
-		cb1 = wx.ComboBox(self, -1, size=(120, -1))
-		st2 = wx.CheckBox(self, -1, 'Start')
-		st3 = wx.StaticText(self, -1, 'Clicked Term: ', (5, 5))
-		tf2 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE|wx.TE_READONLY)
-		st4 = wx.StaticText(self, -1, 'Output: ', (5, 5))
-		tf3 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE|wx.TE_READONLY)
+		self.tf1 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE)
+		self.bt1 = wx.Button(self, 0, "Draw Graph")
+		self.bt2 = wx.Button(self, 0, "Generate Random Lambda term")
+		self.bt3 = wx.Button(self, 0, "Forward")
+		self.bt4 = wx.Button(self, 0, "Back")
+		self.bt5 = wx.Button(self, 0, "Redraw Graph")
+		self.bt6 = wx.Button(self, 0, "Optimize Graph")
+		self.st1 = wx.StaticText(self, -1, 'Select Drawing Alg: ', (5, 5))
+		self.cb1 = wx.ComboBox(self, -1, size=(200, -1), choices=[k for (k,v) in algorithms.iteritems()], style = wx.CB_READONLY)
+		self.st2 = wx.CheckBox(self, -1, 'Start')
+		self.st3 = wx.StaticText(self, -1, 'Clicked Term: ', (5, 5))
+		self.tf2 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE|wx.TE_READONLY)
+		self.st4 = wx.StaticText(self, -1, 'Output: ', (5, 5))
+		self.tf3 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE|wx.TE_READONLY)
 		
 		# Button actions
-		bt1.Bind(wx.EVT_BUTTON, drawing.InitDraw)
-		bt2.Bind(wx.EVT_BUTTON, self.Generate)
-		bt3.Bind(wx.EVT_BUTTON, drawing.Forward)
-		bt4.Bind(wx.EVT_BUTTON, self.Back)
-		bt5.Bind(wx.EVT_BUTTON, self.Redraw)
-		bt6.Bind(wx.EVT_BUTTON, self.Optimize)
+		self.bt1.Bind(wx.EVT_BUTTON, self.DrawGraph)
+		self.bt2.Bind(wx.EVT_BUTTON, self.Generate)
+		self.bt3.Bind(wx.EVT_BUTTON, self.drawing.Forward)
+		self.bt4.Bind(wx.EVT_BUTTON, self.drawing.Back)
+		self.bt5.Bind(wx.EVT_BUTTON, self.drawing.Redraw)
+		self.bt6.Bind(wx.EVT_BUTTON, self.drawing.Optimize)
+		self.cb1.Bind(wx.EVT_COMBOBOX, self.NewAlgoSelected)
+		# self.Bind(wx.EVT_LEFT_DOWN, self.drawing.OnMouseDown)
+		# self.Bind(wx.EVT_LEFT_UP, self.drawing.OnMouseUp)
+		# self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
+		
 		
 		bts = wx.BoxSizer(wx.VERTICAL)
-		bts.Add(tf1, 0, wx.ALIGN_CENTER|wx.ALL, 10)
-		bts.Add(bt1, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(bt2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(bt3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(bt4, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(bt5, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(bt6, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(st1, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(cb1, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(st2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(st3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(tf2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(st4, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(tf3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.tf1, 0, wx.ALIGN_CENTER|wx.ALL, 10)
+		bts.Add(self.bt1, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.bt2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.bt3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.bt4, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.bt5, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.bt6, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.st1, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.cb1, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.st2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.st3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.tf2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.st4, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(self.tf3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
 		
 		box = wx.BoxSizer(wx.HORIZONTAL)
 		box.Add(bts, 0, wx.ALIGN_TOP, 15)
-		box.Add(drawing, 1, wx.EXPAND)
+		box.Add(self.drawing, 1, wx.EXPAND)
 		
 		self.SetAutoLayout(True)
 		self.SetSizer(box)
@@ -128,7 +140,6 @@ class MainWindow(wx.Frame):
 		# Show
 		self.Show(True)
 
-
 	def OnAbout(self,event):
 		message = "Reduction Visualizer\n\nURL:\nhttp://code.google.com/p/reduction-visualizer/\n\nBy:\n Niels Bjoern Bugge Grathwohl\n Jens Duelund Pallesen"
 		caption = "Reduction Visualizer"
@@ -137,44 +148,90 @@ class MainWindow(wx.Frame):
 	def OnExit(self,event):
 		self.Close(True)
 	
+	# def OnMouseDown(self, evt):
+	# 	self.CaptureMouse()
+	# 	self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
+	# 	print self.x
+	# 	print self.y
+	# 
+	# def OnMouseUp(self, evt):
+	# 	self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
+	# 	print self.x
+	# 	print self.y
+	# 	# self.ReleaseMouse()
+	# 
+	# def OnMouseMotion(self, evt):
+	# 	if evt.Dragging() and evt.LeftIsDown():
+	# 		self.lastx, self.lasty = self.x, self.y
+	# 		self.x, self.y = evt.GetPosition()
+	# 		self.Refresh(False)
+	
+	
 	def DrawGraph(self, drawing):
+		Drawer = algorithms[self.cb1.GetValue()]
+		print Drawer
+		self.drawing.selected = Drawer
 		if True:
-			drawing.startnum = 20
-			drawing.endnum = 1000000
+			print self.tf1.GetValue()
+			self.drawing.ready = True
+			self.drawing.startnum = 0
+			self.drawing.endnum = 1000000
+			tempterm = self.tf1.GetValue()
 			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
-			# drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
-			drawing.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
-			drawing.mgs = []
-			operations.assignvariables(drawing.term)
-			drawing.selected = NeatoGraph
-			drawing.startnumber = 1
+# <<<<<<< .mine
+			#tempterm = "#B1.(#B2.(#B3.(B1)))"
+			self.drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+			self.drawing.mgs = []
+			operations.assignvariables(self.drawing.term)
+			# self.drawing.selected = NeatoGraph
+			self.drawing.startnumber = 1
+# =======
+# 			# drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+# 			drawing.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
+# 			drawing.mgs = []
+# 			operations.assignvariables(drawing.term)
+# 			drawing.selected = NeatoGraph
+# 			drawing.startnumber = 1
+# >>>>>>> .r313
 			try:
 				def iterator():
-					Drawer = drawing.selected
-					for (i,g) in enumerate(operations.reductiongraphiter(drawing.term, drawing.startnum, drawing.endnum)):
+					Drawer = self.drawing.selected
+					for (i,g) in enumerate(operations.reductiongraphiter(self.drawing.term, self.drawing.startnum, self.drawing.endnum)):
 						yield g
-				drawing.iterator = iterator()
+				self.drawing.iterator = iterator()
 			except KeyError:
 				pass
-			drawing.graphnumber = 0
-
+			self.drawing.graphnumber = 0
+			
+			# INIT FUNCTION
 			if True:
-				Drawer = drawing.selected
-				rg = drawing.iterator.next()
+				Drawer = self.drawing.selected
+				rg = self.drawing.iterator.next()
 				g = Drawer(rg)
-				drawing.reductiongraphlist = [rg]
-				drawing.graph = g
-				drawing.graphlist = [g]
-				drawing.starttobig = False
-			drawing.graph.update_layout()
-		drawing.Draw(drawing)
-		# if event.ready:
-		# 	print "DrawGraph 1"
-		# else:
-		# 	print "DrawGraph 2"
+				self.drawing.reductiongraphlist = [rg]
+				self.drawing.graph = g
+				self.drawing.graphlist = [g]
+				self.drawing.starttobig = False
+			
+			self.drawing.graph.update_layout()
+		
+		self.drawing.Draw()
+	
+	def NewAlgoSelected (self, event):
+		if hasattr(self.drawing, 'ready') and self.drawing.ready:
+			self.drawing.selectedhaschanged = True
+			Drawer = algorithms[self.cb1.GetValue()]
+			self.drawing.selected = Drawer
+			rg = self.drawing.reductiongraphlist[self.drawing.graphnumber]
+			g = Drawer(rg)
+			self.drawing.graphlist[self.drawing.graphnumber] = g
+			self.drawing.graph = self.drawing.graphlist[self.drawing.graphnumber]
+			self.drawing.graph.update_layout()
+			self.drawing.Draw()
 	
 	def Generate(self,event):
 		print "Generate"
+		# self.drawing.InitDraw()
 	
 	def Forward(self,event):
 		print "Forward"
