@@ -65,12 +65,12 @@ class MainWindow(wx.Frame):
 
 		# Buttons
 		self.tf1 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE)
-		self.bt1 = wx.Button(self, 0, "Draw Graph")
-		self.bt2 = wx.Button(self, 0, "Generate Random Lambda term")
-		self.bt3 = wx.Button(self, 0, "Forward")
-		self.bt4 = wx.Button(self, 0, "Back")
-		self.bt5 = wx.Button(self, 0, "Redraw Graph")
-		self.bt6 = wx.Button(self, 0, "Optimize Graph")
+		self.bt1 = wx.Button(self, 0, size=(175, 10),"Draw Graph")
+		self.bt2 = wx.Button(self, 0, size=(175, 10),"Random Lambda term")
+		self.bt3 = wx.Button(self, 0, size=(175, 10),"Forward")
+		self.bt4 = wx.Button(self, 0, size=(175, 10),"Back")
+		self.bt5 = wx.Button(self, 0, size=(175, 10),"Redraw Graph")
+		self.bt6 = wx.Button(self, 0, size=(175, 10),"Optimize Graph")
 		self.st1 = wx.StaticText(self, -1, 'Select Drawing Alg: ', (5, 5))
 		self.cb1 = wx.ComboBox(self, -1, size=(200, -1), choices=[k for (k,v) in algorithms.iteritems()], style = wx.CB_READONLY)
 		self.st2 = wx.CheckBox(self, -1, 'Start')
