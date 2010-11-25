@@ -58,6 +58,10 @@ class MyCanvasBase(glcanvas.GLCanvas):
 		self.graph = None
 		self.node = None
 		self.fullscreen = 0
+		self.orthoLeft = 0.0
+		self.orthoRight = 0.0
+		self.orthoBottom = 0.0
+		self.orthoTop = 0.0
 		self.window_height = height
 		self.window_width = width
 		self.resizeWindow = 0
@@ -97,9 +101,34 @@ class MyCanvasBase(glcanvas.GLCanvas):
 	def OnMouseDown(self, evt):
 		self.CaptureMouse()
 		self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-
+		# print self.x
+		# print self.y
+		# print self.orthoLeft
+		# print self.orthoRight
+		# print self.orthoBottom
+		# print self.orthoTop
+		x = self.x/self.orthoRight
+		y = self.y/self.orthoBottom
+		print x
+		print y
+		r = 10
+		if self.ready:
+			for node in self.graph.nodes:
+				print node.name
+				print node.x
+				print node.y
+				if int(x) in xrange(int(node.x) - r, int(node.x) + r) and int(y) in xrange(int(node.y) - r, int(node.y) + r):
+					self.graph.dragnode = True
+					self.graph.dragnodename = node.name
+					self.graph.dragnodex = x
+					self.graph.dragnodey = y
+					self.graph.dragnodenode = node
+					print "you have clicked a node"
 
 	def OnMouseUp(self, evt):
+		self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
+		print self.x
+		print self.y
 		self.ReleaseMouse()
 
 
@@ -124,121 +153,134 @@ class MyCubeCanvas(MyCanvasBase):
 		glEnable(GL_POINT_SMOOTH)
 		glEnable(GL_POLYGON_SMOOTH)
 	
-	def InitDraw(self, event):
-		if True:
-			self.startnum = 1
-			self.endnum = 1000000
-			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
-			# self.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
-			self.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
-			self.mgs = []
-			operations.assignvariables(self.term)
-			self.selected = NeatoGraph
-			self.startnumber = 1
-			try:
-				def iterator():
-					Drawer = self.selected
-					for (i,g) in enumerate(operations.reductiongraphiter(self.term, self.startnum, self.endnum)):
-						yield g
-				self.iterator = iterator()
-			except KeyError:
-				pass
-			self.graphnumber = 0
-			
-			# INIT FUNCTION
-			if True:
-				Drawer = self.selected
-				rg = self.iterator.next()
-				g = Drawer(rg)
-				self.reductiongraphlist = [rg]
-				self.graph = g
-				self.graphlist = [g]
-				self.starttobig = False
-			
-			self.graph.update_layout()
-			self.Draw()
+# <<<<<<< .mine
+	# def InitDraw(self):
+	# 	if True:
+	# 		self.ready = True
+	# 		self.startnum = 1
+	# 		self.endnum = 1000000
+	# 		tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
+	# 		self.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+	# 		self.mgs = []
+	# 		operations.assignvariables(self.term)
+	# 		# self.selected = NeatoGraph
+	# 		self.startnumber = 1
+	# 		try:
+	# 			def iterator():
+	# 				Drawer = self.selected
+	# 				for (i,g) in enumerate(operations.reductiongraphiter(self.term, self.startnum, self.endnum)):
+	# 					yield g
+	# 			self.iterator = iterator()
+	# 		except KeyError:
+	# 			pass
+	# 		self.graphnumber = 0
+	# 		
+	# 		# INIT FUNCTION
+	# 		if True:
+	# 			Drawer = self.selected
+	# 			rg = self.iterator.next()
+	# 			g = Drawer(rg)
+	# 			self.reductiongraphlist = [rg]
+	# 			self.graph = g
+	# 			self.graphlist = [g]
+	# 			self.starttobig = False
+	# 		
+	# 		self.graph.update_layout()
+	# 		self.Draw()
+# =======
+# 	def InitDraw(self, event):
+# 		if True:
+# 			self.startnum = 1
+# 			self.endnum = 1000000
+# 			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
+# 			# self.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+# 			self.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
+# 			self.mgs = []
+# 			operations.assignvariables(self.term)
+# 			self.selected = NeatoGraph
+# 			self.startnumber = 1
+# 			try:
+# 				def iterator():
+# 					Drawer = self.selected
+# 					for (i,g) in enumerate(operations.reductiongraphiter(self.term, self.startnum, self.endnum)):
+# 						yield g
+# 				self.iterator = iterator()
+# 			except KeyError:
+# 				pass
+# 			self.graphnumber = 0
+# >>>>>>> .r313
 			
 	def Draw(self):
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		if True:
 			Xs = [node.x for node in self.graph.nodes]
 			Ys = [node.y for node in self.graph.nodes]
-			print "1"
-			# print min(Xs)
-			# print max(Xs)
-			# print min(Ys)
-			# print max(Ys)
-			# scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
-			
-			# for node in drawing.graph.nodes:
-			# 	print node.x
 		
 			glMatrixMode(GL_PROJECTION)
 			glLoadIdentity()
-			gluOrtho2D(0.0, (max(Xs)+10), 0.0, (max(Ys)+10))
+			self.orthoLeft = 0.0
+			self.orthoRight = (max(Xs)+10)
+			self.orthoBottom = (max(Ys)+10)
+			self.orthoTop = 0.0
+			gluOrtho2D(self.orthoLeft, self.orthoRight, self.orthoBottom, self.orthoTop)
 			glMatrixMode(GL_MODELVIEW)
 			
 			# draw six faces of a cube
 			# glColor3f(0.3, 0.6, 1.0)
 			# glPointSize(10)
-			
 			for node in self.graph.nodes:
 				for edge in node.children:
-					glLineWidth(4.5)
-					glColor4f(0.3, 0.9, 0.2, 0.1)
-					far_node = edge.get_far(node)
-					glBegin(GL_LINES)
-					glVertex2f(far_node.x, far_node.y)
-					glColor4f(0.9, 0.1, 0.8, 0.1)
-					glVertex2f(node.x, node.y)
-					glEnd()
+					if hasattr(self.graph, 'bezier') and self.graph.bezier:
+						far_node = edge.get_far(node)
+						if edge.destination == node:
+							continue
+						
+						destX = edge.destination.x
+						destY = edge.destination.y
+						
+						lastX = edge.ipoints[len(edge.ipoints) - 1][0]
+						lastY = edge.ipoints[len(edge.ipoints) - 1][1]
+						
+						if node.y != edge.ipoints[0][1] or node.x != edge.ipoints[0][0]:
+							self.DrawLine(node.x, node.y, edge.ipoints[0][0], edge.ipoints[0][1])
+							# self.__cr.move_to(node.x, node.y)
+							# self.__cr.line_to(edge.ipoints[0][0], edge.ipoints[0][1])
+							# self.__cr.stroke()
+						if destY != lastY or destX != lastX:
+							self.DrawLine(far_node.x, far_node.y, lastX, lastY)
+							# self.__cr.move_to(far_node.x, far_node.y)
+							# self.__cr.line_to(lastX, lastY)
+							# self.__cr.stroke()
+							
+						POld = [edge.ipoints[0][0], edge.ipoints[0][1]]
+						t = 0.00
+						l = len(edge.ipoints)
+						for g in xrange(101):
+							P = drawBezierGen(t, l, edge.ipoints)
+							self.DrawLine(POld[0], POld[1], P[0], P[1])
+							# self.__cr.move_to(POld[0], POld[1])
+							# self.__cr.line_to(P[0], P[1])
+							# self.__cr.stroke()
+							POld = P
+							t = t + 0.01
+					else:
+						far_node = edge.get_far(node)
+						x1 = far_node.x
+						y1 = far_node.y
+						x2 = node.x
+						y2 = node.y
+						self.DrawLine(x1, y1, x2, y2)
 					
-					glLineWidth(3.5)
-					glColor4f(0.3, 0.9, 0.2, 0.2)
-					far_node = edge.get_far(node)
-					glBegin(GL_LINES)
-					glVertex2f(far_node.x, far_node.y)
-					glColor4f(0.9, 0.1, 0.8, 0.2)
-					glVertex2f(node.x, node.y)
-					glEnd()
-					
-					glLineWidth(2.5)
-					glColor4f(0.3, 0.9, 0.2, 0.4)
-					far_node = edge.get_far(node)
-					glBegin(GL_LINES)
-					glVertex2f(far_node.x, far_node.y)
-					glColor4f(0.9, 0.1, 0.8, 0.4)
-					glVertex2f(node.x, node.y)
-					glEnd()
-					
-					glLineWidth(1.5)
-					glColor4f(0.3, 0.9, 0.2, 0.6)
-					far_node = edge.get_far(node)
-					glBegin(GL_LINES)
-					glVertex2f(far_node.x, far_node.y)
-					glColor4f(0.9, 0.1, 0.8, 0.6)
-					glVertex2f(node.x, node.y)
-					glEnd()
-					
-					glLineWidth(1.0)
-					glColor4f(0.3, 0.9, 0.2, 0.8)
-					far_node = edge.get_far(node)
-					glBegin(GL_LINES)
-					glVertex2f(far_node.x, far_node.y)
-					glColor4f(0.9, 0.1, 0.8, 0.8)
-					glVertex2f(node.x, node.y)
-					glEnd()
-					
-					glLineWidth(0.5)
-					glColor4f(0.3, 0.9, 0.2, 1.0)
-					far_node = edge.get_far(node)
-					glBegin(GL_LINES)
-					glVertex2f(far_node.x, far_node.y)
-					glColor4f(0.9, 0.1, 0.8, 1.0)
-					glVertex2f(node.x, node.y)
-					glEnd()
+					radius = 5
+					if node != edge.get_far(node):
+						self.draw_arrowhead(x1, y1, x2, y2, radius)
+						
+						# if node != edge.get_far(node):
+						# 	self.draw_arrowhead(x1, y1, x2, y2, radius)
 
 			for node in self.graph.nodes:
+				print node.x
+				print node.y
 				glPointSize(20)
 				glColor4f(0.3, 0.6, 1.0, 0.1)
 				glBegin(GL_POINTS)
@@ -276,11 +318,109 @@ class MyCubeCanvas(MyCanvasBase):
 				glEnd()
 		
 		self.SwapBuffers()
-
+	def DrawLine(self, x1, y1, x2, y2):
+		glLineWidth(4.5)
+		glColor4f(0.3, 0.9, 0.2, 0.1)
+		glBegin(GL_LINES)
+		glVertex2f(x1, y1)
+		glVertex2f(x2, y2)
+		glEnd()
+		
+		glLineWidth(3.5)
+		glColor4f(0.3, 0.9, 0.2, 0.2)
+		glBegin(GL_LINES)
+		glVertex2f(x1, y1)
+		glVertex2f(x2, y2)
+		glEnd()
+		
+		glLineWidth(2.5)
+		glColor4f(0.3, 0.9, 0.2, 0.4)
+		glBegin(GL_LINES)
+		glVertex2f(x1, y1)
+		glVertex2f(x2, y2)
+		glEnd()
+		
+		glLineWidth(1.5)
+		glColor4f(0.3, 0.9, 0.2, 0.6)
+		glBegin(GL_LINES)
+		glVertex2f(x1, y1)
+		glVertex2f(x2, y2)
+		glEnd()
+		
+		glLineWidth(1.0)
+		glColor4f(0.3, 0.9, 0.2, 0.8)
+		glBegin(GL_LINES)
+		glVertex2f(x1, y1)
+		glVertex2f(x2, y2)
+		glEnd()
+		
+		glLineWidth(0.5)
+		glColor4f(0.3, 0.9, 0.2, 1.0)
+		glBegin(GL_LINES)
+		glVertex2f(x1, y1)
+		glVertex2f(x2, y2)
+		glEnd()
+		
+	
+	def draw_arrowhead(self, x1, y1, x2, y2, noderadius):
+		'''
+		Draws an arrow head on the line segment between the coordinate pairs
+		(x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
+		'''
+		arrowwidth = 10
+		Pi = math.pi
+		angle = 20
+		
+		if x1 - x2 == 0:
+			if y2 <= y1:
+				LineAngle = Pi / 2
+			else:
+				LineAngle = 3 * Pi / 2
+		else:
+			LineAngle = math.atan((y2 - y1) / (x2 - x1))
+	
+		EndAngle1 = LineAngle + angle * Pi/180
+		EndAngle2 = LineAngle - angle * Pi/180
+	
+		xOffset = noderadius * math.cos(LineAngle)
+		yOffset = noderadius * math.sin(LineAngle)
+		if x1 < x2:
+			Y3 = y2 - arrowwidth * math.sin(EndAngle1)
+			Y4 = y2 - arrowwidth * math.sin(EndAngle2)
+			X3 = x2 - arrowwidth * math.cos(EndAngle1)
+			X4 = x2 - arrowwidth * math.cos(EndAngle2)
+			
+			x2 -= xOffset
+			y2 -= yOffset
+			Y3 -= yOffset
+			Y4 -= yOffset
+			X3 -= xOffset
+			X4 -= xOffset
+		else:
+			Y3 = y2 + arrowwidth * math.sin(EndAngle1)
+			Y4 = y2 + arrowwidth * math.sin(EndAngle2)
+			X3 = x2 + arrowwidth * math.cos(EndAngle1)
+			X4 = x2 + arrowwidth * math.cos(EndAngle2)
+			x2 += xOffset
+			y2 += yOffset
+			Y3 += yOffset
+			Y4 += yOffset
+			X3 += xOffset
+			X4 += xOffset
+		
+		glLineWidth(1.0)
+		glColor4f(1.0, 0.2, 0.9, 0.6)
+		glBegin(GL_TRIANGLES)
+		glVertex2f(x2, y2)
+		glVertex2f(X3, Y3)
+		glVertex2f(X4, Y4)
+		glEnd()
+		
+	
 	def Forward(self, event):
 		# clear color and depth buffers
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-		Drawer = TwopiGraph
+		# glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+		Drawer = self.selected
 		self.firstgraph = False
 		if self.graphnumber + 2 <= len(self.graphlist):
 			if hasattr(self, 'selectedhaschanged') and self.selectedhaschanged:
@@ -316,10 +456,65 @@ class MyCubeCanvas(MyCanvasBase):
 				self.nomoregraphs = True
 				# outputtext()
 				print "gg"
-		self.SwapBuffers()
+		# self.SwapBuffers()
 		self.Draw()
-
+	
+	def Back(self, event):
+		Drawer = self.selected
+		self.nomoregraphs = False
+		if self.graphnumber == 0:
+			# outputtext()
+			self.firstgraph = True
+		else:
+			self.firstgraph = False
+			if hasattr(self, 'selectedhaschanged') and self.selectedhaschanged:
+				self.graphnumber -= 1
+				rg = self.reductiongraphlist[self.graphnumber]
+				g = Drawer(rg)
+				self.graphlist[self.graphnumber] = g
+				self.graph = g
+				self.graph.initwith(self.graphlist[self.graphnumber + 1])
+				# outputtext()
+				self.graph.update_layout_animated(iter_animated)
+				# self.queue_draw()
+				# drawing.selectedhaschanged = False
+			else:
+				self.graphnumber -= 1
+				self.graph = self.graphlist[self.graphnumber]
+				# outputtext()
+				self.graph.update_layout()
+				# drawing.queue_draw()
+		# outputtext()
+		self.Draw()
+	
+	def Redraw(self, event):
+		if self.ready:
+			self.graph.reset()
+			self.graph.update_layout()
+			self.Draw()
+		else:
+			print "No graph created yet!"
+		
+	def Optimize(self, event):
+		if self.ready:
+			self.graph.update_layout()
+			self.Draw()
+		else:
+			print "No graph created yet!"
+	
 	def OnDraw(self):
 		# clear color and depth buffers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		self.SwapBuffers()
+
+def binomial(n, i):
+	bin = math.factorial(n) / (math.factorial(i) * math.factorial(n - i))
+	return bin
+
+# calculated the bezier lines
+def drawBezierGen(t, l, ipoints):
+	n = l - 1
+	fun = lambda a, b:a + b
+	x = reduce(fun, (binomial(n, i) * pow((1 - t), n - i) * pow(t, i) * ipoints[i][0] for i in xrange(l)))
+	y = reduce(fun, (binomial(n, i) * pow((1 - t), n - i) * pow(t, i) * ipoints[i][1] for i in xrange(l)))
+	return [x, y]
