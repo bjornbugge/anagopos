@@ -96,67 +96,68 @@ class MyCanvasBase(glcanvas.GLCanvas):
 			self.InitGL(self.window_height, self.window_width)
 			self.init = True
 		self.OnDraw()
-
-
+	
+	
+	def iter_animated(self):
+		sleeptime = 0.01
+		# if hasattr(drawing, 'selected') and drawing.selected == "Neato Animated":
+		# 	while gtk.events_pending():
+		# 		gtk.main_iteration(True)
+		self.Draw()
+		time.sleep(sleeptime)
+	
+	
 	def OnMouseDown(self, evt):
 		self.CaptureMouse()
 		self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-		# print self.GetSize()[0]
-		# print self.GetSize()[1]
 		
-		propX = float(self.x)/float(self.GetSize()[0])
-		propY = float(self.y)/float(self.GetSize()[1])
+		self.propX = float(self.x)/float(self.GetSize()[0])
+		self.propY = float(self.y)/float(self.GetSize()[1])
+		self.scX = self.orthoRight - self.orthoLeft
+		self.scY = self.orthoBottom - self.orthoTop
 		
-		scX = self.orthoRight - self.orthoLeft
-		scY = self.orthoBottom - self.orthoTop
-		
-		X = propX * scX
-		Y = propY * scY
-		
-		# print "X = " + str(self.x) + "/" + str(self.GetSize()[0]) + "(" + str(self.orthoRight) + "-" + str(self.orthoLeft) + ")"
-		# print "Y = " + str(self.y) + "/" + str(self.GetSize()[1]) + "(" + str(self.orthoBottom) + "-" + str(self.orthoTop) + ")"
-		
-		# print self.x
-		# print self.y
-		# print self.orthoLeft
-		# print self.orthoRight
-		# print self.orthoBottom
-		# print self.orthoTop
-		x = self.x#/self.orthoRight
-		y = self.y#/self.orthoBottom
-		# print "X:         " + str(x)
-		# print "Y:         " + str(y)
-		rX = 20/float(self.GetSize()[0])*scX
-		rY = 20/float(self.GetSize()[1])*scY
-		# print rX
-		# print rY
+		X = self.propX * self.scX
+		Y = self.propY * self.scY
+
+		x = self.x
+		y = self.y
+
+		rX = 20/float(self.GetSize()[0])*self.scX
+		rY = 20/float(self.GetSize()[1])*self.scY
+
 		if self.ready:
 			for node in self.graph.nodes:
 				
 				nX = node.x - self.orthoLeft
 				nY = node.y - self.orthoTop
 				
-				# print "node name:           " + node.name
-				# print "     X node coord:   " + str(nX)
-				# print "     Y node coord:   " + str(nY)
-				# print "     X node clicked: " + str(X)
-				# print "     Y node clicked: " + str(Y)
-				
 				if (X > (nX-rX)) and (X < (nX + rX)) and (Y > (nY - rY)) and (Y < (nY + rY)):
-					# self.graph.dragnode = True
-					# self.graph.dragnodename = node.name
-					# self.graph.dragnodex = x
-					# self.graph.dragnodey = y
-					# self.graph.dragnodenode = node
-					print "you have clicked node " + node.name
-					print node
+					self.graph.dragnode = True
+					self.graph.dragnodename = node.name
+					self.graph.dragnodex = x
+					self.graph.dragnodey = y
+					self.graph.dragnodenode = node
+				else:
+					self.graph.dragnode = False
+					
 				# else:
 				# 	print "you have NOT clicked a node"
 
 	def OnMouseUp(self, evt):
-		self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-		# print self.x
-		# print self.y
+		if hasattr(self.graph, 'dragnode') and self.graph.dragnode:
+			x = self.x
+			y = self.y
+			self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
+			if (y != self.y) or (x != self.x):
+				print "you are trying to drag node: " + self.graph.dragnodename
+				print "new pixel coordinates: (" + str(self.x) + "," + str(self.y) + ")"
+				print "new gviz coordinates:  (" + str(self.x) + "," + str(self.y) + ")"
+				self.nodetext = ""
+			else:
+				print "you have clicked node " + self.graph.dragnodename
+				self.nodetext = str(self.graph.dragnodenode)
+			# print self.x
+			# print self.y
 		self.ReleaseMouse()
 
 
@@ -274,37 +275,37 @@ class MyCubeCanvas(MyCanvasBase):
 			for node in self.graph.nodes:
 				# print node.x
 				# print node.y
-				glPointSize(20)
+				glPointSize(15)
 				glColor4f(0.3, 0.6, 1.0, 0.1)
 				glBegin(GL_POINTS)
 				glVertex2f(node.x, node.y)
 				glEnd()
 				
-				glPointSize(18)
+				glPointSize(13)
 				glColor4f(0.3, 0.6, 1.0, 0.2)
 				glBegin(GL_POINTS)
 				glVertex2f(node.x, node.y)
 				glEnd()
 				
-				glPointSize(16)
+				glPointSize(11)
 				glColor4f(0.3, 0.6, 1.0, 0.4)
 				glBegin(GL_POINTS)
 				glVertex2f(node.x, node.y)
 				glEnd()
 				
-				glPointSize(14)
+				glPointSize(9)
 				glColor4f(0.3, 0.6, 1.0, 0.6)
 				glBegin(GL_POINTS)
 				glVertex2f(node.x, node.y)
 				glEnd()
 				
-				glPointSize(12)
+				glPointSize(7)
 				glColor4f(0.3, 0.6, 1.0, 0.8)
 				glBegin(GL_POINTS)
 				glVertex2f(node.x, node.y)
 				glEnd()
 				
-				glPointSize(10)
+				glPointSize(5)
 				glColor4f(0.3, 0.6, 1.0, 1.0)
 				glBegin(GL_POINTS)
 				glVertex2f(node.x, node.y)
@@ -340,8 +341,8 @@ class MyCubeCanvas(MyCanvasBase):
 		glVertex2f(x2, y2)
 		glEnd()
 		
-		glLineWidth(1.0)
-		glColor4f(0.3, 0.9, 0.2, 0.8)
+		glLineWidth(0.8)
+		glColor4f(0.3, 0.9, 0.2, 0.3)
 		glBegin(GL_LINES)
 		glVertex2f(x1, y1)
 		glVertex2f(x2, y2)
@@ -453,7 +454,8 @@ class MyCubeCanvas(MyCanvasBase):
 				self.graph = self.graphlist[self.graphnumber]
 				if type(self.graph) is type(self.graphlist[self.graphnumber - 1]):
 					self.graph.initwith(self.graphlist[self.graphnumber - 1])
-				self.graph.update_layout()
+				self.graph.update_layout_animated(self.iter_animated)
+				# self.graph.update_layout()
 				print "uu"
 			except StopIteration:
 				self.nomoregraphs = True
@@ -485,7 +487,7 @@ class MyCubeCanvas(MyCanvasBase):
 				self.graphnumber -= 1
 				self.graph = self.graphlist[self.graphnumber]
 				# outputtext()
-				self.graph.update_layout()
+				self.graph.update_layout_animated(self.iter_animated)
 				# drawing.queue_draw()
 		# outputtext()
 		self.Draw()
@@ -493,14 +495,14 @@ class MyCubeCanvas(MyCanvasBase):
 	def Redraw(self, event):
 		if self.ready:
 			self.graph.reset()
-			self.graph.update_layout()
+			self.graph.update_layout_animated(self.iter_animated)
 			self.Draw()
 		else:
 			print "No graph created yet!"
 		
 	def Optimize(self, event):
 		if self.ready:
-			self.graph.update_layout()
+			self.graph.update_layout_animated(self.iter_animated)
 			self.Draw()
 		else:
 			print "No graph created yet!"
