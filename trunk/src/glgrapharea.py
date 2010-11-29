@@ -27,6 +27,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *	 
 from OpenGL.GLUT import *
 import OpenGL.platform.darwin
+import OpenGL.platform.glx
 # import OpenGL.arrays.arraydatatype
 import OpenGL.arrays.formathandler
 import OpenGL.arrays.ctypesarrays
