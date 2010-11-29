@@ -89,6 +89,8 @@ class MainWindow(wx.Frame):
 		self.cb1.Bind(wx.EVT_COMBOBOX, self.NewAlgoSelected)
 		# self.Bind(wx.EVT_LEFT_DOWN, self.drawing.OnMouseDown)
 		# self.Bind(wx.EVT_LEFT_UP, self.drawing.OnMouseUp)
+		# self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
+		# self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
 		# self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
 		
 		
@@ -148,23 +150,27 @@ class MainWindow(wx.Frame):
 	def OnExit(self,event):
 		self.Close(True)
 	
-	# def OnMouseDown(self, evt):
-	# 	self.CaptureMouse()
-	# 	self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-	# 	print self.x
-	# 	print self.y
-	# 
-	# def OnMouseUp(self, evt):
-	# 	self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-	# 	print self.x
-	# 	print self.y
-	# 	# self.ReleaseMouse()
-	# 
-	# def OnMouseMotion(self, evt):
-	# 	if evt.Dragging() and evt.LeftIsDown():
-	# 		self.lastx, self.lasty = self.x, self.y
-	# 		self.x, self.y = evt.GetPosition()
-	# 		self.Refresh(False)
+	def OnMouseDown(self, evt):
+		print "mouse down"
+		# self.CaptureMouse()
+		# self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
+		# print self.x
+		# print self.y
+	
+	def OnMouseUp(self, evt):
+		print  "mouse up"
+		# self.tf2.SetValue(self.drawing.nodetest)
+		# self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
+		# print self.x
+		# print self.y
+		# self.ReleaseMouse()
+	
+	def OnMouseMotion(self, evt):
+		print "mouse moving"
+		# if evt.Dragging() and evt.LeftIsDown():
+		# 	self.lastx, self.lasty = self.x, self.y
+		# 	self.x, self.y = evt.GetPosition()
+		# 	self.Refresh(False)
 	
 	
 	def DrawGraph(self, drawing):
@@ -204,7 +210,7 @@ class MainWindow(wx.Frame):
 				self.drawing.graphlist = [g]
 				self.drawing.starttobig = False
 			
-			self.drawing.graph.update_layout()
+			self.drawing.graph.update_layout_animated(self.drawing.iter_animated)
 		
 		self.drawing.Draw()
 	
