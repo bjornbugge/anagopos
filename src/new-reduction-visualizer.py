@@ -22,7 +22,7 @@ from glgrapharea import MyCubeCanvas
 # 
 import computegraph.operations as operations
 # import computegraph.lambda_randomgraph as randomgraph
-import lambdaparser.lambdaparser as parser
+import parser.lambdaparser.lambdaparser as parser
 
 # Drawing algorithms
 from drawingalgorithms.majorizationgraph import MajorizationGraph
