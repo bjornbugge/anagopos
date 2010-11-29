@@ -26,6 +26,22 @@ from wx import glcanvas
 from OpenGL.GL import *	 
 from OpenGL.GLU import *	 
 from OpenGL.GLUT import *
+import OpenGL.platform.darwin
+# import OpenGL.arrays.arraydatatype
+import OpenGL.arrays.formathandler
+import OpenGL.arrays.ctypesarrays
+import OpenGL.arrays.numpymodule
+import OpenGL.arrays.lists
+import OpenGL.arrays.numbers
+import OpenGL.arrays.strings
+import OpenGL.GLU.glustruct
+import OpenGL.arrays.nones
+import OpenGL.arrays.lists
+import OpenGL.arrays.strings
+import OpenGL.arrays.numbers
+import OpenGL.arrays.ctypesarrays
+import OpenGL.arrays.ctypesparameters
+import OpenGL.arrays.ctypespointers
 import computegraph.operations as operations
 # import computegraph.randomgraph as randomgraph
 # import lambdaparser.lambdaparser as parser
