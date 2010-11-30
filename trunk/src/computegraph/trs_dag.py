@@ -1,3 +1,7 @@
+'''
+Contains classes representing the nodes in a DAG for a term.
+'''
+
 # Reduction Visualizer. A tool for visualization of reduction graphs.
 # Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
 # 
@@ -13,11 +17,6 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-__doc__ = \
-'''
-Contains classes representing the nodes in a DAG for a term.
-'''
 
 class TRSNode(object):
     def __init__(self):
@@ -124,7 +123,7 @@ class FunctionSymbol(TRSNode):
             n.append(c.__repr__())
         self.strrepr = self.name
         if len(n) > 0:
-            self.strrepr += "(" + reduce(lambda a,b:a + ", " + b, n) + ")"
+            self.strrepr += "(" + reduce(lambda a, b:a + ", " + b, n) + ")"
     
     def __repr__(self):
         self.makestr()
