@@ -1,3 +1,7 @@
+'''
+Representation of a reduction graph.
+'''
+
 # Reduction Visualizer. A tool for visualization of reduction graphs.
 # Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
 # 
