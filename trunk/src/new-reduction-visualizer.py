@@ -38,7 +38,8 @@ import sys
 import math
 import random
 import time
-import os
+# import os
+from os import getcwd
 import wx
 
 algorithms = {'Neato' : NeatoGraph,
@@ -62,7 +63,7 @@ class MainWindow(wx.Frame):
 		# drawing = GraphArea(graph)
 		self.drawing.ready = False
 		self.drawing.shownewestedget = False
-
+		
 		# Buttons
 		self.tf1 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE)
 		self.bt1 = wx.Button(self, 0, "Draw Graph",         size=(200, 30))
@@ -123,7 +124,11 @@ class MainWindow(wx.Frame):
 
 		# Filemenu
 		filemenu = wx.Menu()
-
+		
+		# Filemenu - Open
+		menuitem = filemenu.Append(-1, "&Load Rule Set", "Load a TRS rule set")
+		self.Bind(wx.EVT_MENU, self.OnLoadRuleSet, menuitem) # Event handler
+		
 		# Filemenu - About
 		menuitem = filemenu.Append(-1, "&About", "Reduction Visualizer")
 		self.Bind(wx.EVT_MENU, self.OnAbout, menuitem) # here comes the event-handler
@@ -136,16 +141,40 @@ class MainWindow(wx.Frame):
 
 		# Menubar
 		menubar = wx.MenuBar()
-		menubar.Append(filemenu,"&File")
+		menubar.Append(filemenu, "&File")
 		self.SetMenuBar(menubar)
 
 		# Show
 		self.Show(True)
+		
+		self.dirname = getcwd() + '/parser' # From 'os'
 
 	def OnAbout(self,event):
 		message = "Reduction Visualizer\n\nURL:\nhttp://code.google.com/p/reduction-visualizer/\n\nBy:\n Niels Bjoern Bugge Grathwohl\n Jens Duelund Pallesen"
 		caption = "Reduction Visualizer"
 		wx.MessageBox(message, caption, wx.OK)
+	
+	def OnLoadRuleSet(self, event):
+		dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
+		if dlg.ShowModal() == wx.ID_OK:
+			name = dlg.GetPath()
+			suffix = name[-3:]
+			if suffix == 'trs':
+				print "Opened a .trs file: " + name
+			elif suffix == 'xml':
+				print "Opened an XML file: " + name
+			else:
+				print "Unrecognized file format: " + name
+				return
+			
+			operations.setmode('trs')
+			
+			with open(name, 'r') as f:
+				contents = f.read()
+			
+			ruleset = operations.parse_rule_set(suffix, contents)
+			print "GOT RULE SET: " + str(ruleset)
+			
 	
 	def OnExit(self,event):
 		self.Close(True)
