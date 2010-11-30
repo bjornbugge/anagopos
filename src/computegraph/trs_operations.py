@@ -1,3 +1,9 @@
+'''
+This module contains functions that operate on terms in a first-order term
+reduction system (TRS). The general format is, that a function takes some
+term and a set of reduction rules, reduces the term and outputs the result.
+'''
+
 # Reduction Visualizer. A tool for visualization of reduction graphs.
 # Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
 # 
@@ -19,18 +25,11 @@ import trs_reductiongraph as redgraph
 import pdb
 from copy import deepcopy
 
-__doc__ = \
-'''
-This module contains functions that operate on terms in a first-order term
-reduction system (TRS). The general format is, that a function takes some
-term and a set of reduction rules, reduces the term and outputs the result.
-'''
-
 def assignvariables(root):
     pass # dummy function!
 
 def sanitize(term):
-	pass # dummy function!
+    pass # dummy function!
 
 def termsmatch(term1, term2):
     '''
