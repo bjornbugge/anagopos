@@ -27,7 +27,7 @@ from computegraph.trs_operations import findredexes
 from parser.trsparser import trs_parser as TRS
 
 
-class TPDPParser(object):
+class TPDBParser(object):
     '''
     Parser class. After a succesfull parse, an instance of this class
     contains the rules specified in the TPDP-XML-file in the instance
@@ -47,7 +47,7 @@ class TPDPParser(object):
     
     def __init__(self):
         self.eat_characters = False
-        self.mode = TPDPParser.initial_mode
+        self.mode = TPDBParser.initial_mode
         self.function_table = {}
         self.function_stack = []
         self.stack = []
@@ -118,12 +118,12 @@ class TPDPParser(object):
         Handler for the start elements. Performs the appropriate actions
         for the different supported tags.
         '''
-        if name == TPDPParser.tags['RULE_SET_DEFINITION']:
+        if name == TPDBParser.tags['RULE_SET_DEFINITION']:
             self.add_rule_set()
-        elif name == TPDPParser.tags['FUNCTION_NAME']:
-            self.mode = TPDPParser.push_function_mode
-        elif name == TPDPParser.tags['VARIABLE_NAME']:
-            self.mode = TPDPParser.add_variable_mode
+        elif name == TPDBParser.tags['FUNCTION_NAME']:
+            self.mode = TPDBParser.push_function_mode
+        elif name == TPDBParser.tags['VARIABLE_NAME']:
+            self.mode = TPDBParser.add_variable_mode
         else:
             pass # Ignore everything else
     
@@ -131,20 +131,20 @@ class TPDPParser(object):
         '''
         Handler for the end elements. 
         '''
-        if name == TPDPParser.tags['FUNCTION_APPLICATION']:
+        if name == TPDBParser.tags['FUNCTION_APPLICATION']:
             self.pop_function()
-        elif name == TPDPParser.tags['RULE_DEFINITION']:
+        elif name == TPDBParser.tags['RULE_DEFINITION']:
             self.add_rule()
         
-        self.mode = TPDPParser.initial_mode
+        self.mode = TPDBParser.initial_mode
     
     def character_data(self, data):
         '''
         Manages character data. Responsible for naming the functions and variables.
         '''
-        if self.mode == TPDPParser.push_function_mode:
+        if self.mode == TPDBParser.push_function_mode:
             self.push_function(data)
-        elif self.mode == TPDPParser.add_variable_mode:
+        elif self.mode == TPDBParser.add_variable_mode:
             self.add_variable(data)
     
     def parse(self, string):
@@ -157,10 +157,15 @@ class TPDPParser(object):
         parser.CharacterDataHandler = self.character_data
         parser.Parse(string)
 
-
+def parse(string):
+    '''
+    Entry point to the parser. Used by the proxy-style-interface in 
+    computegraph/operations.py.
+    '''
+    parser = TDP
 
 if __name__ == '__main__':
-    pa = TPDPParser()
+    pa = TPDBParser()
     
     def parsefile(file_name = 'parser/tpdbparser/addition_example.xml'):
         with open(file_name, 'r') as f:
