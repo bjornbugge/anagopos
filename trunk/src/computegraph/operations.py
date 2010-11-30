@@ -20,6 +20,13 @@ care of selecting the correct reduction mechanisms and the correct parser.
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import computegraph.lambda_operations as lambda_operations
+import computegraph.trs_operations as trs_operations
+
+import parser.lambdaparser.lambdaparser as lambda_parser
+import parser.trsparser.trs_parser as trs_parser
+import parser.tpdbparser.tpdb_parser as tpdb_parser
+
 
 # May be one of 'lambda' or 'trs'.
 if '__mode__' not in locals():
@@ -30,18 +37,35 @@ def setmode(mode):
     Set the mode, i.e. choose which parser and associated operations to use:
     'trs' or 'lambda'.
     '''
-    global OPS, PARSER, __mode__
+    global OPS, PARSER, TPDBPARSER, __mode__
     if mode == 'lambda':
-        import computegraph.lambda_operations as OPS
-        import parser.lambdaparser.lambdaparser as PARSER
+        OPS = lambda_operations
+        PARSER = lambda_parser
     elif mode == 'trs':
-        import computegraph.trs_operations as OPS
-        import parser.trsparser.trs_parser as PARSER
+        OPS = trs_operations
+        PARSER = trs_parser
+        TPDBPARSER = tpdb_parser
     else:
         raise Exception("Unsupported mode: " + mode)
     
     __mode__ = mode
 
+def parse_rule_set(file_type, string):
+    '''
+    Parse rule set definitions and return a set of rules. Can parse the 
+    XML specifcation used by TPDB and our own .trs-format.
+    '''
+    if not __mode__ == 'trs':
+        raise Exception("Lambda calculus has no rule set files.")
+    
+    ruleparser = None
+    
+    if file_type == 'xml': # The TPDB format
+        ruleparser = TPDBPARSER
+    elif file_type == 'trs': # The home-made (better!) format
+        ruleparser = PARSER
+    
+    return ruleparser.parse_rule_set(string)
 
 def parse(string):
     '''
