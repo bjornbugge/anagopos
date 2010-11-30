@@ -1,3 +1,7 @@
+'''
+A parser for a term reduction system (TRS).
+'''
+
 # Reduction Visualizer. A tool for visualization of reduction graphs.
 # Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
 # 
@@ -14,18 +18,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-__doc__ = \
-'''
-A parser for a term reduction system (TRS).
-'''
-
-from pyparsing import OneOrMore,Optional,Literal,Word,Forward,Keyword,nums,\
-    alphas,delimitedList,srange,cppStyleComment,pythonStyleComment
+from pyparsing import OneOrMore, Optional, Literal, Word, Forward, nums, \
+    alphas, delimitedList, srange, cppStyleComment, pythonStyleComment
 
 from computegraph.trs_dag import FunctionSymbol, Variable, RewriteRuleSet
-from computegraph.trs_operations import *
+from computegraph.trs_operations import findredexes
 
-class TRSParser:
+class TRSParser(object):
+    
     """
     Variable        := [a-z][a-zA-Z0-9_]*
     FunctionName    := [A-Z0-9][a-zA-Z0-9_]*
@@ -42,18 +42,21 @@ class TRSParser:
     def __init__(self):
         self._ruleSetParser = None
         self._termParser = None
-        self._functionTable = {}
-        self._functionStack = []
-        self._stack = []
-        self.ruleSets = []
+        self.clear()
         self._makeGrammar()
     
     def parseRuleSets(self, string):
+        '''
+        Parse all the rule sets in the given string and return them as a list.
+        '''
         self.clear()
         self._ruleSetParser.parseString(string)
         return self.ruleSets
     
     def parseTerm(self, string):
+        '''
+        Parse a term and return its DAG-representation.
+        '''
         self.clear()
         self._termParser.parseString(string)
         if len(self._functionStack) == 0:
@@ -61,6 +64,9 @@ class TRSParser:
         return self._functionStack[0]
 
     def clear(self):
+        '''
+        Reset the parser.
+        '''
         self._functionTable = {}
         self._functionStack = []
         self._stack = []
@@ -144,18 +150,32 @@ class TRSParser:
         
         program             = term # ?
         
-        self._ruleSetParser = OneOrMore(rulesDefinition) + Optional(program)
+        self._ruleSetParser = rulesDefinition # + Optional(program)
         self._ruleSetParser.ignore(cppStyleComment)
         self._ruleSetParser.ignore(pythonStyleComment)
         
         self._termParser = functionCall | variable
-    
+
+parser_instance = TRSParser()
 
 def parse(string):
-    _p = TRSParser()
-    return _p.parseTerm(string)
+    '''
+    Entry-point to the term parser. Ensures compliance with the lambda calculus parser.
+    '''
+    parser_instance.clear()
+    return parser_instance.parseTerm(string)
+
+def parse_rule_set(string):
+    '''
+    Entry-point to the rule set parser.
+    '''
+    parser_instance.clear()
+    return parser_instance.parseRuleSets(string)
 
 def defaultRuleSet():
+    '''
+    Dummy, for testing.
+    '''
     fileName = "parser/trsparser/trs_example.trs"
     with open(fileName, 'r') as f:
         string = f.read()
@@ -165,7 +185,7 @@ def defaultRuleSet():
 
 
 if __name__ == "__main__":
-    p = TRSParser()
+    p = parser_instance
     def testFile(fileName):
         with open(fileName, 'r') as f:
             string = f.read()
