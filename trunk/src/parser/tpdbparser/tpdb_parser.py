@@ -1,6 +1,21 @@
 '''
 Parser for (a subset of) the XML-format specified at 
 http://www.termination-portal.org/wiki/TPDB used for defining TRS-systems.
+The parser looks only at the rule definitions, like:
+<rules>
+    <rule>
+        <lhs>
+            <funapp>
+                <name>F</name>
+                <arg><var>x</var><var>y</var></arg>
+            </funapp>
+        </lhs>
+        <rhs>
+            <var>x</var>
+        </rhs>
+    </rule>
+</rules>
+Everything else in the format is simply ignored.
 '''
 
 # Reduction Visualizer. A tool for visualization of reduction graphs.
@@ -48,6 +63,12 @@ class TPDBParser(object):
     def __init__(self):
         self.eat_characters = False
         self.mode = TPDBParser.initial_mode
+        self.clear()
+    
+    def clear(self):
+        '''
+        Reset the parser.
+        '''
         self.function_table = {}
         self.function_stack = []
         self.stack = []
@@ -147,7 +168,7 @@ class TPDBParser(object):
         elif self.mode == TPDBParser.add_variable_mode:
             self.add_variable(data)
     
-    def parse(self, string):
+    def parse_rule_set(self, string):
         '''
         Entry-point for the parser. 
         '''
@@ -157,23 +178,28 @@ class TPDBParser(object):
         parser.CharacterDataHandler = self.character_data
         parser.Parse(string)
 
-def parse(string):
+parser_instance = TPDBParser()
+
+def parse_rule_set(string):
     '''
     Entry point to the parser. Used by the proxy-style-interface in 
     computegraph/operations.py.
     '''
-    parser = TDP
+    parser_instance.clear()
+    parser_instance.parse_rule_set(string)
+    return parser_instance.rule_set
+
 
 if __name__ == '__main__':
     pa = TPDBParser()
     
-    def parsefile(file_name = 'parser/tpdbparser/addition_example.xml'):
+    def parsefile(file_name = 'parser/tpdbparser/ex2.xml'):
         with open(file_name, 'r') as f:
             string = f.read()
         parse(string)
     
     def parse(string):    
-        pa.parse(string)
+        pa.parse_rule_set(string)
     
     parsefile()
     
