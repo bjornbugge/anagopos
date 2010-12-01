@@ -50,6 +50,9 @@ def setmode(mode):
     
     __mode__ = mode
 
+def current_mode():
+	return __mode__
+
 def parse_rule_set(file_type, string):
     '''
     Parse rule set definitions and return a set of rules. Can parse the 

@@ -51,7 +51,7 @@ class TRSParser(object):
         '''
         self.clear()
         self._ruleSetParser.parseString(string)
-        return self.ruleSets
+        return self.ruleSets[0]
     
     def parseTerm(self, string):
         '''
