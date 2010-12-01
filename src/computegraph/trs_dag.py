@@ -39,7 +39,7 @@ class TRSNode(object):
         return str(self) == str(other)
     
     def __ne__(self, other):
-        return not self.__eq__(self, other)
+        return not self.__eq__(other)
     
     def add(self, node):
         raise NotImplementedError()
