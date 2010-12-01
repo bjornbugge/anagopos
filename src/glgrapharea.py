@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import gtk
-import cairo
 import sys
 import math
 import random
@@ -23,11 +21,11 @@ import time
 import os
 import wx
 from wx import glcanvas
-from OpenGL.GL import *	 
-from OpenGL.GLU import *	 
+from OpenGL.GL import *
+from OpenGL.GLU import *
 from OpenGL.GLUT import *
 import OpenGL.platform.darwin
-import OpenGL.platform.glx
+# import OpenGL.platform.glx
 # import OpenGL.arrays.arraydatatype
 import OpenGL.arrays.formathandler
 import OpenGL.arrays.ctypesarrays
@@ -454,13 +452,11 @@ class MyCubeCanvas(MyCanvasBase):
 				# outputtext()
 				self.graph.update_layout(self.term, self.startnum, self.endnum)
 				# drawing.selectedhaschanged = False
-				print "ee"
 			else:
 				self.graphnumber += 1
 				self.graph = self.graphlist[self.graphnumber]
 				self.graph.initwith(self.graphlist[self.graphnumber - 1])
 				self.graph.update_layout(self.term, self.startnum, self.endnum)
-				print "jj"
 		else:
 			try:
 				rg = self.iterator.next()
@@ -473,7 +469,6 @@ class MyCubeCanvas(MyCanvasBase):
 					self.graph.initwith(self.graphlist[self.graphnumber - 1])
 				self.graph.update_layout_animated(self.iter_animated)
 				# self.graph.update_layout()
-				print "uu"
 			except StopIteration:
 				self.nomoregraphs = True
 				# outputtext()
