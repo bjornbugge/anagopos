@@ -36,11 +36,14 @@ Everything else in the format is simply ignored.
 
 
 import xml.parsers.expat
+import pdb
 
 from computegraph.trs_dag import FunctionSymbol, Variable, RewriteRuleSet
 from computegraph.trs_operations import findredexes
 from parser.trsparser import trs_parser as TRS
 
+class TPDBParseException(Exception):
+    pass
 
 class TPDBParser(object):
     '''
@@ -58,17 +61,18 @@ class TPDBParser(object):
             'RULE_SET_DEFINITION'   : 'rules',
             'VARIABLE_NAME'         : 'var',
             'FUNCTION_APPLICATION'  : 'funapp',
-            'RULE_DEFINITION'       : 'rule'}
+            'RULE_DEFINITION'       : 'rule',
+            'LAMBDA_DEFINITION'     : 'lambda',
+            'APPL_DEFINITION'       : 'application'}
     
     def __init__(self):
-        self.eat_characters = False
-        self.mode = TPDBParser.initial_mode
         self.clear()
     
     def clear(self):
         '''
         Reset the parser.
         '''
+        self.mode = TPDBParser.initial_mode
         self.function_table = {}
         self.function_stack = []
         self.stack = []
@@ -78,6 +82,7 @@ class TPDBParser(object):
         '''
         Adds a new rule to the active rule set.
         '''
+        # pdb.set_trace()
         term_b = self.stack.pop()
         term_a = self.stack.pop()
         if isinstance(term_a, Variable):
@@ -139,12 +144,15 @@ class TPDBParser(object):
         Handler for the start elements. Performs the appropriate actions
         for the different supported tags.
         '''
+        # pdb.set_trace()
         if name == TPDBParser.tags['RULE_SET_DEFINITION']:
             self.add_rule_set()
         elif name == TPDBParser.tags['FUNCTION_NAME']:
             self.mode = TPDBParser.push_function_mode
         elif name == TPDBParser.tags['VARIABLE_NAME']:
             self.mode = TPDBParser.add_variable_mode
+        elif name == TPDBParser.tags['LAMBDA_DEFINITION'] or name == TPDBParser.tags['APPL_DEFINITION']:
+            raise TPDBParseException("Higher-order rewrite systems unsupported")
         else:
             pass # Ignore everything else
     
@@ -152,6 +160,7 @@ class TPDBParser(object):
         '''
         Handler for the end elements. 
         '''
+        # pdb.set_trace()
         if name == TPDBParser.tags['FUNCTION_APPLICATION']:
             self.pop_function()
         elif name == TPDBParser.tags['RULE_DEFINITION']:

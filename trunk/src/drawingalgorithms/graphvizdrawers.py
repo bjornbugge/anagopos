@@ -17,6 +17,7 @@
 import random
 import pygraphviz as pgv
 from drawingalgorithm import DrawingAlgorithm
+import os
 
 class GraphVizDrawer(DrawingAlgorithm):
     '''

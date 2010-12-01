@@ -16,12 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import wx
-from wx import glcanvas
 from glgrapharea import MyCubeCanvas
-# 
-# 
 import computegraph.operations as operations
-# import computegraph.lambda_randomgraph as randomgraph
 import parser.lambdaparser.lambdaparser as parser
 
 # Drawing algorithms
@@ -32,15 +28,12 @@ from drawingalgorithms.graphvizdrawers import NeatoGraph
 from drawingalgorithms.graphvizdrawers import TwopiGraph
 from drawingalgorithms.graphvizdrawers import FdpGraph
 
-import gtk
-import cairo
 import sys
 import math
 import random
-import time
-# import os
 from os import getcwd
-import wx
+from os import environ as osenviron
+# import wx
 
 algorithms = {'Neato' : NeatoGraph,
 			'Neato Animated' : MajorizationGraph,
@@ -54,9 +47,15 @@ class MainWindow(wx.Frame):
 	def __init__(self, parent = None, id = -1, title = "Reduction Visualizer"):
 		# Init
 		wx.Frame.__init__(
-				self, parent, id, title, size = (1366,768),
+				self, parent, id, title, size = (1200,768),
 				style = wx.DEFAULT_FRAME_STYLE | wx.NO_FULL_REPAINT_ON_RESIZE
 		)
+		
+		# Hack! Add the extra path so the application knows where to find the 
+		# GraphViz binaries when run with a "double click" (in which case the
+		# path set in .profile isn't used). This path is (by default!) used by 
+		# MacPorts.
+		osenviron['PATH'] = osenviron['PATH'] + ":/opt/local/bin/"
 		
 		#graph = None
 		self.drawing = MyCubeCanvas(self)
@@ -64,16 +63,29 @@ class MainWindow(wx.Frame):
 		self.drawing.ready = False
 		self.drawing.shownewestedget = False
 		
+		# Create the radio buttons to select between lambda calculus and TRS.
+		self.radio_lambda = wx.RadioButton(self, -1, 'Lambda', style = wx.RB_GROUP)
+		self.radio_trs = wx.RadioButton(self, -1, 'TRS')
+		self.Bind(wx.EVT_RADIOBUTTON, self.SetRadioVal, id = self.radio_lambda.GetId())
+		self.Bind(wx.EVT_RADIOBUTTON, self.SetRadioVal, id = self.radio_trs.GetId())
+		self.active_rule_file_text = wx.StaticText(self, -1, 'Rule set: N/A')
+		radio_box = wx.BoxSizer(wx.HORIZONTAL)
+		radio_box.Add(self.radio_lambda, 0, wx.ALIGN_LEFT, 10)
+		radio_box.Add(self.radio_trs, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
+		self.radio_lambda.SetValue(True) # Lambda is default active
+		self.radio_trs.SetToolTip(wx.ToolTip("Select 'File > Load Rule Set' to activate TRS mode."))
+		# self.radio_trs.Disable()
+		
 		# Buttons
 		self.tf1 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE)
-		self.bt1 = wx.Button(self, 0, "Draw Graph",         size=(200, 30))
-		self.bt2 = wx.Button(self, 0, "Random Lambda term", size=(200, 30))
-		self.bt3 = wx.Button(self, 0, "Forward",            size=(200, 30))
-		self.bt4 = wx.Button(self, 0, "Back",               size=(200, 30))
-		self.bt5 = wx.Button(self, 0, "Redraw Graph",       size=(200, 30))
-		self.bt6 = wx.Button(self, 0, "Optimize Graph",     size=(200, 30))
+		self.bt1 = wx.Button(self, 0, "Draw Graph",         size = (200, 30))
+		self.bt2 = wx.Button(self, 0, "Random Lambda term", size = (200, 30))
+		self.bt3 = wx.Button(self, 0, "Forward",            size = (200, 30))
+		self.bt4 = wx.Button(self, 0, "Back",               size = (200, 30))
+		self.bt5 = wx.Button(self, 0, "Redraw Graph",       size = (200, 30))
+		self.bt6 = wx.Button(self, 0, "Optimize Graph",     size = (200, 30))
 		self.st1 = wx.StaticText(self, -1, 'Select Drawing Alg: ', (5, 5))
-		self.cb1 = wx.ComboBox(self, -1, size=(200, -1), choices=[k for (k,v) in algorithms.iteritems()], style = wx.CB_READONLY)
+		self.cb1 = wx.ComboBox(self, -1, size=(200, -1), choices = [k for (k,v) in algorithms.iteritems()], style = wx.CB_READONLY)
 		self.st2 = wx.CheckBox(self, -1, 'Start')
 		self.st3 = wx.StaticText(self, -1, 'Clicked Term: ', (5, 5))
 		self.tf2 = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE|wx.TE_READONLY)
@@ -96,20 +108,22 @@ class MainWindow(wx.Frame):
 		
 		
 		bts = wx.BoxSizer(wx.VERTICAL)
-		bts.Add(self.tf1, 0, wx.ALIGN_CENTER|wx.ALL, 10)
-		bts.Add(self.bt1, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.bt2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.bt3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.bt4, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.bt5, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.bt6, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.st1, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.cb1, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.st2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.st3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.tf2, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.st4, 0, wx.ALIGN_CENTER|wx.ALL, 3)
-		bts.Add(self.tf3, 0, wx.ALIGN_CENTER|wx.ALL, 3)
+		bts.Add(radio_box, 0, wx.ALIGN_LEFT | wx.ALL, 10)
+		bts.Add(self.active_rule_file_text, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
+		bts.Add(self.tf1, 0, wx.ALIGN_CENTER | wx.ALL, 10)
+		bts.Add(self.bt1, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.bt2, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.bt3, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.bt4, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.bt5, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.bt6, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.st1, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.cb1, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.st2, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.st3, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.tf2, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.st4, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+		bts.Add(self.tf3, 0, wx.ALIGN_CENTER | wx.ALL, 3)
 		
 		box = wx.BoxSizer(wx.HORIZONTAL)
 		box.Add(bts, 0, wx.ALIGN_TOP, 15)
@@ -148,6 +162,9 @@ class MainWindow(wx.Frame):
 		self.Show(True)
 		
 		self.dirname = getcwd() + '/parser' # From 'os'
+		self.rule_set = None # Used for the TRS
+		self.last_used_rule_set = None
+		self.last_used_rule_name = ""
 
 	def OnAbout(self,event):
 		message = "Reduction Visualizer\n\nURL:\nhttp://code.google.com/p/reduction-visualizer/\n\nBy:\n Niels Bjoern Bugge Grathwohl\n Jens Duelund Pallesen"
@@ -158,6 +175,7 @@ class MainWindow(wx.Frame):
 		dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
 		if dlg.ShowModal() == wx.ID_OK:
 			name = dlg.GetPath()
+			rulename = dlg.GetFilename()
 			suffix = name[-3:]
 			if suffix == 'trs':
 				print "Opened a .trs file: " + name
@@ -168,13 +186,34 @@ class MainWindow(wx.Frame):
 				return
 			
 			operations.setmode('trs')
+			# self.radio_trs.Enable(True)
+			self.radio_trs.SetValue(True)
+			self.radio_lambda.SetValue(False)
+			self.UpdateRuleInfo(rulename)
 			
 			with open(name, 'r') as f:
 				contents = f.read()
 			
 			ruleset = operations.parse_rule_set(suffix, contents)
+			self.rule_set = self.last_used_rule_set = ruleset
+			self.last_used_rule_name = rulename
 			print "GOT RULE SET: " + str(ruleset)
-			
+	
+	def SetRadioVal(self, event):
+		if self.radio_lambda.GetValue():
+			operations.setmode('lambda')
+			self.rule_set = None
+			self.UpdateRuleInfo("N/A")
+		else:
+			if self.last_used_rule_set == None:
+				self.OnLoadRuleSet(True)
+			else:
+				self.rule_set = self.last_used_rule_set
+				self.UpdateRuleInfo(self.last_used_rule_name)
+			operations.setmode('trs')
+	
+	def UpdateRuleInfo(self, text):
+		self.active_rule_file_text.SetLabel("Rule Set: " + text)
 	
 	def OnExit(self,event):
 		self.Close(True)
@@ -212,9 +251,9 @@ class MainWindow(wx.Frame):
 			self.drawing.startnum = 0
 			self.drawing.endnum = 1000000
 			tempterm = self.tf1.GetValue()
-			tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
+			# tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
 			#tempterm = "#B1.(#B2.(#B3.(B1)))"
-			self.drawing.term = parser.parse(tempterm.replace(u'\u03bb',"#"))
+			self.drawing.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
 			self.drawing.mgs = []
 			operations.assignvariables(self.drawing.term)
 			# self.drawing.selected = NeatoGraph
@@ -222,7 +261,7 @@ class MainWindow(wx.Frame):
 			try:
 				def iterator():
 					Drawer = self.drawing.selected
-					for (i,g) in enumerate(operations.reductiongraphiter(self.drawing.term, self.drawing.startnum, self.drawing.endnum)):
+					for (i,g) in enumerate(operations.reductiongraphiter(self.drawing.term, self.drawing.startnum, self.drawing.endnum, self.rule_set)):
 						yield g
 				self.drawing.iterator = iterator()
 			except KeyError:
