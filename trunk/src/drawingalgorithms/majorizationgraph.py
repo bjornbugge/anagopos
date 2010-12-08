@@ -31,7 +31,7 @@ class MajorizationGraph(DrawingAlgorithm):
     draggable = True
     draggableupdate = True
     
-    def __init__(self, graph, width = 200, height = 200, epsilon = 10**-3):
+    def __init__(self, graph, width = 200, height = 200, epsilon = 10**-2):
         # Make sure we inherit all attributes from the graph.
         for name, value in vars(graph).iteritems():
             setattr(self, name, value)
@@ -117,6 +117,9 @@ class MajorizationGraph(DrawingAlgorithm):
                 self.Xt[j] = othergraph.Xt[i]
                 new.remove(j)
             except ValueError:
+                pass
+            except AttributeError as e:
+                print "Majorization attribute error: " + str(e)
                 pass
         
         self.reset(new)

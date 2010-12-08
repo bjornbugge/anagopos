@@ -205,6 +205,7 @@ if __name__ == "__main__":
     t6 = p.parseTerm("M(any_variable, any_other_variable)")
     t7 = p.parseTerm("x")
     t8 = p.parseTerm("A(S(0), S(S(A(M(S(0), S(S(0))), 0))))")
+#    A(0, S(S(M(0, S(0)))))
     
     t6.redexpositions = findredexes(t6, s)
     t7.redexpositions = findredexes(t7, s)

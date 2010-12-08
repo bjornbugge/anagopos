@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import wx
+import pdb
 from glgrapharea import ReductionGraphCanvas
 import computegraph.operations as operations
 import parser.lambdaparser.lambdaparser as parser
@@ -33,7 +34,7 @@ import math
 import random
 from os import getcwd
 from os import environ as osenviron
-# import wx
+from pyparsing import ParseException
 
 MACPORTS_PATH = "/opt/local/bin:/opt/local/sbin"
 FINK_PATH = "/sw/bin"
@@ -45,12 +46,15 @@ algorithms = {'Neato' : NeatoGraph,
             'Circo' : CircoGraph,
             'Fdp' : FdpGraph}
 
+TERM_PARSE_ERROR_COLOUR = "#BB4444"
+
+VERSION = "0.1"
+
 class MainWindow(wx.Frame):
     
     def __init__(self, parent = None, id = -1, title = "Reduction Visualizer"):
-        # Init
         wx.Frame.__init__(
-                self, parent, id, title, size = (1200,768),
+                self, parent, id, title, size = (1200, 768),
                 style = wx.DEFAULT_FRAME_STYLE | wx.NO_FULL_REPAINT_ON_RESIZE
         )
         
@@ -58,12 +62,9 @@ class MainWindow(wx.Frame):
         # GraphViz binaries when run with a "double click" (in which case the
         # path set in .profile isn't used).
         osenviron['PATH'] = osenviron['PATH'] + ":" + MACPORTS_PATH + ":" + FINK_PATH
-        #graph = None
         
         self.drawing = ReductionGraphCanvas(self)
-        # drawing = GraphArea(graph)
         self.drawing.ready = False
-        self.drawing.shownewestedget = False
         
         # Create the radio buttons to select between lambda calculus and TRS.
         self.radio_lambda = wx.RadioButton(self, -1, 'Lambda', style = wx.RB_GROUP)
@@ -74,72 +75,73 @@ class MainWindow(wx.Frame):
         radio_box = wx.BoxSizer(wx.HORIZONTAL)
         radio_box.Add(self.radio_lambda, 0, wx.ALIGN_LEFT, 10)
         radio_box.Add(self.radio_trs, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
-        self.radio_lambda.SetValue(True) # Lambda is default active
+        self.radio_lambda.SetValue(True) # Lambda is by default active
         self.radio_trs.SetToolTip(wx.ToolTip("Select 'File > Load Rule Set' to activate TRS mode."))
-        # self.radio_trs.Disable()
         
+        width = 200
+        spinner_width = 60
+        button_size = (width, -1)
+        step_size = (width - spinner_width, -1)
         # Buttons
-        self.term_input = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE)
-        self.draw_button = wx.Button(self, 0, "Draw Graph",         size = (200, 30))
-        self.random_button = wx.Button(self, 0, "Random Lambda term", size = (200, 30))
-        self.forward_button = wx.Button(self, 0, "Forward", size = (140, 30))
-        self.back_button = wx.Button(self, 0, "Back",       size = (140, 30))
-        self.redraw_button = wx.Button(self, 0, "Redraw Graph",       size = (200, 30))
-        self.optimize_button = wx.Button(self, 0, "Optimize Graph",     size = (200, 30))
-        algo_label = wx.StaticText(self, -1, 'Select Drawing Alg: ', (5, 5))
-        self.algo_combo = wx.ComboBox(self, -1, size=(200, -1), choices = [k for (k,v) in algorithms.iteritems()], style = wx.CB_READONLY)
-        self.start_checkbox = wx.CheckBox(self, -1, 'Start')
-        term_label = wx.StaticText(self, -1, 'Clicked Term: ', (5, 5))
-        self.term_text = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE|wx.TE_READONLY)
-        output_label = wx.StaticText(self, -1, 'Output: ', (5, 5))
-        self.status_text = wx.TextCtrl(self, 0, size=(200, 100), style = wx.TE_MULTILINE|wx.TE_READONLY)
+        self.term_input = wx.TextCtrl(self, 0, style = wx.TE_MULTILINE, size = (width, 100))
+        draw_button     = wx.Button(self, 0, "Draw Graph",         size = button_size)
+        random_button   = wx.Button(self, 0, "Random Lambda term", size = button_size)
+        forward_button  = wx.Button(self, 0, "Forward",            size = step_size)
+        back_button     = wx.Button(self, 0, "Back",               size = step_size)
+        redraw_button   = wx.Button(self, 0, "Redraw Graph",       size = button_size)
+        optimize_button = wx.Button(self, 0, "Optimize Graph",     size = button_size)
+        algo_label      = wx.StaticText(self, -1, 'Select Drawing Alg: ', (5, 5))
+        self.algo_combo = wx.ComboBox(self, -1, size = (width, -1), choices = [k for (k,v) in algorithms.iteritems()], style = wx.CB_READONLY)
+        
+        term_label      = wx.StaticText(self, -1, 'Clicked Term: ')
+        term_text       = wx.TextCtrl(self, -1, size = (width, 150), style = wx.TE_MULTILINE | wx.TE_READONLY)
+        self.drawing.node_text_widget = term_text
+        
+        start_checkbox  = wx.CheckBox(self, -1, 'Show start')
+        newest_checkbox = wx.CheckBox(self, -1, 'Show newest')
         
         # Spinners (for choosing step size)
-        self.forward_spinner = wx.SpinCtrl(self, -1, "1", min = 1, max = 100, initial = 1, size = (60, 30))
+        self.forward_spinner = wx.SpinCtrl(self, -1, "1", min = 1, max = 100, initial = 1, size = (spinner_width, -1))
         forward_box = wx.BoxSizer(wx.HORIZONTAL)
-        forward_box.Add(self.forward_button, 0, wx.ALIGN_LEFT, 10)
+        forward_box.Add(forward_button, 0, wx.ALIGN_LEFT, 10)
         forward_box.Add(self.forward_spinner, 0, wx.ALIGN_RIGHT, 10)
-        self.back_spinner = wx.SpinCtrl(self, -1, "1", min = 1, max = 100, initial = 1, size = (60, 30))
+        self.back_spinner = wx.SpinCtrl(self, -1, "1", min = 1, max = 100, initial = 1, size = (spinner_width, -1))
         back_box = wx.BoxSizer(wx.HORIZONTAL)
-        back_box.Add(self.back_button, 0, wx.ALIGN_LEFT, 10)
+        back_box.Add(back_button, 0, wx.ALIGN_LEFT, 10)
         back_box.Add(self.back_spinner, 0, wx.ALIGN_RIGHT, 10)
         
-        # Button actions
-        self.draw_button.Bind(wx.EVT_BUTTON, self.DrawGraph)
-        self.random_button.Bind(wx.EVT_BUTTON, self.Generate)
-        self.forward_button.Bind(wx.EVT_BUTTON, self.drawing.Forward)
-        self.back_button.Bind(wx.EVT_BUTTON, self.drawing.Back)
-        self.redraw_button.Bind(wx.EVT_BUTTON, self.drawing.Redraw)
-        self.optimize_button.Bind(wx.EVT_BUTTON, self.drawing.Optimize)
+        # Button/spinner actions
+        draw_button.Bind(wx.EVT_BUTTON, self.DrawGraph)
+        random_button.Bind(wx.EVT_BUTTON, self.Generate)
+        forward_button.Bind(wx.EVT_BUTTON, self.drawing.Forward)
+        back_button.Bind(wx.EVT_BUTTON, self.drawing.Back)
+        redraw_button.Bind(wx.EVT_BUTTON, self.drawing.Redraw)
+        optimize_button.Bind(wx.EVT_BUTTON, self.drawing.Optimize)
         self.algo_combo.Bind(wx.EVT_COMBOBOX, self.NewAlgoSelected)
+        self.forward_spinner.Bind(wx.EVT_SPINCTRL, self.forward_spin)
+        self.back_spinner.Bind(wx.EVT_SPINCTRL, self.back_spin)
+        start_checkbox.Bind(wx.EVT_CHECKBOX, self.drawing.ToggleShowStart)
+        newest_checkbox.Bind(wx.EVT_CHECKBOX, self.drawing.ToggleShowNewest)
         
-        # self.Bind(wx.EVT_LEFT_DOWN, self.drawing.OnMouseDown)
-        # self.Bind(wx.EVT_LEFT_UP, self.drawing.OnMouseUp)
-        # self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
-        # self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
-        # self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
-        
-        
+        # Layout the control panel
         bts = wx.BoxSizer(wx.VERTICAL)
         bts.Add(radio_box, 0, wx.ALIGN_LEFT | wx.ALL, 10)
         bts.Add(self.active_rule_file_text, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
-        bts.Add(self.term_input, 0, wx.ALIGN_CENTER | wx.ALL, 10)
-        bts.Add(self.draw_button, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(self.random_button, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        # bts.Add(self.forward_button, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(forward_box, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        # bts.Add(self.back_button, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(back_box, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(self.redraw_button, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(self.optimize_button, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(algo_label, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(self.algo_combo, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(self.start_checkbox, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+        bts.Add(self.term_input, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 10)
+        bts.Add(draw_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
+        bts.Add(random_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
+        bts.Add(forward_box, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
+        bts.Add(back_box, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
+        bts.Add(redraw_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
+        bts.Add(optimize_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
+        bts.Add(algo_label, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
+        bts.Add(self.algo_combo, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 10)
+        bts.Add(start_checkbox, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
+        bts.Add(newest_checkbox, 0, wx.ALIGN_LEFT | wx.LEFT | wx.BOTTOM, 10)
         bts.Add(term_label, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(self.term_text, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(output_label, 0, wx.ALIGN_CENTER | wx.ALL, 3)
-        bts.Add(self.status_text, 0, wx.ALIGN_CENTER | wx.ALL, 3)
+        bts.Add(term_text, 0, wx.ALIGN_CENTER | wx.ALL, 3)
         
+        # Layout the whole window frame
         box = wx.BoxSizer(wx.HORIZONTAL)
         box.Add(bts, 0, wx.ALIGN_TOP, 15)
         box.Add(self.drawing, 1, wx.EXPAND)
@@ -150,30 +152,25 @@ class MainWindow(wx.Frame):
 
         # StatusBar
         self.CreateStatusBar()
-
+        # TODO Use the status bar to show graph info, like number of nodes.
+        
         # Filemenu
         filemenu = wx.Menu()
         
-        # Filemenu - Open
+        # Filemenu -- actions
         menuitem = filemenu.Append(-1, "&Load Rule Set", "Load a TRS rule set")
-        self.Bind(wx.EVT_MENU, self.OnLoadRuleSet, menuitem) # Event handler
-        
-        # Filemenu - About
+        self.Bind(wx.EVT_MENU, self.OnLoadRuleSet, menuitem)
         menuitem = filemenu.Append(-1, "&About", "Reduction Visualizer")
-        self.Bind(wx.EVT_MENU, self.OnAbout, menuitem) # here comes the event-handler
-        # Filemenu - Separator
+        self.Bind(wx.EVT_MENU, self.OnAbout, menuitem)
         filemenu.AppendSeparator()
-
-        # Filemenu - Exit
         menuitem = filemenu.Append(-1, "E&xit", "Terminate the program")
-        self.Bind(wx.EVT_MENU, self.OnExit, menuitem) # here comes the event-handler
+        self.Bind(wx.EVT_MENU, self.OnExit, menuitem)
 
-        # Menubar
+        # Menubar, containg the menu(s) created above
         menubar = wx.MenuBar()
         menubar.Append(filemenu, "&File")
         self.SetMenuBar(menubar)
-
-        # Show
+        
         self.Show(True)
         
         self.dirname = getcwd() + '/parser' # From 'os'
@@ -182,7 +179,9 @@ class MainWindow(wx.Frame):
         self.last_used_rule_name = ""
 
     def OnAbout(self,event):
-        message = "Reduction Visualizer\n\nURL:\nhttp://code.google.com/p/reduction-visualizer/\n\nBy:\n Niels Bjoern Bugge Grathwohl\n Jens Duelund Pallesen"
+        message = "Reduction Visualizer " + VERSION + "\n\n"
+        message += "URL:\nhttp://code.google.com/p/reduction-visualizer/\n\n"
+        message += "By:\n Niels Bjørn Bugge Grathwohl\n Jens Duelund Pallesen"
         caption = "Reduction Visualizer"
         wx.MessageBox(message, caption, wx.OK)
     
@@ -233,69 +232,46 @@ class MainWindow(wx.Frame):
     def OnExit(self,event):
         self.Close(True)
     
-    def OnMouseDown(self, evt):
-        print "mouse down"
-        self.CaptureMouse()
-        self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-        print self.x
-        print self.y
-    
-    def OnMouseUp(self, evt):
-        print  "mouse up"
-        self.term_text.SetValue(self.drawing.nodetest)
-        self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-        print self.x
-        print self.y
-        self.ReleaseMouse()
-    
-    def OnMouseMotion(self, evt):
-        print "mouse moving"
-        # if evt.Dragging() and evt.LeftIsDown():
-        #   self.lastx, self.lasty = self.x, self.y
-        #   self.x, self.y = evt.GetPosition()
-        #   self.Refresh(False)
-    
-    
     def DrawGraph(self, drawing):
         Drawer = algorithms[self.algo_combo.GetValue()]
-        print Drawer
         self.drawing.selected = Drawer
-        if True:
-            print self.term_input.GetValue()
-            self.drawing.ready = True
-            self.drawing.startnum = 0
-            self.drawing.endnum = 1000000
-            tempterm = self.term_input.GetValue()
-            # tempterm = "(#B1.(((B1 #B2.(#B3.(#B4.(B4)))) #B5.(#B6.(#B7.((((B7 B5) #B8.(#B9.(B5))) B7)))))) #B10.(#B11.(((((#B12.(B11) (#B13.(B11) #B14.((B10 B11)))) (B11 B10)) ((#B15.(#B16.(#B17.(#B18.(#B19.(B11))))) #B20.((#B21.(B20) #B22.(#B23.((#B24.(#B25.(B20)) B23)))))) F1)) (#B26.(#B27.(B27)) #B28.(#B29.(#B30.(#B31.(#B32.(B30))))))))))"
-            #tempterm = "#B1.(#B2.(#B3.(B1)))"
-            self.drawing.term = operations.parse(tempterm.replace(u'\u03bb',"#"))
-            self.drawing.mgs = []
-            operations.assignvariables(self.drawing.term)
-            # self.drawing.selected = NeatoGraph
-            self.drawing.startnumber = 1
-            try:
-                def iterator():
-                    Drawer = self.drawing.selected
-                    for (i,g) in enumerate(operations.reductiongraphiter(self.drawing.term, self.drawing.startnum, self.drawing.endnum, self.rule_set)):
-                        yield g
-                self.drawing.iterator = iterator()
-            except KeyError:
-                pass
-            self.drawing.graphnumber = 0
-            
-            # INIT FUNCTION
-            if True:
+        self.drawing.ready = True
+        self.drawing.startnum = 0
+        self.drawing.endnum = 1000000
+        term = self.term_input.GetValue()
+        try:
+            self.drawing.term = operations.parse(term.replace(u'\u03bb',"#"))
+        except (ParseException, UnboundLocalError):
+            # The TRS parser throws ParseException when it fails.
+            # The lambda parser hasn't got any specific parse exception,
+            # but it throws UnboundLocalError at failure. It's an artefact of Yapps.
+            self.term_input.SetBackgroundColour(TERM_PARSE_ERROR_COLOUR)
+            return
+        self.term_input.SetBackgroundColour("#FFFFFF")
+        self.drawing.mgs = []
+        operations.assignvariables(self.drawing.term)
+        self.drawing.startnumber = 1
+        try:
+            def iterator():
                 Drawer = self.drawing.selected
-                rg = self.drawing.iterator.next()
-                g = Drawer(rg)
-                self.drawing.reductiongraphlist = [rg]
-                self.drawing.graph = g
-                self.drawing.graphlist = [g]
-                self.drawing.starttobig = False
-            
-            self.drawing.graph.update_layout_animated(self.drawing.iter_animated)
+                for (i,g) in enumerate(operations.reductiongraphiter(self.drawing.term, self.drawing.startnum, self.drawing.endnum, self.rule_set)):
+                    yield g
+            self.drawing.iterator = iterator()
+        except KeyError:
+            pass
         
-        self.drawing.Draw()
+        rg = self.drawing.iterator.next()
+        g = Drawer(rg)
+        self.drawing.reductiongraphlist = [rg]
+        self.drawing.graph = g
+        self.drawing.graphlist = [g]
+        self.drawing.graphnumber = 0
+        self.drawing.nomoregraphs = False
+        self.drawing.starttobig = False
+        
+        self.drawing.graph.update_layout_animated(self.drawing.iter_animated)
+        
+        # self.drawing.Draw()
     
     def NewAlgoSelected(self, event):
         if hasattr(self.drawing, 'ready') and self.drawing.ready:
@@ -309,10 +285,15 @@ class MainWindow(wx.Frame):
             self.drawing.graph.update_layout()
             self.drawing.Draw()
     
-    def Generate(self,event):
+    def Generate(self, event):
         print "Generate"
         # self.drawing.InitDraw()
     
+    def forward_spin(self, event):
+        self.drawing.set_forward_step_size(self.forward_spinner.GetValue())
+    
+    def back_spin(self, event):
+        self.drawing.set_back_step_size(self.back_spinner.GetValue())
 
 operations.setmode('lambda')
 
