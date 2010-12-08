@@ -173,15 +173,12 @@ def reductiongraphiter(root, start, end, ruleset):
                 work.append(contractum)
             
             reductions = reductions + 1
-            print "Reduction #" + str(reductions)
         
         alreadydone.append(n1.name)
         del work[0]
         
         if guard >= start:
             yield copygraph(graph)
-            # yield deepcopy(graph)
-            # yield graph
         
         guard = guard + 1
 
@@ -194,6 +191,5 @@ def reductiongraphiter(root, start, end, ruleset):
 def reductiongraph(root, start, end, ruleset):
     last = None
     for g in reductiongraphiter(root, start, end, ruleset):
-        # print "GOT: " + str(g)
         last = g
     return last
