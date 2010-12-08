@@ -21,10 +21,9 @@ beta-reduce etc.
 
 import lambda_dag
 import reductiongraph as graphrepr # nameclash!
+import graphcopy
 import math
 import collections
-# import pdb
-import copy
 
 def assignvariables(root):
     '''
@@ -111,7 +110,7 @@ def betareduce(term, redexpos):
     left child, as returned from the function findredexes(x)
     '''
     # The copy that is transformed into a contractum.
-    contractum = _copyterm(term)
+    contractum = copyterm(term)
     
     appl = getnode(contractum, redexpos)
     
@@ -119,7 +118,7 @@ def betareduce(term, redexpos):
     c = appl.leftchild
     
     for v in c.variables:
-        v.parent.swap(v, _copyterm(appl.rightchild))
+        v.parent.swap(v, copyterm(appl.rightchild))
     
     # Remove the argument.
     appl.remove(appl.rightchild)
@@ -215,7 +214,7 @@ def reductiongraphiter(root, start, end):
         del work[0]
         
         if guard >= start:
-            yield _copygraph(graph)
+            yield graphcopy.copygraph(graph)
         
         guard = guard + 1
     
@@ -223,27 +222,7 @@ def reductiongraphiter(root, start, end):
     if len(work) > 0:
         print "Incomplete reduction graph!"
 
-def _copygraph(graph):
-    '''
-    Perform a deep copy of the given graph.
-    Use this function instead of copy.deepcopy() because this one is much faster!
-    '''
-    graphcopy = graphrepr.Graph()
-    # Add nodes
-    map(lambda x:graphcopy.addnode(x[1].term, x[1].name), graph.nodesdict.iteritems())
-    
-    # Add edges
-    for (key, node) in graph.nodesdict.iteritems():
-        nodecopy = graphcopy.nodesdict[key]
-        for c in node.children:
-            destkey = str(c.destination.term)
-            nodecopy.addchild(graphcopy.nodesdict[destkey])
-    
-    newestkey = str(graph.newest.term)
-    graphcopy.newest = graphcopy.nodesdict[newestkey]
-    return graphcopy
-
-def _copyterm(term):
+def copyterm(term):
     '''
     Perform a deep copy of the given term.
     Use instead of copy.deepcopy() because this is faster.

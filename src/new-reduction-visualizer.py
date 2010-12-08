@@ -35,6 +35,9 @@ from os import getcwd
 from os import environ as osenviron
 # import wx
 
+MACPORTS_PATH = "/opt/local/bin:/opt/local/sbin"
+FINK_PATH = "/sw/bin"
+
 algorithms = {'Neato' : NeatoGraph,
 			'Neato Animated' : MajorizationGraph,
 			'Dot' : DotGraph,
@@ -53,10 +56,8 @@ class MainWindow(wx.Frame):
 		
 		# Hack! Add the extra path so the application knows where to find the 
 		# GraphViz binaries when run with a "double click" (in which case the
-		# path set in .profile isn't used). This path is (by default!) used by 
-		# MacPorts.
-		osenviron['PATH'] = osenviron['PATH'] + ":/opt/local/bin/"
-		
+		# path set in .profile isn't used).
+		osenviron['PATH'] = osenviron['PATH'] + ":" + MACPORTS_PATH + ":" + FINK_PATH
 		#graph = None
 		self.drawing = MyCubeCanvas(self)
 		# drawing = GraphArea(graph)
@@ -100,6 +101,7 @@ class MainWindow(wx.Frame):
 		self.bt5.Bind(wx.EVT_BUTTON, self.drawing.Redraw)
 		self.bt6.Bind(wx.EVT_BUTTON, self.drawing.Optimize)
 		self.cb1.Bind(wx.EVT_COMBOBOX, self.NewAlgoSelected)
+		
 		# self.Bind(wx.EVT_LEFT_DOWN, self.drawing.OnMouseDown)
 		# self.Bind(wx.EVT_LEFT_UP, self.drawing.OnMouseUp)
 		# self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
@@ -220,18 +222,18 @@ class MainWindow(wx.Frame):
 	
 	def OnMouseDown(self, evt):
 		print "mouse down"
-		# self.CaptureMouse()
-		# self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-		# print self.x
-		# print self.y
+		self.CaptureMouse()
+		self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
+		print self.x
+		print self.y
 	
 	def OnMouseUp(self, evt):
 		print  "mouse up"
-		# self.tf2.SetValue(self.drawing.nodetest)
-		# self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
-		# print self.x
-		# print self.y
-		# self.ReleaseMouse()
+		self.tf2.SetValue(self.drawing.nodetest)
+		self.x, self.y = self.lastx, self.lasty = evt.GetPosition()
+		print self.x
+		print self.y
+		self.ReleaseMouse()
 	
 	def OnMouseMotion(self, evt):
 		print "mouse moving"
@@ -282,7 +284,7 @@ class MainWindow(wx.Frame):
 		
 		self.drawing.Draw()
 	
-	def NewAlgoSelected (self, event):
+	def NewAlgoSelected(self, event):
 		if hasattr(self.drawing, 'ready') and self.drawing.ready:
 			self.drawing.selectedhaschanged = True
 			Drawer = algorithms[self.cb1.GetValue()]
