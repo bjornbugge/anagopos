@@ -21,9 +21,9 @@ term and a set of reduction rules, reduces the term and outputs the result.
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from trs_dag import FunctionSymbol, Variable
-import trs_reductiongraph as redgraph
+import reductiongraph as redgraph
 import pdb
-from copy import deepcopy
+from graphcopy import copygraph
 
 def assignvariables(root):
     pass # dummy function!
@@ -179,7 +179,9 @@ def reductiongraphiter(root, start, end, ruleset):
         del work[0]
         
         if guard >= start:
-            yield graph # deepcopy(graph)
+            yield copygraph(graph)
+            # yield deepcopy(graph)
+            # yield graph
         
         guard = guard + 1
 
