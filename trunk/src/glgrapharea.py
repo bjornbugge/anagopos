@@ -24,28 +24,8 @@ import os
 import wx
 from wx import glcanvas
 from OpenGL.GL import *
-from OpenGL.GLU import *
-from OpenGL.GLUT import *
-import OpenGL.platform.darwin
-# import OpenGL.platform.glx
-# import OpenGL.arrays.arraydatatype
-import OpenGL.arrays.formathandler
-import OpenGL.arrays.ctypesarrays
-import OpenGL.arrays.numpymodule
-import OpenGL.arrays.lists
-import OpenGL.arrays.numbers
-import OpenGL.arrays.strings
-import OpenGL.GLU.glustruct
-import OpenGL.arrays.nones
-import OpenGL.arrays.lists
-import OpenGL.arrays.strings
-import OpenGL.arrays.numbers
-import OpenGL.arrays.ctypesarrays
-import OpenGL.arrays.ctypesparameters
-import OpenGL.arrays.ctypespointers
+from OpenGL.GLU import gluOrtho2D
 import computegraph.operations as operations
-# import computegraph.randomgraph as randomgraph
-# import lambdaparser.lambdaparser as parser
 
 # Drawing algorithms
 from drawingalgorithms.majorizationgraph import MajorizationGraph
@@ -55,7 +35,7 @@ from drawingalgorithms.graphvizdrawers import NeatoGraph
 from drawingalgorithms.graphvizdrawers import TwopiGraph
 from drawingalgorithms.graphvizdrawers import FdpGraph
 
-class MyCanvasBase(glcanvas.GLCanvas):
+class ReductionGraphCanvas(glcanvas.GLCanvas):
     def __init__(self, parent, width = 1024, height = 768, iterable = None):
         glcanvas.GLCanvas.__init__(self, parent, -1)
         self.init = False
@@ -89,23 +69,33 @@ class MyCanvasBase(glcanvas.GLCanvas):
         # self.InitGL(width, height)
         self.ipoints = None
         self.cr = None
-
-
+        
+        self.forward_step_size = 1
+        self.back_step_size = 1
+    
+    def InitGL(self, Width, Height):
+        # Anti-aliasing/prettyness stuff
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(GL_BLEND)
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+        glEnable(GL_LINE_SMOOTH)
+        glEnable(GL_POINT_SMOOTH)
+        glEnable(GL_POLYGON_SMOOTH)
+    
     def OnEraseBackground(self, event):
         pass # Do nothing, to avoid flashing on MSW.
-
-
+    
     def OnSize(self, event):
         wx.CallAfter(self.DoSetViewport)
         event.Skip()
-
+    
     def DoSetViewport(self):
         size = self.size = self.GetClientSize()
         self.SetCurrent(self.context)
         glViewport(0, 0, size.width, size.height)
-        
-
-
+    
     def OnPaint(self, event):
         dc = wx.PaintDC(self)
         self.SetCurrent(self.context)
@@ -114,7 +104,6 @@ class MyCanvasBase(glcanvas.GLCanvas):
             self.init = True
         self.OnDraw()
     
-    
     def iter_animated(self):
         sleeptime = 0.01
         # if hasattr(drawing, 'selected') and drawing.selected == "Neato Animated":
@@ -122,7 +111,6 @@ class MyCanvasBase(glcanvas.GLCanvas):
         #       gtk.main_iteration(True)
         self.Draw()
         time.sleep(sleeptime)
-    
     
     def OnMouseDown(self, evt):
         print "=========== OnMouseDown"
@@ -136,13 +124,13 @@ class MyCanvasBase(glcanvas.GLCanvas):
         
         X = self.propX * self.scX
         Y = self.propY * self.scY
-
+        
         x = self.x
         y = self.y
-
+        
         rX = 20/float(self.GetSize()[0])*self.scX
         rY = 20/float(self.GetSize()[1])*self.scY
-
+        
         if self.ready:
             for node in self.graph.nodes:
                 
@@ -161,7 +149,7 @@ class MyCanvasBase(glcanvas.GLCanvas):
                     
                 # else:
                 #   print "you have NOT clicked a node"
-
+    
     def OnMouseUp(self, evt):
         if hasattr(self.graph, 'dragnode') and self.graph.dragnode:
             x = self.x
@@ -187,22 +175,7 @@ class MyCanvasBase(glcanvas.GLCanvas):
             self.lastx, self.lasty = self.x, self.y
             self.x, self.y = evt.GetPosition()
             self.Refresh(False)
-
-
-class ReductionGraphCanvas(MyCanvasBase):
     
-    def InitGL(self, Width, Height):
-
-        # Anti-aliasing/prettyness stuff
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_BLEND)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
-        glEnable(GL_LINE_SMOOTH)
-        glEnable(GL_POINT_SMOOTH)
-        glEnable(GL_POLYGON_SMOOTH)
-            
     def Draw(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         if True:
@@ -216,18 +189,7 @@ class ReductionGraphCanvas(MyCanvasBase):
             self.orthoBottom = ( max(Ys) + max(Ys)*0.02)
             self.orthoTop = min(Ys) - max(Ys)*0.02
             self.orthoDiagonal = self.orthoRight + self.orthoBottom
-            
-            # print "Min Xs" + str(min(Xs))
-            # print "Max Xs" + str(max(Xs))
-            # print "Min Ys" + str(min(Ys))
-            # print "Max Ys" + str(max(Ys))
-            # 
-            # print "Ortho Left:   " + str(self.orthoLeft)
-            # print "Ortho Right:  " + str(self.orthoRight)
-            # print "Ortho Bottom: " + str(self.orthoBottom)
-            # print "Ortho Top:    " + str(self.orthoTop)
-            
-            
+                        
             gluOrtho2D(self.orthoLeft, self.orthoRight, self.orthoBottom, self.orthoTop)
             glMatrixMode(GL_MODELVIEW)
             
@@ -248,12 +210,12 @@ class ReductionGraphCanvas(MyCanvasBase):
                         lastY = edge.ipoints[len(edge.ipoints) - 1][1]
                         
                         if node.y != edge.ipoints[0][1] or node.x != edge.ipoints[0][0]:
-                            self.DrawLine(node.x, node.y, edge.ipoints[0][0], edge.ipoints[0][1])
+                            draw_line(node.x, node.y, edge.ipoints[0][0], edge.ipoints[0][1])
                             # self.__cr.move_to(node.x, node.y)
                             # self.__cr.line_to(edge.ipoints[0][0], edge.ipoints[0][1])
                             # self.__cr.stroke()
                         if destY != lastY or destX != lastX:
-                            self.DrawLine(far_node.x, far_node.y, lastX, lastY)
+                            draw_line(far_node.x, far_node.y, lastX, lastY)
                             # self.__cr.move_to(far_node.x, far_node.y)
                             # self.__cr.line_to(lastX, lastY)
                             # self.__cr.stroke()
@@ -262,8 +224,8 @@ class ReductionGraphCanvas(MyCanvasBase):
                         t = 0.00
                         l = len(edge.ipoints)
                         for g in xrange(101):
-                            P = drawBezierGen(t, l, edge.ipoints)
-                            self.DrawLine(POld[0], POld[1], P[0], P[1])
+                            P = calculate_bezier_points(t, l, edge.ipoints)
+                            draw_line(POld[0], POld[1], P[0], P[1])
                             # self.__cr.move_to(POld[0], POld[1])
                             # self.__cr.line_to(P[0], P[1])
                             # self.__cr.stroke()
@@ -275,172 +237,37 @@ class ReductionGraphCanvas(MyCanvasBase):
                         y1 = far_node.y
                         x2 = node.x
                         y2 = node.y
-                        self.DrawLine(x1, y1, x2, y2)
+                        draw_line(x1, y1, x2, y2)
                     
                         radius = self.orthoDiagonal
                         if node != edge.get_far(node):
                             #    draw_arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, transparency, angle):
-                            self.draw_arrowhead(x1, y1, x2, y2, radius/150, self.orthoDiagonal/230, 1.0, 15)
+                            draw_arrowhead(x1, y1, x2, y2, radius/150, self.orthoDiagonal/230, 1.0, 15)
                             # self.draw_arrowhead(x1, y1, x2, y2, radius/160, self.orthoDiagonal/220, 0.9, 16)
-                            self.draw_arrowhead(x1, y1, x2, y2, radius/170, self.orthoDiagonal/210, 0.8, 17)
+                            draw_arrowhead(x1, y1, x2, y2, radius/170, self.orthoDiagonal/210, 0.8, 17)
                             # self.draw_arrowhead(x1, y1, x2, y2, radius/180, self.orthoDiagonal/200, 0.7, 18)
-                            self.draw_arrowhead(x1, y1, x2, y2, radius/190, self.orthoDiagonal/190, 0.6, 19)
+                            draw_arrowhead(x1, y1, x2, y2, radius/190, self.orthoDiagonal/190, 0.6, 19)
                             # self.draw_arrowhead(x1, y1, x2, y2, radius/200, self.orthoDiagonal/180, 0.5, 20)
-                            self.draw_arrowhead(x1, y1, x2, y2, radius/210, self.orthoDiagonal/170, 0.4, 21)
+                            draw_arrowhead(x1, y1, x2, y2, radius/210, self.orthoDiagonal/170, 0.4, 21)
                             # self.draw_arrowhead(x1, y1, x2, y2, radius/220, self.orthoDiagonal/160, 0.3, 22)
-                            self.draw_arrowhead(x1, y1, x2, y2, radius/230, self.orthoDiagonal/150, 0.1, 23)
+                            draw_arrowhead(x1, y1, x2, y2, radius/230, self.orthoDiagonal/150, 0.1, 23)
                             
                             # if node != edge.get_far(node):
                             #   self.draw_arrowhead(x1, y1, x2, y2, radius)
 
-            for node in self.graph.nodes:
-                # print node.x
-                # print node.y
-                glPointSize(15)
-                glColor4f(0.3, 0.6, 1.0, 0.1)
-                glBegin(GL_POINTS)
-                glVertex2f(node.x, node.y)
-                glEnd()
-                
-                glPointSize(13)
-                glColor4f(0.3, 0.6, 1.0, 0.2)
-                glBegin(GL_POINTS)
-                glVertex2f(node.x, node.y)
-                glEnd()
-                
-                glPointSize(11)
-                glColor4f(0.3, 0.6, 1.0, 0.4)
-                glBegin(GL_POINTS)
-                glVertex2f(node.x, node.y)
-                glEnd()
-                
-                glPointSize(9)
-                glColor4f(0.3, 0.6, 1.0, 0.6)
-                glBegin(GL_POINTS)
-                glVertex2f(node.x, node.y)
-                glEnd()
-                
-                glPointSize(7)
-                glColor4f(0.3, 0.6, 1.0, 0.8)
-                glBegin(GL_POINTS)
-                glVertex2f(node.x, node.y)
-                glEnd()
-                
-                glPointSize(5)
-                glColor4f(0.3, 0.6, 1.0, 1.0)
-                glBegin(GL_POINTS)
-                glVertex2f(node.x, node.y)
-                glEnd()
+            for node in self.graph.nodes: draw_node(node.x, node.y)
         
         self.SwapBuffers()
-    def DrawLine(self, x1, y1, x2, y2):
-        glLineWidth(4.5)
-        glColor4f(0.3, 0.9, 0.2, 0.1)
-        glBegin(GL_LINES)
-        glVertex2f(x1, y1)
-        glVertex2f(x2, y2)
-        glEnd()
-        
-        glLineWidth(3.5)
-        glColor4f(0.3, 0.9, 0.2, 0.2)
-        glBegin(GL_LINES)
-        glVertex2f(x1, y1)
-        glVertex2f(x2, y2)
-        glEnd()
-        
-        glLineWidth(2.5)
-        glColor4f(0.3, 0.9, 0.2, 0.4)
-        glBegin(GL_LINES)
-        glVertex2f(x1, y1)
-        glVertex2f(x2, y2)
-        glEnd()
-        
-        glLineWidth(1.5)
-        glColor4f(0.3, 0.9, 0.2, 0.6)
-        glBegin(GL_LINES)
-        glVertex2f(x1, y1)
-        glVertex2f(x2, y2)
-        glEnd()
-        
-        glLineWidth(0.8)
-        glColor4f(0.3, 0.9, 0.2, 0.3)
-        glBegin(GL_LINES)
-        glVertex2f(x1, y1)
-        glVertex2f(x2, y2)
-        glEnd()
-        
-        glLineWidth(0.5)
-        glColor4f(0.3, 0.9, 0.2, 1.0)
-        glBegin(GL_LINES)
-        glVertex2f(x1, y1)
-        glVertex2f(x2, y2)
-        glEnd()
-        
     
-    def draw_arrowhead(self, x1, y1, x2, y2, noderadius, awidth, transparency, angle):
-        '''
-        Draws an arrow head on the line segment between the coordinate pairs
-        (x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
-        '''
-        arrowwidth = awidth
-        Pi = math.pi
-        # angle = 30
+    def set_forward_step_size(self, s):
+        if s < 1 or s > 100:
+            return
+        self.forward_step_size = s
         
-        if x1 - x2 == 0:
-            if y2 <= y1:
-                LineAngle = Pi / 2
-            else:
-                LineAngle = 3 * Pi / 2
-        else:
-            LineAngle = math.atan((y2 - y1) / (x2 - x1))
-    
-        EndAngle1 = LineAngle + angle * Pi/180
-        EndAngle2 = LineAngle - angle * Pi/180
-    
-        xOffset = noderadius * math.cos(LineAngle)
-        yOffset = noderadius * math.sin(LineAngle)
-        if x1 < x2:
-            Y3 = y2 - arrowwidth * math.sin(EndAngle1)
-            Y4 = y2 - arrowwidth * math.sin(EndAngle2)
-            X3 = x2 - arrowwidth * math.cos(EndAngle1)
-            X4 = x2 - arrowwidth * math.cos(EndAngle2)
-            
-            x2 -= xOffset
-            y2 -= yOffset
-            Y3 -= yOffset
-            Y4 -= yOffset
-            X3 -= xOffset
-            X4 -= xOffset
-        else:
-            Y3 = y2 + arrowwidth * math.sin(EndAngle1)
-            Y4 = y2 + arrowwidth * math.sin(EndAngle2)
-            X3 = x2 + arrowwidth * math.cos(EndAngle1)
-            X4 = x2 + arrowwidth * math.cos(EndAngle2)
-            x2 += xOffset
-            y2 += yOffset
-            Y3 += yOffset
-            Y4 += yOffset
-            X3 += xOffset
-            X4 += xOffset
-        
-        # Anti-aliasing/prettyness stuff
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(GL_BLEND)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-        glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-        glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
-        glEnable(GL_LINE_SMOOTH)
-        glEnable(GL_POINT_SMOOTH)
-        glEnable(GL_POLYGON_SMOOTH)
-        
-        glLineWidth(1.0)
-        glColor4f(1.0, 0.2, 0.9, transparency)
-        glBegin(GL_TRIANGLES)
-        glVertex2f(x2, y2)
-        glVertex2f(X3, Y3)
-        glVertex2f(X4, Y4)
-        glEnd()
-
+    def set_back_step_size(self, s):
+        if s < 1 or s > 100:
+            return
+        self.back_step_size = s
     
     def Forward(self, event):
         # clear color and depth buffers
@@ -455,7 +282,6 @@ class ReductionGraphCanvas(MyCanvasBase):
                 self.graphlist[self.graphnumber] = g
                 self.graph = g
                 self.graph.initwith(self.graphlist[self.graphnumber - 1])
-                # outputtext()
                 self.graph.update_layout()
                 # drawing.selectedhaschanged = False
             else:
@@ -477,7 +303,6 @@ class ReductionGraphCanvas(MyCanvasBase):
                 # self.graph.update_layout()
             except StopIteration:
                 self.nomoregraphs = True
-                # outputtext()
                 print "No more graphs"
         # self.SwapBuffers()
         self.Draw()
@@ -531,12 +356,159 @@ class ReductionGraphCanvas(MyCanvasBase):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         self.SwapBuffers()
 
+
+
+def draw_node(x, y):
+    glPointSize(15)
+    glColor4f(0.3, 0.6, 1.0, 0.1)
+    glBegin(GL_POINTS)
+    glVertex2f(x, y)
+    glEnd()
+    
+    glPointSize(13)
+    glColor4f(0.3, 0.6, 1.0, 0.2)
+    glBegin(GL_POINTS)
+    glVertex2f(x, y)
+    glEnd()
+    
+    glPointSize(11)
+    glColor4f(0.3, 0.6, 1.0, 0.4)
+    glBegin(GL_POINTS)
+    glVertex2f(x, y)
+    glEnd()
+    
+    glPointSize(9)
+    glColor4f(0.3, 0.6, 1.0, 0.6)
+    glBegin(GL_POINTS)
+    glVertex2f(x, y)
+    glEnd()
+    
+    glPointSize(7)
+    glColor4f(0.3, 0.6, 1.0, 0.8)
+    glBegin(GL_POINTS)
+    glVertex2f(x, y)
+    glEnd()
+    
+    glPointSize(5)
+    glColor4f(0.3, 0.6, 1.0, 1.0)
+    glBegin(GL_POINTS)
+    glVertex2f(x, y)
+    glEnd()
+
+def draw_line(x1, y1, x2, y2):
+    glLineWidth(4.5)
+    glColor4f(0.3, 0.9, 0.2, 0.1)
+    glBegin(GL_LINES)
+    glVertex2f(x1, y1)
+    glVertex2f(x2, y2)
+    glEnd()
+    
+    glLineWidth(3.5)
+    glColor4f(0.3, 0.9, 0.2, 0.2)
+    glBegin(GL_LINES)
+    glVertex2f(x1, y1)
+    glVertex2f(x2, y2)
+    glEnd()
+    
+    glLineWidth(2.5)
+    glColor4f(0.3, 0.9, 0.2, 0.4)
+    glBegin(GL_LINES)
+    glVertex2f(x1, y1)
+    glVertex2f(x2, y2)
+    glEnd()
+    
+    glLineWidth(1.5)
+    glColor4f(0.3, 0.9, 0.2, 0.6)
+    glBegin(GL_LINES)
+    glVertex2f(x1, y1)
+    glVertex2f(x2, y2)
+    glEnd()
+    
+    glLineWidth(0.8)
+    glColor4f(0.3, 0.9, 0.2, 0.3)
+    glBegin(GL_LINES)
+    glVertex2f(x1, y1)
+    glVertex2f(x2, y2)
+    glEnd()
+    
+    glLineWidth(0.5)
+    glColor4f(0.3, 0.9, 0.2, 1.0)
+    glBegin(GL_LINES)
+    glVertex2f(x1, y1)
+    glVertex2f(x2, y2)
+    glEnd()
+
+
+def draw_arrowhead(x1, y1, x2, y2, noderadius, awidth, transparency, angle):
+    '''
+    Draws an arrow head on the line segment between the coordinate pairs
+    (x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
+    '''
+    arrowwidth = awidth
+    Pi = math.pi
+    # angle = 30
+    
+    if x1 - x2 == 0:
+        if y2 <= y1:
+            LineAngle = Pi / 2
+        else:
+            LineAngle = 3 * Pi / 2
+    else:
+        LineAngle = math.atan((y2 - y1) / (x2 - x1))
+
+    EndAngle1 = LineAngle + angle * Pi/180
+    EndAngle2 = LineAngle - angle * Pi/180
+
+    xOffset = noderadius * math.cos(LineAngle)
+    yOffset = noderadius * math.sin(LineAngle)
+    if x1 < x2:
+        Y3 = y2 - arrowwidth * math.sin(EndAngle1)
+        Y4 = y2 - arrowwidth * math.sin(EndAngle2)
+        X3 = x2 - arrowwidth * math.cos(EndAngle1)
+        X4 = x2 - arrowwidth * math.cos(EndAngle2)
+        
+        x2 -= xOffset
+        y2 -= yOffset
+        Y3 -= yOffset
+        Y4 -= yOffset
+        X3 -= xOffset
+        X4 -= xOffset
+    else:
+        Y3 = y2 + arrowwidth * math.sin(EndAngle1)
+        Y4 = y2 + arrowwidth * math.sin(EndAngle2)
+        X3 = x2 + arrowwidth * math.cos(EndAngle1)
+        X4 = x2 + arrowwidth * math.cos(EndAngle2)
+        x2 += xOffset
+        y2 += yOffset
+        Y3 += yOffset
+        Y4 += yOffset
+        X3 += xOffset
+        X4 += xOffset
+    
+    # TODO Do we need these again? (InitGL())
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    glEnable(GL_BLEND)
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
+    glEnable(GL_LINE_SMOOTH)
+    glEnable(GL_POINT_SMOOTH)
+    glEnable(GL_POLYGON_SMOOTH)
+    
+    glLineWidth(1.0)
+    glColor4f(1.0, 0.2, 0.9, transparency)
+    glBegin(GL_TRIANGLES)
+    glVertex2f(x2, y2)
+    glVertex2f(X3, Y3)
+    glVertex2f(X4, Y4)
+    glEnd()
+
+
 def binomial(n, i):
     bin = math.factorial(n) / (math.factorial(i) * math.factorial(n - i))
     return bin
 
-# calculated the bezier lines
-def drawBezierGen(t, l, ipoints):
+def calculate_bezier_points(t, l, ipoints):
     n = l - 1
     fun = lambda a, b:a + b
     x = reduce(fun, (binomial(n, i) * pow((1 - t), n - i) * pow(t, i) * ipoints[i][0] for i in xrange(l)))
