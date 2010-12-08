@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import wx
-from glgrapharea import MyCubeCanvas
+from glgrapharea import ReductionGraphCanvas
 import computegraph.operations as operations
 import parser.lambdaparser.lambdaparser as parser
 
@@ -59,7 +59,8 @@ class MainWindow(wx.Frame):
         # path set in .profile isn't used).
         osenviron['PATH'] = osenviron['PATH'] + ":" + MACPORTS_PATH + ":" + FINK_PATH
         #graph = None
-        self.drawing = MyCubeCanvas(self)
+        
+        self.drawing = ReductionGraphCanvas(self)
         # drawing = GraphArea(graph)
         self.drawing.ready = False
         self.drawing.shownewestedget = False
@@ -312,17 +313,6 @@ class MainWindow(wx.Frame):
         print "Generate"
         # self.drawing.InitDraw()
     
-    def Forward(self,event):
-        print "Forward"
-    
-    def Back(self,event):
-        print "Back"
-    
-    def Optimize(self,event):
-        print "Optimize"
-    
-    def Redraw(self,event):
-        print "Redraw"
 
 operations.setmode('lambda')
 
@@ -331,6 +321,6 @@ app = wx.PySimpleApp()
 frame = MainWindow()
 app.MainLoop()
 
-# destroying the objects, so that this script works more than once in IDLEdieses Beispiel
+# destroying the objects, so that this script works more than once
 del frame
 del app

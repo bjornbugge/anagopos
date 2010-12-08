@@ -189,7 +189,7 @@ class MyCanvasBase(glcanvas.GLCanvas):
             self.Refresh(False)
 
 
-class MyCubeCanvas(MyCanvasBase):
+class ReductionGraphCanvas(MyCanvasBase):
     
     def InitGL(self, Width, Height):
 
