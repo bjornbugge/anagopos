@@ -21,8 +21,25 @@ import time
 import os
 import wx
 from wx import glcanvas
-from OpenGL.GL import *
-import OpenGL.platform.darwin
+from OpenGL.GL import \
+    glMatrixMode, glPushMatrix, glLineWidth, glLoadIdentity, glEnd, \
+    glVertex2f, glBegin, glColor4f, glPointSize, glViewport, glClear, \
+    glClearColor, glHint, glEnable, glBlendFunc, glShadeModel, glDisable, \
+    glTranslatef, glScalef, glOrtho, GL_TRIANGLES, GL_LINES, GL_POINTS, \
+    GL_DEPTH_BUFFER_BIT, GL_COLOR_BUFFER_BIT, GL_POLYGON_SMOOTH, \
+    GL_POINT_SMOOTH, GL_LINE_SMOOTH, GL_POLYGON_SMOOTH_HINT, \
+    GL_POINT_SMOOTH_HINT, GL_NICEST, GL_LINE_SMOOTH_HINT, GL_BLEND, \
+    GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_SMOOTH, GL_DEPTH_TEST, \
+    GL_MODELVIEW, GL_PROJECTION
+
+if wx.Platform == '__WXMAC__':
+    import OpenGL.platform.darwin
+elif wx.Platform == '__WXGTK__':
+    import OpenGL.platform.glx
+elif wx.Platform == '__WXMSW__':
+    import OpenGL.platform.win32
+else:
+    raise Exception("Platform %s not supported!" % wx.Platform)
 
 import computegraph.operations as operations
 

@@ -127,7 +127,7 @@ class MainWindow(wx.Frame):
         bts = wx.BoxSizer(wx.VERTICAL)
         bts.Add(radio_box, 0, wx.ALIGN_LEFT | wx.ALL, 10)
         bts.Add(self.active_rule_file_text, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
-        bts.Add(self.term_input, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 10)
+        bts.Add(self.term_input, 0, wx.ALIGN_CENTER | wx.ALL, 10)
         bts.Add(draw_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
         bts.Add(random_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
         bts.Add(forward_box, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
