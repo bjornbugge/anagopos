@@ -16,6 +16,7 @@
 
 import random
 import pygraphviz as pgv
+import utilities
 from drawingalgorithm import DrawingAlgorithm
 import os
 
@@ -114,26 +115,11 @@ class GraphVizDrawer(DrawingAlgorithm):
         self.update_layout()
         f()
     
-    # Scales the node positions to fit the GTK GraphArea
     def scale(self, width, height):
-        Xs = [node.x for node in self.nodes]
-        Ys = [node.y for node in self.nodes]
-        scaling = [max(Xs) / (width - 50), max(Ys) / (height - 50)]
-        self.scaling = scaling
-        
-        for node in self.nodes:
-            node.x = float(node.x) / scaling[0]
-            node.y = float(node.y) / scaling[1]
-            
-            if not hasattr(self, 'bezier') or not self.bezier:
-                continue
-            
-            for edge in node.children:
-                for i, point in enumerate(edge.ipoints):
-                    edge.ipoints[i] = map(lambda x:float(x[0]) / x[1], zip(point, scaling))
-        
-        return scaling
-
+        if hasattr(self, 'bezier') and self.bezier:
+            utilities.scale(self.nodes, width, height, True)
+        else:
+            utilities.scale(self.nodes, width, height)
 
 class CircoGraph(GraphVizDrawer):
     algorithm = 'circo'

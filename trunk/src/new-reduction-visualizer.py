@@ -149,10 +149,13 @@ class MainWindow(wx.Frame):
         self.SetAutoLayout(True)
         self.SetSizer(box)
         self.Layout()
-
-        # StatusBar
+        
         self.CreateStatusBar()
-        # TODO Use the status bar to show graph info, like number of nodes.
+        
+        def status_bar_callback(graph):
+            self.SetStatusText("Number of nodes: " + str(len(graph.nodes)))
+        
+        self.drawing.output_graph_status = status_bar_callback
         
         # Filemenu
         filemenu = wx.Menu()
@@ -171,6 +174,7 @@ class MainWindow(wx.Frame):
         menubar.Append(filemenu, "&File")
         self.SetMenuBar(menubar)
         
+        
         self.Show(True)
         
         self.dirname = getcwd() + '/parser' # From 'os'
@@ -181,7 +185,7 @@ class MainWindow(wx.Frame):
     def OnAbout(self,event):
         message = "Reduction Visualizer " + VERSION + "\n\n"
         message += "URL:\nhttp://code.google.com/p/reduction-visualizer/\n\n"
-        message += "By:\n Niels BjÃ¸rn Bugge Grathwohl\n Jens Duelund Pallesen"
+        message += "By:\n Niels Bjørn Bugge Grathwohl\n Jens Duelund Pallesen"
         caption = "Reduction Visualizer"
         wx.MessageBox(message, caption, wx.OK)
     
