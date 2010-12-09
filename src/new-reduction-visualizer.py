@@ -181,7 +181,7 @@ class MainWindow(wx.Frame):
     def OnAbout(self,event):
         message = "Reduction Visualizer " + VERSION + "\n\n"
         message += "URL:\nhttp://code.google.com/p/reduction-visualizer/\n\n"
-        message += "By:\n Niels Bjørn Bugge Grathwohl\n Jens Duelund Pallesen"
+        message += "By:\n Niels BjÃ¸rn Bugge Grathwohl\n Jens Duelund Pallesen"
         caption = "Reduction Visualizer"
         wx.MessageBox(message, caption, wx.OK)
     
