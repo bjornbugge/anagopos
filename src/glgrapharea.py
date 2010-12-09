@@ -24,7 +24,6 @@ import os
 import wx
 from wx import glcanvas
 from OpenGL.GL import *
-from OpenGL.GLU import gluOrtho2D
 import computegraph.operations as operations
 
 # Drawing algorithms
@@ -35,8 +34,12 @@ from drawingalgorithms.graphvizdrawers import NeatoGraph
 from drawingalgorithms.graphvizdrawers import TwopiGraph
 from drawingalgorithms.graphvizdrawers import FdpGraph
 
+ARROW_COLOR = (1.0, 0.2, 0.9)
+#LINE_COLOR = ?
+#NODE_COLOR = ?
+
 class ReductionGraphCanvas(glcanvas.GLCanvas):
-    def __init__(self, parent, width = 1024, height = 768, iterable = None):
+    def __init__(self, parent, iterable = None):
         glcanvas.GLCanvas.__init__(self, parent, -1)
         self.init = False
         self.context = glcanvas.GLContext(self)
@@ -44,7 +47,6 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         # initial mouse position
         self.lastx = self.x = 30
         self.lasty = self.y = 30
-        self.size = None
         self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
@@ -55,12 +57,6 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         self.graph = None
         self.node = None
         self.fullscreen = 0
-        self.orthoLeft = 0.0
-        self.orthoRight = 0.0
-        self.orthoBottom = 0.0
-        self.orthoTop = 0.0
-        self.window_height = height
-        self.window_width = width
         self.resizeWindow = 0
         self.pointSize = 5
         self.pointArray = None
@@ -71,11 +67,36 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         self.back_step_size = 1
         self.show_start_node = False
         self.show_newest_node = False
+        self.GetCanvasSize()
+        
         
         # When clicking on nodes, this is the widget that should be updated.
         self.node_text_widget = None
+        
+        # Callback function that is called when the graph changes.
+        self.output_graph_status = lambda x:None
+    
+    def GetCanvasSize(self):
+        size = self.GetSize()
+        self.window_width = size[0]
+        self.window_height = size[1]
     
     def InitGL(self, Width, Height):
+        self.view_port_xr = 1
+        self.view_port_yr = 1
+        self.original_x = Width
+        self.original_y = Height
+        
+        glMatrixMode(GL_PROJECTION)
+        glPushMatrix()
+        glLoadIdentity()
+        glOrtho(0, Width, 0, Height, -1, 1)
+        glScalef(1, -1, 1)
+        glTranslatef(0, -Height, 0)
+        glMatrixMode(GL_MODELVIEW)
+        glDisable(GL_DEPTH_TEST)    # Disables Depth Testing
+        glShadeModel(GL_SMOOTH)     # Enables Smooth Color Shading
+        
         # Anti-aliasing/prettyness stuff
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(GL_BLEND)
@@ -85,6 +106,7 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         glEnable(GL_LINE_SMOOTH)
         glEnable(GL_POINT_SMOOTH)
         glEnable(GL_POLYGON_SMOOTH)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
     def OnEraseBackground(self, event):
         pass # Do nothing, to avoid flashing on MSW.
@@ -94,15 +116,19 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         event.Skip()
     
     def DoSetViewport(self):
-        size = self.size = self.GetClientSize()
-        self.SetCurrent(self.context)
+        # pass
+        size = self.GetClientSize()
         glViewport(0, 0, size.width, size.height)
+        self.view_port_xr = float(size.width) / float(self.original_x)
+        self.view_port_yr = float(size.height) / float(self.original_y)
+        self.Draw()
     
     def OnPaint(self, event):
         dc = wx.PaintDC(self)
         self.SetCurrent(self.context)
         if not self.init:
-            self.InitGL(self.window_height, self.window_width)
+            self.GetCanvasSize()
+            self.InitGL(self.window_width, self.window_height)
             self.init = True
         self.OnDraw()
     
@@ -114,23 +140,17 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
             return
         
         self.CaptureMouse()
-        self.x, self.y = self.lastx, self.lasty = event.GetPosition()
-        propX = float(self.x) / float(self.GetSize()[0])
-        propY = float(self.y) / float(self.GetSize()[1])
-        scX = self.orthoRight - self.orthoLeft
-        scY = self.orthoBottom - self.orthoTop
-        
-        X = propX * scX
-        Y = propY * scY
-        
-        rX = 20 / float(self.GetSize()[0]) * scX
-        rY = 20 / float(self.GetSize()[1]) * scY
-        
+        x, y = event.GetPosition()
+        x = x / self.view_port_xr
+        y = y / self.view_port_yr
+        print "You clicked on " + str(x) + ", " + str(y)
+        self.x, self.y = x, y
+        self.lastx, self.lasty = x, y
+        r = 8
         for node in self.graph.nodes:
-            nX = node.x - self.orthoLeft
-            nY = node.y - self.orthoTop
-            
-            if (X > (nX - rX)) and (X < (nX + rX)) and (Y > (nY - rY)) and (Y < (nY + rY)):
+            n_x, n_y = node.x, node.y
+            print "  Checking " + str(n_x) + ", " + str(n_y)
+            if (x > (n_x - r)) and (x < (n_x + r)) and (y > (n_y - r)) and (y < (n_y + r)):
                 self.graph.dragnode = True
                 self.graph.dragnodename = node.name
                 self.graph.dragnodex = self.x
@@ -166,20 +186,7 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
     
     def Draw(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        
-        Xs = [node.x for node in self.graph.nodes]
-        Ys = [node.y for node in self.graph.nodes]
-        
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        self.orthoLeft = min(Xs) - max(Xs) * 0.02
-        self.orthoRight = max(Xs) + max(Xs) * 0.02
-        self.orthoBottom = max(Ys) + max(Ys) * 0.02
-        self.orthoTop = min(Ys) - max(Ys) * 0.02
-        self.orthoDiagonal = self.orthoRight + self.orthoBottom
-                    
-        gluOrtho2D(self.orthoLeft, self.orthoRight, self.orthoBottom, self.orthoTop)
-        glMatrixMode(GL_MODELVIEW)
+        self.graph.scale(self.window_width, self.window_height)
         
         for node in self.graph.nodes:
             for edge in node.children:
@@ -190,22 +197,13 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
                     (x1, y1, x2, y2) = (node.x, node.y, far_node.x, far_node.y)
                     draw_regular_line(x1, y1, x2, y2)
                 
-                radius = self.orthoDiagonal
                 if node != edge.get_far(node):
-                    # FIXME These arrows are hideous!!!!!
-                    
-                    draw_arrowhead(x1, y1, x2, y2, radius/150, self.orthoDiagonal/230, 1.0, 15)
-                    # self.draw_arrowhead(x1, y1, x2, y2, radius/160, self.orthoDiagonal/220, 0.9, 16)
-                    draw_arrowhead(x1, y1, x2, y2, radius/170, self.orthoDiagonal/210, 0.8, 17)
-                    # self.draw_arrowhead(x1, y1, x2, y2, radius/180, self.orthoDiagonal/200, 0.7, 18)
-                    draw_arrowhead(x1, y1, x2, y2, radius/190, self.orthoDiagonal/190, 0.6, 19)
-                    # self.draw_arrowhead(x1, y1, x2, y2, radius/200, self.orthoDiagonal/180, 0.5, 20)
-                    draw_arrowhead(x1, y1, x2, y2, radius/210, self.orthoDiagonal/170, 0.4, 21)
-                    # self.draw_arrowhead(x1, y1, x2, y2, radius/220, self.orthoDiagonal/160, 0.3, 22)
-                    draw_arrowhead(x1, y1, x2, y2, radius/230, self.orthoDiagonal/150, 0.1, 23)
+                    draw_arrowhead(x1, y1, x2, y2, 5, 16, 15, 0.5)
+                    draw_arrowhead(x1, y1, x2, y2, 5, 14, 15, 0.7)
+                    draw_arrowhead(x1, y1, x2, y2, 5, 12, 13, 1.0)
         
         for node in self.graph.nodes:
-            if len(node.term.redexpositions) == 0:
+            if len(node.term.redexpositions) == 0: # Normal form
                 draw_nf_node(node.x, node.y)
             elif node.name == "N0" and self.show_start_node:
                 draw_start_node(node.x, node.y)
@@ -214,6 +212,7 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
             else:
                 draw_regular_node(node.x, node.y)
         
+        self.output_graph_status(self.graph)
         self.SwapBuffers()
     
     def set_forward_step_size(self, s):
@@ -233,10 +232,12 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
             c = 0
         else:
             c = self.forward_step_size
+        
         if self.graphnumber + c < len(self.graphlist):
             self.graphnumber += self.forward_step_size
-            if self.graphnumber > len(self.graphlist):
+            if self.graphnumber >= len(self.graphlist):
                 self.graphnumber = len(self.graphlist) - 1
+            
             if hasattr(self, 'selectedhaschanged') and self.selectedhaschanged:
                 rg = self.reductiongraphlist[self.graphnumber]
                 g = Drawer(rg)
@@ -310,7 +311,6 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
             print "No graph created yet!"
     
     def OnDraw(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         self.SwapBuffers()
     
     def ToggleShowStart(self, event):
@@ -425,7 +425,7 @@ def draw_bezier_edge(node, edge):
     return (x1, y1, far_node.x, far_node.y)
     
 
-def draw_arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, transparency, angle):
+def draw_arrowhead(x1, y1, x2, y2, noderadius, arrowwidth = 20, angle = 20, trans = 1.0):
     '''
     Draws an arrow head on the line segment between the coordinate pairs
     (x1,y1) and (x2,y2). The arrow head is placed in the (x2,y2)-end.
@@ -438,8 +438,8 @@ def draw_arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, transparency, angle):
     else:
         LineAngle = math.atan((y2 - y1) / (x2 - x1))
 
-    EndAngle1 = LineAngle + angle * math.pi/180
-    EndAngle2 = LineAngle - angle * math.pi/180
+    EndAngle1 = LineAngle + angle * math.pi / 180
+    EndAngle2 = LineAngle - angle * math.pi / 180
 
     xOffset = noderadius * math.cos(LineAngle)
     yOffset = noderadius * math.sin(LineAngle)
@@ -467,18 +467,8 @@ def draw_arrowhead(x1, y1, x2, y2, noderadius, arrowwidth, transparency, angle):
         X3 += xOffset
         X4 += xOffset
     
-    # TODO Do we need these again? (InitGL())
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-    glEnable(GL_BLEND)
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST)
-    glEnable(GL_LINE_SMOOTH)
-    glEnable(GL_POINT_SMOOTH)
-    glEnable(GL_POLYGON_SMOOTH)
-    
     glLineWidth(1.0)
-    glColor4f(1.0, 0.2, 0.9, transparency)
+    glColor4f(ARROW_COLOR[0], ARROW_COLOR[1], ARROW_COLOR[2], trans)
     glBegin(GL_TRIANGLES)
     glVertex2f(x2, y2)
     glVertex2f(X3, Y3)
