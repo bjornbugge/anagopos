@@ -29,15 +29,15 @@ import parser.tpdbparser.tpdb_parser as tpdb_parser
 
 
 # May be one of 'lambda' or 'trs'.
-if '__mode__' not in locals():
-    __mode__ = ''
+if '_mode' not in locals():
+    _mode = ''
 
 def setmode(mode):
     '''
     Set the mode, i.e. choose which parser and associated operations to use:
     'trs' or 'lambda'.
     '''
-    global OPS, PARSER, TPDBPARSER, __mode__
+    global OPS, PARSER, TPDBPARSER, _mode
     if mode == 'lambda':
         OPS = lambda_operations
         PARSER = lambda_parser
@@ -48,17 +48,17 @@ def setmode(mode):
     else:
         raise Exception("Unsupported mode: " + mode)
     
-    __mode__ = mode
+    _mode = mode
 
 def current_mode():
-	return __mode__
+	return _mode
 
 def parse_rule_set(file_type, string):
     '''
     Parse rule set definitions and return a set of rules. Can parse the 
     XML specifcation used by TPDB and our own .trs-format.
     '''
-    if not __mode__ == 'trs':
+    if not _mode == 'trs':
         raise Exception("Lambda calculus has no rule set files.")
     
     ruleparser = None
@@ -80,7 +80,7 @@ def assignvariables(root):
     '''
     Assign bound variables. No-op on TRS-systems.
     '''
-    if __mode__ == '':
+    if _mode == '':
         return
     OPS.assignvariables(root)
 
@@ -90,7 +90,7 @@ def sanitize(term):
     Call the system-specific sanitizzing operation. On TRS-systems this is a 
     no-op.
     '''
-    if __mode__ == '':
+    if _mode == '':
         return
     OPS.sanitize(term)
 
@@ -103,9 +103,9 @@ def reductiongraphiter(root, start, end, ruleSet = None):
     Returns an iterator over the reduction graph, evovlving the graph in each
     iteration step.
     '''
-    if __mode__ == 'lambda':
+    if _mode == 'lambda':
         return OPS.reductiongraphiter(root, start, end)
-    elif __mode__ == 'trs':
+    elif _mode == 'trs':
         return OPS.reductiongraphiter(root, start, end, ruleSet)
     else:
-        raise Exception("Unsupported mode: " + __mode__)
+        raise Exception("Unsupported mode: " + _mode)
