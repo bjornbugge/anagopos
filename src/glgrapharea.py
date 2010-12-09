@@ -42,6 +42,8 @@ else:
     raise Exception("Platform %s not supported!" % wx.Platform)
 
 import computegraph.operations as operations
+from colors import arrow_color, line_color, node_color, start_node_color, \
+    nf_node_color, selfref_halo_color, newest_node_color, background_color
 
 # Drawing algorithms
 from drawingalgorithms.majorizationgraph import MajorizationGraph
@@ -51,15 +53,6 @@ from drawingalgorithms.graphvizdrawers import NeatoGraph
 from drawingalgorithms.graphvizdrawers import TwopiGraph
 from drawingalgorithms.graphvizdrawers import FdpGraph
 
-d = float(255)
-ARROW_COLOR         = (1.0, 0.2, 0.9)
-LINE_COLOR          = (0.3, 1, 0.2)
-NODE_COLOR          = (0.3, 0.6, 1.0)
-START_NODE_COLOR    = (0.5, 0.8, 1.0)
-NF_NODE_COLOR       = (1.0, 0.0, 0.0)
-SELFREF_HALO_COLOR  = (250/d, 214/d, 107/d)
-NEWEST_NODE_COLOR   = (0.0, 0.0, 1.0)
-BACKGROUND_COLOR    = (0.0, 0.0, 0.0)
 
 class ReductionGraphCanvas(glcanvas.GLCanvas):
     def __init__(self, parent, iterable = None):
@@ -128,7 +121,7 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         glEnable(GL_LINE_SMOOTH)
         glEnable(GL_POINT_SMOOTH)
         glEnable(GL_POLYGON_SMOOTH)
-        glClearColor(BACKGROUND_COLOR[0], BACKGROUND_COLOR[1], BACKGROUND_COLOR[2], 1.0)
+        glClearColor(background_color()[0], background_color()[1], background_color()[2], 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
     def OnEraseBackground(self, event):
@@ -209,6 +202,7 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
             self.Refresh(False)
     
     def Draw(self):
+        glClearColor(background_color()[0], background_color()[1], background_color()[2], 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         if not self.graph:
             return
@@ -244,7 +238,7 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
             else:
                 draw_regular_node(node.x, node.y)
         
-        self.output_graph_status(self.graph)
+        self.output_graph_status(self)
         self.SwapBuffers()
     
     def set_forward_step_size(self, s):
@@ -398,41 +392,41 @@ def draw_line(x1, y1, x2, y2, widths, colors):
         glEnd()
 
 def draw_regular_node(x, y):
-    r, g, b = NODE_COLOR
+    r, g, b = node_color()
     sizes = [15, 13, 11, 9, 7, 5]
     colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
               (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
 
 def draw_start_node(x, y):
-    r, g, b = START_NODE_COLOR
+    r, g, b = start_node_color()
     sizes = [15, 13, 11, 9, 7, 5]
     colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
               (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
 
 def draw_nf_node(x, y):
-    r, g, b = NF_NODE_COLOR
+    r, g, b = nf_node_color()
     sizes = [18, 17, 15, 13, 11, 9]
     colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
               (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
 
 def draw_newest_node(x, y):
-    r, g, b = NEWEST_NODE_COLOR
+    r, g, b = newest_node_color()
     sizes = [15, 13, 11, 9, 7, 5]
     colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
               (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
 
 def draw_selfref_halo(x, y):
-    r, g, b = SELFREF_HALO_COLOR
+    r, g, b = selfref_halo_color()
     sizes = [18, 17, 16]
     colors = [(r, g, b, 0.22), (r, g, b, 0.66), (r, g, b, 0.7)]
     draw_node(x, y, sizes, colors)
 
 def draw_regular_line(x1, y1, x2, y2):
-    r, g, b = LINE_COLOR
+    r, g, b = line_color()
     # widths = [4.5, 3.5, 2.5, 1.5, 0.8, 0.5]
     widths = [4.5, 2.5, 1.5, 0.8, 0.5]
     # colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
@@ -514,7 +508,7 @@ def draw_arrowhead(x1, y1, x2, y2, noderadius, arrowwidth = 20, angle = 20, tran
         X4 += xOffset
     
     glLineWidth(1.0)
-    glColor4f(ARROW_COLOR[0], ARROW_COLOR[1], ARROW_COLOR[2], trans)
+    glColor4f(arrow_color()[0], arrow_color()[1], arrow_color()[2], trans)
     glBegin(GL_TRIANGLES)
     glVertex2f(x2, y2)
     glVertex2f(X3, Y3)

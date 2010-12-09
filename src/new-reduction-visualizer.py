@@ -29,6 +29,8 @@ from drawingalgorithms.graphvizdrawers import NeatoGraph
 from drawingalgorithms.graphvizdrawers import TwopiGraph
 from drawingalgorithms.graphvizdrawers import FdpGraph
 
+from colors import set_color_scheme_black, set_color_scheme_white, set_color_scheme_grey
+
 import sys
 import math
 import random
@@ -75,7 +77,7 @@ class MainWindow(wx.Frame):
         radio_box = wx.BoxSizer(wx.HORIZONTAL)
         radio_box.Add(self.radio_lambda, 0, wx.ALIGN_LEFT, 10)
         radio_box.Add(self.radio_trs, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
-        self.radio_lambda.SetValue(True) # Lambda is by default active
+        self.radio_lambda.SetValue(True)    # Lambda is by default active
         self.radio_trs.SetToolTip(wx.ToolTip("Select 'File > Load Rule Set' to activate TRS mode."))
         
         width = 200
@@ -152,22 +154,39 @@ class MainWindow(wx.Frame):
         
         self.CreateStatusBar()
         
-        def status_bar_callback(graph):
-            self.SetStatusText("Number of nodes: " + str(len(graph.nodes)))
+        def status_bar_callback(grapharea):
+            s = "Number of nodes: " + str(len(grapharea.graph.nodes)) + "."
+            
+            if hasattr(grapharea, 'nomoregraphs') and grapharea.nomoregraphs:
+                s += " No more graphs."
+            self.SetStatusText(s)
         
         self.drawing.output_graph_status = status_bar_callback
         
-        # Filemenu
+        # Menus
         filemenu = wx.Menu()
+        color_scheme_menu = wx.Menu()
         
-        # Filemenu -- actions
+        # Menu actions
         menuitem = filemenu.Append(-1, "&Load Rule Set", "Load a TRS rule set")
         self.Bind(wx.EVT_MENU, self.OnLoadRuleSet, menuitem)
+        
+        self.color_scheme_black = color_scheme_menu.AppendRadioItem(-1, "Black Funk")
+        self.Bind(wx.EVT_MENU, self.OnColorSchemeChange, self.color_scheme_black)
+        self.color_scheme_white = color_scheme_menu.AppendRadioItem(-1, "White Snow")
+        self.Bind(wx.EVT_MENU, self.OnColorSchemeChange, self.color_scheme_white)
+        self.color_scheme_grey = color_scheme_menu.AppendRadioItem(-1, "Grey Dawn")
+        self.Bind(wx.EVT_MENU, self.OnColorSchemeChange, self.color_scheme_grey)
+        filemenu.AppendMenu(-1, "Color Schemes", color_scheme_menu)
+        
         menuitem = filemenu.Append(-1, "&About", "Reduction Visualizer")
         self.Bind(wx.EVT_MENU, self.OnAbout, menuitem)
         filemenu.AppendSeparator()
         menuitem = filemenu.Append(-1, "E&xit", "Terminate the program")
         self.Bind(wx.EVT_MENU, self.OnExit, menuitem)
+        
+        # menu->AppendRadioItem( ID_NORMAL_WEIGHT, wxT("Normal") );
+        
 
         # Menubar, containg the menu(s) created above
         menubar = wx.MenuBar()
@@ -216,6 +235,16 @@ class MainWindow(wx.Frame):
             self.rule_set = self.last_used_rule_set = ruleset
             self.last_used_rule_name = rulename
             print "GOT RULE SET: " + str(ruleset)
+    
+    def OnColorSchemeChange(self, event):
+        if self.color_scheme_black.IsChecked():
+            set_color_scheme_black()
+        elif self.color_scheme_grey.IsChecked():
+            set_color_scheme_grey()
+        else:
+            set_color_scheme_white()
+        self.drawing.Draw()
+        
     
     def SetRadioVal(self, event):
         if self.radio_lambda.GetValue():
@@ -300,7 +329,6 @@ class MainWindow(wx.Frame):
         self.drawing.set_back_step_size(self.back_spinner.GetValue())
 
 operations.setmode('lambda')
-
 
 app = wx.PySimpleApp()
 frame = MainWindow()
