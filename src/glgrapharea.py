@@ -34,9 +34,13 @@ from drawingalgorithms.graphvizdrawers import NeatoGraph
 from drawingalgorithms.graphvizdrawers import TwopiGraph
 from drawingalgorithms.graphvizdrawers import FdpGraph
 
-ARROW_COLOR = (1.0, 0.2, 0.9)
-#LINE_COLOR = ?
-#NODE_COLOR = ?
+ARROW_COLOR         = (1.0, 0.2, 0.9)
+LINE_COLOR          = (0.3, 0.9, 0.2)
+NODE_COLOR          = (0.3, 0.6, 1.0)
+START_NODE_COLOR    = (0.5, 0.8, 1.0)
+NF_NODE_COLOR       = (1.0, 0.0, 0.0)
+NEWEST_NODE_COLOR   = (0.0, 1.0, 1.0)
+BACKGROUND_COLOR    = (0.0, 0.0, 0.0)
 
 class ReductionGraphCanvas(glcanvas.GLCanvas):
     def __init__(self, parent, iterable = None):
@@ -106,6 +110,7 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         glEnable(GL_LINE_SMOOTH)
         glEnable(GL_POINT_SMOOTH)
         glEnable(GL_POLYGON_SMOOTH)
+        glClearColor(BACKGROUND_COLOR[0], BACKGROUND_COLOR[1], BACKGROUND_COLOR[2], 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
     def OnEraseBackground(self, event):
@@ -366,34 +371,38 @@ def draw_line(x1, y1, x2, y2, widths, colors):
         glEnd()
 
 def draw_regular_node(x, y):
+    r, g, b = NODE_COLOR
     sizes = [15, 13, 11, 9, 7, 5]
-    colors = [(0.3, 0.6, 1.0, 0.1), (0.3, 0.6, 1.0, 0.2), (0.3, 0.6, 1.0, 0.4),
-              (0.3, 0.6, 1.0, 0.6), (0.3, 0.6, 1.0, 0.8), (0.3, 0.6, 1.0, 1.0)]
+    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
+              (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
 
 def draw_start_node(x, y):
+    r, g, b = START_NODE_COLOR
     sizes = [15, 13, 11, 9, 7, 5]
-    colors = [(0.5, 0.8, 1.0, 0.1), (0.5, 0.8, 1.0, 0.2), (0.5, 0.8, 1.0, 0.4),
-              (0.5, 0.8, 1.0, 0.6), (0.5, 0.8, 1.0, 0.8), (0.5, 0.8, 1.0, 1.0)]
+    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
+              (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
 
 def draw_nf_node(x, y):
+    r, g, b = NF_NODE_COLOR
     sizes = [17, 15, 13, 11, 9, 7]
-    colors = [(1.0, 0.0, 0.0, 0.1), (1.0, 0.0, 0.0, 0.2), (1.0, 0.0, 0.0, 0.4),
-              (1.0, 0.0, 0.0, 0.6), (1.0, 0.0, 0.0, 0.8), (1.0, 0.0, 0.0, 1.0)]
+    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
+              (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
 
 def draw_newest_node(x, y):
+    r, g, b = NEWEST_NODE_COLOR
     sizes = [15, 13, 11, 9, 7, 5]
-    colors = [(0.0, 1.0, 1.0, 0.1), (0.0, 1.0, 1.0, 0.2), (0.0, 1.0, 1.0, 0.4),
-              (0.0, 1.0, 1.0, 0.6), (0.0, 1.0, 1.0, 0.8), (0.0, 1.0, 1.0, 1.0)]
+    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
+              (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
 
 def draw_regular_line(x1, y1, x2, y2):
+    r, g, b = LINE_COLOR
     widths = [4.5, 3.5, 2.5, 1.5, 0.8, 0.5]
-    colors = [(0.3, 0.9, 0.2, 0.1), (0.3, 0.9, 0.2, 0.2), (0.3, 0.9, 0.2, 0.4),
-              (0.3, 0.9, 0.2, 0.6), (0.3, 0.9, 0.2, 0.3), (0.3, 0.9, 0.2, 1.0)]
-    
+    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
+              (r, g, b, 0.6), (r, g, b, 0.3), (r, g, b, 1.0)]
     draw_line(x1, y1, x2, y2, widths, colors)
 
 def draw_bezier_edge(node, edge):
