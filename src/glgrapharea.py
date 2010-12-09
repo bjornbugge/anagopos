@@ -16,14 +16,14 @@
 
 import pdb
 
-import sys
 import math
-import random
 import time
 import os
 import wx
 from wx import glcanvas
 from OpenGL.GL import *
+import OpenGL.platform.darwin
+
 import computegraph.operations as operations
 
 # Drawing algorithms
@@ -34,12 +34,14 @@ from drawingalgorithms.graphvizdrawers import NeatoGraph
 from drawingalgorithms.graphvizdrawers import TwopiGraph
 from drawingalgorithms.graphvizdrawers import FdpGraph
 
+d = float(255)
 ARROW_COLOR         = (1.0, 0.2, 0.9)
-LINE_COLOR          = (0.3, 0.9, 0.2)
+LINE_COLOR          = (0.3, 1, 0.2)
 NODE_COLOR          = (0.3, 0.6, 1.0)
 START_NODE_COLOR    = (0.5, 0.8, 1.0)
 NF_NODE_COLOR       = (1.0, 0.0, 0.0)
-NEWEST_NODE_COLOR   = (0.0, 1.0, 1.0)
+SELFREF_HALO_COLOR  = (250/d, 214/d, 107/d)
+NEWEST_NODE_COLOR   = (0.0, 0.0, 1.0)
 BACKGROUND_COLOR    = (0.0, 0.0, 0.0)
 
 class ReductionGraphCanvas(glcanvas.GLCanvas):
@@ -72,7 +74,6 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         self.show_start_node = False
         self.show_newest_node = False
         self.GetCanvasSize()
-        
         
         # When clicking on nodes, this is the widget that should be updated.
         self.node_text_widget = None
@@ -121,7 +122,8 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         event.Skip()
     
     def DoSetViewport(self):
-        # pass
+        if not self:
+            return
         size = self.GetClientSize()
         glViewport(0, 0, size.width, size.height)
         self.view_port_xr = float(size.width) / float(self.original_x)
@@ -146,15 +148,15 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         
         self.CaptureMouse()
         x, y = event.GetPosition()
+        
+        # Transform the event coordinates to match the active view port.
         x = x / self.view_port_xr
         y = y / self.view_port_yr
-        print "You clicked on " + str(x) + ", " + str(y)
         self.x, self.y = x, y
         self.lastx, self.lasty = x, y
         r = 8
         for node in self.graph.nodes:
             n_x, n_y = node.x, node.y
-            print "  Checking " + str(n_x) + ", " + str(n_y)
             if (x > (n_x - r)) and (x < (n_x + r)) and (y > (n_y - r)) and (y < (n_y + r)):
                 self.graph.dragnode = True
                 self.graph.dragnodename = node.name
@@ -191,8 +193,11 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
     
     def Draw(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        self.graph.scale(self.window_width, self.window_height)
+        if not self.graph:
+            return
         
+        self.graph.scale(self.window_width, self.window_height)
+        selfrefs = []
         for node in self.graph.nodes:
             for edge in node.children:
                 if hasattr(self.graph, 'bezier') and self.graph.bezier:
@@ -203,11 +208,16 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
                     draw_regular_line(x1, y1, x2, y2)
                 
                 if node != edge.get_far(node):
-                    draw_arrowhead(x1, y1, x2, y2, 5, 16, 15, 0.5)
-                    draw_arrowhead(x1, y1, x2, y2, 5, 14, 15, 0.7)
-                    draw_arrowhead(x1, y1, x2, y2, 5, 12, 13, 1.0)
+                    draw_arrowhead(x1, y1, x2, y2, 4, 16, 15, 0.5)
+                    draw_arrowhead(x1, y1, x2, y2, 4, 14, 15, 0.7)
+                    draw_arrowhead(x1, y1, x2, y2, 4, 12, 13, 1.0)
+                else:
+                    selfrefs.append(node)
         
         for node in self.graph.nodes:
+            if node in selfrefs:
+                draw_selfref_halo(node.x, node.y)
+            
             if len(node.term.redexpositions) == 0: # Normal form
                 draw_nf_node(node.x, node.y)
             elif node.name == "N0" and self.show_start_node:
@@ -386,7 +396,7 @@ def draw_start_node(x, y):
 
 def draw_nf_node(x, y):
     r, g, b = NF_NODE_COLOR
-    sizes = [17, 15, 13, 11, 9, 7]
+    sizes = [18, 17, 15, 13, 11, 9]
     colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
               (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
@@ -398,11 +408,21 @@ def draw_newest_node(x, y):
               (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
     draw_node(x, y, sizes, colors)
 
+def draw_selfref_halo(x, y):
+    r, g, b = SELFREF_HALO_COLOR
+    sizes = [18, 17, 16]
+    colors = [(r, g, b, 0.22), (r, g, b, 0.66), (r, g, b, 0.7)]
+    draw_node(x, y, sizes, colors)
+
 def draw_regular_line(x1, y1, x2, y2):
     r, g, b = LINE_COLOR
-    widths = [4.5, 3.5, 2.5, 1.5, 0.8, 0.5]
-    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
+    # widths = [4.5, 3.5, 2.5, 1.5, 0.8, 0.5]
+    widths = [4.5, 2.5, 1.5, 0.8, 0.5]
+    # colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
+    #           (r, g, b, 0.6), (r, g, b, 0.3), (r, g, b, 1.0)]
+    colors = [(r, g, b, 0.2), (r, g, b, 0.4),
               (r, g, b, 0.6), (r, g, b, 0.3), (r, g, b, 1.0)]
+    
     draw_line(x1, y1, x2, y2, widths, colors)
 
 def draw_bezier_edge(node, edge):
