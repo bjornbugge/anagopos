@@ -187,6 +187,7 @@ class MainWindow(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnScreenshot, menuitem)
         menuitem = filemenu.Append(-1, "&Open Rule Set\tCtrl+O", "Load a TRS rule set")
         self.Bind(wx.EVT_MENU, self.OnLoadRuleSet, menuitem)
+        filemenu.AppendSeparator()
         
         self.color_scheme_black = color_scheme_menu.AppendRadioItem(-1, "Black Funk\tCtrl+1")
         self.Bind(wx.EVT_MENU, self.OnColorSchemeChange, self.color_scheme_black)
@@ -216,6 +217,7 @@ class MainWindow(wx.Frame):
     
     def load_state(self):
         s = getcwd() + "/state.dat"
+        # Create the file if it's not present (like on first run).
         try:
             f = open(s, 'r')
         except IOError:
@@ -241,7 +243,6 @@ class MainWindow(wx.Frame):
     def save_state(self):
         with file(getcwd() + "/state.dat", 'w') as statefile:
             pickle.dump(self.state, statefile)
-        print "Saved state: " + str(self.state)
 
     def OnAbout(self,event):
         message = "Reduction Visualizer " + VERSION + "\n\n"
@@ -255,11 +256,12 @@ class MainWindow(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             name = dlg.GetPath()
             rulename = dlg.GetFilename()
-            self.state.rule_dir = name[:name.index(rulename) - 1]
             suffix = name[-3:]
             if not (suffix == 'trs' or suffix == 'xml'):
                 print "Unrecognized file format: " + name
                 return
+            
+            self.state.rule_dir = name[:name.index(rulename) - 1]
             
             operations.setmode('trs')
             self.radio_trs.SetValue(True)
