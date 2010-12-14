@@ -209,15 +209,21 @@ class MainWindow(wx.Frame):
         
         self.lambda_contents = self.trs_contents = ""
         
-        self.Show(True)
-        
-        
         self.rule_set = None # Used for the TRS
         self.last_used_rule_set = None
         self.last_used_rule_name = ""
+        
     
     def load_state(self):
-        with file(getcwd() + "/state.dat", 'rw') as statefile:
+        s = getcwd() + "/state.dat"
+        try:
+            f = open(s, 'r')
+        except IOError:
+            f = file(s, 'w')
+        finally:
+            f.close()
+        
+        with file(s, 'r') as statefile:
             c = statefile.read()
             if not c == '':
                 statefile.seek(0)
@@ -235,6 +241,7 @@ class MainWindow(wx.Frame):
     def save_state(self):
         with file(getcwd() + "/state.dat", 'w') as statefile:
             pickle.dump(self.state, statefile)
+        print "Saved state: " + str(self.state)
 
     def OnAbout(self,event):
         message = "Reduction Visualizer " + VERSION + "\n\n"
@@ -244,7 +251,7 @@ class MainWindow(wx.Frame):
         wx.MessageBox(message, caption, wx.OK)
     
     def OnLoadRuleSet(self, event):
-        dlg = wx.FileDialog(self, "Choose a file", self.state.rule_dir, "", "*.*", wx.OPEN)
+        dlg = wx.FileDialog(self, "Open Rule Set", self.state.rule_dir, "", "*.*", wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             name = dlg.GetPath()
             rulename = dlg.GetFilename()
@@ -365,7 +372,7 @@ class MainWindow(wx.Frame):
         self.term_input.SetValue("" + str(g))
     
     def OnScreenshot(self, event):
-        dlg = wx.FileDialog(self, "Choose a file", self.state.save_dir, "", "*.*", wx.SAVE)
+        dlg = wx.FileDialog(self, "Save Screenshot", self.state.save_dir, "", "*.*", wx.SAVE)
         if dlg.ShowModal() == wx.ID_OK:
             name = dlg.GetPath()
             filename = dlg.GetFilename()
@@ -383,8 +390,8 @@ operations.setmode('lambda')
 
 app = wx.PySimpleApp()
 frame = MainWindow()
+frame.Show(True)
 app.MainLoop()
 
-# destroying the objects, so that this script works more than once
 del frame
 del app
