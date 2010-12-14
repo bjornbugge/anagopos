@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Reduction Visualizer. A tool for visualization of reduction graphs.
 # Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
 # 
@@ -19,6 +20,7 @@ import pdb
 import math
 import time
 import os
+import subprocess
 import wx
 from wx import glcanvas
 from OpenGL.GL import \
@@ -63,23 +65,12 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         self.init = False
         self.context = glcanvas.GLContext(self)
         
-        # initial mouse position
-        self.lastx = self.x = 30
-        self.lasty = self.y = 30
-        self.Bind(wx.EVT_ERASE_BACKGROUND, self.OnEraseBackground)
         self.Bind(wx.EVT_SIZE, self.OnSize)
         self.Bind(wx.EVT_PAINT, self.OnPaint)
         self.Bind(wx.EVT_LEFT_DOWN, self.OnMouseDown)
         self.Bind(wx.EVT_LEFT_UP, self.OnMouseUp)
-        self.Bind(wx.EVT_MOTION, self.OnMouseMotion)
         self.term = None
         self.graph = None
-        self.node = None
-        self.fullscreen = 0
-        self.resizeWindow = 0
-        self.pointSize = 5
-        self.pointArray = None
-        self.graphiterable = iterable
         self.graphlist = []
         
         self.forward_step_size = 1
@@ -88,8 +79,8 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         self.show_newest_node = False
         self.GetCanvasSize()
         
-        # When clicking on nodes, this is the widget that should be updated.
-        self.node_text_widget = None
+        # Callback used when nodes are clicked.
+        self.node_clicked = lambda x:None
         
         # Callback function that is called when the graph changes.
         self.output_graph_status = lambda x:None
@@ -127,9 +118,6 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         glClearColor(background_color()[0], background_color()[1], background_color()[2], 1.0)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
-    def OnEraseBackground(self, event):
-        pass # Do nothing, to avoid flashing on MSW.
-    
     def OnSize(self, event):
         wx.CallAfter(self.DoSetViewport)
         event.Skip()
@@ -144,7 +132,7 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         self.Draw()
     
     def OnPaint(self, event):
-        dc = wx.PaintDC(self)
+        # dc = wx.PaintDC(self)
         self.SetCurrent(self.context)
         if not self.init:
             self.GetCanvasSize()
@@ -165,44 +153,15 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         # Transform the event coordinates to match the active view port.
         x = x / self.view_port_xr
         y = y / self.view_port_yr
-        self.x, self.y = x, y
-        self.lastx, self.lasty = x, y
         r = 8
         for node in self.graph.nodes:
             n_x, n_y = node.x, node.y
             if (x > (n_x - r)) and (x < (n_x + r)) and (y > (n_y - r)) and (y < (n_y + r)):
-                self.graph.dragnode = True
-                self.graph.dragnodename = node.name
-                self.graph.dragnodex = self.x
-                self.graph.dragnodey = self.y
-                # Cut the first 5 chars. They are "NODE ".
-                self.node_text_widget.SetValue("" + str(node)[5:])
-            else:
-                self.graph.dragnode = False
+                self.node_clicked(node)
     
     def OnMouseUp(self, event):
-        if hasattr(self.graph, 'dragnode') and self.graph.dragnode:
-            x = self.x
-            y = self.y
-            self.x, self.y = event.GetPosition()
-            self.lastx, self.lasty = x, y
-            if (y != self.y) or (x != self.x):
-                print "you are trying to drag node: " + self.graph.dragnodename
-                print "new pixel coordinates: (" + str(self.x) + "," + str(self.y) + ")"
-                print "new gviz coordinates:  (" + str(self.x) + "," + str(self.y) + ")"
-                self.nodetext = ""
-            else:
-                print "you have clicked node " + self.graph.dragnodename
-        
         if self.HasCapture():
             self.ReleaseMouse()
-    
-    def OnMouseMotion(self, event):
-        # TODO Does not work!
-        if event.Dragging() and event.LeftIsDown() and False:
-            self.lastx, self.lasty = self.x, self.y
-            self.x, self.y = event.GetPosition()
-            self.Refresh(False)
     
     def Draw(self):
         glClearColor(background_color()[0], background_color()[1], background_color()[2], 1.0)
@@ -351,6 +310,27 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         self.show_newest_node = not self.show_newest_node
         if self.ready:
             self.Draw()
+    
+    def export_canvas(self, filename):
+        x = self.GetScreenPosition().x
+        y = self.GetScreenPosition().y
+        width = self.GetSize().GetWidth()
+        height = self.GetSize().GetHeight()
+        
+        if wx.Platform == '__WXMAC__': # Workaround for OS X
+            subprocess.call(["screencapture", "-x", filename])
+            bm = wx.Bitmap(filename).GetSubBitmap(wx.Rect(x, y, width, height))
+        else: # FIXME Untested!
+            dc = wx.ClientDC(self)
+            bm = wx.EmptyBitmap(width, height, -1)
+            br = wx.MemoryDC()
+            br.SelectObject(bm)
+            br.Blit(0, 0, width, height, dc, 0, 0, wx.COPY, useMask = True)
+            br.SelectObject(wx.NullBitmap)
+        
+        img = bm.ConvertToImage()
+        img.SaveFile(filename, wx.BITMAP_TYPE_PNG)
+        
 
 
 ##############################################################################
@@ -397,36 +377,42 @@ def draw_line(x1, y1, x2, y2, widths, colors):
 def draw_regular_node(x, y):
     r, g, b = node_color()
     sizes = node_sizes()
+    # colors = [(r, g, b, x) for x in node_opacities()]
     colors = map(lambda x:(r, g, b, x), node_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_start_node(x, y):
     r, g, b = start_node_color()
     sizes = start_node_sizes()
+    # colors = [(r, g, b, x) for x in start_node_opacities()]
     colors = map(lambda x:(r, g, b, x), start_node_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_nf_node(x, y):
     r, g, b = nf_node_color()
     sizes = nf_node_sizes()
+    # colors = [(r, g, b, x) for x in nf_node_opacities()]
     colors = map(lambda x:(r, g, b, x), nf_node_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_newest_node(x, y):
     r, g, b = newest_node_color()
     sizes = newest_node_sizes()
+    # colors = [(r, g, b, x) for x in newest_node_opacities()]
     colors = map(lambda x:(r, g, b, x), newest_node_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_selfref_halo(x, y):
     r, g, b = selfref_halo_color()
     sizes = selfref_halo_sizes()
+    # colors = [(r, g, b, x) for x in selfref_halo_opacities()]
     colors = map(lambda x:(r, g, b, x), selfref_halo_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_regular_line(x1, y1, x2, y2):
     r, g, b = line_color()
     widths = line_widths()
+    # colors = [(r, g, b, x) for x in line_opacities()]
     colors = map(lambda x:(r, g, b, x), line_opacities())
     draw_line(x1, y1, x2, y2, widths, colors)
 

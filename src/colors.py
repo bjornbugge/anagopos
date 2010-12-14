@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 '''
 Color schemes for the OpenGL canvas. Use the "*_color()"-functions to access
 the colors in the currently active color scheme.

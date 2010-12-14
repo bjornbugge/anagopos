@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 # Reduction Visualizer. A tool for visualization of reduction graphs.
 # Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
 # 
@@ -17,6 +17,7 @@
 
 import wx
 import pdb
+import pickle
 from glgrapharea import ReductionGraphCanvas
 import computegraph.operations as operations
 import parser.lambdaparser.lambdaparser as parser
@@ -53,6 +54,14 @@ TERM_PARSE_ERROR_COLOUR = "#BB4444"
 
 VERSION = "0.1"
 
+class State(object):
+    def __init__(self):
+        self.save_dir = osenviron['HOME']
+        self.rule_dir = osenviron['HOME']
+        self.color_scheme = 'black'
+    def __repr__(self):
+        return self.save_dir + " " + self.rule_dir + " " + self.color_scheme
+
 class MainWindow(wx.Frame):
     
     def __init__(self, parent = None, id = -1, title = "Reduction Visualizer"):
@@ -65,6 +74,8 @@ class MainWindow(wx.Frame):
         # GraphViz binaries when run with a "double click" (in which case the
         # path set in .profile isn't used).
         osenviron['PATH'] = osenviron['PATH'] + ":" + MACPORTS_PATH + ":" + FINK_PATH
+        
+        self.load_state()
         
         self.drawing = ReductionGraphCanvas(self)
         self.drawing.ready = False
@@ -98,7 +109,10 @@ class MainWindow(wx.Frame):
         
         term_label      = wx.StaticText(self, -1, 'Clicked Term: ')
         term_text  = wx.TextCtrl(self, -1, size = (width, 150), style = wx.TE_MULTILINE | wx.TE_READONLY)
-        self.drawing.node_text_widget = term_text
+
+        def node_click_callback(node):
+            term_text.SetValue("" + str(node)[5:])
+        self.drawing.node_clicked = node_click_callback
         
         start_checkbox  = wx.CheckBox(self, -1, 'Show start')
         newest_checkbox = wx.CheckBox(self, -1, 'Show newest')
@@ -169,26 +183,25 @@ class MainWindow(wx.Frame):
         color_scheme_menu = wx.Menu()
         
         # Menu actions
-        menuitem = filemenu.Append(-1, "&Load Rule Set", "Load a TRS rule set")
+        menuitem = filemenu.Append(-1, "&Save Image\tCtrl+S", "Take a screenshot")
+        self.Bind(wx.EVT_MENU, self.OnScreenshot, menuitem)
+        menuitem = filemenu.Append(-1, "&Open Rule Set\tCtrl+O", "Load a TRS rule set")
         self.Bind(wx.EVT_MENU, self.OnLoadRuleSet, menuitem)
         
-        self.color_scheme_black = color_scheme_menu.AppendRadioItem(-1, "Black Funk")
+        self.color_scheme_black = color_scheme_menu.AppendRadioItem(-1, "Black Funk\tCtrl+1")
         self.Bind(wx.EVT_MENU, self.OnColorSchemeChange, self.color_scheme_black)
-        self.color_scheme_white = color_scheme_menu.AppendRadioItem(-1, "White Snow")
+        self.color_scheme_white = color_scheme_menu.AppendRadioItem(-1, "White Snow\tCtrl+2")
         self.Bind(wx.EVT_MENU, self.OnColorSchemeChange, self.color_scheme_white)
-        self.color_scheme_grey = color_scheme_menu.AppendRadioItem(-1, "Grey Dawn")
+        self.color_scheme_grey = color_scheme_menu.AppendRadioItem(-1, "Grey Dawn\tCtrl+3")
         self.Bind(wx.EVT_MENU, self.OnColorSchemeChange, self.color_scheme_grey)
         filemenu.AppendMenu(-1, "Color Schemes", color_scheme_menu)
         
-        menuitem = filemenu.Append(-1, "&About", "Reduction Visualizer")
+        menuitem = filemenu.Append(-1, "&About", "About")
         self.Bind(wx.EVT_MENU, self.OnAbout, menuitem)
         filemenu.AppendSeparator()
         menuitem = filemenu.Append(-1, "E&xit", "Terminate the program")
         self.Bind(wx.EVT_MENU, self.OnExit, menuitem)
         
-        # menu->AppendRadioItem( ID_NORMAL_WEIGHT, wxT("Normal") );
-        
-
         # Menubar, containg the menu(s) created above
         menubar = wx.MenuBar()
         menubar.Append(filemenu, "&File")
@@ -198,10 +211,30 @@ class MainWindow(wx.Frame):
         
         self.Show(True)
         
-        self.dirname = getcwd() + '/parser' # From 'os'
+        
         self.rule_set = None # Used for the TRS
         self.last_used_rule_set = None
         self.last_used_rule_name = ""
+    
+    def load_state(self):
+        with file(getcwd() + "/state.dat", 'rw') as statefile:
+            c = statefile.read()
+            if not c == '':
+                statefile.seek(0)
+                self.state = pickle.load(statefile)
+            else:
+                self.state = State()
+        
+        if self.state.color_scheme == 'black':
+            colors.set_color_scheme_black()
+        elif self.state.color_scheme == 'white':
+            colors.set_color_scheme_white()
+        elif self.state.color_scheme == 'grey':
+            colors.set_color_scheme_grey()
+    
+    def save_state(self):
+        with file(getcwd() + "/state.dat", 'w') as statefile:
+            pickle.dump(self.state, statefile)
 
     def OnAbout(self,event):
         message = "Reduction Visualizer " + VERSION + "\n\n"
@@ -211,21 +244,17 @@ class MainWindow(wx.Frame):
         wx.MessageBox(message, caption, wx.OK)
     
     def OnLoadRuleSet(self, event):
-        dlg = wx.FileDialog(self, "Choose a file", self.dirname, "", "*.*", wx.OPEN)
+        dlg = wx.FileDialog(self, "Choose a file", self.state.rule_dir, "", "*.*", wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             name = dlg.GetPath()
             rulename = dlg.GetFilename()
+            self.state.rule_dir = name[:name.index(rulename) - 1]
             suffix = name[-3:]
-            if suffix == 'trs':
-                print "Opened a .trs file: " + name
-            elif suffix == 'xml':
-                print "Opened an XML file: " + name
-            else:
+            if not (suffix == 'trs' or suffix == 'xml'):
                 print "Unrecognized file format: " + name
                 return
             
             operations.setmode('trs')
-            # self.radio_trs.Enable(True)
             self.radio_trs.SetValue(True)
             self.radio_lambda.SetValue(False)
             self.UpdateRuleInfo(rulename)
@@ -236,15 +265,20 @@ class MainWindow(wx.Frame):
             ruleset = operations.parse_rule_set(suffix, contents)
             self.rule_set = self.last_used_rule_set = ruleset
             self.last_used_rule_name = rulename
-            print "GOT RULE SET: " + str(ruleset)
+            self.SetRadioVal(None)
+            self.save_state()
     
     def OnColorSchemeChange(self, event):
         if self.color_scheme_black.IsChecked():
             colors.set_color_scheme_black()
+            self.state.color_scheme = 'black'
         elif self.color_scheme_grey.IsChecked():
             colors.set_color_scheme_grey()
+            self.state.color_scheme = 'grey'
         else:
             colors.set_color_scheme_white()
+            self.state.color_scheme = 'white'
+        self.save_state()
         self.drawing.Draw()
         
     
@@ -329,6 +363,15 @@ class MainWindow(wx.Frame):
     def Generate(self, event):
         g = lambda_randomgraph.randomterm()
         self.term_input.SetValue("" + str(g))
+    
+    def OnScreenshot(self, event):
+        dlg = wx.FileDialog(self, "Choose a file", self.state.save_dir, "", "*.*", wx.SAVE)
+        if dlg.ShowModal() == wx.ID_OK:
+            name = dlg.GetPath()
+            filename = dlg.GetFilename()
+            self.state.save_dir = name[:name.index(filename) - 1]
+            self.drawing.export_canvas(name)
+            self.save_state()
     
     def forward_spin(self, event):
         self.drawing.set_forward_step_size(self.forward_spinner.GetValue())

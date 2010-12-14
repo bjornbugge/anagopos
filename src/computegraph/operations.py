@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Choose the reduction "mode". Currently there are two choices: the lambda
 calculus or a first-order term reduction system. The proxy functions here takes

@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 '''
 This module contains functions that operate on terms in a first-order term
 reduction system (TRS). The general format is, that a function takes some

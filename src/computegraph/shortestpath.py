@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 '''
 Shortest-path- and adjacency-algorithms.
 '''

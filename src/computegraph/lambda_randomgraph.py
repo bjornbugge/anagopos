@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Generate a random DAG for a lambda term.
 '''

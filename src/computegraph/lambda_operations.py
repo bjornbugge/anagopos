@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Contains the operations associated with the lambda calculus, like 
 beta-reduce etc.
