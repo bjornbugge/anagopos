@@ -20,6 +20,7 @@ import pdb
 from glgrapharea import ReductionGraphCanvas
 import computegraph.operations as operations
 import parser.lambdaparser.lambdaparser as parser
+import computegraph.lambda_randomgraph as lambda_randomgraph
 
 # Drawing algorithms
 from drawingalgorithms.majorizationgraph import MajorizationGraph
@@ -87,7 +88,7 @@ class MainWindow(wx.Frame):
         # Buttons
         self.term_input = wx.TextCtrl(self, 0, style = wx.TE_MULTILINE, size = (width, 100))
         draw_button     = wx.Button(self, 0, "Draw Graph",         size = button_size)
-        random_button   = wx.Button(self, 0, "Random Lambda term", size = button_size)
+        self.random_button = wx.Button(self, 0, "Random Lambda term", size = button_size)
         forward_button  = wx.Button(self, 0, "Forward",            size = step_size)
         back_button     = wx.Button(self, 0, "Back",               size = step_size)
         redraw_button   = wx.Button(self, 0, "Redraw Graph",       size = button_size)
@@ -114,7 +115,7 @@ class MainWindow(wx.Frame):
         
         # Button/spinner actions
         draw_button.Bind(wx.EVT_BUTTON, self.DrawGraph)
-        random_button.Bind(wx.EVT_BUTTON, self.Generate)
+        self.random_button.Bind(wx.EVT_BUTTON, self.Generate)
         forward_button.Bind(wx.EVT_BUTTON, self.drawing.Forward)
         back_button.Bind(wx.EVT_BUTTON, self.drawing.Back)
         redraw_button.Bind(wx.EVT_BUTTON, self.drawing.Redraw)
@@ -131,7 +132,7 @@ class MainWindow(wx.Frame):
         bts.Add(self.active_rule_file_text, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
         bts.Add(self.term_input, 0, wx.ALIGN_CENTER | wx.ALL, 10)
         bts.Add(draw_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
-        bts.Add(random_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
+        bts.Add(self.random_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
         bts.Add(forward_box, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
         bts.Add(back_box, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
         bts.Add(redraw_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
@@ -254,12 +255,14 @@ class MainWindow(wx.Frame):
             self.UpdateRuleInfo("N/A")
             self.trs_contents = self.term_input.GetValue()
             self.term_input.SetValue(self.lambda_contents)
+            self.random_button.Enable(True)
         else:
             if self.last_used_rule_set == None:
                 self.OnLoadRuleSet(True)
             else:
                 self.rule_set = self.last_used_rule_set
                 self.UpdateRuleInfo(self.last_used_rule_name)
+            self.random_button.Enable(False)
             self.lambda_contents = self.term_input.GetValue()
             self.term_input.SetValue(self.trs_contents)
             operations.setmode('trs')
@@ -324,8 +327,8 @@ class MainWindow(wx.Frame):
             self.drawing.Draw()
     
     def Generate(self, event):
-        print "Generate"
-        # self.drawing.InitDraw()
+        g = lambda_randomgraph.randomterm()
+        self.term_input.SetValue("" + str(g))
     
     def forward_spin(self, event):
         self.drawing.set_forward_step_size(self.forward_spinner.GetValue())
