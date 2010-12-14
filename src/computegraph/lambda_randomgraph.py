@@ -22,7 +22,7 @@ import computegraph.operations as operations
 import computegraph.lambda_dag as lambda_dag
 import copy
 import random
-import lambdaparser as parser
+import parser.lambdaparser as parser
 
 
 # ((#B1.(B1) #B2.((#B3.((#B4.((#B5.(B4) #B6.(#B7.(#B8.(#B9.(B6)))))) #B10.(#B11.(#B12.(B12))))) #B13.(#B14.(#B15.(#B16.(B14))))))) #B17.(#B18.((#B19.(#B20.(#B21.(B17))) B17))))
