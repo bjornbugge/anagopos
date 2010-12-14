@@ -29,7 +29,7 @@ from drawingalgorithms.graphvizdrawers import NeatoGraph
 from drawingalgorithms.graphvizdrawers import TwopiGraph
 from drawingalgorithms.graphvizdrawers import FdpGraph
 
-from colors import set_color_scheme_black, set_color_scheme_white, set_color_scheme_grey
+import colors
 
 import sys
 import math
@@ -238,11 +238,11 @@ class MainWindow(wx.Frame):
     
     def OnColorSchemeChange(self, event):
         if self.color_scheme_black.IsChecked():
-            set_color_scheme_black()
+            colors.set_color_scheme_black()
         elif self.color_scheme_grey.IsChecked():
-            set_color_scheme_grey()
+            colors.set_color_scheme_grey()
         else:
-            set_color_scheme_white()
+            colors.set_color_scheme_white()
         self.drawing.Draw()
         
     
