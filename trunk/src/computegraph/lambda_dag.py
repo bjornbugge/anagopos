@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 # Reduction Visualizer. A tool for visualization of reduction graphs.
 # Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
 # 
@@ -138,8 +138,7 @@ class Abstraction(LambdaNode):
     
     def makestr(self):
         self.leftchild.makestr()
-        # self.strrepr = "#" + self.varname + ".(" + self.leftchild.strrepr + ")"
-        self.strrepr = "λ" + self.varname + ".(" + self.leftchild.strrepr + ")"
+        self.strrepr = "#" + self.varname + ".(" + self.leftchild.strrepr + ")"
     
     def __repr__(self):
         return self.strrepr

@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 '''
 Contains classes representing the nodes in a DAG for a term.
 '''

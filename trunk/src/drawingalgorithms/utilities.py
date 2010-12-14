@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 Utility module. As of now it simply provides the scale()-function to use
 in the drawing algorithms.

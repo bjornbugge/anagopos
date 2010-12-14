@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 '''
 Deep-copy function. Use instead of built-in deep-copy because this is specialized
 and thus faster for reduction graphs.
