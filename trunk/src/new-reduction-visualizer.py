@@ -96,7 +96,7 @@ class MainWindow(wx.Frame):
         self.algo_combo = wx.ComboBox(self, -1, size = (width, -1), choices = [k for (k,v) in algorithms.iteritems()], style = wx.CB_READONLY)
         
         term_label      = wx.StaticText(self, -1, 'Clicked Term: ')
-        term_text       = wx.TextCtrl(self, -1, size = (width, 150), style = wx.TE_MULTILINE | wx.TE_READONLY)
+        term_text  = wx.TextCtrl(self, -1, size = (width, 150), style = wx.TE_MULTILINE | wx.TE_READONLY)
         self.drawing.node_text_widget = term_text
         
         start_checkbox  = wx.CheckBox(self, -1, 'Show start')
@@ -193,6 +193,7 @@ class MainWindow(wx.Frame):
         menubar.Append(filemenu, "&File")
         self.SetMenuBar(menubar)
         
+        self.lambda_contents = self.trs_contents = ""
         
         self.Show(True)
         
@@ -251,12 +252,16 @@ class MainWindow(wx.Frame):
             operations.setmode('lambda')
             self.rule_set = None
             self.UpdateRuleInfo("N/A")
+            self.trs_contents = self.term_input.GetValue()
+            self.term_input.SetValue(self.lambda_contents)
         else:
             if self.last_used_rule_set == None:
                 self.OnLoadRuleSet(True)
             else:
                 self.rule_set = self.last_used_rule_set
                 self.UpdateRuleInfo(self.last_used_rule_name)
+            self.lambda_contents = self.term_input.GetValue()
+            self.term_input.SetValue(self.trs_contents)
             operations.setmode('trs')
     
     def UpdateRuleInfo(self, text):
