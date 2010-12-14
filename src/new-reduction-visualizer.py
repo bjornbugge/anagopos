@@ -42,6 +42,8 @@ from pyparsing import ParseException
 
 MACPORTS_PATH = "/opt/local/bin:/opt/local/sbin"
 FINK_PATH = "/sw/bin"
+# From http://www.ryandesign.com/graphviz/faq.php
+BINARY_DISTRO_PATH = "/usr/local/graphviz*/bin"
 
 algorithms = {'Neato' : NeatoGraph,
             'Neato Animated' : MajorizationGraph,
@@ -73,7 +75,10 @@ class MainWindow(wx.Frame):
         # Hack! Add the extra path so the application knows where to find the 
         # GraphViz binaries when run with a "double click" (in which case the
         # path set in .profile isn't used).
-        osenviron['PATH'] = osenviron['PATH'] + ":" + MACPORTS_PATH + ":" + FINK_PATH
+        osenviron['PATH'] = osenviron['PATH'] + ":" \
+                            + MACPORTS_PATH + ":" \
+                            + FINK_PATH + ":" \
+                            + BINARY_DISTRO_PATH
         
         self.load_state()
         
