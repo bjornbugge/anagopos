@@ -43,7 +43,10 @@ else:
 
 import computegraph.operations as operations
 from colors import arrow_color, line_color, node_color, start_node_color, \
-    nf_node_color, selfref_halo_color, newest_node_color, background_color
+    nf_node_color, selfref_halo_color, newest_node_color, background_color, \
+    node_sizes, node_opacities, start_node_sizes, start_node_opacities, \
+    nf_node_sizes, nf_node_opacities, newest_node_sizes, newest_node_opacities, \
+    selfref_halo_sizes, selfref_halo_opacities, line_widths, line_opacities
 
 # Drawing algorithms
 from drawingalgorithms.majorizationgraph import MajorizationGraph
@@ -393,47 +396,38 @@ def draw_line(x1, y1, x2, y2, widths, colors):
 
 def draw_regular_node(x, y):
     r, g, b = node_color()
-    sizes = [15, 13, 11, 9, 7, 5]
-    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
-              (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
+    sizes = node_sizes()
+    colors = map(lambda x:(r, g, b, x), node_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_start_node(x, y):
     r, g, b = start_node_color()
-    sizes = [15, 13, 11, 9, 7, 5]
-    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
-              (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
+    sizes = start_node_sizes()
+    colors = map(lambda x:(r, g, b, x), start_node_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_nf_node(x, y):
     r, g, b = nf_node_color()
-    sizes = [18, 17, 15, 13, 11, 9]
-    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
-              (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
+    sizes = nf_node_sizes()
+    colors = map(lambda x:(r, g, b, x), nf_node_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_newest_node(x, y):
     r, g, b = newest_node_color()
-    sizes = [15, 13, 11, 9, 7, 5]
-    colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
-              (r, g, b, 0.6), (r, g, b, 0.8), (r, g, b, 1.0)]
+    sizes = newest_node_sizes()
+    colors = map(lambda x:(r, g, b, x), newest_node_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_selfref_halo(x, y):
     r, g, b = selfref_halo_color()
-    sizes = [18, 17, 16]
-    colors = [(r, g, b, 0.22), (r, g, b, 0.66), (r, g, b, 0.7)]
+    sizes = selfref_halo_sizes()
+    colors = map(lambda x:(r, g, b, x), selfref_halo_opacities())
     draw_node(x, y, sizes, colors)
 
 def draw_regular_line(x1, y1, x2, y2):
     r, g, b = line_color()
-    # widths = [4.5, 3.5, 2.5, 1.5, 0.8, 0.5]
-    widths = [4.5, 2.5, 1.5, 0.8, 0.5]
-    # colors = [(r, g, b, 0.1), (r, g, b, 0.2), (r, g, b, 0.4),
-    #           (r, g, b, 0.6), (r, g, b, 0.3), (r, g, b, 1.0)]
-    colors = [(r, g, b, 0.2), (r, g, b, 0.4),
-              (r, g, b, 0.6), (r, g, b, 0.3), (r, g, b, 1.0)]
-    
+    widths = line_widths()
+    colors = map(lambda x:(r, g, b, x), line_opacities())
     draw_line(x1, y1, x2, y2, widths, colors)
 
 def draw_bezier_edge(node, edge):
