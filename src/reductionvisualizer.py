@@ -18,7 +18,7 @@
 import wx
 import pdb
 import pickle
-from glgrapharea import ReductionGraphCanvas
+from grapharea import ReductionGraphCanvas
 import computegraph.operations as operations
 import parser.lambdaparser.lambdaparser as parser
 import computegraph.lambda_randomgraph as lambda_randomgraph
