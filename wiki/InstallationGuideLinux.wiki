@@ -1,13 +1,14 @@
 #summary One-sentence summary of this page.
 
-= Introduction =
-
-Add your content here.
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+==Debian based systems, e.g. Ubuntu==
+ * Install dependencies with the following command:
+{{{
+sudo apt-get install python-pyparsing python-opengl python-wxgtk2.8 python-pygraphviz python-numpy python-scipy
+}}}
+ * Download .deb package from: http://reduction-visualizer.googlecode.com/files/reductionvisualizer_1.5-1_i386.deb
+ * Double click and install the reductionvisualizer_1.5-1_i386.deb deb-package
+ * or run:
+{{{
+sudo dpkg -i reductionvisualizer_1.5-1_i386.deb
+}}}
+It will now be placed under Applications -> Graphics -> reductionvisualizer
