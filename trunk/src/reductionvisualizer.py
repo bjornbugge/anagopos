@@ -42,6 +42,7 @@ from pyparsing import ParseException
 
 MACPORTS_PATH = "/opt/local/bin:/opt/local/sbin"
 FINK_PATH = "/sw/bin"
+PKGSRC_PATH = "/usr/pkg/bin"
 # From http://www.ryandesign.com/graphviz/faq.php
 BINARY_DISTRO_PATH = "/usr/local/graphviz*/bin"
 
@@ -78,6 +79,7 @@ class MainWindow(wx.Frame):
         osenviron['PATH'] = osenviron['PATH'] + ":" \
                             + MACPORTS_PATH + ":" \
                             + FINK_PATH + ":" \
+                            + PKGSRC_PATH + ":" \
                             + BINARY_DISTRO_PATH
         
         self.load_state()
@@ -86,11 +88,11 @@ class MainWindow(wx.Frame):
         self.drawing.ready = False
         
         # Create the radio buttons to select between lambda calculus and TRS.
-        self.radio_lambda = wx.RadioButton(self, -1, 'Lambda', style = wx.RB_GROUP)
+        self.radio_lambda = wx.RadioButton(self, -1, 'Lambda Calculus', style = wx.RB_GROUP)
         self.radio_trs = wx.RadioButton(self, -1, 'TRS')
         self.Bind(wx.EVT_RADIOBUTTON, self.SetRadioVal, id = self.radio_lambda.GetId())
         self.Bind(wx.EVT_RADIOBUTTON, self.SetRadioVal, id = self.radio_trs.GetId())
-        self.active_rule_file_text = wx.StaticText(self, -1, 'Rule set: N/A')
+        self.active_rule_file_text = wx.StaticText(self, -1, 'Rule set: Beta Reduction')
         radio_box = wx.BoxSizer(wx.HORIZONTAL)
         radio_box.Add(self.radio_lambda, 0, wx.ALIGN_LEFT, 10)
         radio_box.Add(self.radio_trs, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
@@ -109,7 +111,7 @@ class MainWindow(wx.Frame):
         back_button     = wx.Button(self, 0, "Back",               size = step_size)
         redraw_button   = wx.Button(self, 0, "Redraw Graph",       size = button_size)
         optimize_button = wx.Button(self, 0, "Optimize Graph",     size = button_size)
-        algo_label      = wx.StaticText(self, -1, 'Select Drawing Alg: ', (5, 5))
+        algo_label      = wx.StaticText(self, -1, 'Select Drawing Algorithm: ', (5, 5))
         self.algo_combo = wx.ComboBox(self, -1, size = (width, -1), choices = [k for (k,v) in algorithms.iteritems()], style = wx.CB_READONLY)
         
         term_label      = wx.StaticText(self, -1, 'Clicked Term: ')
@@ -150,8 +152,8 @@ class MainWindow(wx.Frame):
         bts.Add(radio_box, 0, wx.ALIGN_LEFT | wx.ALL, 10)
         bts.Add(self.active_rule_file_text, 0, wx.ALIGN_LEFT | wx.LEFT, 10)
         bts.Add(self.term_input, 0, wx.ALIGN_CENTER | wx.ALL, 10)
-        bts.Add(draw_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
         bts.Add(self.random_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
+        bts.Add(draw_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
         bts.Add(forward_box, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
         bts.Add(back_box, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
         bts.Add(redraw_button, 0, wx.ALIGN_CENTER | wx.LEFT | wx.BOTTOM, 3)
@@ -329,7 +331,8 @@ class MainWindow(wx.Frame):
         self.drawing.endnum = 1000000
         term = self.term_input.GetValue()
         try:
-            self.drawing.term = operations.parse(term.replace(u'\u03bb',"#"))
+            #self.drawing.term = operations.parse(term.replace(u'\u03bb',"#"))
+            self.drawing.term = operations.parse(term.replace("\\","#"))
         except (ParseException, UnboundLocalError):
             # The TRS parser throws ParseException when it fails.
             # The lambda parser hasn't got any specific parse exception,
@@ -375,8 +378,8 @@ class MainWindow(wx.Frame):
             self.drawing.Draw()
     
     def Generate(self, event):
-        g = lambda_randomgraph.randomterm()
-        self.term_input.SetValue("" + str(g))
+        g = "" + str(lambda_randomgraph.randomterm())
+        self.term_input.SetValue(g.replace("#","\\"))
     
     def OnScreenshot(self, event):
         dlg = wx.FileDialog(self, "Save Screenshot", self.state.save_dir, "", "*.*", wx.SAVE)
