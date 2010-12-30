@@ -1,6 +1,20 @@
+# Reduction Visualizer. A tool for visualization of reduction graphs.
+# Copyright (C) 2010 Niels Bjoern Bugge Grathwohl and Jens Duelund Pallesen
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from computegraph.lambda_dag import *
-
 
 _position  = None
 _string_in = None
@@ -99,14 +113,6 @@ def term():
             top.add(subterm)
 
     return top
-
-
-# (\\x.x)((\\y.(\\w.w)x)z)
-# (\\x.x)
-# (\\x.x)(\\x.x)
-
-# @((\x.x), @((\y.@((\w.w), x)), z))
-# @((\x.x), @(\y.@((\w.w), x), z))
 
 def parse(string):
     global _string_in, _position
