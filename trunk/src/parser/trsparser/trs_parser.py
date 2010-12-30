@@ -181,7 +181,7 @@ def defaultRuleSet():
         string = f.read()
     _p = TRSParser()
     
-    return _p.parseRuleSets(string)[0]
+    return _p.parseRuleSets(string)
 
 
 if __name__ == "__main__":
