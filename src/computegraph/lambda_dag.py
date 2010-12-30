@@ -138,7 +138,8 @@ class Abstraction(LambdaNode):
     
     def makestr(self):
         self.leftchild.makestr()
-        self.strrepr = "#" + self.varname + ".(" + self.leftchild.strrepr + ")"
+        self.strrepr = "(\\" + self.varname + "." + self.leftchild.strrepr + ")"
+        # self.strrepr = "#" + self.varname + ".(" + self.leftchild.strrepr + ")"
     
     def __repr__(self):
         return self.strrepr
