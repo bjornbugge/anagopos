@@ -22,6 +22,7 @@ from grapharea import ReductionGraphCanvas
 import computegraph.operations as operations
 import parser.lambdaparser.lambdaparser as parser
 import computegraph.lambda_randomgraph as lambda_randomgraph
+import computegraph.trs_randomgraph as trs_randomgraph
 
 # Drawing algorithms
 from drawingalgorithms.majorizationgraph import MajorizationGraph
@@ -106,7 +107,7 @@ class MainWindow(wx.Frame):
         # Buttons
         self.term_input = wx.TextCtrl(self, 0, style = wx.TE_MULTILINE, size = (width, 100))
         draw_button     = wx.Button(self, 0, "Draw Graph",         size = button_size)
-        self.random_button = wx.Button(self, 0, "Random Lambda term", size = button_size)
+        self.random_button = wx.Button(self, 0, "Generate Random Term", size = button_size)
         forward_button  = wx.Button(self, 0, "Forward",            size = step_size)
         back_button     = wx.Button(self, 0, "Back",               size = step_size)
         redraw_button   = wx.Button(self, 0, "Redraw Graph",       size = button_size)
@@ -302,20 +303,32 @@ class MainWindow(wx.Frame):
         if self.radio_lambda.GetValue():
             operations.setmode('lambda')
             self.rule_set = None
-            self.UpdateRuleInfo("N/A")
+            self.UpdateRuleInfo("Beta Reduction")
             self.trs_contents = self.term_input.GetValue()
             self.term_input.SetValue(self.lambda_contents)
-            self.random_button.Enable(True)
+            self.random_button.SetLabel("Random Lambda Term")
         else:
             if self.last_used_rule_set == None:
                 self.OnLoadRuleSet(True)
             else:
                 self.rule_set = self.last_used_rule_set
                 self.UpdateRuleInfo(self.last_used_rule_name)
-            self.random_button.Enable(False)
-            self.lambda_contents = self.term_input.GetValue()
-            self.term_input.SetValue(self.trs_contents)
-            operations.setmode('trs')
+            
+            if self.rule_set == None:
+                self.radio_lambda.SetValue(True)
+                print "no rule set"
+                operations.setmode('lambda')
+                self.rule_set = None
+                self.UpdateRuleInfo("Beta Reduction")
+                self.trs_contents = self.term_input.GetValue()
+                self.term_input.SetValue(self.lambda_contents)
+                self.random_button.SetLabel("Random Lambda Term")
+            else:
+                print "some rule set"
+                self.random_button.SetLabel("Random TRS Term")
+                self.lambda_contents = self.term_input.GetValue()
+                self.term_input.SetValue(self.trs_contents)
+                operations.setmode('trs')
     
     def UpdateRuleInfo(self, text):
         self.active_rule_file_text.SetLabel("Rule Set: " + text)
@@ -332,7 +345,7 @@ class MainWindow(wx.Frame):
         term = self.term_input.GetValue()
         try:
             #self.drawing.term = operations.parse(term.replace(u'\u03bb',"#"))
-            self.drawing.term = operations.parse(term.replace("\\","#"))
+            self.drawing.term = operations.parse(term)
         except (ParseException, UnboundLocalError):
             # The TRS parser throws ParseException when it fails.
             # The lambda parser hasn't got any specific parse exception,
@@ -378,8 +391,13 @@ class MainWindow(wx.Frame):
             self.drawing.Draw()
     
     def Generate(self, event):
-        g = "" + str(lambda_randomgraph.randomterm())
-        self.term_input.SetValue(g.replace("#","\\"))
+        if self.radio_lambda.GetValue():
+            g = "" + str(lambda_randomgraph.randomterm())
+            self.term_input.SetValue(g)
+        
+        if self.radio_trs.GetValue():
+            g = "" + str(trs_randomgraph.randomterm(self.rule_set))
+            self.term_input.SetValue(g)
     
     def OnScreenshot(self, event):
         dlg = wx.FileDialog(self, "Save Screenshot", self.state.save_dir, "", "*.*", wx.SAVE)
