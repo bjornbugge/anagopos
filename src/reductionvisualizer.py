@@ -316,7 +316,6 @@ class MainWindow(wx.Frame):
             
             if self.rule_set == None:
                 self.radio_lambda.SetValue(True)
-                print "no rule set"
                 operations.setmode('lambda')
                 self.rule_set = None
                 self.UpdateRuleInfo("Beta Reduction")
@@ -324,7 +323,6 @@ class MainWindow(wx.Frame):
                 self.term_input.SetValue(self.lambda_contents)
                 self.random_button.SetLabel("Random Lambda Term")
             else:
-                print "some rule set"
                 self.random_button.SetLabel("Random TRS Term")
                 self.lambda_contents = self.term_input.GetValue()
                 self.term_input.SetValue(self.trs_contents)
