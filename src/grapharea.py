@@ -34,6 +34,8 @@ from OpenGL.GL import \
     GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_SMOOTH, GL_DEPTH_TEST, \
     GL_MODELVIEW, GL_PROJECTION
 
+import OpenGL.arrays.arraydatatype
+
 if wx.Platform == '__WXMAC__':
     import OpenGL.platform.darwin
 elif wx.Platform == '__WXGTK__':
