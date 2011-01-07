@@ -123,7 +123,7 @@ def parse(string):
     whole_term = term()
 
     if _symbol != '\0':
-        raise Exception("Symbols left on input: " + _string_in[_position:])
+        raise LambdaParseException("Symbols left on input: " + _string_in[_position:])
 
     return whole_term
 
