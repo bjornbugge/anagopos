@@ -40,6 +40,7 @@ import random
 from os import getcwd
 from os import environ as osenviron
 from pyparsing import ParseException
+from parser.lambdaparser.lambdaparser import LambdaParseException
 
 MACPORTS_PATH = "/opt/local/bin:/opt/local/sbin"
 FINK_PATH = "/sw/bin"
@@ -344,7 +345,7 @@ class MainWindow(wx.Frame):
         try:
             #self.drawing.term = operations.parse(term.replace(u'\u03bb',"#"))
             self.drawing.term = operations.parse(term)
-        except (ParseException, UnboundLocalError):
+        except (ParseException, LambdaParseException):
             # The TRS parser throws ParseException when it fails.
             # The lambda parser hasn't got any specific parse exception,
             # but it throws UnboundLocalError at failure. It's an artefact of Yapps.
