@@ -20,7 +20,7 @@ import pdb
 import pickle
 from grapharea import ReductionGraphCanvas
 import computegraph.operations as operations
-import parser.lambdaparser.lambdaparser as parser
+# import parser.lambdaparser.lambdaparser as parser
 import computegraph.lambda_randomgraph as lambda_randomgraph
 import computegraph.trs_randomgraph as trs_randomgraph
 
@@ -347,8 +347,6 @@ class MainWindow(wx.Frame):
             self.drawing.term = operations.parse(term)
         except (ParseException, LambdaParseException):
             # The TRS parser throws ParseException when it fails.
-            # The lambda parser hasn't got any specific parse exception,
-            # but it throws UnboundLocalError at failure. It's an artefact of Yapps.
             self.term_input.SetBackgroundColour(TERM_PARSE_ERROR_COLOUR)
             return
         self.term_input.SetBackgroundColour("#FFFFFF")
