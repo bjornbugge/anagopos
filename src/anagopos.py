@@ -57,7 +57,7 @@ algorithms = {'Neato' : NeatoGraph,
 
 TERM_PARSE_ERROR_COLOUR = "#BB4444"
 
-VERSION = "0.1"
+VERSION = "2.0"
 
 class State(object):
     def __init__(self):
@@ -69,7 +69,7 @@ class State(object):
 
 class MainWindow(wx.Frame):
     
-    def __init__(self, parent = None, id = -1, title = "Reduction Visualizer"):
+    def __init__(self, parent = None, id = -1, title = "Anagopos"):
         wx.Frame.__init__(
                 self, parent, id, title, size = (1200, 768),
                 style = wx.DEFAULT_FRAME_STYLE | wx.NO_FULL_REPAINT_ON_RESIZE
@@ -254,10 +254,10 @@ class MainWindow(wx.Frame):
             pickle.dump(self.state, statefile)
 
     def OnAbout(self,event):
-        message = "Reduction Visualizer " + VERSION + "\n\n"
-        message += "URL:\nhttp://code.google.com/p/reduction-visualizer/\n\n"
-        message += "By:\n Niels Bjørn Bugge Grathwohl\n Jens Duelund Pallesen"
-        caption = "Reduction Visualizer"
+        message = "Anagopos " + VERSION + "\n\n"
+        message += "URL:\n http://code.google.com/p/anagopos/\n\n"
+        message += "By:\n Niels Bjørn Bugge Grathwohl\n Jens Duelund Pallesen\n Jeroen Ketema\n Jakob Grue Simonsen"
+        caption = "Anagopos"
         wx.MessageBox(message, caption, wx.OK)
     
     def OnLoadRuleSet(self, event):
