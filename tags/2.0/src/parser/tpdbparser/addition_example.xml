@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This XML-definition should be equivalent to:
+addition {
+    A(x, 0)      -> x
+    A(x, S(y))   -> S(A(x, y))
+    M(x, 0)      -> 0
+    M(x, S(y))   -> A(M(x,y), x)
+}
+-->
+<problem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="termination" xsi:noNamespaceSchemaLocation="http://dev.aspsimon.org/xtc.xsd">
+    <trs>
+        <rules>
+            <rule> <!-- A(x, 0)      -> x -->
+                <lhs>
+                    <funapp>
+                        <name>A</name>
+                        <arg>
+                            <var>x</var>
+                            <funapp>
+                                <name>0</name>
+                            </funapp>
+                        </arg>
+                    </funapp>
+                </lhs>
+                <rhs>
+                    <var>x</var>
+                </rhs>
+            </rule>
+            <rule> <!-- A(x, S(y))   -> S(A(x, y)) -->
+                <lhs>
+                    <funapp>
+                        <name>A</name>
+                        <arg>
+                            <var>x</var>
+                            <funapp>
+                                <name>S</name>
+                                <arg>
+                                    <var>y</var>
+                                </arg>
+                            </funapp>
+                        </arg>
+                    </funapp>
+                </lhs>
+                <rhs>
+                    <funapp>
+                        <name>S</name>
+                        <arg>
+                            <funapp>
+                                <name>A</name>
+                                <arg>
+                                    <var>x</var>
+                                    <var>y</var>
+                                </arg>
+                            </funapp>
+                        </arg>
+                    </funapp>
+                </rhs>
+            </rule>
+            <rule> <!-- M(x, 0)      -> 0 -->
+                <lhs>
+                    <funapp>
+                        <name>M</name>
+                        <arg>
+                            <var>x</var>
+                            <funapp>
+                                <name>0</name>
+                            </funapp>
+                        </arg>
+                    </funapp>
+                </lhs>
+                <rhs>
+                    <funapp>
+                        <name>0</name>
+                    </funapp>
+                </rhs>
+            </rule>
+            <rule> <!-- M(x, S(y))   -> A(M(x,y), x) -->
+                <lhs>
+                    <funapp>
+                        <name>M</name>
+                        <arg>
+                            <var>x</var>
+                            <funapp>
+                                <name>S</name>
+                                <arg>
+                                    <var>y</var>
+                                </arg>
+                            </funapp>
+                        </arg>
+                    </funapp>
+                </lhs>
+                <rhs>
+                    <funapp>
+                        <name>A</name>
+                        <arg>
+                            <funapp>
+                                <name>M</name>
+                                <arg>
+                                    <var>x</var>
+                                    <var>y</var>
+                                </arg>
+                            </funapp>
+                            <var>x</var>
+                        </arg>
+                    </funapp>
+                </rhs>
+            </rule>
+        </rules>
+    </trs>
+</problem>
