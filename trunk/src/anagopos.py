@@ -113,6 +113,7 @@ class MainWindow(wx.Frame):
         back_button     = wx.Button(self, 0, "Back",               size = step_size)
         redraw_button   = wx.Button(self, 0, "Redraw Graph",       size = button_size)
         optimize_button = wx.Button(self, 0, "Optimize Graph",     size = button_size)
+        optimize_button.SetToolTip(wx.ToolTip("Recomputes graph with optimized node positions."))
         algo_label      = wx.StaticText(self, -1, 'Select Drawing Algorithm: ', (5, 5))
         self.algo_combo = wx.ComboBox(self, -1, size = (width, -1), choices = [k for (k,v) in algorithms.iteritems()], style = wx.CB_READONLY)
         
@@ -256,7 +257,7 @@ class MainWindow(wx.Frame):
     def OnAbout(self,event):
         message = "Anagopos " + VERSION + "\n\n"
         message += "URL:\n http://code.google.com/p/anagopos/\n\n"
-        message += "By:\n Niels Bjørn Bugge Grathwohl\n Jens Duelund Pallesen\n Jeroen Ketema\n Jakob Grue Simonsen"
+        message += "By:\n Niels Bjørn Bugge Grathwohl\n Jeroen Ketema\n Jens Duelund Pallesen\n Jakob Grue Simonsen"
         caption = "Anagopos"
         wx.MessageBox(message, caption, wx.OK)
     
@@ -336,7 +337,10 @@ class MainWindow(wx.Frame):
         self.Close(True)
     
     def DrawGraph(self, drawing):
-        Drawer = algorithms[self.algo_combo.GetValue()]
+        try:
+            Drawer = algorithms[self.algo_combo.GetValue()]
+        except KeyError:
+            return
         self.drawing.selected = Drawer
         self.drawing.ready = True
         self.drawing.startnum = 0

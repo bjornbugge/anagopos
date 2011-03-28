@@ -216,6 +216,8 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         self.back_step_size = s
     
     def Forward(self, event):
+        if not hasattr(self, 'selected'):
+            return
         Drawer = self.selected
         self.firstgraph = False
         if hasattr(self, 'nomoregraphs') and self.nomoregraphs:
@@ -251,9 +253,7 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
                     self.graphlist.append(g)
                     i += 1
             except StopIteration:
-                self.nomoregraphs = True
-                print "No more graphs"
-            
+                self.nomoregraphs = True            
             if i > 0:
                 self.graphnumber += i
                 self.graph = self.graphlist[self.graphnumber]
@@ -264,6 +264,8 @@ class ReductionGraphCanvas(glcanvas.GLCanvas):
         self.Draw()
     
     def Back(self, event):
+        if not hasattr(self, 'selected'):
+            return
         Drawer = self.selected
         if self.graphnumber == 0:
             self.firstgraph = True
