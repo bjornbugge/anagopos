@@ -208,10 +208,11 @@ class MajorizationGraph(DrawingAlgorithm):
             self.Xt_old = deepcopy(self.Xt)
             self.Xt = Xt_new
         except Exception as e:
-            print b
-            print self.Lw
-            print self.D
-            print "SINGULAR MATRIX!!!"
+            # print b
+            # print self.Lw
+            # print self.D
+            # print "SINGULAR MATRIX!!!"
+            pass
         
     def _ata_dists(self, X):
         '''
